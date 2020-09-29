@@ -2,11 +2,16 @@ extends Control
 
 var open_file_path
 var component_text
+var cam
+var largest_dim = 0 # Largest dimension of any component that is loaded
+var safe_distance = largest_dim * 1.5 # The distance away the camera should be placed to be able to view the components
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Set the default tab to let the user know where to start
 	$GUI/VBoxContainer/WorkArea/DocumentTabs.set_tab_title(0, "Start *")
+
+	cam = $"GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer/3DViewport/CADLikeOrbit_Camera"
 
 """
 Handler for when the Open Component button is clicked.
@@ -21,12 +26,6 @@ func _on_OpenDialog_file_selected(path):
 	# Save the open file path for use later
 	open_file_path = path
 	
-	# Read the contents of the file and render them
-#	var file = File.new()
-#	file.open(path, 1)
-#	component_text = file.get_as_text()
-#	print(component_text)
-	
 	# Temporary location and name of the file to convert
 	var array = [path]
 	var args = PoolStringArray(array)
@@ -38,6 +37,12 @@ func _on_OpenDialog_file_selected(path):
 	var result_json = JSON.parse(stdout[0]).result
 
 	for component in result_json["components"]:
+		# If we've found a larger dimension, save the safe distance, which is the largest dimension of any component
+		var dim = component["largestDim"]
+		if dim > largest_dim:
+			largest_dim = dim
+			safe_distance = largest_dim * 1.5
+
 		# Set the material color
 		var material = SpatialMaterial.new()
 		material.albedo_color = Color(0.3, 0.3, 0.0)
@@ -70,8 +75,18 @@ func _on_OpenDialog_file_selected(path):
 		var mesh = st.commit()
 		var mesh_inst = MeshInstance.new()
 		mesh_inst.mesh = mesh
-	
+
 		# Add the mesh instance to the viewport
 		$"GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer/3DViewport".add_child(mesh_inst)
+
+		# Set the camera to the safe distance and have it look at the origin
+		cam.look_at_from_position(Vector3(safe_distance, safe_distance, safe_distance), Vector3(0, 0, 0), Vector3(0, 1, 0))
 	
 		print(component)
+
+"""
+Handler that is called when the user clicks the button for the home view.
+"""
+func _on_HomeViewButton_button_down():
+	# Set the camera to the safe distance and have it look at the origin
+		cam.look_at_from_position(Vector3(safe_distance, safe_distance, safe_distance), Vector3(0, 0, 0), Vector3(0, 1, 0))

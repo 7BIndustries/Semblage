@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
 [ext_resource path="res://addons/CADLikeOrbit_Camera/CADLikeOrbit_Camera.gd" type="Script" id=3]
+[ext_resource path="res://assets/icons/home_button_flat_ready.svg" type="Texture" id=4]
 
 [node name="Control" type="Control"]
 anchor_right = 1.0
@@ -25,7 +26,7 @@ margin_bottom = 600.0
 
 [node name="Toolbar" type="HBoxContainer" parent="GUI/VBoxContainer"]
 margin_right = 1024.0
-margin_bottom = 47.0
+margin_bottom = 48.0
 rect_min_size = Vector2( 0, 30 )
 size_flags_horizontal = 3
 __meta__ = {
@@ -34,19 +35,25 @@ __meta__ = {
 
 [node name="OpenButton" type="ToolButton" parent="GUI/VBoxContainer/Toolbar"]
 margin_right = 51.0
-margin_bottom = 47.0
+margin_bottom = 48.0
 size_flags_vertical = 3
 icon = ExtResource( 1 )
 
+[node name="HomeViewButton" type="ToolButton" parent="GUI/VBoxContainer/Toolbar"]
+margin_left = 55.0
+margin_right = 107.0
+margin_bottom = 48.0
+icon = ExtResource( 4 )
+
 [node name="WorkArea" type="HSplitContainer" parent="GUI/VBoxContainer"]
-margin_top = 51.0
+margin_top = 52.0
 margin_right = 1024.0
 margin_bottom = 571.0
 size_flags_vertical = 3
 
 [node name="TreeViewTabs" type="TabContainer" parent="GUI/VBoxContainer/WorkArea"]
 margin_right = 100.0
-margin_bottom = 520.0
+margin_bottom = 519.0
 rect_min_size = Vector2( 100, 0 )
 tab_align = 0
 
@@ -63,7 +70,7 @@ size_flags_vertical = 3
 [node name="DocumentTabs" type="TabContainer" parent="GUI/VBoxContainer/WorkArea"]
 margin_left = 112.0
 margin_right = 1024.0
-margin_bottom = 520.0
+margin_bottom = 519.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 tab_align = 0
@@ -80,7 +87,7 @@ size_flags_vertical = 3
 stretch = true
 
 [node name="3DViewport" type="Viewport" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer"]
-size = Vector2( 904, 484 )
+size = Vector2( 904, 483 )
 handle_input_locally = false
 render_target_update_mode = 3
 
@@ -111,4 +118,5 @@ filters = PoolStringArray( "*.py" )
 current_dir = "/home/jwright/Downloads/repos/Semblage"
 current_path = "/home/jwright/Downloads/repos/Semblage/"
 [connection signal="button_down" from="GUI/VBoxContainer/Toolbar/OpenButton" to="." method="_on_OpenButton_button_down"]
+[connection signal="button_down" from="GUI/VBoxContainer/Toolbar/HomeViewButton" to="." method="_on_HomeViewButton_button_down"]
 [connection signal="file_selected" from="OpenDialog" to="." method="_on_OpenDialog_file_selected"]
