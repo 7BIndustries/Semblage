@@ -23,6 +23,9 @@ func _on_OpenButton_button_down():
 Handles rendering the user-selected file to the 3DView.
 """
 func _on_OpenDialog_file_selected(path):
+	# Clear the viewport for the next component that is loaded
+	clear_viewport()
+
 	# Save the open file path for use later
 	open_file_path = path
 	
@@ -90,3 +93,22 @@ Handler that is called when the user clicks the button for the home view.
 func _on_HomeViewButton_button_down():
 	# Set the camera to the safe distance and have it look at the origin
 		cam.look_at_from_position(Vector3(safe_distance, safe_distance, safe_distance), Vector3(0, 0, 0), Vector3(0, 1, 0))
+
+"""
+Handler that is called when the user clicks the button to close the current component/view.
+"""
+func _on_CloseButton_button_down():
+	clear_viewport()
+
+"""
+Removes all MeshInstances from a viewport to prepare for something new to be loaded.
+"""
+func clear_viewport():
+	# Grab the viewport and its children
+	var vp = $"GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer/3DViewport"
+	var children = vp.get_children()
+
+	# Remove any child that is not the camera, assuming everything else is a MeshInstance
+	for child in children:
+		if child.get_name() != "CADLikeOrbit_Camera":
+			vp.remove_child(child)
