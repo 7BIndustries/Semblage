@@ -115,6 +115,20 @@ margin_right = 1024.0
 margin_bottom = 25.0
 size_flags_horizontal = 3
 
+[node name="HBoxContainer" type="HBoxContainer" parent="GUI/VBoxContainer/StatusBar/Panel"]
+margin_right = 38.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="StatusLabel" type="Label" parent="GUI/VBoxContainer/StatusBar/Panel/HBoxContainer"]
+margin_bottom = 25.0
+size_flags_vertical = 3
+valign = 1
+
 [node name="OpenDialog" type="FileDialog" parent="."]
 margin_right = 760.0
 margin_bottom = 381.0
@@ -124,6 +138,17 @@ access = 2
 filters = PoolStringArray( "*.py" )
 current_dir = "/home/jwright/Downloads/repos/Semblage"
 current_path = "/home/jwright/Downloads/repos/Semblage/"
+
+[node name="Popup" type="Popup" parent="."]
+margin_right = 1024.0
+margin_bottom = 600.0
+
+[node name="ErrorDialog" type="AcceptDialog" parent="."]
+margin_left = 200.0
+margin_top = 200.0
+margin_right = 500.0
+margin_bottom = 300.0
+window_title = "Component Error"
 [connection signal="button_down" from="GUI/VBoxContainer/Toolbar/OpenButton" to="." method="_on_OpenButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/Toolbar/CloseButton" to="." method="_on_CloseButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/Toolbar/HomeViewButton" to="." method="_on_HomeViewButton_button_down"]

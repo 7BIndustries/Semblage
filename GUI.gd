@@ -5,6 +5,10 @@ var component_text
 var cam
 var largest_dim = 0 # Largest dimension of any component that is loaded
 var safe_distance = largest_dim * 1.5 # The distance away the camera should be placed to be able to view the components
+var status # The status bar that keeps the user appraised of what is going on
+var cur_temp_file # The path to the current temp file
+var cur_error_file # The path to the current error file, if needed
+var executing = false # Whether or not a script is currently executing
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -12,6 +16,60 @@ func _ready():
 	$GUI/VBoxContainer/WorkArea/DocumentTabs.set_tab_title(0, "Start *")
 
 	cam = $"GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer/3DViewport/CADLikeOrbit_Camera"
+
+	# Let the user know the app is ready to use
+	status = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
+	status.text = " Ready"
+
+"""
+Used to do things like check if a semb process is generating a component.
+"""
+func _process(delta):
+	# Error file handling
+	if cur_error_file != null:
+		var cur_file = File.new()
+
+		# If we are executing and there is an error file, display the error
+		if executing && cur_file.file_exists(cur_error_file):
+			cur_file.open(cur_error_file, File.READ)
+			executing = false
+
+			# Load the JSON from the file
+			var error_string = cur_file.get_as_text()
+
+			$ErrorDialog.dialog_text = error_string
+			$ErrorDialog.show_modal()
+
+			# Remove the current temp file since we no longer need it
+			var array = [cur_temp_file, cur_error_file]
+			var args = PoolStringArray(array)
+			OS.execute("rm", args, false)
+			cur_temp_file = null
+			cur_error_file = false
+
+			status.text = " Generation Error"
+
+	# JSON file handling
+	if cur_temp_file != null:
+		var cur_file = File.new()
+
+		# If we are executing and the file exists, process it
+		if executing && cur_file.file_exists(cur_temp_file):
+			cur_file.open(cur_temp_file, File.READ)
+			executing = false
+
+			# Load the JSON from the file
+			var json_string = cur_file.get_as_text()
+			load_component_json(json_string)
+
+			# Remove the current temp file since we no longer need it
+			var array = [cur_temp_file]
+			var args = PoolStringArray(array)
+			OS.execute("rm", args, false)
+			cur_temp_file = null
+
+		cur_file.close()
+
 
 """
 Handler for when the Open Component button is clicked.
@@ -28,18 +86,30 @@ func _on_OpenDialog_file_selected(path):
 
 	# Save the open file path for use later
 	open_file_path = path
+
+	# Construct the directory where the temporary JSON file can be written
+	cur_temp_file = OS.get_user_data_dir() + "/temp_1.json"
+	cur_error_file = OS.get_user_data_dir() + "/error_1.txt"
 	
 	# Temporary location and name of the file to convert
-	var array = [path]
+	var array = [path, cur_temp_file, cur_error_file]
 	var args = PoolStringArray(array)
 	
-	# Execute the render script 
-	var stdout = []
-	OS.execute("/home/jwright/Downloads/repos/semb/semb.py", args, true, stdout, true)
-	
-	var result_json = JSON.parse(stdout[0]).result
+	# Execute the render script
+	OS.execute("/home/jwright/Downloads/repos/semb/semb.py", args, false)
+	executing = true
 
-	for component in result_json["components"]:
+	status.text = "Generating component..."
+
+"""
+Loads a generated component into a mesh.
+"""
+func load_component_json(json_string):
+	status.text = "Redering component"
+
+	var component_json = JSON.parse(json_string).result
+
+	for component in component_json["components"]:
 		# If we've found a larger dimension, save the safe distance, which is the largest dimension of any component
 		var dim = component["largestDim"]
 		if dim > largest_dim:
@@ -86,6 +156,8 @@ func _on_OpenDialog_file_selected(path):
 		cam.look_at_from_position(Vector3(safe_distance, safe_distance, safe_distance), Vector3(0, 0, 0), Vector3(0, 1, 0))
 	
 		print(component)
+
+		status.text = "Redering component...done."
 
 """
 Handler that is called when the user clicks the button for the home view.
