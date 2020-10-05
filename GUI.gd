@@ -3,13 +3,16 @@ extends Control
 var open_file_path
 var component_text
 var cam
-var largest_dim = 0 # Largest dimension of any component that is loaded
-var safe_distance = largest_dim * 1.5 # The distance away the camera should be placed to be able to view the components
+var max_dim = 0 # Largest dimension of any component that is loaded
+var safe_distance = max_dim * 1.5 # The distance away the camera should be placed to be able to view the components
 var status # The status bar that keeps the user appraised of what is going on
 var cur_temp_file # The path to the current temp file
 var cur_error_file # The path to the current error file, if needed
 var executing = false # Whether or not a script is currently executing
 var rand_id # The pseudo-random id of the component instance being generated
+var home_transform
+var vp # The 3D viewport
+var rng = RandomNumberGenerator.new() 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -17,6 +20,7 @@ func _ready():
 	$GUI/VBoxContainer/WorkArea/DocumentTabs.set_tab_title(0, "Start *")
 
 	cam = $"GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer/3DViewport/CADLikeOrbit_Camera"
+	vp = $"GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer/3DViewport"
 
 	# Let the user know the app is ready to use
 	status = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
@@ -103,9 +107,8 @@ func _on_OpenDialog_file_selected(path):
 	cur_temp_file = OS.get_user_data_dir() + "/temp_1.json"
 	cur_error_file = OS.get_user_data_dir() + "/error_1.txt"
 
-	# Create a random ID 
-	var rng = RandomNumberGenerator.new() 
-	rand_id = str(rng.randi_range(100, 1000)) + "-" + str(rng.randi_range(100, 1000)) + "-" + str(rng.randi_range(100, 1000)) + "-" + str(rng.randi_range(100, 1000))
+	# Create a random ID
+	rand_id = str(rng.randi()) + "-" + str(rng.randi()) + "-" + str(rng.randi()) + "-" + str(rng.randi())
 
 	# Temporary location and name of the file to convert
 	var array = [path, cur_temp_file, cur_error_file, rand_id]
@@ -118,23 +121,32 @@ func _on_OpenDialog_file_selected(path):
 	status.text = "Generating component..."
 
 """
+Calculates the proper Y position to set the camera to fit a component or
+assembly in the viewport.
+"""
+func get_safe_camera_distance(mesh_instance):
+	var x = vp.get_visible_rect().size.x
+	var y = vp.get_visible_rect().size.y
+
+	return 10
+
+"""
 Loads a generated component into a mesh.
 """
 func load_component_json(json_string):
 	status.text = "Redering component..."
 	
-	# Reset the largest dimension so we do not save a larger one from a previous load
-	largest_dim = 0
+	# Reset the maximum dimension so we do not save a larger one from a previous load
+	max_dim = 0
 
 	var component_json = JSON.parse(json_string).result
 
 	for component in component_json["components"]:
-		# If we've found a larger dimension, save the safe distance, which is the largest dimension of any component
+		# If we've found a larger dimension, save the safe distance, which is the maximum dimension of any component
 		var dim = component["largestDim"]
-		if dim > largest_dim:
-			largest_dim = dim
-			safe_distance = largest_dim + (0.2 * largest_dim)
-			cam.ZOOMSPEED = 0.075 * largest_dim
+		if dim > max_dim:
+			max_dim = dim
+			cam.ZOOMSPEED = 0.075 * max_dim
 
 		# Get the new material color
 		var new_color = component["color"]
@@ -177,8 +189,13 @@ func load_component_json(json_string):
 		# Add the mesh instance to the viewport
 		$"GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer/3DViewport".add_child(mesh_inst)
 
+		safe_distance = get_safe_camera_distance(mesh_inst)
+
 		# Set the camera to the safe distance and have it look at the origin
-		cam.look_at_from_position(Vector3(safe_distance, safe_distance, safe_distance), Vector3(0, 0, 0), Vector3(0, 1, 0))
+		cam.look_at_from_position(Vector3(0, safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 1, 0))
+
+		# Save this transform as the home transform
+		home_transform = cam.get_transform()
 
 		status.text = "Redering component...done."
 
@@ -186,13 +203,19 @@ func load_component_json(json_string):
 Handler that is called when the user clicks the button for the home view.
 """
 func _on_HomeViewButton_button_down():
-	# Set the camera to the safe distance and have it look at the origin
-		cam.look_at_from_position(Vector3(safe_distance, safe_distance, safe_distance), Vector3(0, 0, 0), Vector3(0, 1, 0))
+	# Reset the tranform for the camera back to the one we saved when the scene loaded
+	cam.transform = home_transform
 
 """
 Handler that is called when the user clicks the button to close the current component/view.
 """
 func _on_CloseButton_button_down():
+	# Reset the tranform for the camera back to the one we saved when the scene loaded
+	if cam != null && home_transform != null: cam.transform = home_transform
+
+	# Make sure the new maximum dim takes effect next time
+	max_dim = 0
+
 	clear_viewport()
 
 """
