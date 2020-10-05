@@ -133,7 +133,8 @@ func load_component_json(json_string):
 		var dim = component["largestDim"]
 		if dim > largest_dim:
 			largest_dim = dim
-			safe_distance = largest_dim * 1.5
+			safe_distance = largest_dim + (0.2 * largest_dim)
+			cam.ZOOMSPEED = 0.075 * largest_dim
 
 		# Get the new material color
 		var new_color = component["color"]
