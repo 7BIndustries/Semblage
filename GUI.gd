@@ -42,9 +42,19 @@ func _process(delta):
 
 			# Load the JSON from the file
 			var error_string = cur_file.get_as_text()
+			
+			# Make sure all the JSON was written by checking the processed file name
+			var needed_str = "semb_process_finished(" + rand_id + ")"
 
-			$ErrorDialog.dialog_text = error_string
-			$ErrorDialog.popup_centered()
+			# If the necessary string was found at the end of the file, we are done and can remove the check string
+			if error_string.ends_with(needed_str):
+				executing = false
+				error_string = error_string.replace(needed_str, "")
+				
+				$ErrorDialog.dialog_text = error_string
+				$ErrorDialog.popup_centered()
+			else:
+				return
 
 			# Remove the current temp file since we no longer need it
 #			var array = [cur_temp_file, cur_error_file]
