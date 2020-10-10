@@ -27,7 +27,7 @@ __meta__ = {
 
 [node name="VBoxContainer" type="VBoxContainer" parent="GUI"]
 margin_right = 1024.0
-margin_bottom = 1201.0
+margin_bottom = 600.0
 
 [node name="PanelContainer" type="PanelContainer" parent="GUI/VBoxContainer"]
 margin_right = 1024.0
@@ -70,12 +70,12 @@ icon = ExtResource( 4 )
 [node name="WorkArea" type="HSplitContainer" parent="GUI/VBoxContainer"]
 margin_top = 52.0
 margin_right = 1024.0
-margin_bottom = 1172.0
+margin_bottom = 571.0
 size_flags_vertical = 3
 
 [node name="TreeViewTabs" type="TabContainer" parent="GUI/VBoxContainer/WorkArea"]
 margin_right = 100.0
-margin_bottom = 1120.0
+margin_bottom = 519.0
 rect_min_size = Vector2( 100, 0 )
 tab_align = 0
 
@@ -92,7 +92,7 @@ size_flags_vertical = 3
 [node name="DocumentTabs" type="TabContainer" parent="GUI/VBoxContainer/WorkArea"]
 margin_left = 112.0
 margin_right = 1024.0
-margin_bottom = 1120.0
+margin_bottom = 519.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 tab_align = 0
@@ -109,7 +109,7 @@ size_flags_vertical = 3
 stretch = true
 
 [node name="3DViewport" type="Viewport" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer"]
-size = Vector2( 904, 1084 )
+size = Vector2( 904, 483 )
 handle_input_locally = false
 render_target_update_mode = 3
 
@@ -121,9 +121,9 @@ IfNoObjPickedRotateAroundOrigin = true
 RotateUsingZoomPlusPan = false
 
 [node name="StatusBar" type="MarginContainer" parent="GUI/VBoxContainer"]
-margin_top = 1176.0
+margin_top = 575.0
 margin_right = 1024.0
-margin_bottom = 1201.0
+margin_bottom = 600.0
 rect_min_size = Vector2( 0, 25 )
 
 [node name="Panel" type="Panel" parent="GUI/VBoxContainer/StatusBar"]
