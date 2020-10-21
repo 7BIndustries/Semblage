@@ -128,11 +128,11 @@ func generate_component(path):
 	cur_error_file = OS.get_user_data_dir() + "/error_" + file_id + ".txt"
 	
 	# Temporary location and name of the file to convert
-	var array = [path, cur_temp_file, cur_error_file]
+	var array = ["--codec", "semb", "--infile", path, "--outfile", cur_temp_file, "--errfile", cur_error_file]
 	var args = PoolStringArray(array)
 	
 	# Execute the render script
-	OS.execute("/home/jwright/Downloads/repos/semb/semb.py", args, false)
+	OS.execute("/home/jwright/Downloads/repos/jmwright/cq-cli/cq-cli.py", args, false)
 	executing = true
 
 	status.text = "Generating component..."
@@ -226,7 +226,7 @@ func load_component_json(json_string):
 	safe_distance = max_dist * 2.0 # get_safe_camera_distance(max_dist)
 	
 	# Set the camera to the safe distance and have it look at the origin
-	cam.look_at_from_position(Vector3(0, 0, safe_distance), Vector3(0, 0, 0), Vector3(0, 1, 0))
+	cam.look_at_from_position(Vector3(0, safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
 	
 	# Save this transform as the home transform
 	home_transform = cam.get_transform()
