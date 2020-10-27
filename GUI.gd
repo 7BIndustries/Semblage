@@ -41,20 +41,32 @@ func _process(delta):
 
 			# Load the JSON from the file
 			var error_string = cur_file.get_as_text()
-			
-			if error_string.ends_with("semb_process_finished"):
-				error_string = error_string.replace("semb_process_finished", "")
 
-				$ErrorDialog.dialog_text = error_string
-				$ErrorDialog.popup_centered()
-	
-				# Prevent us from entering this code block again
-				cur_temp_file = null
-				cur_error_file = null
-	
-				executing = false
-				
-				status.text = " Generation Error"
+			# Display the error to the user
+			$ErrorDialog.dialog_text = error_string
+			$ErrorDialog.popup_centered()
+
+			# Prevent us from entering this code block again
+			cur_temp_file = null
+			cur_error_file = null
+
+			executing = false
+			
+			status.text = " Generation Error"
+			
+#			if error_string.ends_with("semb_process_finished"):
+#				error_string = error_string.replace("semb_process_finished", "")
+#
+#				$ErrorDialog.dialog_text = error_string
+#				$ErrorDialog.popup_centered()
+#
+#				# Prevent us from entering this code block again
+#				cur_temp_file = null
+#				cur_error_file = null
+#
+#				executing = false
+#
+#				status.text = " Generation Error"
 
 			# Remove the current temp file since we no longer need it
 #			var array = [cur_temp_file, cur_error_file]
