@@ -103,7 +103,6 @@ func _process(delta):
 
 		cur_file.close()
 
-
 """
 Handler for when the Open Component button is clicked.
 """
@@ -145,6 +144,7 @@ func generate_component(path):
 	
 	# Execute the render script
 	OS.execute("/home/jwright/Downloads/repos/jmwright/cq-cli/cq-cli.py", args, false)
+#	OS.execute("/home/jwright/Downloads/cq-cli-Linux/cq-cli/cq-cli", args, false)
 	executing = true
 
 	status.text = "Generating component..."
@@ -191,6 +191,12 @@ func load_component_json(json_string):
 		# not cause artifacts
 		material.albedo_color = Color(new_color[0], new_color[1], new_color[2], new_color[3])
 
+		# Enable/disable transparency based on the alpha set by the user
+		if new_color[3] == 1.0:
+			material.flags_transparent = false
+		else:
+			material.flags_transparent = true
+
 		# Set the SurfaceTool up to build a new mesh
 		var st = SurfaceTool.new()
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -232,7 +238,19 @@ func load_component_json(json_string):
 		mesh_inst.mesh = mesh
 
 		# Add the mesh instance to the viewport
-		$"GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer/3DViewport".add_child(mesh_inst)
+		vp.add_child(mesh_inst)
+
+		# Handle the vertices
+#		for v in component["cqVertices"]:
+#			var newVert = CSGMesh.new()
+#			newVert.name = "VertexCapsule"
+#			newVert.mesh = SphereMesh.new()
+#			# newVert.mesh.radius = 0.1
+#			newVert.scale = Vector3(0.05, 0.05, 0.05)
+#			newVert.mesh.material = SpatialMaterial.new()
+#			newVert.mesh.material.albedo_color = Color(0.8, 0.8, 0.8)
+#			newVert.set_translation(Vector3(v[0], v[1], v[2]))
+#			vp.add_child(newVert)
 	
 	# Find the safe distance for the camera based on the maximum distance of any vertex from the origin
 	safe_distance = max_dist * 2.0 # get_safe_camera_distance(max_dist)
