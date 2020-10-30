@@ -252,14 +252,16 @@ func load_component_json(json_string):
 #			newVert.set_translation(Vector3(v[0], v[1], v[2]))
 #			vp.add_child(newVert)
 	
-	# Find the safe distance for the camera based on the maximum distance of any vertex from the origin
-	safe_distance = max_dist * 2.0 # get_safe_camera_distance(max_dist)
+	# Only reset the view if the same distance changed
+	if (max_dist * 2.0) != safe_distance:
+		# Find the safe distance for the camera based on the maximum distance of any vertex from the origin
+		safe_distance = max_dist * 2.0 # get_safe_camera_distance(max_dist)
+		
+		# Set the camera to the safe distance and have it look at the origin
+		cam.look_at_from_position(Vector3(0, safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
 	
-	# Set the camera to the safe distance and have it look at the origin
-	cam.look_at_from_position(Vector3(0, safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
-	
-	# Save this transform as the home transform
-	home_transform = cam.get_transform()
+		# Save this transform as the home transform
+		home_transform = cam.get_transform()
 
 	status.text = "Redering component...done."
 
