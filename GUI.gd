@@ -2,7 +2,6 @@ extends Control
 
 var open_file_path
 var component_text
-var cam
 var max_dim = 0 # Largest dimension of any component that is loaded
 var max_dist = 0 # Maximum distance away from the origin any vertex is
 var safe_distance = max_dim * 1.5 # The distance away the camera should be placed to be able to view the components
@@ -11,14 +10,22 @@ var cur_temp_file # The path to the current temp file
 var cur_error_file # The path to the current error file, if needed
 var executing = false # Whether or not a script is currently executing
 var home_transform # Allows us to move the camera back to the starting location/rotation/etc
+var origin_transform # Allows us to move the orgin camera view back to a starting transform
+var cam # The main camera for the 3D view
+var origin_cam # The camera showing the orientation of the component(s) via an origin indicator
 var vp # The 3D viewport
 var tabs # The tab container for component documents
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	cam = $"GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer/3DViewport/CADLikeOrbit_Camera"
-	vp = $"GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer/3DViewport"
-	tabs = $"GUI/VBoxContainer/WorkArea/DocumentTabs"
+	origin_cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginCamera
+	cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/CADLikeOrbit_Camera
+	vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
+	tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
+	
+	origin_cam.zoom_enabled = false
+	origin_cam.pan_enabled = false
+	origin_cam.rotate_enabled = true
 
 	# Set the default tab to let the user know where to start
 	tabs.set_tab_title(0, "Start")
@@ -259,9 +266,11 @@ func load_component_json(json_string):
 		
 		# Set the camera to the safe distance and have it look at the origin
 		cam.look_at_from_position(Vector3(0, safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
+		origin_cam.look_at_from_position(Vector3(0, safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
 	
 		# Save this transform as the home transform
 		home_transform = cam.get_transform()
+		origin_transform = origin_cam.get_transform()
 
 	status.text = "Redering component...done."
 
@@ -271,6 +280,9 @@ Handler that is called when the user clicks the button for the home view.
 func _on_HomeViewButton_button_down():
 	# Reset the tranform for the camera back to the one we saved when the scene loaded
 	if home_transform != null: cam.transform = home_transform
+	
+	# Reset the origin indicator camera back to the view we saved on scene load
+	if origin_transform != null: origin_cam.transform = origin_transform
 
 """
 Handler that is called when the user clicks the button to close the current component/view.
@@ -301,7 +313,7 @@ Removes all MeshInstances from a viewport to prepare for something new to be loa
 """
 func clear_viewport():
 	# Grab the viewport and its children
-	var vp = $"GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer/3DViewport"
+	var vp = $"GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport"
 	var children = vp.get_children()
 
 	# Remove any child that is not the camera, assuming everything else is a MeshInstance

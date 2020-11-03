@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=26 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -9,6 +9,72 @@
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
+
+[sub_resource type="ProceduralSky" id=19]
+
+[sub_resource type="Environment" id=20]
+background_mode = 3
+background_sky = SubResource( 19 )
+background_color = Color( 0.333333, 0.309804, 0.309804, 1 )
+
+[sub_resource type="World" id=21]
+environment = SubResource( 20 )
+
+[sub_resource type="ProceduralSky" id=3]
+
+[sub_resource type="Environment" id=4]
+background_mode = 3
+background_sky = SubResource( 3 )
+background_color = Color( 0.576471, 0.560784, 0.560784, 1 )
+ambient_light_color = Color( 0.862745, 0.780392, 0.780392, 1 )
+
+[sub_resource type="World" id=5]
+environment = SubResource( 4 )
+
+[sub_resource type="CylinderMesh" id=7]
+top_radius = 0.1
+bottom_radius = 0.1
+height = 1.0
+
+[sub_resource type="SpatialMaterial" id=8]
+albedo_color = Color( 0.117647, 0.870588, 0.219608, 1 )
+
+[sub_resource type="SphereMesh" id=9]
+radius = 0.3
+height = 0.6
+
+[sub_resource type="SpatialMaterial" id=10]
+albedo_color = Color( 0.117647, 0.870588, 0.219608, 1 )
+
+[sub_resource type="CylinderMesh" id=11]
+top_radius = 0.1
+bottom_radius = 0.1
+height = 1.0
+
+[sub_resource type="SpatialMaterial" id=12]
+albedo_color = Color( 0.976471, 0.101961, 0.0117647, 1 )
+
+[sub_resource type="SphereMesh" id=13]
+radius = 0.3
+height = 0.6
+
+[sub_resource type="SpatialMaterial" id=14]
+albedo_color = Color( 0.976471, 0.101961, 0.0117647, 1 )
+
+[sub_resource type="CylinderMesh" id=15]
+top_radius = 0.1
+bottom_radius = 0.1
+height = 1.0
+
+[sub_resource type="SpatialMaterial" id=16]
+albedo_color = Color( 0.054902, 0.462745, 0.937255, 1 )
+
+[sub_resource type="SphereMesh" id=17]
+radius = 0.3
+height = 0.6
+
+[sub_resource type="SpatialMaterial" id=18]
+albedo_color = Color( 0.054902, 0.462745, 0.937255, 1 )
 
 [node name="Control" type="Control"]
 anchor_right = 1.0
@@ -27,7 +93,7 @@ __meta__ = {
 
 [node name="VBoxContainer" type="VBoxContainer" parent="GUI"]
 margin_right = 1024.0
-margin_bottom = 600.0
+margin_bottom = 617.0
 
 [node name="PanelContainer" type="PanelContainer" parent="GUI/VBoxContainer"]
 margin_right = 1024.0
@@ -70,12 +136,12 @@ icon = ExtResource( 4 )
 [node name="WorkArea" type="HSplitContainer" parent="GUI/VBoxContainer"]
 margin_top = 52.0
 margin_right = 1024.0
-margin_bottom = 571.0
+margin_bottom = 588.0
 size_flags_vertical = 3
 
 [node name="TreeViewTabs" type="TabContainer" parent="GUI/VBoxContainer/WorkArea"]
 margin_right = 100.0
-margin_bottom = 519.0
+margin_bottom = 536.0
 rect_min_size = Vector2( 100, 0 )
 tab_align = 0
 
@@ -92,38 +158,88 @@ size_flags_vertical = 3
 [node name="DocumentTabs" type="TabContainer" parent="GUI/VBoxContainer/WorkArea"]
 margin_left = 112.0
 margin_right = 1024.0
-margin_bottom = 519.0
+margin_bottom = 536.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 tab_align = 0
 
-[node name="3DViewContainer" type="ViewportContainer" parent="GUI/VBoxContainer/WorkArea/DocumentTabs"]
+[node name="VPMarginContainer" type="MarginContainer" parent="GUI/VBoxContainer/WorkArea/DocumentTabs"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
+
+[node name="ThreeDViewContainer" type="ViewportContainer" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer"]
+margin_right = 904.0
+margin_bottom = 500.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 stretch = true
 
-[node name="3DViewport" type="Viewport" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer"]
-size = Vector2( 904, 483 )
+[node name="ThreeDViewport" type="Viewport" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer"]
+size = Vector2( 904, 500 )
+world = SubResource( 21 )
 handle_input_locally = false
 render_target_update_mode = 3
 
-[node name="CADLikeOrbit_Camera" type="Camera" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/3DViewContainer/3DViewport"]
+[node name="CADLikeOrbit_Camera" type="Camera" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3 )
 far = 8192.0
 script = ExtResource( 3 )
 IfNoObjPickedRotateAroundOrigin = true
 RotateUsingZoomPlusPan = false
 
+[node name="OriginViewportContainer" type="ViewportContainer" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer"]
+margin_right = 100.0
+margin_bottom = 100.0
+
+[node name="OriginViewport" type="Viewport" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer"]
+size = Vector2( 100, 100 )
+own_world = true
+world = SubResource( 5 )
+transparent_bg = true
+
+[node name="OriginCamera" type="Camera" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3 )
+projection = 1
+size = 3.0
+script = ExtResource( 3 )
+
+[node name="YStem" type="MeshInstance" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport"]
+mesh = SubResource( 7 )
+material/0 = SubResource( 8 )
+
+[node name="YBall" type="MeshInstance" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0 )
+mesh = SubResource( 9 )
+material/0 = SubResource( 10 )
+
+[node name="XStem" type="MeshInstance" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport"]
+transform = Transform( -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0, 0, 1, 0.5, -0.5, 0 )
+mesh = SubResource( 11 )
+material/0 = SubResource( 12 )
+
+[node name="XBall" type="MeshInstance" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport"]
+transform = Transform( -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0, 0, 1, 1, -0.5, 0 )
+mesh = SubResource( 13 )
+material/0 = SubResource( 14 )
+
+[node name="ZStem" type="MeshInstance" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport"]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, -0.5, 0.5 )
+mesh = SubResource( 15 )
+material/0 = SubResource( 16 )
+
+[node name="ZBall" type="MeshInstance" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 1 )
+mesh = SubResource( 17 )
+material/0 = SubResource( 18 )
+
 [node name="StatusBar" type="MarginContainer" parent="GUI/VBoxContainer"]
-margin_top = 575.0
+margin_top = 592.0
 margin_right = 1024.0
-margin_bottom = 600.0
+margin_bottom = 617.0
 rect_min_size = Vector2( 0, 25 )
 
 [node name="Panel" type="Panel" parent="GUI/VBoxContainer/StatusBar"]
