@@ -266,7 +266,7 @@ func load_component_json(json_string):
 		
 		# Set the camera to the safe distance and have it look at the origin
 		cam.look_at_from_position(Vector3(0, safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
-		origin_cam.look_at_from_position(Vector3(0, safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
+		origin_cam.look_at_from_position(Vector3(0, 3, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
 	
 		# Save this transform as the home transform
 		home_transform = cam.get_transform()
