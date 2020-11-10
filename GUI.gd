@@ -1,7 +1,7 @@
 extends Control
 
-var open_file_path
-var component_text
+var open_file_path # The component/CQ file that the user opened
+var component_text # The text of the current component's script
 var max_dim = 0 # Largest dimension of any component that is loaded
 var max_dist = 0 # Maximum distance away from the origin any vertex is
 var safe_distance = max_dim * 1.5 # The distance away the camera should be placed to be able to view the components
@@ -29,6 +29,9 @@ func _ready():
 
 	# Set the default tab to let the user know where to start
 	tabs.set_tab_title(0, "Start")
+
+	# Start off with the base script text
+	component_text = "import cadquery as cq\ncq"
 
 	# Let the user know the app is ready to use
 	status = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
@@ -111,6 +114,21 @@ func _process(delta):
 		cur_file.close()
 
 """
+Handles user input, specifically the non-camera inputs like right-clicking for the 
+action menu.
+"""
+func _input(event):
+	match event.get_class():
+		"InputEventMouseButton":
+			# See if the user requested the action menu
+			if Input.is_action_just_pressed("Action"):
+				# Set the menu at the mouse cursor position
+				var mouse_pos = get_viewport().get_mouse_position()
+
+				$GUI/ActionPopupPanel.activate_popup(mouse_pos, component_text)
+
+
+"""
 Handler for when the Open Component button is clicked.
 """
 func _on_OpenButton_button_down():
@@ -125,11 +143,27 @@ func _on_OpenDialog_file_selected(path):
 
 	# Save the open file path for use later
 	open_file_path = path
-	
+
 	# Let the user know the name of the file they are trying to open
 	tabs.set_tab_title(0, open_file_path)
 
+	# Load the component text to handle later
+	component_text = load_component_file(open_file_path)
+
 	generate_component(open_file_path)
+
+"""
+Loads the text of a file into a string to be manipulated by the GUI.
+"""
+func load_component_file(path):
+	var f = File.new()
+	var err = f.open(path, File.READ)
+	if err != OK:
+		printerr("Could not open file, error code ", err)
+		return ""
+	var text = f.get_as_text()
+	f.close()
+	return text
 
 """
 Generates a component using the semb CLI, which returns JSON.
@@ -148,7 +182,7 @@ func generate_component(path):
 	# Temporary location and name of the file to convert
 	var array = ["--codec", "semb", "--infile", path, "--outfile", cur_temp_file, "--errfile", cur_error_file]
 	var args = PoolStringArray(array)
-	
+
 	# Execute the render script
 	OS.execute("/home/jwright/Downloads/repos/jmwright/cq-cli/cq-cli.py", args, false)
 #	OS.execute("/home/jwright/Downloads/cq-cli-Linux/cq-cli/cq-cli", args, false)
@@ -258,16 +292,16 @@ func load_component_json(json_string):
 #			newVert.mesh.material.albedo_color = Color(0.8, 0.8, 0.8)
 #			newVert.set_translation(Vector3(v[0], v[1], v[2]))
 #			vp.add_child(newVert)
-	
+
 	# Only reset the view if the same distance changed
 	if (max_dist * 2.0) != safe_distance:
 		# Find the safe distance for the camera based on the maximum distance of any vertex from the origin
 		safe_distance = max_dist * 2.0 # get_safe_camera_distance(max_dist)
-		
+
 		# Set the camera to the safe distance and have it look at the origin
 		cam.look_at_from_position(Vector3(0, safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
 		origin_cam.look_at_from_position(Vector3(0, 3, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
-	
+
 		# Save this transform as the home transform
 		home_transform = cam.get_transform()
 		origin_transform = origin_cam.get_transform()
@@ -280,7 +314,7 @@ Handler that is called when the user clicks the button for the home view.
 func _on_HomeViewButton_button_down():
 	# Reset the tranform for the camera back to the one we saved when the scene loaded
 	if home_transform != null: cam.transform = home_transform
-	
+
 	# Reset the origin indicator camera back to the view we saved on scene load
 	if origin_transform != null: origin_cam.transform = origin_transform
 
@@ -293,7 +327,7 @@ func _on_CloseButton_button_down():
 
 	# Make sure the new maximum dim takes effect next time
 	max_dim = 0
-	
+
 	# Set the default tab name
 	tabs.set_tab_title(0, "Start")
 
@@ -305,7 +339,7 @@ from file.
 """
 func _on_ReloadButton_button_down():
 	clear_viewport()
-	
+
 	generate_component(open_file_path)
 
 """
@@ -313,10 +347,17 @@ Removes all MeshInstances from a viewport to prepare for something new to be loa
 """
 func clear_viewport():
 	# Grab the viewport and its children
-	var vp = $"GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport"
 	var children = vp.get_children()
 
 	# Remove any child that is not the camera, assuming everything else is a MeshInstance
 	for child in children:
 		if child.get_name() != "CADLikeOrbit_Camera":
 			vp.remove_child(child)
+
+
+"""
+Retrieves the information on what is returned by the Actions panel and acts on them.
+"""
+func _on_PreviewButton_button_down():
+	print($GUI/ActionPopupPanel.get_action_type())
+	print($GUI/ActionPopupPanel.get_action_args())
