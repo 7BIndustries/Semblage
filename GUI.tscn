@@ -353,6 +353,14 @@ margin_right = 12.0
 margin_bottom = 20.0
 text = "Preview"
 
+[node name="CancelButton" type="Button" parent="GUI/ActionPopupPanel/VBoxContainer"]
+margin_right = 12.0
+margin_bottom = 20.0
+text = "Cancel"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="OpenDialog" type="FileDialog" parent="."]
 margin_right = 760.0
 margin_bottom = 381.0
@@ -374,5 +382,6 @@ window_title = "Component Error"
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton" to="." method="_on_CloseButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton" to="." method="_on_HomeViewButton_button_down"]
 [connection signal="about_to_show" from="GUI/ActionPopupPanel" to="." method="_on_ActionPopupPanel_about_to_show"]
-[connection signal="button_down" from="GUI/ActionPopupPanel/VBoxContainer/PreviewButton" to="." method="_on_PreviewButton_button_down"]
+[connection signal="preview_signal" from="GUI/ActionPopupPanel" to="." method="_on_ActionPopupPanel_preview_signal"]
+[connection signal="button_down" from="GUI/ActionPopupPanel/VBoxContainer/PreviewButton" to="GUI/ActionPopupPanel" method="_on_PreviewButton_button_down"]
 [connection signal="file_selected" from="OpenDialog" to="." method="_on_OpenDialog_file_selected"]

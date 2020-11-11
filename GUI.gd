@@ -1,5 +1,7 @@
 extends Control
 
+var ContextHandler = load("res://ContextHandler.gd")
+
 var open_file_path # The component/CQ file that the user opened
 var component_text # The text of the current component's script
 var max_dim = 0 # Largest dimension of any component that is loaded
@@ -15,6 +17,7 @@ var cam # The main camera for the 3D view
 var origin_cam # The camera showing the orientation of the component(s) via an origin indicator
 var vp # The 3D viewport
 var tabs # The tab container for component documents
+var context_handler # Handles the situation where the context Action menu needs to be populated
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -32,6 +35,9 @@ func _ready():
 
 	# Start off with the base script text
 	component_text = "import cadquery as cq\ncq"
+	
+	# Instantiate the context handler which tells us what type of Action we are dealing with
+	context_handler = ContextHandler.new()
 
 	# Let the user know the app is ready to use
 	status = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
@@ -358,6 +364,50 @@ func clear_viewport():
 """
 Retrieves the information on what is returned by the Actions panel and acts on them.
 """
-func _on_PreviewButton_button_down():
-	print($GUI/ActionPopupPanel.get_action_type())
-	print($GUI/ActionPopupPanel.get_action_args())
+func _on_ActionPopupPanel_preview_signal():
+	clear_viewport()
+
+	var untesses = context_handler.get_untessellateds($GUI/ActionPopupPanel.get_new_context())
+
+	# If we have untessellated objects (i.e. workplanes), display placeholders for them
+	if len(untesses) > 0:
+		for untess in untesses:
+			_make_wp_mesh(untess["origin"])
+
+			print(untess["origin"])
+
+#	print($GUI/ActionPopupPanel.get_action_type())
+	print($GUI/ActionPopupPanel.get_new_context())
+	
+	
+func _make_wp_mesh(origin):
+	# Get the new material color
+	var new_color = Color(0.6, 0.6, 0.6, 0.3)
+	var material = SpatialMaterial.new()
+	material.albedo_color = Color(new_color[0], new_color[1], new_color[2], new_color[3])
+	material.flags_transparent = true
+
+	# Set up the workplane mesh
+	var wp_mesh = MeshInstance.new()
+	var raw_cube_mesh = CubeMesh.new()
+	raw_cube_mesh.size = Vector3(5, 5, 0.01)
+	wp_mesh.material_override = material
+	wp_mesh.mesh = raw_cube_mesh
+	wp_mesh.transform.origin = origin
+
+	# Add the mesh instance to the viewport
+	vp.add_child(wp_mesh)
+	
+	# Set up the normal mesh
+	var norm_mesh = MeshInstance.new()
+	var raw_norm_mesh = CylinderMesh.new()
+	raw_norm_mesh.bottom_radius = 0.5
+	raw_norm_mesh.top_radius = 0.01
+	raw_norm_mesh.height = 1.0
+	norm_mesh.material_override = material
+	norm_mesh.mesh = raw_norm_mesh
+	norm_mesh.set_rotation_degrees(Vector3(90, 0, 0))
+	norm_mesh.set_translation(Vector3(0, 0, 0.5))
+	
+	# Add the normal mesh instance to the viewport
+	vp.add_child(norm_mesh)
