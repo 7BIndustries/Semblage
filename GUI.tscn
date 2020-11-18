@@ -322,8 +322,10 @@ margin_bottom = 600.0
 script = ExtResource( 7 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="GUI/ActionPopupPanel"]
-margin_right = 40.0
-margin_bottom = 40.0
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 1020.0
+margin_bottom = 596.0
 
 [node name="ActionLabel" type="Label" parent="GUI/ActionPopupPanel/VBoxContainer"]
 margin_right = 40.0
@@ -331,6 +333,10 @@ margin_bottom = 14.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="HSeparator" type="HSeparator" parent="GUI/ActionPopupPanel/VBoxContainer"]
+margin_right = 40.0
+margin_bottom = 4.0
 
 [node name="PVBoxContainer" type="VBoxContainer" parent="GUI/ActionPopupPanel/VBoxContainer"]
 margin_left = 4.0

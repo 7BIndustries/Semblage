@@ -372,15 +372,19 @@ func _on_ActionPopupPanel_preview_signal():
 	# If we have untessellated objects (i.e. workplanes), display placeholders for them
 	if len(untesses) > 0:
 		for untess in untesses:
-			_make_wp_mesh(untess["origin"])
-
-			print(untess["origin"])
+			_make_wp_mesh(untess["origin"], untess["normal"])
 
 #	print($GUI/ActionPopupPanel.get_action_type())
 	print($GUI/ActionPopupPanel.get_new_context())
-	
-	
-func _make_wp_mesh(origin):
+
+
+"""
+Creates the placeholder workplane mesh to show the user what the workplane
+and its normal looks like.
+"""
+func _make_wp_mesh(origin, normal):
+	var rot = _find_rotation(normal)
+
 	# Get the new material color
 	var new_color = Color(0.6, 0.6, 0.6, 0.3)
 	var material = SpatialMaterial.new()
@@ -394,20 +398,73 @@ func _make_wp_mesh(origin):
 	wp_mesh.material_override = material
 	wp_mesh.mesh = raw_cube_mesh
 	wp_mesh.transform.origin = origin
+	wp_mesh.transform.basis = find_basis(normal)
 
 	# Add the mesh instance to the viewport
 	vp.add_child(wp_mesh)
 	
 	# Set up the normal mesh
-	var norm_mesh = MeshInstance.new()
-	var raw_norm_mesh = CylinderMesh.new()
-	raw_norm_mesh.bottom_radius = 0.5
-	raw_norm_mesh.top_radius = 0.01
-	raw_norm_mesh.height = 1.0
-	norm_mesh.material_override = material
-	norm_mesh.mesh = raw_norm_mesh
-	norm_mesh.set_rotation_degrees(Vector3(90, 0, 0))
-	norm_mesh.set_translation(Vector3(0, 0, 0.5))
-	
+#	var norm_mesh = MeshInstance.new()
+#	var raw_norm_mesh = PrismMesh.new()
+#	raw_norm_mesh.size = Vector3(0.5, 0.5, 0.5)
+#	raw_norm_mesh.left_to_right = 0.5
+#	norm_mesh.material_override = material
+#	norm_mesh.mesh = raw_norm_mesh
+#
+#	norm_mesh.transform.origin = Vector3(origin[0], origin[1], origin[2] + 0.25)
+#	norm_mesh.transform.basis = find_basis(normal)
+
 	# Add the normal mesh instance to the viewport
-	vp.add_child(norm_mesh)
+#	vp.add_child(norm_mesh)
+
+"""
+Find the basis for a 3D node based on a normal.
+"""
+func find_basis(normal):
+	var imin = 0
+	for i in range(0, 3):
+		if abs(normal[i]) < abs(normal[imin]):
+			imin = i
+	
+	var v2 = Vector3(0, 0, 0)
+	var dt = normal[imin]
+	
+	v2[imin] = 1
+	for i in range(0, 3):
+		v2[i] -= dt * normal[i];
+
+	var v3 = normal.cross(v2)
+	
+	var basis = Basis()
+	basis[0] = v3.normalized()
+	basis[1] = v2.normalized()
+	basis[2] = normal.normalized()
+	
+	return basis
+	
+
+"""
+Converts the normal from a CQ workplane to a vector of normal.
+"""
+func _find_rotation(normal):
+	var rot = Vector3(0, 0, 0)
+
+	# Handle the x rotation
+	if normal[0] >= 0:
+		rot[0] = (normal[0] / 1.0) * 180.0
+	else:
+		rot[0] = -(normal[1] / 1.0) * 180.0
+
+	# Handle y rotation
+	if normal[1] >= 0:
+		rot[1] = (normal[1] / 1.0) * 180.0
+	else:
+		rot[1] = -(normal[1] / 1.0) * 180.0
+
+	# Handle z rotation
+	if normal[2] >= 0:
+		rot[2] = (normal[2] / 1.0) * 180.0
+	else:
+		rot[2] = -(normal[2] / 1.0) * 180.0
+
+	return rot
