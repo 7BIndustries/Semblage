@@ -374,7 +374,6 @@ func _on_ActionPopupPanel_preview_signal():
 		for untess in untesses:
 			_make_wp_mesh(untess["origin"], untess["normal"])
 
-#	print($GUI/ActionPopupPanel.get_action_type())
 	print($GUI/ActionPopupPanel.get_new_context())
 
 
@@ -383,8 +382,6 @@ Creates the placeholder workplane mesh to show the user what the workplane
 and its normal looks like.
 """
 func _make_wp_mesh(origin, normal):
-	var rot = _find_rotation(normal)
-
 	# Get the new material color
 	var new_color = Color(0.6, 0.6, 0.6, 0.3)
 	var material = SpatialMaterial.new()
@@ -398,7 +395,7 @@ func _make_wp_mesh(origin, normal):
 	wp_mesh.material_override = material
 	wp_mesh.mesh = raw_cube_mesh
 	wp_mesh.transform.origin = origin
-	wp_mesh.transform.basis = find_basis(normal)
+	wp_mesh.transform.basis = _find_basis(normal)
 
 	# Add the mesh instance to the viewport
 	vp.add_child(wp_mesh)
@@ -412,7 +409,7 @@ func _make_wp_mesh(origin, normal):
 #	norm_mesh.mesh = raw_norm_mesh
 #
 #	norm_mesh.transform.origin = Vector3(origin[0], origin[1], origin[2] + 0.25)
-#	norm_mesh.transform.basis = find_basis(normal)
+#	norm_mesh.transform.basis = _find_basis(normal)
 
 	# Add the normal mesh instance to the viewport
 #	vp.add_child(norm_mesh)
@@ -420,7 +417,7 @@ func _make_wp_mesh(origin, normal):
 """
 Find the basis for a 3D node based on a normal.
 """
-func find_basis(normal):
+func _find_basis(normal):
 	var imin = 0
 	for i in range(0, 3):
 		if abs(normal[i]) < abs(normal[imin]):
@@ -441,30 +438,3 @@ func find_basis(normal):
 	basis[2] = normal.normalized()
 	
 	return basis
-	
-
-"""
-Converts the normal from a CQ workplane to a vector of normal.
-"""
-func _find_rotation(normal):
-	var rot = Vector3(0, 0, 0)
-
-	# Handle the x rotation
-	if normal[0] >= 0:
-		rot[0] = (normal[0] / 1.0) * 180.0
-	else:
-		rot[0] = -(normal[1] / 1.0) * 180.0
-
-	# Handle y rotation
-	if normal[1] >= 0:
-		rot[1] = (normal[1] / 1.0) * 180.0
-	else:
-		rot[1] = -(normal[1] / 1.0) * 180.0
-
-	# Handle z rotation
-	if normal[2] >= 0:
-		rot[2] = (normal[2] / 1.0) * 180.0
-	else:
-		rot[2] = -(normal[2] / 1.0) * 180.0
-
-	return rot

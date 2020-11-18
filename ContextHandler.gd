@@ -1,7 +1,7 @@
 extends Node
 class_name ContextHandler
 
-var wp_template = ".Workplane(cq.Plane(origin=({origin_x},{origin_y},{origin_z}), xDir=(1,0,0), normal=({normal_x},{normal_y},{normal_z})))"
+var cur_template = null
 
 var triggers = load("res://Triggers.gd").new().triggers
 
@@ -21,51 +21,19 @@ func get_next_action(context):
 		# If this trigger matches, extract the info we can use to build controls
 		if trig_res:
 			action = triggers[trigger].action
+			
+			# Save the template of the matching trigger as a side-effect for later use
+			cur_template = action.template
 
 	return action
-	
-# Get any groups of controls
-#var group_rgx = RegEx.new()
-#group_rgx.compile("(?=\\w+\\=)(?<=\\()(.*?)(?=\\))")
-#var group_res = group_rgx.search_all(triggers[trigger])
-#if group_res:
-#	print(group_res)
-#	print(group_res[0].get_string())
-#
-## Get the individual controls in the group
-#var ctrl_rgx = RegEx.new()
-#ctrl_rgx.compile("(?<=\\{)(.*?)(?=\\})")
-#var ctrl_res = ctrl_rgx.search_all(triggers[trigger])
-#for res in ctrl_res:
-#	var ctrl_parts = res.get_string().split(";")
-#
-#	ctrls[ctrl_parts[0]] = res.get_string()
 
-
-"""
-Adds constrols to the Actions popup based on the script text.
-"""
-func get_action_from_context(context):
-	# Populate the menu with the workplane entries
-	if context.ends_with('cq'):
-		return "new_workplane"
-	else:
-		return "unknown"
 
 """
 Updates the script context based on 
 """
 func update_context(context, action_args):
-
 	# Create the new context based on the appropriate template of what comes next
-	var new_context = context + wp_template.format({
-		"origin_x": action_args["origin_x"],
-		"origin_y": action_args["origin_y"],
-		"origin_z": action_args["origin_z"],
-		"normal_x": action_args["normal_x"],
-		"normal_y": action_args["normal_y"],
-		"normal_z": action_args["normal_z"],
-	})
+	var new_context = context + cur_template.format(action_args)
 
 	return new_context
 	
