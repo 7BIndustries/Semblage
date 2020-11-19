@@ -1,7 +1,8 @@
 extends Node
 class_name ContextHandler
 
-var cur_template = null
+var cur_actions = {}
+var cur_templates = {}
 
 var triggers = load("res://Triggers.gd").new().triggers
 
@@ -15,15 +16,15 @@ func get_next_action(context):
 	for trigger in triggers.keys():
 		# See if the trigger matches
 		var trig_rgx = RegEx.new()
-		trig_rgx.compile(trigger)
+		trig_rgx.compile(triggers[trigger].trigger)
 		var trig_res = trig_rgx.search(context)
 
 		# If this trigger matches, extract the info we can use to build controls
 		if trig_res:
-			action = triggers[trigger].action
+			action[trigger] = triggers[trigger].action
 			
 			# Save the template of the matching trigger as a side-effect for later use
-			cur_template = action.template
+			cur_templates[trigger] = action[trigger].template
 
 	return action
 
@@ -31,13 +32,13 @@ func get_next_action(context):
 """
 Updates the script context based on 
 """
-func update_context(context, action_args):
+func update_context(context, action_args, selected_action):
 	# Create the new context based on the appropriate template of what comes next
-	var new_context = context + cur_template.format(action_args)
+	var new_context = context + cur_templates[selected_action].format(action_args)
 
 	return new_context
-	
-	
+
+
 """
 Get things that will not be tessellated during execution, like workplanes so
 that they can be displayed as previews to the user.
@@ -49,7 +50,7 @@ func get_untessellateds(context):
 	var regex = RegEx.new()
 	regex.compile("Workplane\\(.*\\)$")
 	var result = regex.search(context)
-	
+
 	# If we found an untessellated at the end of the context, figure out the dimensions
 	if result:
 		var untess = result.get_string()
@@ -65,7 +66,7 @@ func get_untessellateds(context):
 			origin_vec[0] = float(origin_parts[0])
 			origin_vec[1] = float(origin_parts[1])
 			origin_vec[2] = float(origin_parts[2])
-		
+
 		# Extract the normal from the Workplane string
 		regex.compile("normal=(.*)")
 		result = regex.search(untess)

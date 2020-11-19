@@ -1,13 +1,14 @@
 extends PopupPanel
 
 signal preview_signal
+signal ok_signal
 
 var ContextHandler = load("res://ContextHandler.gd")
 
+var actions = null
 var action_type = "None"
 var action_args = {}
 var context_handler # Handles the situation where the context Action menu needs to be populated
-var cur_controls = {} # Keeps handles to all current controls for use 
 var original_context = null
 var new_context = null
 
@@ -26,7 +27,7 @@ func activate_popup(mouse_pos, context):
 	popup(Rect2(mouse_pos[0], mouse_pos[1], 1.0, 1.0))
 	
 	# Make way for the new controls
-	clear_popup()
+	clear_popup(true)
 
 	# Get the controls for the popup based on the context
 	var action = context_handler.get_next_action(context)
@@ -38,12 +39,27 @@ func activate_popup(mouse_pos, context):
 """
 Builds up the dynamic controls in the popup.
 """
-func populate_context_controls(action):
+func populate_context_controls(actions):
 	# Let the user know what Action is currently selected
-	self.get_node("VBoxContainer/ActionLabel").set_text(action.name)
+#	self.get_node("VBoxContainer/ActionLabel").set_text(actions.values()[0].name)
 
-	for group_key in action.control_groups.keys():
-		var cur_group = action.control_groups[group_key]
+	# Save the actions so we can change control groups later
+	self.actions = actions
+
+	# Add all matching actions to the dropdown
+	for action in actions.keys():
+		self.get_node("VBoxContainer/ActionOptionButton").add_item(action)
+
+	# Populate the default controls
+	_set_up_action_controls(actions, actions.keys()[0])
+
+
+"""
+Used to add the controls for the currently selected action's control groups.
+"""
+func _set_up_action_controls(actions, selected):
+	for group_key in actions[selected].control_groups.keys():
+		var cur_group = actions[selected].control_groups[group_key]
 
 		# Add the label for this control group
 		var lbl1 = Label.new()
@@ -75,6 +91,11 @@ func populate_context_controls(action):
 				new_ctrl.set_name(ctrl)
 				new_ctrl.text = ctrls[ctrl].values[0]
 				cont1.add_child(new_ctrl)
+			elif ctrls[ctrl].type == "CheckBox":
+				var new_ctrl = CheckBox.new()
+				new_ctrl.set_name(ctrl)
+				cont1.add_child(new_ctrl)
+				new_ctrl.pressed = ctrls[ctrl].values[0]
 
 		get_node("VBoxContainer/PVBoxContainer").add_child(cont1)
 
@@ -82,7 +103,7 @@ func populate_context_controls(action):
 """
 Clears the previous dynamic controls from this popup.
 """
-func clear_popup():
+func clear_popup(clear_all):
 	# We only want to remove the contents of the dynamic VBoxContainer
 	var par = get_node("VBoxContainer/PVBoxContainer")
 
@@ -91,8 +112,9 @@ func clear_popup():
 	for child in children:
 		par.remove_child(child)
 
-	# Clear all controls from the collection
-	cur_controls.clear()
+	# Clear the triggers dropdown, but only if the caller wanted a complete refresh
+	if clear_all:
+		self.get_node("VBoxContainer/ActionOptionButton").clear()
 
 
 """
@@ -133,11 +155,51 @@ func _get_control_value(ctrl):
 		return ctrl.get_item_text(ctrl.get_selected_id())
 	elif ctrl.get_class() == "LineEdit":
 		return ctrl.get_text()
+	elif ctrl.get_class() == "CheckBox":
+		return ctrl.pressed
+
+
+"""
+Finds out which trigger was selected by the user.
+"""
+func _get_selected_trigger():
+	var aob = self.get_node("VBoxContainer/ActionOptionButton")
+	return aob.get_item_text(aob.get_selected_id())
 
 """
 Called when the Preview button is pressed so that it can collect the relevant data.
 """
 func _on_PreviewButton_button_down():
 	action_args = collect_action_settings()
-	new_context = context_handler.update_context(original_context, action_args)
+	new_context = context_handler.update_context(original_context, action_args, _get_selected_trigger())
 	emit_signal("preview_signal")
+
+
+"""
+Called when the Ok button is pressed so that the GUI can collect the changed context.
+"""
+func _on_OkButton_button_down():
+	action_args = collect_action_settings()
+	new_context = context_handler.update_context(original_context, action_args, _get_selected_trigger())
+	emit_signal("ok_signal")
+	hide()
+
+
+"""
+Called when the Cancel button is pressed so that this popup can just be closed.
+"""
+func _on_CancelButton_button_down():
+	hide()
+
+
+"""
+Called when the user selects a different trigger from the top option button.
+"""
+func _on_ActionOptionButton_item_selected(index):
+	var trig = _get_selected_trigger()
+
+	# Clear the dynamic action items from the popup
+	clear_popup(false)
+
+	# Populate the default controls
+	_set_up_action_controls(self.actions, trig)

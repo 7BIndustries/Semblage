@@ -34,7 +34,7 @@ func _ready():
 	tabs.set_tab_title(0, "Start")
 
 	# Start off with the base script text
-	component_text = "import cadquery as cq\ncq"
+	component_text = "import cadquery as cq\nresult=cq"
 	
 	# Instantiate the context handler which tells us what type of Action we are dealing with
 	context_handler = ContextHandler.new()
@@ -171,10 +171,33 @@ func load_component_file(path):
 	f.close()
 	return text
 
+
+"""
+Mainly used to write the contents of the actions popup dialog to a temporary file
+so that the result can be displayed.
+"""
+func _save_temp_component_file(path, component_text):
+	var file = File.new()
+	file.open(path, File.WRITE)
+	file.store_string(component_text)
+	file.close()
+
+
 """
 Generates a component using the semb CLI, which returns JSON.
 """
-func generate_component(path):
+func generate_component(path, component_text=null):
+	# If component text has been passed, it have probably been modified from any file contents
+	if component_text != null:
+		# We want to write the component text to a temporary file and render the result of executing that
+		var temp_component_path = OS.get_user_data_dir() + "/temp_component_path.py"
+		
+		# We append the show_object here so that it is not part of the context going forward
+		_save_temp_component_file(temp_component_path, component_text + "\nshow_object(result)")
+		
+		# Switch path to pass that to cq-cli
+		path = temp_component_path
+
 	# Create a random ID
 #	var rand_id = str(rng.randi()) + "-" + str(rng.randi()) + "-" + str(rng.randi()) + "-" + str(rng.randi())
 	# Get the date and time and use it to construct the unique file id
@@ -336,6 +359,9 @@ func _on_CloseButton_button_down():
 
 	# Set the default tab name
 	tabs.set_tab_title(0, "Start")
+	
+	open_file_path = null
+	component_text = "import cadquery as cq\nresult=cq"
 
 	clear_viewport()
 
@@ -375,6 +401,17 @@ func _on_ActionPopupPanel_preview_signal():
 			_make_wp_mesh(untess["origin"], untess["normal"])
 
 	print($GUI/ActionPopupPanel.get_new_context())
+
+
+"""
+Retries the updated context and makes it the current one.
+"""
+func _on_ActionPopupPanel_ok_signal():
+	clear_viewport()
+	
+	component_text = $GUI/ActionPopupPanel.get_new_context()
+
+	generate_component(open_file_path, component_text)
 
 
 """

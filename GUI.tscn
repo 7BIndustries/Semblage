@@ -327,41 +327,39 @@ margin_top = 4.0
 margin_right = 1020.0
 margin_bottom = 596.0
 
-[node name="ActionLabel" type="Label" parent="GUI/ActionPopupPanel/VBoxContainer"]
-margin_right = 40.0
-margin_bottom = 14.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="ActionOptionButton" type="OptionButton" parent="GUI/ActionPopupPanel/VBoxContainer"]
+margin_right = 29.0
+margin_bottom = 20.0
 
 [node name="HSeparator" type="HSeparator" parent="GUI/ActionPopupPanel/VBoxContainer"]
-margin_right = 40.0
-margin_bottom = 4.0
+margin_top = 18.0
+margin_right = 1016.0
+margin_bottom = 22.0
 
 [node name="PVBoxContainer" type="VBoxContainer" parent="GUI/ActionPopupPanel/VBoxContainer"]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 1020.0
-margin_bottom = 596.0
+margin_top = 26.0
+margin_right = 1016.0
+margin_bottom = 26.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="OkButton" type="Button" parent="GUI/ActionPopupPanel/VBoxContainer"]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 35.0
-margin_bottom = 24.0
+margin_top = 30.0
+margin_right = 1016.0
+margin_bottom = 50.0
 text = "OK"
 
 [node name="PreviewButton" type="Button" parent="GUI/ActionPopupPanel/VBoxContainer"]
-margin_right = 12.0
-margin_bottom = 20.0
+margin_top = 54.0
+margin_right = 1016.0
+margin_bottom = 74.0
 text = "Preview"
 
 [node name="CancelButton" type="Button" parent="GUI/ActionPopupPanel/VBoxContainer"]
-margin_right = 12.0
-margin_bottom = 20.0
+margin_top = 78.0
+margin_right = 1016.0
+margin_bottom = 98.0
 text = "Cancel"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -388,6 +386,10 @@ window_title = "Component Error"
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton" to="." method="_on_CloseButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton" to="." method="_on_HomeViewButton_button_down"]
 [connection signal="about_to_show" from="GUI/ActionPopupPanel" to="." method="_on_ActionPopupPanel_about_to_show"]
+[connection signal="ok_signal" from="GUI/ActionPopupPanel" to="." method="_on_ActionPopupPanel_ok_signal"]
 [connection signal="preview_signal" from="GUI/ActionPopupPanel" to="." method="_on_ActionPopupPanel_preview_signal"]
+[connection signal="item_selected" from="GUI/ActionPopupPanel/VBoxContainer/ActionOptionButton" to="GUI/ActionPopupPanel" method="_on_ActionOptionButton_item_selected"]
+[connection signal="button_down" from="GUI/ActionPopupPanel/VBoxContainer/OkButton" to="GUI/ActionPopupPanel" method="_on_OkButton_button_down"]
 [connection signal="button_down" from="GUI/ActionPopupPanel/VBoxContainer/PreviewButton" to="GUI/ActionPopupPanel" method="_on_PreviewButton_button_down"]
+[connection signal="button_down" from="GUI/ActionPopupPanel/VBoxContainer/CancelButton" to="GUI/ActionPopupPanel" method="_on_CancelButton_button_down"]
 [connection signal="file_selected" from="OpenDialog" to="." method="_on_OpenDialog_file_selected"]
