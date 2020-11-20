@@ -3,6 +3,8 @@ class_name ContextHandler
 
 var cur_actions = {}
 var cur_templates = {}
+var latest_context_addition = null
+var latest_object_addition = null
 
 var triggers = load("res://Triggers.gd").new().triggers
 
@@ -33,10 +35,45 @@ func get_next_action(context):
 Updates the script context based on 
 """
 func update_context(context, action_args, selected_action):
+	# Save this addition
+	self.latest_context_addition = cur_templates[selected_action].format(action_args)
+
+	# Save any objects that were added to the context
+	self.latest_object_addition = _get_object_from_context(self.latest_context_addition)
+
 	# Create the new context based on the appropriate template of what comes next
-	var new_context = context + cur_templates[selected_action].format(action_args)
+	var new_context = context + self.latest_context_addition
 
 	return new_context
+
+
+"""
+Returns the latest action that was added to the script context.
+"""
+func get_latest_context_addition():
+	return self.latest_context_addition
+
+
+"""
+Returns the latest object that was added to the script context.
+"""
+func get_latest_object_addition():
+	return self.latest_object_addition
+
+
+"""
+Returns any tagged objects specified via tags in the context.
+"""
+func _get_object_from_context(context):
+	# Use a regular expression to extract the tag names
+	var object_rgx = RegEx.new()
+	object_rgx.compile("(?<=tag\\(\")(.*)(?=\"\\))")
+	var res = object_rgx.search(context)
+
+	if res:
+		return res.get_string()
+	else:
+		return null
 
 
 """

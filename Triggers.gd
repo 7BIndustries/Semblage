@@ -5,8 +5,14 @@ var triggers  = {
 		"trigger": "cq$",
 		"action": {
 			"name": "New Workplane",
-			"template": ".Workplane(cq.Plane(origin=({origin_x},{origin_y},{origin_z}), xDir=(1,0,0), normal=({normal_x},{normal_y},{normal_z})))",
+			"template": ".Workplane(cq.Plane(origin=({origin_x},{origin_y},{origin_z}), xDir=(1,0,0), normal=({normal_x},{normal_y},{normal_z}))).tag(\"{comp_name}\")",
 			"control_groups": {
+				"component_name": {
+					"label": "Component Name",
+					"controls": {
+						"comp_name":  {"label": "None", "value_type": "string", "type": "LineEdit", "values": ["Change_Me"]},
+					}
+				},
 				"inPlane": {
 					"label": "Workplane Name",
 					"controls": {

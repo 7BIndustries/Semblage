@@ -166,6 +166,21 @@ func _get_selected_trigger():
 	var aob = self.get_node("VBoxContainer/ActionOptionButton")
 	return aob.get_item_text(aob.get_selected_id())
 
+
+"""
+Gets the latest addition to the context for this popup panel.
+"""
+func get_latest_context_addition():
+	return self.context_handler.get_latest_context_addition()
+
+
+"""
+Get the latest object addition to the context for this popup panel.
+"""
+func get_latest_object_addition():
+	return self.context_handler.get_latest_object_addition()
+
+
 """
 Called when the Preview button is pressed so that it can collect the relevant data.
 """

@@ -18,6 +18,8 @@ var origin_cam # The camera showing the orientation of the component(s) via an o
 var vp # The 3D viewport
 var tabs # The tab container for component documents
 var context_handler # Handles the situation where the context Action menu needs to be populated
+var object_tree_root = null
+var history_tree_root = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -35,9 +37,13 @@ func _ready():
 
 	# Start off with the base script text
 	component_text = "import cadquery as cq\nresult=cq"
-	
+
 	# Instantiate the context handler which tells us what type of Action we are dealing with
 	context_handler = ContextHandler.new()
+
+	# Get the object and history trees ready to use
+	_init_history_tree()
+	_init_object_tree()
 
 	# Let the user know the app is ready to use
 	status = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
@@ -145,7 +151,7 @@ Handles rendering the user-selected file to the 3DView.
 """
 func _on_OpenDialog_file_selected(path):
 	# Clear the viewport for the next component that is loaded
-	clear_viewport()
+	self._clear_viewport()
 
 	# Save the open file path for use later
 	open_file_path = path
@@ -363,21 +369,47 @@ func _on_CloseButton_button_down():
 	open_file_path = null
 	component_text = "import cadquery as cq\nresult=cq"
 
-	clear_viewport()
+	self._clear_viewport()
+	self._clear_history_tree()
+	self._init_history_tree()
+
+
+"""
+Initializes the object tree so that it can be added to as the component changes.
+"""
+func _init_object_tree():
+	var object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree")
+
+	# Create the root of the object tree
+	self.object_tree_root = object_tree.create_item()
+	self.object_tree_root.set_text(0, "Workspace")
+
+
+"""
+Initializes the history tree so that it can be added to as the component changes.
+"""
+func _init_history_tree():
+	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree")
+	
+	# Create the root of the history tree
+	self.history_tree_root = history_tree.create_item()
+	self.history_tree_root.set_text(0, "cq")
+
 
 """
 Handles the event of the user pressing the Reload button to reload a component 
 from file.
 """
 func _on_ReloadButton_button_down():
-	clear_viewport()
+	self._clear_viewport()
+	self._clear_history_tree()
 
 	generate_component(open_file_path)
 
 """
 Removes all MeshInstances from a viewport to prepare for something new to be loaded.
 """
-func clear_viewport():
+func _clear_viewport():
 	# Grab the viewport and its children
 	var children = vp.get_children()
 
@@ -388,10 +420,17 @@ func clear_viewport():
 
 
 """
+Resets the history tree to prepare for the creation of a new CQ object.
+"""
+func _clear_history_tree():
+	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.clear()
+
+
+"""
 Retrieves the information on what is returned by the Actions panel and acts on them.
 """
 func _on_ActionPopupPanel_preview_signal():
-	clear_viewport()
+	self._clear_viewport()
 
 	var untesses = context_handler.get_untessellateds($GUI/ActionPopupPanel.get_new_context())
 
@@ -407,11 +446,21 @@ func _on_ActionPopupPanel_preview_signal():
 Retries the updated context and makes it the current one.
 """
 func _on_ActionPopupPanel_ok_signal():
-	clear_viewport()
+	self._clear_viewport()
 	
 	component_text = $GUI/ActionPopupPanel.get_new_context()
 
+	var new_hist_item = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.create_item(self.history_tree_root)
+	new_hist_item.set_text(0, $GUI/ActionPopupPanel.get_latest_context_addition())
+
 	generate_component(open_file_path, component_text)
+
+	# Find any object name (if present) that needs to be displayed in the list
+	var new_object = $GUI/ActionPopupPanel.get_latest_object_addition()
+	if new_object:
+		var ot = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree
+		var new_obj_item = ot.create_item(self.object_tree_root)
+		new_obj_item.set_text(0, new_object)
 
 
 """
