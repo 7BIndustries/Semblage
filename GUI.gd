@@ -447,7 +447,13 @@ Retries the updated context and makes it the current one.
 """
 func _on_ActionPopupPanel_ok_signal():
 	self._clear_viewport()
-	
+
+	# If we have untessellated objects (i.e. workplanes), display placeholders for them
+	var untesses = context_handler.get_untessellateds($GUI/ActionPopupPanel.get_new_context())
+	if len(untesses) > 0:
+		for untess in untesses:
+			_make_wp_mesh(untess["origin"], untess["normal"])
+
 	component_text = $GUI/ActionPopupPanel.get_new_context()
 
 	var new_hist_item = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.create_item(self.history_tree_root)
@@ -485,20 +491,52 @@ func _make_wp_mesh(origin, normal):
 
 	# Add the mesh instance to the viewport
 	vp.add_child(wp_mesh)
-	
+
+	# Get the new material color
+	var norm_color = Color(1.0, 1.0, 1.0, 0.5)
+	var norm_mat = SpatialMaterial.new()
+	norm_mat.albedo_color = Color(norm_color[0], norm_color[1], norm_color[2], norm_color[3])
+	norm_mat.flags_transparent = true
+
 	# Set up the normal mesh
-#	var norm_mesh = MeshInstance.new()
-#	var raw_norm_mesh = PrismMesh.new()
-#	raw_norm_mesh.size = Vector3(0.5, 0.5, 0.5)
-#	raw_norm_mesh.left_to_right = 0.5
-#	norm_mesh.material_override = material
-#	norm_mesh.mesh = raw_norm_mesh
-#
-#	norm_mesh.transform.origin = Vector3(origin[0], origin[1], origin[2] + 0.25)
-#	norm_mesh.transform.basis = _find_basis(normal)
+	var norm_mesh = MeshInstance.new()
+	norm_mesh.material_override = norm_mat
+
+	# Set the SurfaceTool up to build a new mesh
+	var st = SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	st.set_material(norm_mat)
+	
+	# Add norm triangle
+	st.add_vertex(Vector3(0.0, 0.0, 1.0))
+	st.add_vertex(Vector3(-0.1, 0.1, 0.0))
+	st.add_vertex(Vector3(0.1, 0.1, 0.0))
+
+	# Add norm triangle
+	st.add_vertex(Vector3(0.0, 0.0, 1.0))
+	st.add_vertex(Vector3(0.1, 0.1, 0.0))
+	st.add_vertex(Vector3(0.1, -0.1, 0.0))
+
+	# Add norm triangle
+	st.add_vertex(Vector3(0.0, 0.0, 1.0))
+	st.add_vertex(Vector3(0.1, -0.1, 0.0))
+	st.add_vertex(Vector3(-0.1, -0.1, 0.0))
+
+	# Add norm triangle
+	st.add_vertex(Vector3(0.0, 0.0, 1.0))
+	st.add_vertex(Vector3(-0.1, -0.1, 0.0))
+	st.add_vertex(Vector3(-0.1, 0.1, 0.0))
+
+	# Finish the mesh and attach it to a MeshInstance
+	st.generate_normals()
+	var mesh = st.commit()
+	norm_mesh.mesh = mesh
+
+	norm_mesh.transform.origin = Vector3(origin[0], origin[1], origin[2])
+	norm_mesh.transform.basis = _find_basis(normal)
 
 	# Add the normal mesh instance to the viewport
-#	vp.add_child(norm_mesh)
+	vp.add_child(norm_mesh)
 
 """
 Find the basis for a 3D node based on a normal.
