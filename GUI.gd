@@ -370,8 +370,12 @@ func _on_CloseButton_button_down():
 	component_text = "import cadquery as cq\nresult=cq"
 
 	self._clear_viewport()
+	
+	# Get the tree views set up for the next object
 	self._clear_history_tree()
+	self._clear_object_tree()
 	self._init_history_tree()
+	self._init_object_tree()
 
 
 """
@@ -424,6 +428,13 @@ Resets the history tree to prepare for the creation of a new CQ object.
 """
 func _clear_history_tree():
 	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.clear()
+
+
+"""
+Resets the object tree to prepare for the creation of a new CQ object.
+"""
+func _clear_object_tree():
+	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree.clear()
 
 
 """

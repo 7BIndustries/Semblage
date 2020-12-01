@@ -99,6 +99,9 @@ func _set_up_action_controls(actions, selected):
 
 		get_node("VBoxContainer/PVBoxContainer").add_child(cont1)
 
+	# Make sure the panel is the correct size to contain all controls
+	rect_size = get_node("VBoxContainer").rect_size
+
 
 """
 Clears the previous dynamic controls from this popup.
@@ -152,12 +155,43 @@ Figures out what type of control was passed in and attempts to get a value from 
 """
 func _get_control_value(ctrl):
 	if ctrl.get_class() == "OptionButton":
-		return ctrl.get_item_text(ctrl.get_selected_id())
+		var new_text = ctrl.get_item_text(ctrl.get_selected_id())
+
+		# Handle the case of the user not setting anything
+		if new_text == "None":
+			new_text = ""
+
+		# Add quotes, if needed
+		new_text = _quotify(new_text)
+
+		return new_text
 	elif ctrl.get_class() == "LineEdit":
-		return ctrl.get_text()
+		var new_text = ctrl.get_text()
+
+		# Handle the case of the user not setting anything
+		if new_text == "None":
+			new_text = ""
+
+		# Add quotes, if needed
+		new_text = _quotify(new_text)
+
+		return new_text
 	elif ctrl.get_class() == "CheckBox":
 		return ctrl.pressed
 
+
+"""
+Adds quotes to control values, if needed.
+"""
+func _quotify(input_text):
+	# See if the value is text needing to be quoted
+	var txt_rgx = RegEx.new()
+	txt_rgx.compile("^[>|<|\\|].*")
+	var txt_res = txt_rgx.search(input_text)
+	if txt_res:
+		input_text = "\"\"" + input_text + "\"\""
+
+	return input_text
 
 """
 Finds out which trigger was selected by the user.

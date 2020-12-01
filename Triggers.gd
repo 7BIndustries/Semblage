@@ -39,7 +39,7 @@ var triggers  = {
 		}
 	},
 	"box": {
-		"trigger": "Workplane(.*)$",
+		"trigger": "\\..*(.*)$",
 		"action": {
 			"name": "box",
 			"template": ".box({length},{width},{height}, centered=({centered_x},{centered_y},{centered_z}))",
@@ -64,7 +64,7 @@ var triggers  = {
 		}
 	},
 	"rect": {
-		"trigger": "Workplane(.*)$",
+		"trigger": "\\..*(.*)$",
 		"action": {
 			"name": "rect",
 			"template": ".rect({xLen},{yLen},centered={centered},forConstruction={for_construction})",
@@ -86,6 +86,105 @@ var triggers  = {
 					"label": "For Construction?",
 					"controls": {
 						"for_construction": {"label": "None", "value_type": "bool", "type": "CheckBox", "values": [true]}
+					}
+				}
+			}
+		}
+	},
+	"fillet": {
+		"trigger": "\\..*(.*)$",
+		"action": {
+			"name": "faces",
+			"template": ".faces({face_selector}).edges({edge_selector}).fillet({fillet_radius})",
+			"control_groups": {
+				"face_selector": {
+					"label": "Face(s) Selector",
+					"controls": {
+#						"first_face_op": {"label": "Filter Operator", "value_type": "string", "type": "OptionButton", "values": ["None", "Max", "Min", "Parallel", "Orthogonal"]},
+#						"first_face_arg": {"label": "Filter Direction", "value_type": "string", "type": "OptionButton", "values": ["None", "X", "Y", "Z"]},
+#						"first_face_nth": {"label": "Nth Selector", "value_type": "float", "type": "LineEdit", "values": ["0"]},
+						"face_selector": {"label": "Selctor Text", "value_type": "float", "type": "LineEdit", "values": ["None"]}
+					}
+				},
+				"edge_selector": {
+					"label": "Edge(s) Selector",
+					"controls": {
+#						"first_edge_op": {"label": "Filter Operator", "value_type": "string", "type": "OptionButton", "values": ["None", "Max", "Min", "Parallel", "Orthogonal"]},
+#						"first_edge_arg": {"label": "Filter Direction", "value_type": "string", "type": "OptionButton", "values": ["None", "X", "Y", "Z"]},
+#						"first_edge_nth": {"label": "Width", "value_type": "float", "type": "LineEdit", "values": ["0"]},
+						"edge_selector": {"label": "Selctor Text", "value_type": "float", "type": "LineEdit", "values": ["None"]}
+					}
+				},
+				"fillet": {
+					"label": "Fillet",
+					"controls": {
+						"fillet_radius": {"label": "Radius", "value_type": "float", "type": "LineEdit", "values": ["0.1"]}
+					}
+				}
+			}
+		}
+	},
+	"chamfer": {
+		"trigger": "\\..*(.*)$",
+		"action": {
+			"name": "faces",
+			"template": ".faces({face_selector}).edges({edge_selector}).chamfer({chamfer_length})",
+			"control_groups": {
+				"face_selector": {
+					"label": "Face(s) Selector",
+					"controls": {
+#						"first_face_op": {"label": "Filter Operator", "value_type": "string", "type": "OptionButton", "values": ["None", "Max", "Min", "Parallel", "Orthogonal"]},
+#						"first_face_arg": {"label": "Filter Direction", "value_type": "string", "type": "OptionButton", "values": ["None", "X", "Y", "Z"]},
+#						"first_face_nth": {"label": "Nth Selector", "value_type": "float", "type": "LineEdit", "values": ["0"]},
+						"face_selector": {"label": "Selctor Text", "value_type": "float", "type": "LineEdit", "values": ["None"]}
+					}
+				},
+				"edge_selector": {
+					"label": "Edge(s) Selector",
+					"controls": {
+#						"first_edge_op": {"label": "Filter Operator", "value_type": "string", "type": "OptionButton", "values": ["None", "Max", "Min", "Parallel", "Orthogonal"]},
+#						"first_edge_arg": {"label": "Filter Direction", "value_type": "string", "type": "OptionButton", "values": ["None", "X", "Y", "Z"]},
+#						"first_edge_nth": {"label": "Width", "value_type": "float", "type": "LineEdit", "values": ["0"]},
+						"edge_selector": {"label": "Selctor Text", "value_type": "float", "type": "LineEdit", "values": ["None"]}
+					}
+				},
+				"chamfer": {
+					"label": "Chamfer",
+					"controls": {
+						"chamfer_length": {"label": "Length", "value_type": "float", "type": "LineEdit", "values": ["0.1"]}
+					}
+				}
+			}
+		}
+	},
+	"extrude": {
+		"trigger": "\\..*(.*)$",
+		"action": {
+			"name": "extrude",
+			"template": ".extrude({distance}, combine={combine}, both={both}, taper={taper})",
+			"control_groups": {
+				"distance": {
+					"label": "Distance",
+					"controls": {
+						"distance": {"label": "Distance", "value_type": "float", "type": "LineEdit", "values": ["1.0"]}
+					}
+				},
+				"combine": {
+					"label": "Combine?",
+					"controls": {
+						"combine": {"label": "None", "value_type": "bool", "type": "CheckBox", "values": [true]}
+					}
+				},
+				"both": {
+					"label": "Both?",
+					"controls": {
+						"both": {"label": "None", "value_type": "bool", "type": "CheckBox", "values": [false]}
+					}
+				},
+				"taper": {
+					"label": "Taper",
+					"controls": {
+						"taper": {"label": "Taper", "value_type": "float", "type": "LineEdit", "values": ["0.0"]}
 					}
 				}
 			}
