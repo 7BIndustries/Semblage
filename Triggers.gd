@@ -6,6 +6,7 @@ var triggers  = {
 		"action": {
 			"name": "New Workplane",
 			"template": ".Workplane(cq.Plane(origin=({origin_x},{origin_y},{origin_z}), xDir=(1,0,0), normal=({normal_x},{normal_y},{normal_z}))).tag(\"{comp_name}\")",
+			"control": null,
 			"control_groups": {
 				"component_name": {
 					"label": "Component Name",
@@ -43,6 +44,7 @@ var triggers  = {
 		"action": {
 			"name": "box",
 			"template": ".box({length},{width},{height}, centered=({centered_x},{centered_y},{centered_z}))",
+			"control": null,
 			"control_groups": {
 				"dimensions": {
 					"label": "Dimensions",
@@ -68,6 +70,7 @@ var triggers  = {
 		"action": {
 			"name": "rect",
 			"template": ".rect({xLen},{yLen},centered={centered},forConstruction={for_construction})",
+			"control": null,
 			"control_groups": {
 				"dimensions": {
 					"label": "Dimensions",
@@ -96,6 +99,7 @@ var triggers  = {
 		"action": {
 			"name": "faces",
 			"template": ".faces({face_selector}).edges({edge_selector}).fillet({fillet_radius})",
+			"control": FilletControl.new(),
 			"control_groups": {
 				"face_selector": {
 					"label": "Face(s) Selector",
@@ -129,6 +133,7 @@ var triggers  = {
 		"action": {
 			"name": "faces",
 			"template": ".faces({face_selector}).edges({edge_selector}).chamfer({chamfer_length})",
+			"control": null,
 			"control_groups": {
 				"face_selector": {
 					"label": "Face(s) Selector",
@@ -162,6 +167,7 @@ var triggers  = {
 		"action": {
 			"name": "extrude",
 			"template": ".extrude({distance}, combine={combine}, both={both}, taper={taper})",
+			"control": null,
 			"control_groups": {
 				"distance": {
 					"label": "Distance",

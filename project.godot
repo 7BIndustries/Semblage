@@ -13,9 +13,21 @@ _global_script_classes=[ {
 "class": "ContextHandler",
 "language": "GDScript",
 "path": "res://ContextHandler.gd"
+}, {
+"base": "VBoxContainer",
+"class": "FilletControl",
+"language": "GDScript",
+"path": "res://controls/FilletControl.gd"
+}, {
+"base": "VBoxContainer",
+"class": "SelectorControl",
+"language": "GDScript",
+"path": "res://controls/SelectorControl.gd"
 } ]
 _global_script_class_icons={
-"ContextHandler": ""
+"ContextHandler": "",
+"FilletControl": "",
+"SelectorControl": ""
 }
 
 [application]

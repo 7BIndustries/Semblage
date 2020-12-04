@@ -137,7 +137,8 @@ func _input(event):
 				# Set the menu at the mouse cursor position
 				var mouse_pos = get_viewport().get_mouse_position()
 
-				$GUI/ActionPopupPanel.activate_popup(mouse_pos, component_text)
+				$ActionPopupPanel.show_modal(true)
+				$ActionPopupPanel.activate_popup(mouse_pos, component_text)
 
 
 """
@@ -219,11 +220,15 @@ func generate_component(path, component_text=null):
 	var args = PoolStringArray(array)
 
 	# Execute the render script
-	OS.execute("/home/jwright/Downloads/repos/jmwright/cq-cli/cq-cli.py", args, false)
-#	OS.execute("/home/jwright/Downloads/cq-cli-Linux/cq-cli/cq-cli", args, false)
-	executing = true
+	var success = OS.execute("/home/jwright/Downloads/repos/jmwright/cq-cli/cq-cli.py", args, false)
+	# OS.execute("/home/jwright/Downloads/cq-cli-Linux/cq-cli/cq-cli", args, false)
 
-	status.text = "Generating component..."
+	# Track whether or not execution happened successfully
+	if success == -1:
+		status.text = "Execution error"
+	else:
+		executing = true
+		status.text = "Generating component..."
 
 """
 Calculates the proper Y position to set the camera to fit a component or
@@ -443,14 +448,14 @@ Retrieves the information on what is returned by the Actions panel and acts on t
 func _on_ActionPopupPanel_preview_signal():
 	self._clear_viewport()
 
-	var untesses = context_handler.get_untessellateds($GUI/ActionPopupPanel.get_new_context())
+	var untesses = context_handler.get_untessellateds($ActionPopupPanel.get_new_context())
 
 	# If we have untessellated objects (i.e. workplanes), display placeholders for them
 	if len(untesses) > 0:
 		for untess in untesses:
 			_make_wp_mesh(untess["origin"], untess["normal"])
 
-	print($GUI/ActionPopupPanel.get_new_context())
+	print($ActionPopupPanel.get_new_context())
 
 
 """
@@ -460,20 +465,20 @@ func _on_ActionPopupPanel_ok_signal():
 	self._clear_viewport()
 
 	# If we have untessellated objects (i.e. workplanes), display placeholders for them
-	var untesses = context_handler.get_untessellateds($GUI/ActionPopupPanel.get_new_context())
+	var untesses = context_handler.get_untessellateds($ActionPopupPanel.get_new_context())
 	if len(untesses) > 0:
 		for untess in untesses:
 			_make_wp_mesh(untess["origin"], untess["normal"])
 
-	component_text = $GUI/ActionPopupPanel.get_new_context()
+	component_text = $ActionPopupPanel.get_new_context()
 
 	var new_hist_item = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.create_item(self.history_tree_root)
-	new_hist_item.set_text(0, $GUI/ActionPopupPanel.get_latest_context_addition())
+	new_hist_item.set_text(0, $ActionPopupPanel.get_latest_context_addition())
 
 	generate_component(open_file_path, component_text)
 
 	# Find any object name (if present) that needs to be displayed in the list
-	var new_object = $GUI/ActionPopupPanel.get_latest_object_addition()
+	var new_object = $ActionPopupPanel.get_latest_object_addition()
 	if new_object:
 		var ot = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree
 		var new_obj_item = ot.create_item(self.object_tree_root)

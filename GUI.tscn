@@ -6,7 +6,7 @@
 [ext_resource path="res://assets/icons/home_button_flat_ready.svg" type="Texture" id=4]
 [ext_resource path="res://assets/icons/close_button_flat_ready.svg" type="Texture" id=5]
 [ext_resource path="res://assets/icons/reload_button_flat_ready.png" type="Texture" id=6]
-[ext_resource path="res://ActionPopupPanel.gd" type="Script" id=7]
+[ext_resource path="res://ActionPopupPanel.gd" type="Script" id=8]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
@@ -342,55 +342,6 @@ margin_bottom = 25.0
 size_flags_vertical = 3
 valign = 1
 
-[node name="ActionPopupPanel" type="PopupPanel" parent="GUI"]
-margin_right = 1024.0
-margin_bottom = 600.0
-script = ExtResource( 7 )
-
-[node name="VBoxContainer" type="VBoxContainer" parent="GUI/ActionPopupPanel"]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 1020.0
-margin_bottom = 596.0
-
-[node name="ActionOptionButton" type="OptionButton" parent="GUI/ActionPopupPanel/VBoxContainer"]
-margin_right = 29.0
-margin_bottom = 20.0
-
-[node name="HSeparator" type="HSeparator" parent="GUI/ActionPopupPanel/VBoxContainer"]
-margin_top = 18.0
-margin_right = 1016.0
-margin_bottom = 22.0
-
-[node name="PVBoxContainer" type="VBoxContainer" parent="GUI/ActionPopupPanel/VBoxContainer"]
-margin_top = 26.0
-margin_right = 1016.0
-margin_bottom = 26.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="OkButton" type="Button" parent="GUI/ActionPopupPanel/VBoxContainer"]
-margin_top = 30.0
-margin_right = 1016.0
-margin_bottom = 50.0
-text = "OK"
-
-[node name="PreviewButton" type="Button" parent="GUI/ActionPopupPanel/VBoxContainer"]
-margin_top = 54.0
-margin_right = 1016.0
-margin_bottom = 74.0
-text = "Preview"
-
-[node name="CancelButton" type="Button" parent="GUI/ActionPopupPanel/VBoxContainer"]
-margin_top = 78.0
-margin_right = 1016.0
-margin_bottom = 98.0
-text = "Cancel"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="OpenDialog" type="FileDialog" parent="."]
 margin_right = 760.0
 margin_bottom = 381.0
@@ -407,15 +358,75 @@ margin_top = 200.0
 margin_right = 500.0
 margin_bottom = 300.0
 window_title = "Component Error"
+
+[node name="ActionPopupPanel" type="WindowDialog" parent="."]
+margin_right = 96.0
+margin_bottom = 1.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+popup_exclusive = true
+window_title = "Actions"
+resizable = true
+script = ExtResource( 8 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ActionPopupPanel"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 66.0
+margin_bottom = 112.0
+
+[node name="ActionOptionButton" type="OptionButton" parent="ActionPopupPanel/VBoxContainer"]
+margin_right = 62.0
+margin_bottom = 20.0
+
+[node name="HSeparator" type="HSeparator" parent="ActionPopupPanel/VBoxContainer"]
+margin_top = 24.0
+margin_right = 62.0
+margin_bottom = 28.0
+
+[node name="DynamicContainer" type="MarginContainer" parent="ActionPopupPanel/VBoxContainer"]
+margin_top = 32.0
+margin_right = 62.0
+margin_bottom = 32.0
+
+[node name="PVBoxContainer" type="VBoxContainer" parent="ActionPopupPanel/VBoxContainer"]
+margin_top = 36.0
+margin_right = 62.0
+margin_bottom = 36.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="OkButton" type="Button" parent="ActionPopupPanel/VBoxContainer"]
+margin_top = 40.0
+margin_right = 62.0
+margin_bottom = 60.0
+text = "OK"
+
+[node name="PreviewButton" type="Button" parent="ActionPopupPanel/VBoxContainer"]
+margin_top = 64.0
+margin_right = 62.0
+margin_bottom = 84.0
+text = "Preview"
+
+[node name="CancelButton" type="Button" parent="ActionPopupPanel/VBoxContainer"]
+margin_top = 88.0
+margin_right = 62.0
+margin_bottom = 108.0
+text = "Cancel"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton" to="." method="_on_OpenButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton" to="." method="_on_ReloadButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton" to="." method="_on_CloseButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton" to="." method="_on_HomeViewButton_button_down"]
-[connection signal="about_to_show" from="GUI/ActionPopupPanel" to="." method="_on_ActionPopupPanel_about_to_show"]
-[connection signal="ok_signal" from="GUI/ActionPopupPanel" to="." method="_on_ActionPopupPanel_ok_signal"]
-[connection signal="preview_signal" from="GUI/ActionPopupPanel" to="." method="_on_ActionPopupPanel_preview_signal"]
-[connection signal="item_selected" from="GUI/ActionPopupPanel/VBoxContainer/ActionOptionButton" to="GUI/ActionPopupPanel" method="_on_ActionOptionButton_item_selected"]
-[connection signal="button_down" from="GUI/ActionPopupPanel/VBoxContainer/OkButton" to="GUI/ActionPopupPanel" method="_on_OkButton_button_down"]
-[connection signal="button_down" from="GUI/ActionPopupPanel/VBoxContainer/PreviewButton" to="GUI/ActionPopupPanel" method="_on_PreviewButton_button_down"]
-[connection signal="button_down" from="GUI/ActionPopupPanel/VBoxContainer/CancelButton" to="GUI/ActionPopupPanel" method="_on_CancelButton_button_down"]
 [connection signal="file_selected" from="OpenDialog" to="." method="_on_OpenDialog_file_selected"]
+[connection signal="about_to_show" from="ActionPopupPanel" to="." method="_on_ActionPopupPanel_about_to_show"]
+[connection signal="ok_signal" from="ActionPopupPanel" to="." method="_on_ActionPopupPanel_ok_signal"]
+[connection signal="preview_signal" from="ActionPopupPanel" to="." method="_on_ActionPopupPanel_preview_signal"]
+[connection signal="resized" from="ActionPopupPanel/VBoxContainer" to="ActionPopupPanel" method="_on_VBoxContainer_resized"]
+[connection signal="item_selected" from="ActionPopupPanel/VBoxContainer/ActionOptionButton" to="ActionPopupPanel" method="_on_ActionOptionButton_item_selected"]
+[connection signal="button_down" from="ActionPopupPanel/VBoxContainer/OkButton" to="ActionPopupPanel" method="_on_OkButton_button_down"]
+[connection signal="button_down" from="ActionPopupPanel/VBoxContainer/PreviewButton" to="ActionPopupPanel" method="_on_PreviewButton_button_down"]
+[connection signal="button_down" from="ActionPopupPanel/VBoxContainer/CancelButton" to="ActionPopupPanel" method="_on_CancelButton_button_down"]

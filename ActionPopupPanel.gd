@@ -1,4 +1,4 @@
-extends PopupPanel
+extends WindowDialog
 
 signal preview_signal
 signal ok_signal
@@ -24,8 +24,8 @@ func activate_popup(mouse_pos, context):
 	context_handler = ContextHandler.new()
 
 	# Locate the popup at the mouse position and make it a minimum size to be resized later
-	popup(Rect2(mouse_pos[0], mouse_pos[1], 1.0, 1.0))
-	
+	set_position(mouse_pos)
+
 	# Make way for the new controls
 	clear_popup(true)
 
@@ -33,8 +33,6 @@ func activate_popup(mouse_pos, context):
 	var action = context_handler.get_next_action(context)
 	populate_context_controls(action)
 
-	# Make sure the panel is the correct size to contain all controls
-	rect_size = get_node("VBoxContainer").rect_size
 
 """
 Builds up the dynamic controls in the popup.
@@ -58,49 +56,51 @@ func populate_context_controls(actions):
 Used to add the controls for the currently selected action's control groups.
 """
 func _set_up_action_controls(actions, selected):
-	for group_key in actions[selected].control_groups.keys():
-		var cur_group = actions[selected].control_groups[group_key]
+	# If there is a control defined in GDScript use that, otherwise populate from the control_group
+	if actions[selected].control != null:
+		var cont1 = actions[selected].control
+		$VBoxContainer/DynamicContainer.add_child(cont1)
+	else:
+		for group_key in actions[selected].control_groups.keys():
+			var cur_group = actions[selected].control_groups[group_key]
 
-		# Add the label for this control group
-		var lbl1 = Label.new()
-		lbl1.set_text(cur_group.label)
-		get_node("VBoxContainer/PVBoxContainer").add_child(lbl1)
-		
-		# Add the controls from the group
-		var ctrls = cur_group.controls
-		var cont1 = HBoxContainer.new()
-		for ctrl in ctrls.keys():
-			# Add the label for this specific control, if needed
-			if ctrls[ctrl].label != "None":
-				var lbl2 = Label.new()
-				lbl2.set_text(ctrls[ctrl].label)
-				cont1.add_child((lbl2))
+			# Add the label for this control group
+			var lbl1 = Label.new()
+			lbl1.set_text(cur_group.label)
+			get_node("VBoxContainer/PVBoxContainer").add_child(lbl1)
 
-			# Add the control based on its type
-			if ctrls[ctrl].type == "OptionButton":
-				var new_ctrl = OptionButton.new()
-				new_ctrl.set_name(ctrl)
-				
-				# Add the values to the OptionButton as items
-				for item in ctrls[ctrl].values:
-					new_ctrl.add_item(item)
+			# Add the controls from the group
+			var ctrls = cur_group.controls
+			var cont1 = HBoxContainer.new()
+			for ctrl in ctrls.keys():
+				# Add the label for this specific control, if needed
+				if ctrls[ctrl].label != "None":
+					var lbl2 = Label.new()
+					lbl2.set_text(ctrls[ctrl].label)
+					cont1.add_child((lbl2))
+	
+				# Add the control based on its type
+				if ctrls[ctrl].type == "OptionButton":
+					var new_ctrl = OptionButton.new()
+					new_ctrl.set_name(ctrl)
 
-				cont1.add_child(new_ctrl)
-			elif ctrls[ctrl].type == "LineEdit":
-				var new_ctrl = LineEdit.new()
-				new_ctrl.set_name(ctrl)
-				new_ctrl.text = ctrls[ctrl].values[0]
-				cont1.add_child(new_ctrl)
-			elif ctrls[ctrl].type == "CheckBox":
-				var new_ctrl = CheckBox.new()
-				new_ctrl.set_name(ctrl)
-				cont1.add_child(new_ctrl)
-				new_ctrl.pressed = ctrls[ctrl].values[0]
+					# Add the values to the OptionButton as items
+					for item in ctrls[ctrl].values:
+						new_ctrl.add_item(item)
+	
+					cont1.add_child(new_ctrl)
+				elif ctrls[ctrl].type == "LineEdit":
+					var new_ctrl = LineEdit.new()
+					new_ctrl.set_name(ctrl)
+					new_ctrl.text = ctrls[ctrl].values[0]
+					cont1.add_child(new_ctrl)
+				elif ctrls[ctrl].type == "CheckBox":
+					var new_ctrl = CheckBox.new()
+					new_ctrl.set_name(ctrl)
+					cont1.add_child(new_ctrl)
+					new_ctrl.pressed = ctrls[ctrl].values[0]
 
-		get_node("VBoxContainer/PVBoxContainer").add_child(cont1)
-
-	# Make sure the panel is the correct size to contain all controls
-	rect_size = get_node("VBoxContainer").rect_size
+			get_node("VBoxContainer/PVBoxContainer").add_child(cont1)
 
 
 """
@@ -114,6 +114,10 @@ func clear_popup(clear_all):
 	var children = par.get_children()
 	for child in children:
 		par.remove_child(child)
+
+	# Clear the previous control item(s) from the DynamicContainer
+	for child in $VBoxContainer/DynamicContainer.get_children():
+		$VBoxContainer/DynamicContainer.remove_child(child)
 
 	# Clear the triggers dropdown, but only if the caller wanted a complete refresh
 	if clear_all:
@@ -252,3 +256,11 @@ func _on_ActionOptionButton_item_selected(index):
 
 	# Populate the default controls
 	_set_up_action_controls(self.actions, trig)
+
+
+"""
+Called whenever the contents of the main VBoxContainer require a size change.
+"""
+func _on_VBoxContainer_resized():
+	# Make sure the panel is the correct size to contain all controls
+	rect_size = Vector2($VBoxContainer.rect_size[0] + 7, $VBoxContainer.rect_size[1] + 7)
