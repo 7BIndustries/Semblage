@@ -389,14 +389,6 @@ margin_top = 32.0
 margin_right = 62.0
 margin_bottom = 32.0
 
-[node name="PVBoxContainer" type="VBoxContainer" parent="ActionPopupPanel/VBoxContainer"]
-margin_top = 36.0
-margin_right = 62.0
-margin_bottom = 36.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="OkButton" type="Button" parent="ActionPopupPanel/VBoxContainer"]
 margin_top = 40.0
 margin_right = 62.0

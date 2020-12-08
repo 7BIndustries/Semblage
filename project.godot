@@ -9,10 +9,25 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "VBoxContainer",
+"class": "BoxControl",
+"language": "GDScript",
+"path": "res://controls/BoxControl.gd"
+}, {
+"base": "VBoxContainer",
+"class": "ChamferControl",
+"language": "GDScript",
+"path": "res://controls/ChamferControl.gd"
+}, {
 "base": "Node",
 "class": "ContextHandler",
 "language": "GDScript",
 "path": "res://ContextHandler.gd"
+}, {
+"base": "VBoxContainer",
+"class": "ExtrudeControl",
+"language": "GDScript",
+"path": "res://controls/ExtrudeControl.gd"
 }, {
 "base": "VBoxContainer",
 "class": "FilletControl",
@@ -20,14 +35,29 @@ _global_script_classes=[ {
 "path": "res://controls/FilletControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "RectControl",
+"language": "GDScript",
+"path": "res://controls/RectControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "SelectorControl",
 "language": "GDScript",
 "path": "res://controls/SelectorControl.gd"
+}, {
+"base": "VBoxContainer",
+"class": "WorkplaneControl",
+"language": "GDScript",
+"path": "res://controls/WorkplaneControl.gd"
 } ]
 _global_script_class_icons={
+"BoxControl": "",
+"ChamferControl": "",
 "ContextHandler": "",
+"ExtrudeControl": "",
 "FilletControl": "",
-"SelectorControl": ""
+"RectControl": "",
+"SelectorControl": "",
+"WorkplaneControl": ""
 }
 
 [application]

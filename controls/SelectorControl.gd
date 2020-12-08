@@ -2,6 +2,7 @@ extends VBoxContainer
 
 class_name SelectorControl
 
+var face_comps = null
 var face_comps_opt_1 = null
 var face_comps_opt_2 = null
 var extra_face_selector_adder = null
@@ -10,9 +11,11 @@ var face_comps_opt_3 = null
 var face_comps_opt_4 = null
 var face_selector_txt = null
 
+var edge_comps = null
 var edge_comps_opt_1 = null
 var edge_comps_opt_2 = null
 var extra_edge_selector_adder = null
+var edge_logic_option_button = null
 var edge_comps_opt_3 = null
 var edge_comps_opt_4 = null
 var edge_selector_txt = null
@@ -20,21 +23,55 @@ var edge_selector_txt = null
 var filter_items = ["All", "Maximum", "Minimum", "Positive Normal", "Negative Normal", "Parallel", "Orthogonal"]
 var axis_items = ["X", "Y", "Z"]
 
-var template = ".faces({face_selector}).edges({edge_selector})"
+var faces_template = ".faces({face_selector})"
+var edges_template = ".edges({edge_selector})"
 
+var show_faces = true
+var show_edges = true
 
+"""
+Fills out the template and returns it.
+"""
 func get_completed_template():
-	return template.format(
-		{"face_selector": face_selector_txt.get_text(),
-		 "edge_selector": edge_selector_txt.get_text()
-		})
+	var completed = ""
+
+	# Add face selector(s), if needed
+	if show_faces:
+		# Add the escaped quotes if needed
+		var face_selector = face_selector_txt.get_text()
+		if face_selector != "":
+			face_selector = "\"\"" + face_selector + "\"\""
+		
+		completed += faces_template.format({"face_selector": face_selector});
+
+	# Add edge selector(s), if needed
+	if show_edges:
+		var edge_selector = edge_selector_txt.get_text()
+		if edge_selector != "":
+			edge_selector = "\"\"" + edge_selector + "\"\""
+
+		completed += edges_template.format({"edge_selector": edge_selector})
+
+	return completed
+
+
+"""
+Allows the caller to hide any selectors that do not apply.
+"""
+func config_visibility(faces=true, edges=true):
+	self.show_faces = faces
+	self.show_edges = edges
 
 
 func _ready():
 	# 
 	# Populate the face selector controls
 	#
-	var face_comps = HBoxContainer.new()
+	face_comps = HBoxContainer.new()
+
+	# Make sure the appropriate controls are visible
+	if not self.show_faces:
+		face_comps.hide()
 
 	var face_comps_lbl = Label.new()
 	face_comps_lbl.set_text("Face Selector: ")
@@ -70,7 +107,8 @@ func _ready():
 
 	# The second face filter (i.e. >, <, |)
 	face_comps_opt_3 = OptionButton.new()
-	_load_items(face_comps_opt_3, filter_items)
+	var short_filter_items = filter_items.slice(1, -1)
+	_load_items(face_comps_opt_3, short_filter_items)
 	face_comps_opt_3.connect("item_selected", self, "_second_face_filter_selected")
 	face_comps_opt_3.hide()
 	face_comps.add_child(face_comps_opt_3)
@@ -91,13 +129,22 @@ func _ready():
 	face_selector_txt.size_flags_horizontal = face_selector_txt.SIZE_EXPAND_FILL
 	face_selector.add_child(face_selector_txt)
 
+	# Make sure the appropriate controls are visible
+	if not self.show_faces:
+		face_selector.hide()
+
 	add_child(face_comps)
 	add_child(face_selector)
 
 	# 
 	# Populate the edge selector controls
 	#
-	var edge_comps = HBoxContainer.new()
+	edge_comps = HBoxContainer.new()
+	
+	# Make sure the appropriate controls are visible
+	if not self.show_edges:
+		edge_comps.hide()
+		
 	var edge_comps_lbl = Label.new()
 	edge_comps_lbl.set_text("Edge Selector: ")
 	edge_comps.add_child(edge_comps_lbl)
@@ -122,9 +169,17 @@ func _ready():
 	extra_edge_selector_adder.connect("button_down", self, "_first_edge_add_button_clicked")
 	edge_comps.add_child(extra_edge_selector_adder)
 
+	# The logic operator (and/or)
+	edge_logic_option_button = OptionButton.new()
+	edge_logic_option_button.add_item("and")
+	edge_logic_option_button.add_item("or")
+	edge_logic_option_button.hide()
+	edge_logic_option_button.connect("item_selected", self, "_edge_logic_button_changed")
+	edge_comps.add_child(edge_logic_option_button)
+
 	# The second face filter (i.e. >, <, |)
 	edge_comps_opt_3 = OptionButton.new()
-	_load_items(edge_comps_opt_3, filter_items)
+	_load_items(edge_comps_opt_3, short_filter_items)
 	edge_comps_opt_3.connect("item_selected", self, "_second_edge_filter_selected")
 	edge_comps_opt_3.hide()
 	edge_comps.add_child(edge_comps_opt_3)
@@ -144,6 +199,10 @@ func _ready():
 	edge_selector_txt = LineEdit.new()
 	edge_selector_txt.size_flags_horizontal = edge_selector_txt.SIZE_EXPAND_FILL
 	edge_selector.add_child(edge_selector_txt)
+
+	# Make sure the appropriate controls are visible
+	if not self.show_edges:
+		edge_selector.hide()
 
 	add_child(edge_comps)
 	add_child(edge_selector)
@@ -174,9 +233,21 @@ func _first_face_axis_selected(index):
 Called when the first button is clicked to add another face selector.
 """
 func _first_add_button_clicked():
-	face_logic_option_button.show()
-	face_comps_opt_3.show()
-	face_comps_opt_4.show()
+	# If the button is visible already, hide it and change its text
+	if face_logic_option_button.visible:
+		# Show the second set of selector buttons
+		face_logic_option_button.hide()
+		face_comps_opt_3.hide()
+		face_comps_opt_4.hide()
+
+		extra_face_selector_adder.set_text("+")
+	else:
+		# Show the second set of selector buttons
+		face_logic_option_button.show()
+		face_comps_opt_3.show()
+		face_comps_opt_4.show()
+
+		extra_face_selector_adder.set_text("-")
 
 	_update_face_selector_string()
 
@@ -185,14 +256,14 @@ func _first_add_button_clicked():
 Called when the second face filter is selected.
 """
 func _second_face_filter_selected(index):
-	print("HERE1")
+	_update_face_selector_string()
 
 
 """
 Called when the first face axis is selected.
 """
 func _second_face_axis_selected(index):
-	print("HERE2")
+	_update_face_selector_string()
 
 
 """
@@ -220,15 +291,49 @@ func _first_edge_axis_selected(index):
 Called when the first button is clicked to add another edge selector.
 """
 func _first_edge_add_button_clicked():
-	edge_comps_opt_3.show()
-	edge_comps_opt_4.show()
+	if edge_comps_opt_3.visible:
+		edge_logic_option_button.hide()
+		edge_comps_opt_3.hide()
+		edge_comps_opt_4.hide()
+
+		extra_edge_selector_adder.set_text("+")
+	else:
+		edge_logic_option_button.show()
+		edge_comps_opt_3.show()
+		edge_comps_opt_4.show()
+
+		extra_edge_selector_adder.set_text("-")
+
+	_update_edge_selector_string()
 
 
 """
-Update the face selector string with a logic combiner, if needed.
+Update the face selector string with the logic combiner, if needed.
 """
 func _face_logic_button_changed(index):
 	_update_face_selector_string()
+
+
+"""
+Update the edge selector string with the logic combiner, if needed.
+"""
+func _edge_logic_button_changed(index):
+	_update_edge_selector_string()
+
+
+"""
+Update the edge selector for the second edge filter.
+"""
+func _second_edge_filter_selected(index):
+	_update_edge_selector_string()
+
+
+"""
+Update the edge selector for the second edge axis.
+"""
+func _second_edge_axis_selected(index):
+	_update_edge_selector_string()
+
 
 """
 Loads all of the items from an array into an option button.
@@ -280,6 +385,20 @@ func _update_face_selector_string():
 		face_selector_string = face_selector_txt.get_text()
 		face_selector_string += " " + logic_txt + " "
 		face_selector_txt.set_text(face_selector_string)
+	
+	# If the second face filter option button is visible, pull its value
+	if face_comps_opt_3.visible:
+		var sec_face_selector_txt = _get_filter_symbol(face_comps_opt_3.get_item_text(face_comps_opt_3.get_selected_id()))
+		face_selector_string = face_selector_txt.get_text()
+		face_selector_string += sec_face_selector_txt
+		face_selector_txt.set_text(face_selector_string)
+
+	# If the second axis option button is visible, pull its value
+	if face_comps_opt_4.visible:
+		var sec_axis_selector_txt = face_comps_opt_4.get_item_text(face_comps_opt_4.get_selected_id())
+		face_selector_string = face_selector_txt.get_text()
+		face_selector_string += sec_axis_selector_txt
+		face_selector_txt.set_text(face_selector_string)
 
 
 """
@@ -294,3 +413,24 @@ func _update_edge_selector_string():
 	var edge_selector_string = edge_selector_txt.get_text()
 	edge_selector_string += first_edge_axis
 	edge_selector_txt.set_text(edge_selector_string)
+
+	# If the logic operator option button is visible, pull its value into the selector string
+	if edge_logic_option_button.visible:
+		var logic_txt = edge_logic_option_button.get_item_text(edge_logic_option_button.get_selected_id())
+		edge_selector_string = edge_selector_txt.get_text()
+		edge_selector_string += " " + logic_txt + " "
+		edge_selector_txt.set_text(edge_selector_string)
+
+	# If the second face filter option button is visible, pull its value
+	if edge_comps_opt_3.visible:
+		var sec_edge_selector_txt = _get_filter_symbol(edge_comps_opt_3.get_item_text(edge_comps_opt_3.get_selected_id()))
+		edge_selector_string = edge_selector_txt.get_text()
+		edge_selector_string += sec_edge_selector_txt
+		edge_selector_txt.set_text(edge_selector_string)
+
+	# If the second axis option button is visible, pull its value
+	if edge_comps_opt_4.visible:
+		var sec_axis_selector_txt = edge_comps_opt_4.get_item_text(edge_comps_opt_4.get_selected_id())
+		edge_selector_string = edge_selector_txt.get_text()
+		edge_selector_string += sec_axis_selector_txt
+		edge_selector_txt.set_text(edge_selector_string)

@@ -1,0 +1,204 @@
+extends VBoxContainer
+
+class_name WorkplaneControl
+
+var simple_template = ".Workplane(\"{named_wp}\").workplane(invert={invert}).tag(\"{comp_name}\")"
+var template = ".Workplane(cq.Plane(origin=({origin_x},{origin_y},{origin_z}), xDir=({xdir_x},{xdir_y},{xdir_z}), normal=({normal_x},{normal_y},{normal_z}))).tag(\"{comp_name}\")"
+
+var wp_ctrl = null
+var invert_ctrl = null
+var wp_name_ctrl = null
+var origin_x_ctrl = null
+var origin_y_ctrl = null
+var origin_z_ctrl = null
+var xdir_x_ctrl = null
+var xdir_y_ctrl = null
+var xdir_z_ctrl = null
+var normal_x_ctrl = null
+var normal_y_ctrl = null
+var normal_z_ctrl = null
+
+var workplane_list = ["XY", "YZ", "ZX", "XZ", "YX", "ZY", "front", "back", "left", "right", "top", "bottom"]
+
+var advanced_group = null
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	# Allow the user to give the Workplane/component a name
+	var name_group = HBoxContainer.new()
+	var wp_name_lbl = Label.new()
+	wp_name_lbl.set_text("Name: ")
+	name_group.add_child(wp_name_lbl)
+	wp_name_ctrl = LineEdit.new()
+	wp_name_ctrl.set_text("Change Me")
+	name_group.add_child(wp_name_ctrl)
+
+	add_child(name_group)
+
+	# Allow the user to select the named workplane
+	var wp_group = HBoxContainer.new()
+	var wp_lbl = Label.new()
+	wp_lbl.set_text("Workplane: ")
+	wp_group.add_child(wp_lbl)
+	wp_ctrl = OptionButton.new()
+	load_option_button(wp_ctrl, workplane_list)
+	wp_group.add_child(wp_ctrl)
+
+	add_child(wp_group)
+
+	# Allow the user to set whether the workplane normal is inverted
+	var invert_group = HBoxContainer.new()
+	var invert_lbl = Label.new()
+	invert_lbl.set_text("Invert: ")
+	invert_group.add_child(invert_lbl)
+	invert_ctrl = CheckBox.new()
+	invert_ctrl.pressed = false
+	invert_group.add_child(invert_ctrl)
+
+	add_child(invert_group)
+	
+	# Allow the user to show and hide the advanced workplane controls
+	var hide_show_btn = Button.new()
+	hide_show_btn.set_text("Advanced")
+	hide_show_btn.connect("button_down", self, "_show_advanced")
+
+	add_child(hide_show_btn)
+
+	# The advanced workplane controls
+	advanced_group = VBoxContainer.new()
+	advanced_group.hide()
+	var origin_lbl = Label.new()
+	origin_lbl.set_text("Origin")
+	advanced_group.add_child(origin_lbl)
+	var origin_group = HBoxContainer.new()
+	# Origin X
+	var x_lbl = Label.new()
+	x_lbl.set_text("X: ")
+	origin_group.add_child(x_lbl)
+	origin_x_ctrl = LineEdit.new()
+	origin_x_ctrl.set_text("0")
+	origin_group.add_child(origin_x_ctrl)
+	# Origin Y
+	var y_lbl = Label.new()
+	y_lbl.set_text("Y: ")
+	origin_group.add_child(y_lbl)
+	origin_y_ctrl = LineEdit.new()
+	origin_y_ctrl.set_text("0")
+	origin_group.add_child(origin_y_ctrl)
+	# Origin Z
+	var z_lbl = Label.new()
+	z_lbl.set_text("Z: ")
+	origin_group.add_child(z_lbl)
+	origin_z_ctrl = LineEdit.new()
+	origin_z_ctrl.set_text("0")
+	origin_group.add_child(origin_z_ctrl)
+
+	advanced_group.add_child(origin_group)
+
+	# XDir Controls
+	var xdir_lbl = Label.new()
+	xdir_lbl.set_text("X Direction")
+	advanced_group.add_child(xdir_lbl)
+	var xdir_group = HBoxContainer.new()
+	# XDir X
+	var xdir_x_lbl = Label.new()
+	xdir_x_lbl.set_text("X: ")
+	xdir_group.add_child(xdir_x_lbl)
+	xdir_x_ctrl = LineEdit.new()
+	xdir_x_ctrl.set_text("1")
+	xdir_group.add_child(xdir_x_ctrl)
+	# XDir Y
+	var xdir_y_lbl = Label.new()
+	xdir_y_lbl.set_text("Y: ")
+	xdir_group.add_child(xdir_y_lbl)
+	xdir_y_ctrl = LineEdit.new()
+	xdir_y_ctrl.set_text("0")
+	xdir_group.add_child(xdir_y_ctrl)
+	# XDir Z
+	var xdir_z_lbl = Label.new()
+	xdir_z_lbl.set_text("Z: ")
+	xdir_group.add_child(xdir_z_lbl)
+	xdir_z_ctrl = LineEdit.new()
+	xdir_z_ctrl.set_text("0")
+	xdir_group.add_child(xdir_z_ctrl)
+
+	advanced_group.add_child(xdir_group)
+
+	# Normal controls
+	var normal_lbl = Label.new()
+	normal_lbl.set_text("Normal")
+	advanced_group.add_child(normal_lbl)
+	var normal_group = HBoxContainer.new()
+	# Normal X
+	var norm_x_lbl = Label.new()
+	norm_x_lbl.set_text("X: ")
+	normal_group.add_child(norm_x_lbl)
+	normal_x_ctrl = LineEdit.new()
+	normal_x_ctrl.set_text("0")
+	normal_group.add_child(normal_x_ctrl)
+	# Normal Y
+	var norm_y_lbl = Label.new()
+	norm_y_lbl.set_text("Y: ")
+	normal_group.add_child(norm_y_lbl)
+	normal_y_ctrl = LineEdit.new()
+	normal_y_ctrl.set_text("0")
+	normal_group.add_child(normal_y_ctrl)
+	# Normal Z
+	var norm_z_lbl = Label.new()
+	norm_z_lbl.set_text("Z: ")
+	normal_group.add_child(norm_z_lbl)
+	normal_z_ctrl = LineEdit.new()
+	normal_z_ctrl.set_text("1")
+	normal_group.add_child(normal_z_ctrl)
+
+	advanced_group.add_child(normal_group)
+
+	add_child(advanced_group)
+
+
+"""
+Fills out the template and returns it.
+"""
+func get_completed_template():
+	var complete = ""
+
+	# If the advanced group is visible, fill the advanced template out with those controls
+	if advanced_group.visible:
+		complete = template.format({
+			"comp_name": wp_name_ctrl.get_text(),
+			"origin_x": origin_x_ctrl.get_text(),
+			"origin_y": origin_y_ctrl.get_text(),
+			"origin_z": origin_z_ctrl.get_text(),
+			"xdir_x": xdir_x_ctrl.get_text(),
+			"xdir_y": xdir_y_ctrl.get_text(),
+			"xdir_z": xdir_z_ctrl.get_text(),
+			"normal_x": normal_x_ctrl.get_text(),
+			"normal_y": normal_y_ctrl.get_text(),
+			"normal_z": normal_z_ctrl.get_text(),
+			})
+	else:
+		# Use the simple template
+		complete = simple_template.format({
+			"comp_name": wp_name_ctrl.get_text(),
+			"named_wp": wp_ctrl.get_item_text(wp_ctrl.get_selected_id()),
+			"invert": invert_ctrl.pressed
+		})
+
+	return complete
+
+
+"""
+Shows/hides the advanced workplane controls.
+"""
+func _show_advanced():
+	if advanced_group.visible:
+		advanced_group.hide()
+	else:
+		advanced_group.show()
+
+"""
+Loads an option button up with an array of items.
+"""
+func load_option_button(option_btn, items):
+	for item in items:
+		option_btn.add_item(item)

@@ -24,15 +24,27 @@ func get_next_action(context):
 		# If this trigger matches, extract the info we can use to build controls
 		if trig_res:
 			action[trigger] = triggers[trigger].action
-			
-			# Save the template of the matching trigger as a side-effect for later use
-			cur_templates[trigger] = action[trigger].template
 
 	return action
 
 
 """
-Updates the script context based on 
+Update the script context based on the string returned from the control.
+"""
+func update_context_string(context, addition):
+	# Save this addition
+	self.latest_context_addition = addition
+
+	# Save any objects that were added to the context
+	self.latest_object_addition = _get_object_from_context(self.latest_context_addition)
+
+	# Create the new context based on the appropriate template of what comes next
+	var new_context = context + self.latest_context_addition
+
+	return new_context
+
+"""
+Updates the script context based on the components returned from the dynamic controls.
 """
 func update_context(context, action_args, selected_action):
 	# Save this addition

@@ -205,8 +205,6 @@ func generate_component(path, component_text=null):
 		# Switch path to pass that to cq-cli
 		path = temp_component_path
 
-	# Create a random ID
-#	var rand_id = str(rng.randi()) + "-" + str(rng.randi()) + "-" + str(rng.randi()) + "-" + str(rng.randi())
 	# Get the date and time and use it to construct the unique file id
 	var date_time = OS.get_datetime()
 	var file_id = str(date_time["year"]) + "_" +  str(date_time["month"]) + "_" + str(date_time["day"]) + "_" + str(date_time["hour"]) + "_" + str(date_time["minute"]) + "_" + str(date_time["second"])
