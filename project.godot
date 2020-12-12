@@ -34,6 +34,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/FilletControl.gd"
 }, {
+"base": "Camera",
+"class": "OrbitCamera",
+"language": "GDScript",
+"path": "res://cameras/OrbitCamera.gd"
+}, {
 "base": "VBoxContainer",
 "class": "RectControl",
 "language": "GDScript",
@@ -55,6 +60,7 @@ _global_script_class_icons={
 "ContextHandler": "",
 "ExtrudeControl": "",
 "FilletControl": "",
+"OrbitCamera": "",
 "RectControl": "",
 "SelectorControl": "",
 "WorkplaneControl": ""

@@ -1,12 +1,13 @@
-[gd_scene load_steps=35 format=2]
+[gd_scene load_steps=36 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
-[ext_resource path="res://addons/CADLikeOrbit_Camera/CADLikeOrbit_Camera.gd" type="Script" id=3]
 [ext_resource path="res://assets/icons/home_button_flat_ready.svg" type="Texture" id=4]
 [ext_resource path="res://assets/icons/close_button_flat_ready.svg" type="Texture" id=5]
 [ext_resource path="res://assets/icons/reload_button_flat_ready.png" type="Texture" id=6]
+[ext_resource path="res://DocumentTabs.gd" type="Script" id=7]
 [ext_resource path="res://ActionPopupPanel.gd" type="Script" id=8]
+[ext_resource path="res://cameras/OrbitCamera.gd" type="Script" id=9]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
@@ -216,6 +217,7 @@ margin_bottom = 519.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 tab_align = 0
+script = ExtResource( 7 )
 
 [node name="VPMarginContainer" type="MarginContainer" parent="GUI/VBoxContainer/WorkArea/DocumentTabs"]
 anchor_right = 1.0
@@ -237,11 +239,14 @@ transparent_bg = true
 handle_input_locally = false
 render_target_update_mode = 3
 
-[node name="OriginCamera" type="Camera" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport"]
+[node name="OriginOrbitCamera" type="Camera" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3 )
 projection = 1
 size = 3.0
-script = ExtResource( 3 )
+near = 0.01
+script = ExtResource( 9 )
+ZOOMENABLED = false
+PANENABLED = false
 
 [node name="YStem" type="MeshInstance" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
@@ -306,12 +311,10 @@ world = SubResource( 27 )
 handle_input_locally = false
 render_target_update_mode = 3
 
-[node name="CADLikeOrbit_Camera" type="Camera" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport"]
+[node name="MainOrbitCamera" type="Camera" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3 )
 far = 8192.0
-script = ExtResource( 3 )
-IfNoObjPickedRotateAroundOrigin = true
-RotateUsingZoomPlusPan = false
+script = ExtResource( 9 )
 
 [node name="CenterContainer" type="CenterContainer" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer"]
 margin_right = 854.0
@@ -413,8 +416,14 @@ __meta__ = {
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton" to="." method="_on_ReloadButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton" to="." method="_on_CloseButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton" to="." method="_on_HomeViewButton_button_down"]
+[connection signal="activate_action_popup" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="." method="_on_DocumentTabs_activate_action_popup"]
+[connection signal="cam_pan" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_pan"]
+[connection signal="cam_rotate" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_rotate"]
+[connection signal="cam_rotate" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginOrbitCamera" method="_on_DocumentTabs_cam_rotate"]
+[connection signal="cam_zoom" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_zoom"]
 [connection signal="file_selected" from="OpenDialog" to="." method="_on_OpenDialog_file_selected"]
 [connection signal="about_to_show" from="ActionPopupPanel" to="." method="_on_ActionPopupPanel_about_to_show"]
+[connection signal="hide" from="ActionPopupPanel" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_on_ActionPopupPanel_hide"]
 [connection signal="ok_signal" from="ActionPopupPanel" to="." method="_on_ActionPopupPanel_ok_signal"]
 [connection signal="preview_signal" from="ActionPopupPanel" to="." method="_on_ActionPopupPanel_preview_signal"]
 [connection signal="resized" from="ActionPopupPanel/VBoxContainer" to="ActionPopupPanel" method="_on_VBoxContainer_resized"]

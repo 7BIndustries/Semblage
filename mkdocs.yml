@@ -1,0 +1,5 @@
+site_name: Semblage Documentation
+
+nav:
+    - Home: index.md
+    - About: about.md

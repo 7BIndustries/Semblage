@@ -23,14 +23,10 @@ var history_tree_root = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	origin_cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginCamera
-	cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/CADLikeOrbit_Camera
+	origin_cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginOrbitCamera
+	cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
 	vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
 	tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
-	
-	origin_cam.zoom_enabled = false
-	origin_cam.pan_enabled = false
-	origin_cam.rotate_enabled = true
 
 	# Set the default tab to let the user know where to start
 	tabs.set_tab_title(0, "Start")
@@ -129,16 +125,16 @@ func _process(delta):
 Handles user input, specifically the non-camera inputs like right-clicking for the 
 action menu.
 """
-func _input(event):
-	match event.get_class():
-		"InputEventMouseButton":
-			# See if the user requested the action menu
-			if Input.is_action_just_pressed("Action"):
-				# Set the menu at the mouse cursor position
-				var mouse_pos = get_viewport().get_mouse_position()
-
-				$ActionPopupPanel.show_modal(true)
-				$ActionPopupPanel.activate_popup(mouse_pos, component_text)
+#func _input(event):
+#	match event.get_class():
+#		"InputEventMouseButton":
+#			# See if the user requested the action menu
+#			if Input.is_action_just_pressed("Action"):
+#				# Set the menu at the mouse cursor position
+#				var mouse_pos = get_viewport().get_mouse_position()
+#
+#				$ActionPopupPanel.show_modal(true)
+#				$ActionPopupPanel.activate_popup(mouse_pos, component_text)
 
 
 """
@@ -338,7 +334,6 @@ func load_component_json(json_string):
 
 		# Set the camera to the safe distance and have it look at the origin
 		cam.look_at_from_position(Vector3(0, safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
-		origin_cam.look_at_from_position(Vector3(0, 3, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
 
 		# Save this transform as the home transform
 		home_transform = cam.get_transform()
@@ -422,7 +417,7 @@ func _clear_viewport():
 
 	# Remove any child that is not the camera, assuming everything else is a MeshInstance
 	for child in children:
-		if child.get_name() != "CADLikeOrbit_Camera":
+		if child.get_name() != "MainOrbitCamera":
 			vp.remove_child(child)
 
 
@@ -576,3 +571,11 @@ func _find_basis(normal):
 	basis[2] = normal.normalized()
 	
 	return basis
+
+
+"""
+Fired when the Action popup needs to be displayed.
+"""
+func _on_DocumentTabs_activate_action_popup(mouse_pos):
+	$ActionPopupPanel.show_modal(true)
+	$ActionPopupPanel.activate_popup(mouse_pos, component_text)
