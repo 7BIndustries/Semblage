@@ -74,7 +74,7 @@ config/icon="res://icon.png"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "CADLikeOrbit_Camera" )
+enabled=PoolStringArray(  )
 
 [input]
 
