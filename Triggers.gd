@@ -3,13 +3,15 @@ extends Node
 var triggers  = {
 	"Workplane": {
 		"trigger": "cq$",
+		"edit_trigger": "^.Workplane(.*).*",
 		"action": {
 			"name": "New Workplane",
-			"control": WorkplaneControl.new()
+			"control": WorkplaneControl.new(),
 		}
 	},
 	"box": {
 		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".box(.*)$",
 		"action": {
 			"name": "box",
 			"control": BoxControl.new()
@@ -17,6 +19,7 @@ var triggers  = {
 	},
 	"rect": {
 		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".rect(.*)$",
 		"action": {
 			"name": "rect",
 			"control": RectControl.new()
@@ -31,6 +34,7 @@ var triggers  = {
 	},
 	"chamfer": {
 		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".chamfer(.*)$",
 		"action": {
 			"name": "chamfer",
 			"control": ChamferControl.new()
@@ -38,6 +42,7 @@ var triggers  = {
 	},
 	"extrude": {
 		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".extrude(.*)$",
 		"action": {
 			"name": "extrude",
 			"template": ".extrude({distance}, combine={combine}, both={both}, taper={taper})",

@@ -334,6 +334,7 @@ func load_component_json(json_string):
 
 		# Set the camera to the safe distance and have it look at the origin
 		cam.look_at_from_position(Vector3(0, safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
+		origin_cam.look_at_from_position(Vector3(0, 3, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
 
 		# Save this transform as the home transform
 		home_transform = cam.get_transform()
@@ -448,13 +449,11 @@ func _on_ActionPopupPanel_preview_signal():
 		for untess in untesses:
 			_make_wp_mesh(untess["origin"], untess["normal"])
 
-	print($ActionPopupPanel.get_new_context())
-
 
 """
 Retries the updated context and makes it the current one.
 """
-func _on_ActionPopupPanel_ok_signal():
+func _on_ActionPopupPanel_ok_signal(edit_mode):
 	self._clear_viewport()
 
 	# If we have untessellated objects (i.e. workplanes), display placeholders for them
@@ -465,17 +464,52 @@ func _on_ActionPopupPanel_ok_signal():
 
 	component_text = $ActionPopupPanel.get_new_context()
 
-	var new_hist_item = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.create_item(self.history_tree_root)
-	new_hist_item.set_text(0, $ActionPopupPanel.get_latest_context_addition())
+	# If we are in edit mode, do not try to add anything to the history
+	if edit_mode:
+		var new_template = $ActionPopupPanel.get_new_template()
+		var prev_template = $ActionPopupPanel.get_prev_template()
 
+		# Update the edited line within the history tree
+		var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree
+		_update_tree_item(tree, prev_template, new_template)
+
+		# Update the component name in the object tree if the object name was changed
+		var new_object = $ActionPopupPanel.get_latest_object_addition()
+		if new_object:
+			var prev_object = $ActionPopupPanel.get_prev_object_addition()
+			tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree
+			_update_tree_item(tree, prev_object, new_object)
+	else:
+		var new_hist_item = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.create_item(self.history_tree_root)
+		new_hist_item.set_text(0, $ActionPopupPanel.get_latest_context_addition())
+
+		# Find any object name (if present) that needs to be displayed in the list
+		var new_object = $ActionPopupPanel.get_latest_object_addition()
+		if new_object:
+			var ot = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree
+			var new_obj_item = ot.create_item(self.object_tree_root)
+			new_obj_item.set_text(0, new_object)
+	
 	generate_component(open_file_path, component_text)
 
-	# Find any object name (if present) that needs to be displayed in the list
-	var new_object = $ActionPopupPanel.get_latest_object_addition()
-	if new_object:
-		var ot = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree
-		var new_obj_item = ot.create_item(self.object_tree_root)
-		new_obj_item.set_text(0, new_object)
+
+"""
+Updates a matching item in the given tree with a new entry during an edit.
+"""
+func _update_tree_item(tree, old_text, new_text):
+	var cur_item = tree.get_root().get_children()
+
+	# Search the history tree and update the matchine entry in the tree
+	while true:
+		if cur_item == null:
+			break
+		else:
+			# If we have a text match, update the matching TreeItem's text
+			if cur_item.get_text(0) == old_text:
+				cur_item.set_text(0, new_text)
+				break
+
+			cur_item = cur_item.get_next()
 
 
 """
@@ -578,4 +612,26 @@ Fired when the Action popup needs to be displayed.
 """
 func _on_DocumentTabs_activate_action_popup(mouse_pos):
 	$ActionPopupPanel.show_modal(true)
-	$ActionPopupPanel.activate_popup(mouse_pos, component_text)
+	$ActionPopupPanel.activate_popup(mouse_pos, component_text, null)
+
+
+"""
+Allows a user to edit a history entry by clicking on the entry in the History
+Tree.
+"""
+func _on_HistoryTree_item_selected():
+	var item_text = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.get_selected().get_text(0)
+
+	# Get the control taht matches the edit trigger for the history code, if any
+	var popup_action = context_handler.find_matching_edit_trigger(item_text)
+
+	# If the returned control is null, there is not need continuing
+	if popup_action == null:
+		return
+
+	var mouse_pos = get_viewport().get_mouse_position()
+	$ActionPopupPanel.show_modal(true)
+	$ActionPopupPanel.activate_popup(mouse_pos, component_text, popup_action)
+
+	# Get the parts of the item text that can be used to set the control values
+	popup_action.get(popup_action.keys()[0]).control.set_values_from_string(item_text)

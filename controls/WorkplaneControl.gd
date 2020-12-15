@@ -5,6 +5,8 @@ class_name WorkplaneControl
 var simple_template = ".Workplane(\"{named_wp}\").workplane(invert={invert}).tag(\"{comp_name}\")"
 var template = ".Workplane(cq.Plane(origin=({origin_x},{origin_y},{origin_z}), xDir=({xdir_x},{xdir_y},{xdir_z}), normal=({normal_x},{normal_y},{normal_z}))).tag(\"{comp_name}\")"
 
+var prev_template = null
+
 var wp_ctrl = null
 var invert_ctrl = null
 var wp_name_ctrl = null
@@ -21,6 +23,12 @@ var normal_z_ctrl = null
 var workplane_list = ["XY", "YZ", "ZX", "XZ", "YX", "ZY", "front", "back", "left", "right", "top", "bottom"]
 
 var advanced_group = null
+
+var wp_name_edit_rgx = "(?<=.Workplane\\(\")(.*?)(?=\"\\))"
+var origin_edit_rgx = "(?<=origin\\=\\()(.*?)(?=\\))"
+var xdir_edit_rgx = "(?<=xdir\\=\\()(.*?)(?=\\))"
+var normal_edit_rgx = "(?<=normal\\=\\()(.*?)(?=\\))"
+var tag_edit_rgx = "(?<=.tag\\(\")(.*?)(?=\"\\))"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -188,6 +196,14 @@ func get_completed_template():
 
 
 """
+When in edit mode, returns the previous template string that needs to
+be replaced.
+"""
+func get_previous_template():
+	return prev_template
+
+
+"""
 Shows/hides the advanced workplane controls.
 """
 func _show_advanced():
@@ -202,3 +218,68 @@ Loads an option button up with an array of items.
 func load_option_button(option_btn, items):
 	for item in items:
 		option_btn.add_item(item)
+
+
+"""
+Loads values into the control's sub-controls based on a code string.
+"""
+func set_values_from_string(text_line):
+	prev_template = text_line
+
+	var rgx = RegEx.new()
+
+	# The workplane name
+	rgx.compile(wp_name_edit_rgx)
+	var res = rgx.search(text_line)
+	if res:
+		set_option_btn_by_text(wp_ctrl, res.get_string())
+		print(res.get_string())
+	
+	# The origin text
+	rgx.compile(origin_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		# Fill in the origin X, Y and Z controls
+		var xyz = res.get_string().split(",")
+		origin_x_ctrl.set_text(xyz[0])
+		origin_y_ctrl.set_text(xyz[1])
+		origin_z_ctrl.set_text(xyz[2])
+
+	# The xdir text
+	rgx.compile(xdir_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		# Fill in the xdir X, Y and Z controls
+		var xyz = res.get_string().split(",")
+		xdir_x_ctrl.set_text(xyz[0])
+		xdir_y_ctrl.set_text(xyz[1])
+		xdir_z_ctrl.set_text(xyz[2])
+
+	# The normal text
+	rgx.compile(normal_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		# Fill in the normal X, Y and Z controls
+		var xyz = res.get_string().split(",")
+		normal_x_ctrl.set_text(xyz[0])
+		normal_y_ctrl.set_text(xyz[1])
+		normal_z_ctrl.set_text(xyz[2])
+
+	# The component (tag) name
+	rgx.compile(tag_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		# Fill in the tag/name text
+		wp_name_ctrl.set_text(res.get_string())
+
+"""
+If the option button has matching text in an item, sets that to be the
+selected item.
+"""
+func set_option_btn_by_text(opt_btn, name):
+	for i in range(0, opt_btn.get_item_count()):
+		var txt = opt_btn.get_item_text(i)
+		
+		# If the item matches, set it to be the selected id
+		if txt == name:
+			opt_btn.select(i)
