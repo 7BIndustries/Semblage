@@ -9,8 +9,12 @@ var cen_x_ctrl = null
 var cen_y_ctrl = null
 var cen_z_ctrl = null
 
-var template = ".box({length},{width},{height}, centered=({centered_x},{centered_y},{centered_z}))"
+var prev_template = null
 
+var template = ".box({length},{width},{height},centered=({centered_x},{centered_y},{centered_z}))"
+
+var dims_edit_rgx = "(?<=.box\\()(.*?)(?=,centered)"
+var centered_edit_rgx = "(?<=centered\\=\\()(.*?)(?=\\))"
 
 func _ready():
 	# Add a label for the box size group controls
@@ -89,3 +93,40 @@ func get_completed_template():
 		})
 
 	return complete
+
+
+"""
+When in edit mode, returns the previous template string that needs to
+be replaced.
+"""
+func get_previous_template():
+	return prev_template
+
+
+"""
+Loads values into the control's sub-controls based on a code string.
+"""
+func set_values_from_string(text_line):
+	prev_template = text_line
+
+	var rgx = RegEx.new()
+
+	# The box dimensions
+	rgx.compile(dims_edit_rgx)
+	var res = rgx.search(text_line)
+	if res:
+		# Fill in the box dimension controls
+		var lwh = res.get_string().split(",")
+		length_ctrl.set_text(lwh[0])
+		width_ctrl.set_text(lwh[1])
+		height_ctrl.set_text(lwh[2])
+
+	# Box centering booleans
+	rgx.compile(centered_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		# Fill in the centering controls
+		var lwh = res.get_string().split(",")
+		cen_x_ctrl.pressed = true if lwh[0] == "True" else false
+		cen_y_ctrl.pressed = true if lwh[1] == "True" else false
+		cen_z_ctrl.pressed = true if lwh[2] == "True" else false

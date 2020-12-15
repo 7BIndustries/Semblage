@@ -20,6 +20,11 @@ _global_script_classes=[ {
 "path": "res://controls/ChamferControl.gd"
 }, {
 "base": "Node",
+"class": "Common",
+"language": "GDScript",
+"path": "res://controls/Common.gd"
+}, {
+"base": "Node",
 "class": "ContextHandler",
 "language": "GDScript",
 "path": "res://ContextHandler.gd"
@@ -57,6 +62,7 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "BoxControl": "",
 "ChamferControl": "",
+"Common": "",
 "ContextHandler": "",
 "ExtrudeControl": "",
 "FilletControl": "",

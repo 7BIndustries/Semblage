@@ -2,7 +2,14 @@ extends VBoxContainer
 
 class_name RectControl
 
+var prev_template = null
+
 var template = ".rect({xLen},{yLen},centered={centered},forConstruction={for_construction})"
+
+var dims_edit_rgx = "(?<=.rect\\()(.*?)(?=,centered)"
+var centered_edit_rgx = "(?<=centered\\=\\()(.*?)(?=\\))"
+var const_edit_rgx = "(?<=forConstruction\\=\\()(.*?)(?=\\))"
+var select_edit_rgx = "^.faces\\(.*\\)\\."
 
 var x_length_ctrl = null
 var y_length_ctrl = null
@@ -97,3 +104,54 @@ func _show_selectors():
 		select_ctrl.hide()
 	else:
 		select_ctrl.show()
+
+
+"""
+When in edit mode, returns the previous template string that needs to
+be replaced.
+"""
+func get_previous_template():
+	return prev_template
+
+
+"""
+Loads values into the control's sub-controls based on a code string.
+"""
+func set_values_from_string(text_line):
+	prev_template = text_line
+
+	var rgx = RegEx.new()
+
+	# Rect dimensions
+	rgx.compile(dims_edit_rgx)
+	var res = rgx.search(text_line)
+	if res:
+		# Fill in the box dimension controls
+		var lw = res.get_string().split(",")
+		x_length_ctrl.set_text(lw[0])
+		y_length_ctrl.set_text(lw[1])
+
+	# Centered
+	rgx.compile(centered_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		var cen = res.get_string()
+		centered_ctrl = true if cen == "True" else false
+
+	# For construction
+	rgx.compile(const_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		var constr = res.get_string()
+		for_construction_ctrl = true if constr == "True" else false
+
+	# Selector
+	rgx.compile(select_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		var sel = res.get_string()
+
+		_show_selectors()
+
+		# Allow the selector control to set itself up appropriately
+		select_ctrl.set_values_from_string(sel.left(sel.length() - 1))

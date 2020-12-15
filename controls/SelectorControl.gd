@@ -1,5 +1,7 @@
 extends VBoxContainer
 
+var ControlsCommon = load("res://controls/Common.gd").new()
+
 class_name SelectorControl
 
 var face_comps = null
@@ -22,6 +24,8 @@ var edge_selector_txt = null
 
 var filter_items = ["All", "Maximum", "Minimum", "Positive Normal", "Negative Normal", "Parallel", "Orthogonal"]
 var axis_items = ["X", "Y", "Z"]
+
+var prev_template = null
 
 var faces_template = ".faces({face_selector})"
 var edges_template = ".edges({edge_selector})"
@@ -366,6 +370,25 @@ func _get_filter_symbol(human_readable):
 
 
 """
+Converts a script filter operator into the human-readable version.
+"""
+func _get_filter_text(symbol):
+	if symbol == ">":
+		return "Maximum"
+	elif symbol == "<":
+		return "Minimum"
+	elif symbol == "+":
+		return "Positive Normal"
+	elif symbol == "-":
+		return "Negative Normal"
+	elif symbol == "|":
+		return "Parallel"
+	elif symbol == "#":
+		return "Orthogonal"
+	else:
+		return null
+
+"""
 Updates the face selector based on the controls that are visible and what they contain.
 """
 func _update_face_selector_string():
@@ -434,3 +457,41 @@ func _update_edge_selector_string():
 		edge_selector_string = edge_selector_txt.get_text()
 		edge_selector_string += sec_axis_selector_txt
 		edge_selector_txt.set_text(edge_selector_string)
+
+
+"""
+When in editing mode, uses a string that is passed in to set up the controls.
+"""
+func set_values_from_string(text_line):
+	var face_sel_edit_rgx = "(?<=.faces\\(\")(.*?)(?=\"\\))"
+
+	prev_template = text_line
+
+	var rgx = RegEx.new()
+
+	# Face selector
+	rgx.compile(face_sel_edit_rgx)
+	var res = rgx.search(text_line)
+	if res:
+		# Fill in the box dimension controls
+		var sel = res.get_string()
+		set_sel_dropdowns_from_string("face", sel)
+
+
+"""
+Parses the selector and sets the selector dropdowns appropriately.
+"""
+func set_sel_dropdowns_from_string(sel_type, sel_string):
+	# Figure out whether the selector is face, edge or vertex
+	if sel_type == "face":
+		# Set the filter control
+		var filter_text = _get_filter_text(sel_string.substr(0, 1))
+		ControlsCommon.set_option_btn_by_text(face_comps_opt_1, filter_text)
+
+		# Handle the axis
+		face_comps_opt_2.show()
+		ControlsCommon.set_option_btn_by_text(face_comps_opt_2, sel_string.substr(1, 2))
+	elif sel_type == "edge":
+		pass
+	elif sel_type == "vertex":
+		pass

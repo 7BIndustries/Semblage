@@ -333,8 +333,8 @@ func load_component_json(json_string):
 		safe_distance = max_dist * 2.0 # get_safe_camera_distance(max_dist)
 
 		# Set the camera to the safe distance and have it look at the origin
-		cam.look_at_from_position(Vector3(0, safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
-		origin_cam.look_at_from_position(Vector3(0, 3, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
+		cam.look_at_from_position(Vector3(0, -safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
+		origin_cam.look_at_from_position(Vector3(0, -3, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
 
 		# Save this transform as the home transform
 		home_transform = cam.get_transform()
@@ -581,6 +581,7 @@ func _make_wp_mesh(origin, normal):
 	# Add the normal mesh instance to the viewport
 	vp.add_child(norm_mesh)
 
+
 """
 Find the basis for a 3D node based on a normal.
 """
@@ -616,10 +617,10 @@ func _on_DocumentTabs_activate_action_popup(mouse_pos):
 
 
 """
-Allows a user to edit a history entry by clicking on the entry in the History
+Allows a user to edit a history entry by double-clicking on the entry in the History
 Tree.
 """
-func _on_HistoryTree_item_selected():
+func _on_HistoryTree_item_activated():
 	var item_text = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.get_selected().get_text(0)
 
 	# Get the control taht matches the edit trigger for the history code, if any

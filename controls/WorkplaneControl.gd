@@ -1,5 +1,7 @@
 extends VBoxContainer
 
+var ControlsCommon = load("res://controls/Common.gd")
+
 class_name WorkplaneControl
 
 var simple_template = ".Workplane(\"{named_wp}\").workplane(invert={invert}).tag(\"{comp_name}\")"
@@ -38,7 +40,8 @@ func _ready():
 	wp_name_lbl.set_text("Name: ")
 	name_group.add_child(wp_name_lbl)
 	wp_name_ctrl = LineEdit.new()
-	wp_name_ctrl.set_text("Change Me")
+	wp_name_ctrl.expand_to_text_length = true
+	wp_name_ctrl.set_text("Change This")
 	name_group.add_child(wp_name_ctrl)
 
 	add_child(name_group)
@@ -232,8 +235,7 @@ func set_values_from_string(text_line):
 	rgx.compile(wp_name_edit_rgx)
 	var res = rgx.search(text_line)
 	if res:
-		set_option_btn_by_text(wp_ctrl, res.get_string())
-		print(res.get_string())
+		ControlsCommon.set_option_btn_by_text(wp_ctrl, res.get_string())
 	
 	# The origin text
 	rgx.compile(origin_edit_rgx)
@@ -271,15 +273,3 @@ func set_values_from_string(text_line):
 	if res:
 		# Fill in the tag/name text
 		wp_name_ctrl.set_text(res.get_string())
-
-"""
-If the option button has matching text in an item, sets that to be the
-selected item.
-"""
-func set_option_btn_by_text(opt_btn, name):
-	for i in range(0, opt_btn.get_item_count()):
-		var txt = opt_btn.get_item_text(i)
-		
-		# If the item matches, set it to be the selected id
-		if txt == name:
-			opt_btn.select(i)

@@ -416,7 +416,7 @@ __meta__ = {
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton" to="." method="_on_ReloadButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton" to="." method="_on_CloseButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton" to="." method="_on_HomeViewButton_button_down"]
-[connection signal="item_selected" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree" to="." method="_on_HistoryTree_item_selected"]
+[connection signal="item_activated" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree" to="." method="_on_HistoryTree_item_activated"]
 [connection signal="activate_action_popup" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="." method="_on_DocumentTabs_activate_action_popup"]
 [connection signal="cam_pan" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_pan"]
 [connection signal="cam_rotate" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginOrbitCamera" method="_on_DocumentTabs_cam_rotate"]
