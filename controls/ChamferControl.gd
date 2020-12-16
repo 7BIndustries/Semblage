@@ -2,10 +2,15 @@ extends VBoxContainer
 
 class_name ChamferControl
 
+var prev_template = null
+
 var select_ctrl = null
 var length_ctrl = null
 
 var template = ".chamfer({chamfer_length})"
+
+var len_edit_rgx = "(?<=.chamfer\\()(.*?)(?=\\))"
+var select_edit_rgx = "^.faces\\(.*\\)\\.edges\\(.*\\)\\."
 
 func _ready():
 	var length_group = HBoxContainer.new()
@@ -34,3 +39,35 @@ func get_completed_template():
 	complete += template.format({"chamfer_length": length_ctrl.get_text()})
 
 	return complete
+
+
+"""
+When in edit mode, returns the previous template string that needs to
+be replaced.
+"""
+func get_previous_template():
+	return prev_template
+
+
+"""
+Loads values into the control's sub-controls based on a code string.
+"""
+func set_values_from_string(text_line):
+	prev_template = text_line
+
+	var rgx = RegEx.new()
+
+	# Rect dimensions
+	rgx.compile(len_edit_rgx)
+	var res = rgx.search(text_line)
+	if res:
+		length_ctrl.set_text(res.get_string())
+
+	# Selector
+	rgx.compile(select_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		var sel = res.get_string()
+
+		# Allow the selector control to set itself up appropriately
+		select_ctrl.set_values_from_string(sel.left(sel.length() - 1))

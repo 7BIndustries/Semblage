@@ -7,8 +7,8 @@ var prev_template = null
 var template = ".rect({xLen},{yLen},centered={centered},forConstruction={for_construction})"
 
 var dims_edit_rgx = "(?<=.rect\\()(.*?)(?=,centered)"
-var centered_edit_rgx = "(?<=centered\\=\\()(.*?)(?=\\))"
-var const_edit_rgx = "(?<=forConstruction\\=\\()(.*?)(?=\\))"
+var centered_edit_rgx = "(?<=centered\\=)(.*?)(?=\\,)"
+var const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 var select_edit_rgx = "^.faces\\(.*\\)\\."
 
 var x_length_ctrl = null
@@ -136,14 +136,14 @@ func set_values_from_string(text_line):
 	res = rgx.search(text_line)
 	if res:
 		var cen = res.get_string()
-		centered_ctrl = true if cen == "True" else false
+		centered_ctrl.pressed = true if cen == "True" else false
 
 	# For construction
 	rgx.compile(const_edit_rgx)
 	res = rgx.search(text_line)
 	if res:
 		var constr = res.get_string()
-		for_construction_ctrl = true if constr == "True" else false
+		for_construction_ctrl.pressed = true if constr == "True" else false
 
 	# Selector
 	rgx.compile(select_edit_rgx)

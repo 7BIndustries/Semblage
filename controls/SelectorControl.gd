@@ -30,6 +30,11 @@ var prev_template = null
 var faces_template = ".faces({face_selector})"
 var edges_template = ".edges({edge_selector})"
 
+var face_sel_edit_rgx = "(?<=.faces\\(\")(.*?)(?=\"\\))"
+var edge_sel_edit_rgx = "(?<=.edges\\(\")(.*?)(?=\"\\))"
+var logic_edit_rgx = "(and|or)"
+var second_edit_rgx = "(and|or).*"
+
 var show_faces = true
 var show_edges = true
 
@@ -463,8 +468,6 @@ func _update_edge_selector_string():
 When in editing mode, uses a string that is passed in to set up the controls.
 """
 func set_values_from_string(text_line):
-	var face_sel_edit_rgx = "(?<=.faces\\(\")(.*?)(?=\"\\))"
-
 	prev_template = text_line
 
 	var rgx = RegEx.new()
@@ -473,25 +476,102 @@ func set_values_from_string(text_line):
 	rgx.compile(face_sel_edit_rgx)
 	var res = rgx.search(text_line)
 	if res:
-		# Fill in the box dimension controls
+		# Set the face selector controls
 		var sel = res.get_string()
-		set_sel_dropdowns_from_string("face", sel)
+		set_face_sel_dropdowns_from_string(sel)
+
+	# Edge selector
+	rgx.compile(edge_sel_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		# Set the edge selector controls
+		var sel = res.get_string()
+		set_edge_sel_dropdowns_from_string(sel)
 
 
 """
-Parses the selector and sets the selector dropdowns appropriately.
+Parses the selector and sets the face selector dropdowns appropriately.
 """
-func set_sel_dropdowns_from_string(sel_type, sel_string):
-	# Figure out whether the selector is face, edge or vertex
-	if sel_type == "face":
-		# Set the filter control
-		var filter_text = _get_filter_text(sel_string.substr(0, 1))
-		ControlsCommon.set_option_btn_by_text(face_comps_opt_1, filter_text)
+func set_face_sel_dropdowns_from_string(sel_string):
+	# Set the filter control
+	var filter_text = _get_filter_text(sel_string.substr(0, 1))
+	ControlsCommon.set_option_btn_by_text(face_comps_opt_1, filter_text)
 
-		# Handle the axis
-		face_comps_opt_2.show()
-		ControlsCommon.set_option_btn_by_text(face_comps_opt_2, sel_string.substr(1, 2))
-	elif sel_type == "edge":
-		pass
-	elif sel_type == "vertex":
-		pass
+	# Handle the axis
+	ControlsCommon.set_option_btn_by_text(face_comps_opt_2, sel_string.substr(1, 1))
+	face_comps_opt_2.show()
+
+	# If there is a logic operator, we need to display the add/remove button properly
+	var rgx = RegEx.new()
+	rgx.compile(logic_edit_rgx)
+	var res = rgx.search(sel_string)
+	if res:
+		extra_face_selector_adder.set_text("-")
+		extra_face_selector_adder.show()
+
+		# Show the face logic operator and set it to the correct value
+		face_logic_option_button.show()
+		ControlsCommon.set_option_btn_by_text(face_logic_option_button, res.get_string())
+
+		# Extract the second face selector
+		var second_filter = null
+		var second_axis = null
+		rgx.compile(second_edit_rgx)
+		res = rgx.search(sel_string)
+		if res:
+			var second_sel = res.get_string().split(" ")[1]
+			second_filter = second_sel.substr(0, 1)
+			second_axis = second_sel.substr(1, 1)
+
+		# Show the second face's controls and set them appropriately
+		ControlsCommon.set_option_btn_by_text(face_comps_opt_3, _get_filter_text(second_filter))
+		face_comps_opt_3.show()
+		ControlsCommon.set_option_btn_by_text(face_comps_opt_4, second_axis)
+		face_comps_opt_4.show()
+
+	# Make sure that the face selector string reflects the control settings
+	_update_face_selector_string()
+
+
+"""
+Parses the selector and sets the edge selector dropdowns appropriately.
+"""
+func set_edge_sel_dropdowns_from_string(sel_string):
+	# Set the filter control
+	var filter_text = _get_filter_text(sel_string.substr(0, 1))
+	ControlsCommon.set_option_btn_by_text(edge_comps_opt_1, filter_text)
+
+	# Handle the axis
+	ControlsCommon.set_option_btn_by_text(edge_comps_opt_2, sel_string.substr(1, 1))
+	edge_comps_opt_2.show()
+
+	# If there is a logic operator, we need to display the add/remove button properly
+	var rgx = RegEx.new()
+	rgx.compile(logic_edit_rgx)
+	var res = rgx.search(sel_string)
+	if res:
+		extra_edge_selector_adder.set_text("-")
+		extra_edge_selector_adder.show()
+
+		# Show the edge logic operator and set it to the correct value
+		edge_logic_option_button.show()
+		ControlsCommon.set_option_btn_by_text(edge_logic_option_button, res.get_string())
+
+		# Extract the second edge selector
+		var second_filter = null
+		var second_axis = null
+		rgx.compile(second_edit_rgx)
+		res = rgx.search(sel_string)
+		if res:
+			var second_sel = res.get_string().split(" ")[1]
+			second_filter = second_sel.substr(0, 1)
+			second_axis = second_sel.substr(1, 1)
+
+		# Show the second edge's controls and set them appropriately
+		ControlsCommon.set_option_btn_by_text(edge_comps_opt_3, _get_filter_text(second_filter))
+		edge_comps_opt_3.show()
+		ControlsCommon.set_option_btn_by_text(edge_comps_opt_4, second_axis)
+		edge_comps_opt_4.show()
+
+	# Make sure that the edge selector string reflects the control settings
+	_update_edge_selector_string()

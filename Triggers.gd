@@ -27,6 +27,7 @@ var triggers  = {
 	},
 	"fillet": {
 		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".fillet(.*)$",
 		"action": {
 			"name": "fillet",
 			"control": FilletControl.new()

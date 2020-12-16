@@ -2,7 +2,15 @@ extends VBoxContainer
 
 class_name ExtrudeControl
 
-var template = ".extrude({distance}, combine={combine}, clean={clean}, both={both}, taper={taper})"
+var prev_template = null
+
+var template = ".extrude({distance},combine={combine},clean={clean},both={both},taper={taper})"
+
+var dist_edit_rgx = "(?<=.extrude\\()(.*?)(?=,combine)"
+var combine_edit_rgx = "(?<=combine\\=)(.*?)(?=\\,)"
+var clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\,)"
+var both_edit_rgx = "(?<=both\\=)(.*?)(?=\\,)"
+var taper_edit_rgx = "(?<=taper\\=)(.*?)(?=\\))"
 
 var distance_ctrl = null
 var combine_ctrl = null
@@ -81,3 +89,53 @@ func get_completed_template():
 	})
 
 	return complete
+
+
+"""
+When in edit mode, returns the previous template string that needs to
+be replaced.
+"""
+func get_previous_template():
+	return prev_template
+
+
+"""
+Loads values into the control's sub-controls based on a code string.
+"""
+func set_values_from_string(text_line):
+	prev_template = text_line
+
+	var rgx = RegEx.new()
+
+	# Extrusion distance
+	rgx.compile(dist_edit_rgx)
+	var res = rgx.search(text_line)
+	if res:
+		distance_ctrl.set_text(res.get_string())
+
+	# Combine boolean
+	rgx.compile(combine_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		var comb = res.get_string()
+		combine_ctrl.pressed = true if comb == "True" else false
+
+	# Clean boolean
+	rgx.compile(clean_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		var clean = res.get_string()
+		clean_ctrl.pressed = true if clean == "True" else false
+
+	# Both boolean
+	rgx.compile(both_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		var both = res.get_string()
+		both_ctrl.pressed = true if both == "True" else false
+
+	# Taper amount
+	rgx.compile(taper_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		taper_ctrl.set_text(res.get_string())
