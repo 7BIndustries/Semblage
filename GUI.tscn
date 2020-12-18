@@ -399,6 +399,7 @@ margin_bottom = 60.0
 text = "OK"
 
 [node name="PreviewButton" type="Button" parent="ActionPopupPanel/VBoxContainer"]
+visible = false
 margin_top = 64.0
 margin_right = 62.0
 margin_bottom = 84.0

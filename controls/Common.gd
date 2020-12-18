@@ -13,3 +13,11 @@ func set_option_btn_by_text(opt_btn, name):
 		# If the item matches, set it to be the selected id
 		if txt == name:
 			opt_btn.select(i)
+
+
+"""
+Loads an option button up with an array of items.
+"""
+func load_option_button(option_btn, items):
+	for item in items:
+		option_btn.add_item(item)

@@ -1,6 +1,6 @@
 extends VBoxContainer
 
-var ControlsCommon = load("res://controls/Common.gd")
+var ControlsCommon = load("res://controls/Common.gd").new()
 
 class_name WorkplaneControl
 
@@ -52,7 +52,7 @@ func _ready():
 	wp_lbl.set_text("Workplane: ")
 	wp_group.add_child(wp_lbl)
 	wp_ctrl = OptionButton.new()
-	load_option_button(wp_ctrl, workplane_list)
+	ControlsCommon.load_option_button(wp_ctrl, workplane_list)
 	wp_group.add_child(wp_ctrl)
 
 	add_child(wp_group)
@@ -214,13 +214,6 @@ func _show_advanced():
 		advanced_group.hide()
 	else:
 		advanced_group.show()
-
-"""
-Loads an option button up with an array of items.
-"""
-func load_option_button(option_btn, items):
-	for item in items:
-		option_btn.add_item(item)
 
 
 """

@@ -55,6 +55,11 @@ _global_script_classes=[ {
 "path": "res://controls/SelectorControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "ShellControl",
+"language": "GDScript",
+"path": "res://controls/ShellControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "WorkplaneControl",
 "language": "GDScript",
 "path": "res://controls/WorkplaneControl.gd"
@@ -69,6 +74,7 @@ _global_script_class_icons={
 "OrbitCamera": "",
 "RectControl": "",
 "SelectorControl": "",
+"ShellControl": "",
 "WorkplaneControl": ""
 }
 

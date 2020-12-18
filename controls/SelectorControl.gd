@@ -88,13 +88,13 @@ func _ready():
 
 	# The first face filter (i.e. >, <, |)
 	face_comps_opt_1 = OptionButton.new()
-	_load_items(face_comps_opt_1, filter_items)
+	ControlsCommon.load_option_button(face_comps_opt_1, filter_items)
 	face_comps_opt_1.connect("item_selected", self, "_first_face_filter_selected")
 	face_comps.add_child(face_comps_opt_1)
 
 	# First axis filter (X, Y, Z)
 	face_comps_opt_2 = OptionButton.new()
-	_load_items(face_comps_opt_2, axis_items)
+	ControlsCommon.load_option_button(face_comps_opt_2, axis_items)
 	face_comps_opt_2.connect("item_selected", self, "_first_face_axis_selected")
 	face_comps_opt_2.hide()
 	face_comps.add_child(face_comps_opt_2)
@@ -117,14 +117,14 @@ func _ready():
 	# The second face filter (i.e. >, <, |)
 	face_comps_opt_3 = OptionButton.new()
 	var short_filter_items = filter_items.slice(1, -1)
-	_load_items(face_comps_opt_3, short_filter_items)
+	ControlsCommon.load_option_button(face_comps_opt_3, short_filter_items)
 	face_comps_opt_3.connect("item_selected", self, "_second_face_filter_selected")
 	face_comps_opt_3.hide()
 	face_comps.add_child(face_comps_opt_3)
 
 	# Second axis filter (X, Y, Z)
 	face_comps_opt_4 = OptionButton.new()
-	_load_items(face_comps_opt_4, axis_items)
+	ControlsCommon.load_option_button(face_comps_opt_4, axis_items)
 	face_comps_opt_4.connect("item_selected", self, "_second_face_axis_selected")
 	face_comps_opt_4.hide()
 	face_comps.add_child(face_comps_opt_4)
@@ -160,13 +160,13 @@ func _ready():
 
 	# The first face filter (i.e. >, <, |)
 	edge_comps_opt_1 = OptionButton.new()
-	_load_items(edge_comps_opt_1, filter_items)
+	ControlsCommon.load_option_button(edge_comps_opt_1, filter_items)
 	edge_comps_opt_1.connect("item_selected", self, "_first_edge_filter_selected")
 	edge_comps.add_child(edge_comps_opt_1)
 
 	# First axis filter (X, Y, Z)
 	edge_comps_opt_2 = OptionButton.new()
-	_load_items(edge_comps_opt_2, axis_items)
+	ControlsCommon.load_option_button(edge_comps_opt_2, axis_items)
 	edge_comps_opt_2.connect("item_selected", self, "_first_edge_axis_selected")
 	edge_comps_opt_2.hide()
 	edge_comps.add_child(edge_comps_opt_2)
@@ -188,14 +188,14 @@ func _ready():
 
 	# The second face filter (i.e. >, <, |)
 	edge_comps_opt_3 = OptionButton.new()
-	_load_items(edge_comps_opt_3, short_filter_items)
+	ControlsCommon.load_option_button(edge_comps_opt_3, short_filter_items)
 	edge_comps_opt_3.connect("item_selected", self, "_second_edge_filter_selected")
 	edge_comps_opt_3.hide()
 	edge_comps.add_child(edge_comps_opt_3)
 
 	# Second axis filter (X, Y, Z)
 	edge_comps_opt_4 = OptionButton.new()
-	_load_items(edge_comps_opt_4, axis_items)
+	ControlsCommon.load_option_button(edge_comps_opt_4, axis_items)
 	edge_comps_opt_4.connect("item_selected", self, "_second_edge_axis_selected")
 	edge_comps_opt_4.hide()
 	edge_comps.add_child(edge_comps_opt_4)
@@ -342,14 +342,6 @@ Update the edge selector for the second edge axis.
 """
 func _second_edge_axis_selected(index):
 	_update_edge_selector_string()
-
-
-"""
-Loads all of the items from an array into an option button.
-"""
-func _load_items(option_button, items):
-	for item in items:
-		option_button.add_item(item)
 
 
 """

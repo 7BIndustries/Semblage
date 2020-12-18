@@ -17,22 +17,6 @@ var triggers  = {
 			"control": BoxControl.new()
 		}
 	},
-	"rect": {
-		"trigger": "\\..*(.*)$",
-		"edit_trigger": ".rect(.*)$",
-		"action": {
-			"name": "rect",
-			"control": RectControl.new()
-		}
-	},
-	"fillet": {
-		"trigger": "\\..*(.*)$",
-		"edit_trigger": ".fillet(.*)$",
-		"action": {
-			"name": "fillet",
-			"control": FilletControl.new()
-		}
-	},
 	"chamfer": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".chamfer(.*)$",
@@ -48,6 +32,30 @@ var triggers  = {
 			"name": "extrude",
 			"template": ".extrude({distance}, combine={combine}, both={both}, taper={taper})",
 			"control": ExtrudeControl.new()
+		}
+	},
+	"fillet": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".fillet(.*)$",
+		"action": {
+			"name": "fillet",
+			"control": FilletControl.new()
+		}
+	},
+	"rect": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".rect(.*)$",
+		"action": {
+			"name": "rect",
+			"control": RectControl.new()
+		}
+	},
+	"shell": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".shell(.*)$",
+		"action": {
+			"name": "shell",
+			"control": ShellControl.new()
 		}
 	}
 }
