@@ -15,8 +15,8 @@
    inkscape:version="1.0.1 (0767f8302a, 2020-10-17)"
    sodipodi:docname="roadmap.svg"
    inkscape:export-filename="/home/jwright/Downloads/repos/Semblage/docs/Semblage/about/_static/roadmap-med.png"
-   inkscape:export-xdpi="54.734009"
-   inkscape:export-ydpi="54.734009">
+   inkscape:export-xdpi="55.610001"
+   inkscape:export-ydpi="55.610001">
   <defs
      id="defs2">
     <inkscape:path-effect
@@ -336,7 +336,7 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="1.0752595"
-     inkscape:cx="561.25984"
+     inkscape:cx="570.01766"
      inkscape:cy="396.85039"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -355,7 +355,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -640,7 +640,7 @@
          y="94.78421"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';stroke-width:0.264583">UX P3</tspan></text>
     <path
-       style="fill:#f27380;fill-opacity:1;stroke:#000000;stroke-width:0.191294px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:#e4ea80;fill-opacity:1;stroke:#000000;stroke-width:0.191294px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 227.94225,90.338866 c 0,0 59.32866,0 59.32866,0 0,0 6.7569,2.90435 6.7569,2.90435 0,0 -5.90112,2.90435 -5.90112,2.90435 0,0 -60.22984,0 -60.22984,0 0,0 5.97004,-2.90435 5.97004,-2.90435 0,0 -5.92464,-2.90435 -5.92464,-2.90435 z"
        id="path1074"
        inkscape:path-effect="#path-effect1076"
@@ -1068,14 +1068,14 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
-       x="259.64795"
-       y="106.50124"
+       x="238.61572"
+       y="101.74133"
        id="text1774"><tspan
          sodipodi:role="line"
          id="tspan1772"
-         x="259.64795"
-         y="106.50124"
-         style="font-size:4.23333px;stroke-width:0.264583">?</tspan></text>
+         x="238.61572"
+         y="101.74133"
+         style="font-size:4.23333px;stroke-width:0.264583">Improve accessibility</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:4.23333px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
