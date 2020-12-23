@@ -393,7 +393,7 @@ Initializes the history tree so that it can be added to as the component changes
 """
 func _init_history_tree():
 	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree")
-	
+
 	# Create the root of the history tree
 	self.history_tree_root = history_tree.create_item()
 	self.history_tree_root.set_text(0, "cq")
@@ -485,8 +485,8 @@ func _on_ActionPopupPanel_ok_signal(edit_mode):
 
 		# Find any object name (if present) that needs to be displayed in the list
 		var new_object = $ActionPopupPanel.get_latest_object_addition()
-		if new_object:
-			var ot = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree
+		var ot = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree
+		if new_object and not _check_tree_item_exists(ot, new_object):
 			var new_obj_item = ot.create_item(self.object_tree_root)
 			new_obj_item.set_text(0, new_object)
 	
@@ -499,7 +499,7 @@ Updates a matching item in the given tree with a new entry during an edit.
 func _update_tree_item(tree, old_text, new_text):
 	var cur_item = tree.get_root().get_children()
 
-	# Search the history tree and update the matchine entry in the tree
+	# Search the tree and update the matchine entry in the tree
 	while true:
 		if cur_item == null:
 			break
@@ -511,6 +511,20 @@ func _update_tree_item(tree, old_text, new_text):
 
 			cur_item = cur_item.get_next()
 
+
+"""
+Lets the caller confirm if an item already exists in a tree.
+"""
+func _check_tree_item_exists(tree, text):
+	var cur_item = tree.get_root().get_children()
+
+	# Search the tree to see if there is a match
+	if cur_item == null:
+		return false
+	else:
+		# If we have a text match, tell the caller that there was a matching item
+		if cur_item.get_text(0) == text:
+			return true
 
 """
 Creates the placeholder workplane mesh to show the user what the workplane

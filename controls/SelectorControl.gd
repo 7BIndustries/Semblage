@@ -40,39 +40,6 @@ var second_edit_rgx = "(and|or).*"
 var show_faces = true
 var show_edges = true
 
-"""
-Fills out the template and returns it.
-"""
-func get_completed_template():
-	var completed = ""
-
-	# Add face selector(s), if needed
-	if show_faces:
-		# Add the escaped quotes if needed
-		var face_selector = face_selector_txt.get_text()
-		if face_selector != "":
-			face_selector = "\"\"" + face_selector + "\"\""
-		
-		completed += faces_template.format({"face_selector": face_selector});
-
-	# Add edge selector(s), if needed
-	if show_edges:
-		var edge_selector = edge_selector_txt.get_text()
-		if edge_selector != "":
-			edge_selector = "\"\"" + edge_selector + "\"\""
-
-		completed += edges_template.format({"edge_selector": edge_selector})
-
-	return completed
-
-
-"""
-Allows the caller to hide any selectors that do not apply.
-"""
-func config_visibility(faces=true, edges=true):
-	self.show_faces = faces
-	self.show_edges = edges
-
 
 func _ready():
 	var show_btn_texture = load("res://assets/icons/show_button_flat_ready.png")
@@ -215,6 +182,40 @@ func _ready():
 
 	add_child(edge_comps)
 	add_child(edge_selector_txt)
+
+
+"""
+Fills out the template and returns it.
+"""
+func get_completed_template():
+	var completed = ""
+
+	# Add face selector(s), if needed
+	if show_faces:
+		# Add the escaped quotes if needed
+		var face_selector = face_selector_txt.get_text()
+		if face_selector != "":
+			face_selector = "\"\"" + face_selector + "\"\""
+		
+		completed += faces_template.format({"face_selector": face_selector});
+
+	# Add edge selector(s), if needed
+	if show_edges:
+		var edge_selector = edge_selector_txt.get_text()
+		if edge_selector != "":
+			edge_selector = "\"\"" + edge_selector + "\"\""
+
+		completed += edges_template.format({"edge_selector": edge_selector})
+
+	return completed
+
+
+"""
+Allows the caller to hide any selectors that do not apply.
+"""
+func config_visibility(faces=true, edges=true):
+	self.show_faces = faces
+	self.show_edges = edges
 
 
 """

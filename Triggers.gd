@@ -25,12 +25,19 @@ var triggers  = {
 			"control": ChamferControl.new()
 		}
 	},
+	"cutBlind": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": "^.cutBlind(.*)$",
+		"action": {
+			"name": "cutBlind",
+			"control": BlindCutControl.new()
+		}
+	},
 	"extrude": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": "^.extrude(.*)$",
 		"action": {
 			"name": "extrude",
-			"template": ".extrude({distance}, combine={combine}, both={both}, taper={taper})",
 			"control": ExtrudeControl.new()
 		}
 	},
@@ -60,7 +67,7 @@ var triggers  = {
 	},
 	"slot": {
 		"trigger": "\\..*(.*)$",
-		"edit_trigger": ".slot(.*)$",
+		"edit_trigger": ".slot2D(.*)$",
 		"action": {
 			"name": "slot",
 			"control": SlotControl.new()

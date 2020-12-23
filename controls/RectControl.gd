@@ -16,6 +16,7 @@ var y_length_ctrl = null
 var centered_ctrl = null
 var for_construction_ctrl = null
 
+var hide_show_btn = null
 var select_ctrl = null
 
 # Called when the node enters the scene tree for the first time.
@@ -64,8 +65,8 @@ func _ready():
 
 	# Allow the user to show/hide the selector controls that allow the rect to 
 	# be placed on something other than the current workplane
-	var hide_show_btn = Button.new()
-	hide_show_btn.set_text("Selectors")
+	hide_show_btn = CheckButton.new()
+	hide_show_btn.set_text("Selectors: ")
 	hide_show_btn.connect("button_down", self, "_show_selectors")
 	add_child(hide_show_btn)
 

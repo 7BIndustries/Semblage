@@ -43,7 +43,6 @@ func _ready():
 	wp_name_ctrl.expand_to_text_length = true
 	wp_name_ctrl.set_text("Change This")
 	name_group.add_child(wp_name_ctrl)
-
 	add_child(name_group)
 
 	# Allow the user to select the named workplane
@@ -54,7 +53,6 @@ func _ready():
 	wp_ctrl = OptionButton.new()
 	ControlsCommon.load_option_button(wp_ctrl, workplane_list)
 	wp_group.add_child(wp_ctrl)
-
 	add_child(wp_group)
 
 	# Allow the user to set whether the workplane normal is inverted
@@ -65,14 +63,12 @@ func _ready():
 	invert_ctrl = CheckBox.new()
 	invert_ctrl.pressed = false
 	invert_group.add_child(invert_ctrl)
-
 	add_child(invert_group)
-	
+
 	# Allow the user to show and hide the advanced workplane controls
 	var hide_show_btn = Button.new()
 	hide_show_btn.set_text("Advanced")
 	hide_show_btn.connect("button_down", self, "_show_advanced")
-
 	add_child(hide_show_btn)
 
 	# The advanced workplane controls

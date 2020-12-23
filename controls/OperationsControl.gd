@@ -6,14 +6,12 @@ class_name OperationsControl
 
 var prev_template = null
 
-var cut_thru_all_template = ".cutThruAll()"
-var cut_blind_template = ".cutBlind({distance})"
-
-var op_list = ["None", "Extrude", "Blind Cut", "Thru Cut"] #, "Revolve"
+var op_list = ["None", "Extrude", "Blind Cut"] #, "Revolve", "Thru Cut"
 
 var op_ctrl = null
 var extrude_lbl = null
 var extrude_ctrl = null
+var cut_blind_ctrl = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -33,6 +31,11 @@ func _ready():
 	extrude_ctrl.hide()
 	add_child(extrude_ctrl)
 
+	# The Cut Blind control, which will be hidden unless it is needed
+	cut_blind_ctrl = BlindCutControl.new()
+	cut_blind_ctrl.hide()
+	add_child(cut_blind_ctrl)
+
 
 """
 Called when the user selects a new Operation from the Operations option button.
@@ -44,6 +47,8 @@ func _op_ctrl_item_selected(index):
 	# Figure out which controls, if any, to show
 	if op_ctrl.get_item_text(index) == "Extrude":
 		extrude_ctrl.show()
+	elif op_ctrl.get_item_text(index) == "Blind Cut":
+		cut_blind_ctrl.show()
 
 
 """
@@ -60,6 +65,8 @@ func get_completed_template():
 	# If the selector control is visible, prepend its contents
 	if extrude_ctrl.visible:
 		complete += extrude_ctrl.get_completed_template()
+	elif cut_blind_ctrl.visible:
+		complete += cut_blind_ctrl.get_completed_template()
 
 	return complete
 

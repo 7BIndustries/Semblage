@@ -65,6 +65,7 @@ func _ready():
 
 	# The selector control for where to locate the slot
 	select_ctrl = SelectorControl.new()
+	select_ctrl.config_visibility(true, false)
 	select_ctrl.hide()
 	add_child(select_ctrl)
 
