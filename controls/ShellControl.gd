@@ -16,6 +16,7 @@ var thickness_ctrl = null
 var kind_ctrl = null
 
 var select_ctrl = null
+#var select_ctrl_2 = null
 
 var kind_list = ["arc", "intersection"]
 
@@ -41,17 +42,24 @@ func _ready():
 	kind_group.add_child(kind_ctrl)
 	add_child(kind_group)
 
-	# Allow the user to show/hide the selector controls that allow the rect to 
-	# be placed on something other than the current workplane
-#	var hide_show_btn = Button.new()
-#	hide_show_btn.set_text("Selectors")
-#	hide_show_btn.connect("button_down", self, "_show_selectors")
-#	add_child(hide_show_btn)
-
 	# Add the face/edge selector control
 	select_ctrl = SelectorControl.new()
 	select_ctrl.config_visibility(true, false) # Only allow face selection
 	add_child(select_ctrl)
+
+	# TODO: Allow selection of additional faces
+
+	# Allow the user to show/hide the selector controls that allow selection of 
+	# additional faces
+#	var hide_show_btn = Button.new()
+#	hide_show_btn.set_text("Additional Face(s)")
+#	hide_show_btn.connect("button_down", self, "_show_selectors")
+#	add_child(hide_show_btn)
+
+#	select_ctrl_2 = SelectorControl.new()
+#	select_ctrl_2.config_visibility(true, false)
+#	select_ctrl_2.hide()
+#	add_child(select_ctrl_2)
 
 
 """
@@ -74,11 +82,11 @@ func get_completed_template():
 """
 Show the selector controls.
 """
-func _show_selectors():
-	if select_ctrl.visible:
-		select_ctrl.hide()
-	else:
-		select_ctrl.show()
+#func _show_selectors():
+#	if select_ctrl_2.visible:
+#		select_ctrl_2.hide()
+#	else:
+#		select_ctrl_2.show()
 
 
 """

@@ -11,6 +11,7 @@ var extra_face_selector_adder = null
 var face_logic_option_button = null
 var face_comps_opt_3 = null
 var face_comps_opt_4 = null
+var hide_show_face_str = null
 var face_selector_txt = null
 
 var edge_comps = null
@@ -20,6 +21,7 @@ var extra_edge_selector_adder = null
 var edge_logic_option_button = null
 var edge_comps_opt_3 = null
 var edge_comps_opt_4 = null
+var hide_show_edge_str = null
 var edge_selector_txt = null
 
 var filter_items = ["All", "Maximum", "Minimum", "Positive Normal", "Negative Normal", "Parallel", "Orthogonal"]
@@ -73,6 +75,8 @@ func config_visibility(faces=true, edges=true):
 
 
 func _ready():
+	var show_btn_texture = load("res://assets/icons/show_button_flat_ready.png")
+	
 	# 
 	# Populate the face selector controls
 	#
@@ -129,21 +133,19 @@ func _ready():
 	face_comps_opt_4.hide()
 	face_comps.add_child(face_comps_opt_4)
 
+	# Button to make the raw face selector string visible
+	hide_show_face_str = Button.new()
+	hide_show_face_str.set_button_icon(show_btn_texture)
+	hide_show_face_str.connect("button_down", self, "_hide_show_face_sel_string")
+	face_comps.add_child(hide_show_face_str)
+
 	# Populate the face selector readout controls
-	var face_selector = HBoxContainer.new()
-	var face_selector_lbl = Label.new()
-	face_selector_lbl.set_text("Face Selector String: ")
-	face_selector.add_child(face_selector_lbl)
 	face_selector_txt = LineEdit.new()
 	face_selector_txt.size_flags_horizontal = face_selector_txt.SIZE_EXPAND_FILL
-	face_selector.add_child(face_selector_txt)
-
-	# Make sure the appropriate controls are visible
-	if not self.show_faces:
-		face_selector.hide()
+	face_selector_txt.hide()
 
 	add_child(face_comps)
-	add_child(face_selector)
+	add_child(face_selector_txt)
 
 	# 
 	# Populate the edge selector controls
@@ -200,21 +202,19 @@ func _ready():
 	edge_comps_opt_4.hide()
 	edge_comps.add_child(edge_comps_opt_4)
 
+	# Button to make the raw face selector string visible
+	hide_show_edge_str = Button.new()
+	hide_show_edge_str.set_button_icon(show_btn_texture)
+	hide_show_edge_str.connect("button_down", self, "_hide_show_edge_sel_string")
+	edge_comps.add_child(hide_show_edge_str)
+
 	# Populate the face selector readout controls
-	var edge_selector = HBoxContainer.new()
-	var edge_selector_lbl = Label.new()
-	edge_selector_lbl.set_text("Edge Selector String: ")
-	edge_selector.add_child(edge_selector_lbl)
 	edge_selector_txt = LineEdit.new()
 	edge_selector_txt.size_flags_horizontal = edge_selector_txt.SIZE_EXPAND_FILL
-	edge_selector.add_child(edge_selector_txt)
-
-	# Make sure the appropriate controls are visible
-	if not self.show_edges:
-		edge_selector.hide()
+	edge_selector_txt.hide()
 
 	add_child(edge_comps)
-	add_child(edge_selector)
+	add_child(edge_selector_txt)
 
 
 """
@@ -294,6 +294,26 @@ Called when the first edge axis is selected.
 """
 func _first_edge_axis_selected(index):
 	_update_edge_selector_string()
+
+
+"""
+Called when the button to hide/show the raw face selector string is pressed.
+"""
+func _hide_show_face_sel_string():
+	if face_selector_txt.visible:
+		face_selector_txt.hide()
+	else:
+		face_selector_txt.show()
+
+
+"""
+Called when the button to hide/show the raw edge selector string is pressed.
+"""
+func _hide_show_edge_sel_string():
+	if edge_selector_txt.visible:
+		edge_selector_txt.hide()
+	else:
+		edge_selector_txt.show()
 
 
 """

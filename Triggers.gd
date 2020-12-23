@@ -27,7 +27,7 @@ var triggers  = {
 	},
 	"extrude": {
 		"trigger": "\\..*(.*)$",
-		"edit_trigger": ".extrude(.*)$",
+		"edit_trigger": "^.extrude(.*)$",
 		"action": {
 			"name": "extrude",
 			"template": ".extrude({distance}, combine={combine}, both={both}, taper={taper})",
@@ -56,6 +56,14 @@ var triggers  = {
 		"action": {
 			"name": "shell",
 			"control": ShellControl.new()
+		}
+	},
+	"slot": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".slot(.*)$",
+		"action": {
+			"name": "slot",
+			"control": SlotControl.new()
 		}
 	}
 }
