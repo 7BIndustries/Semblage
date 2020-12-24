@@ -13,6 +13,9 @@ var extrude_lbl = null
 var extrude_ctrl = null
 var cut_blind_ctrl = null
 
+var extrude_edit_rgx = ".extrude\\(.*\\)"
+var cut_blind_edit_rgx = ".cutBlind\\(.*\\)"
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Whether to cut, extrude or do nothing
@@ -77,3 +80,28 @@ be replaced.
 """
 func get_previous_template():
 	return prev_template
+
+
+"""
+Loads values into the control's sub-controls based on a code string.
+"""
+func set_values_from_string(text_line):
+	prev_template = text_line
+
+	var rgx = RegEx.new()
+
+	# Extrude
+	rgx.compile(extrude_edit_rgx)
+	var res = rgx.search(text_line)
+	if res:
+		ControlsCommon.set_option_btn_by_text(op_ctrl, "Extrude")
+		extrude_ctrl.set_values_from_string(res.get_string())
+		extrude_ctrl.show()
+
+	# Cut blind
+	rgx.compile(cut_blind_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		ControlsCommon.set_option_btn_by_text(op_ctrl, "Blind Cut")
+		cut_blind_ctrl.set_values_from_string(res.get_string())
+		cut_blind_ctrl.show()

@@ -42,6 +42,9 @@ func _ready():
 	kind_group.add_child(kind_ctrl)
 	add_child(kind_group)
 
+	# Add a horizontal rule to break things up
+	add_child(HSeparator.new())
+
 	# Add the face/edge selector control
 	select_ctrl = SelectorControl.new()
 	select_ctrl.config_visibility(true, false) # Only allow face selection

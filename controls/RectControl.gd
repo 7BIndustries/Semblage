@@ -63,6 +63,9 @@ func _ready():
 
 	add_child(const_group)
 
+	# Add a horizontal rule to break things up
+	add_child(HSeparator.new())
+
 	# Allow the user to show/hide the selector controls that allow the rect to 
 	# be placed on something other than the current workplane
 	hide_show_btn = CheckButton.new()

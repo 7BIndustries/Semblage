@@ -230,6 +230,10 @@ func _first_face_filter_selected(index):
 
 		self.face_comps_opt_2.show()
 		self.extra_face_selector_adder.show()
+	else:
+		self.face_comps_opt_2.hide()
+		self.extra_face_selector_adder.hide()
+		face_selector_txt.set_text("")
 
 
 """
@@ -288,6 +292,10 @@ func _first_edge_filter_selected(index):
 
 		self.edge_comps_opt_2.show()
 		self.extra_edge_selector_adder.show()
+	else:
+		self.edge_comps_opt_2.hide()
+		self.extra_edge_selector_adder.hide()
+		edge_selector_txt.set_text("")
 
 
 """

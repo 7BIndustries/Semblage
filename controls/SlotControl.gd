@@ -111,6 +111,14 @@ func _show_selectors():
 
 
 """
+When in edit mode, returns the previous template string that needs to
+be replaced.
+"""
+func get_previous_template():
+	return prev_template
+
+
+"""
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
@@ -146,5 +154,13 @@ func set_values_from_string(text_line):
 	rgx.compile(select_edit_rgx)
 	res = rgx.search(text_line)
 	if res:
+		hide_show_btn.pressed = true
+
+		var sel = res.get_string()
 		# Pass the selector string to the selector control
-		select_ctrl.set_values_from_string(res.to_string())
+		select_ctrl.set_values_from_string(sel.left(sel.length() - 1))
+
+		select_ctrl.show()
+
+	# Operation
+	op_ctrl.set_values_from_string(text_line)
