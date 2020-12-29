@@ -49,8 +49,10 @@ func _op_ctrl_item_selected(index):
 
 	# Figure out which controls, if any, to show
 	if op_ctrl.get_item_text(index) == "Extrude":
+		cut_blind_ctrl.hide()
 		extrude_ctrl.show()
 	elif op_ctrl.get_item_text(index) == "Blind Cut":
+		extrude_ctrl.hide()
 		cut_blind_ctrl.show()
 
 

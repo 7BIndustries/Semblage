@@ -1,57 +1,36 @@
 extends VBoxContainer
 
-class_name RectControl
+class_name CircleControl
 
 var prev_template = null
 
-var template = ".rect({xLen},{yLen},centered={centered},forConstruction={for_construction})"
+var template = ".circle({radius},forConstruction={for_construction})"
 
-var dims_edit_rgx = "(?<=.rect\\()(.*?)(?=,centered)"
-var centered_edit_rgx = "(?<=centered\\=)(.*?)(?=\\,)"
+var rad_edit_rgx = "(?<=.circle\\()(.*?)(?=,forConstruction)"
 var const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 var select_edit_rgx = "^.faces\\(.*\\)\\."
 
-var x_length_ctrl = null
-var y_length_ctrl = null
-var centered_ctrl = null
+var radius_ctrl = null
 var for_construction_ctrl = null
 
 var hide_show_btn = null
 var select_ctrl = null
 var op_ctrl = null
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Add the rect dimension controls
-	var dims_group = HBoxContainer.new()
+	var rad_group = HBoxContainer.new()
 
 	# Width (X length)
-	var x_length_lbl = Label.new()
-	x_length_lbl.set_text("Width: ")
-	dims_group.add_child(x_length_lbl)
-	x_length_ctrl = LineEdit.new()
-	x_length_ctrl.set_text("1.0")
-	dims_group.add_child(x_length_ctrl)
-	# Height (Y length)
-	var y_length_lbl = Label.new()
-	y_length_lbl.set_text("Height: ")
-	dims_group.add_child(y_length_lbl)
-	y_length_ctrl = LineEdit.new()
-	y_length_ctrl.set_text("1.0")
-	dims_group.add_child(y_length_ctrl)
-
-	add_child(dims_group)
-
-	# Add the centered control
-	var centered_group = HBoxContainer.new()
-	var centered_lbl = Label.new()
-	centered_lbl.set_text("Centered: ")
-	centered_group.add_child(centered_lbl)
-	centered_ctrl = CheckBox.new()
-	centered_ctrl.pressed = true
-	centered_group.add_child(centered_ctrl)
-
-	add_child(centered_group)
+	var rad_lbl = Label.new()
+	rad_lbl.set_text("Radius: ")
+	rad_group.add_child(rad_lbl)
+	radius_ctrl = LineEdit.new()
+	radius_ctrl.set_text("1.0")
+	rad_group.add_child(radius_ctrl)
+	add_child(rad_group)
 
 	# Add the for construction control
 	var const_group = HBoxContainer.new()
@@ -61,7 +40,6 @@ func _ready():
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
 	const_group.add_child(for_construction_ctrl)
-
 	add_child(const_group)
 
 	# Add a horizontal rule to break things up
@@ -87,6 +65,7 @@ func _ready():
 	op_ctrl = OperationsControl.new()
 	add_child(op_ctrl)
 
+
 """
 Fills out the template and returns it.
 """
@@ -98,9 +77,7 @@ func get_completed_template():
 		complete += select_ctrl.get_completed_template()
 
 	complete += template.format({
-		"xLen": x_length_ctrl.get_text(),
-		"yLen": y_length_ctrl.get_text(),
-		"centered": centered_ctrl.pressed,
+		"radius": radius_ctrl.get_text(),
 		"for_construction": for_construction_ctrl.pressed
 		})
 
@@ -137,20 +114,12 @@ func set_values_from_string(text_line):
 	var rgx = RegEx.new()
 
 	# Rect dimensions
-	rgx.compile(dims_edit_rgx)
+	rgx.compile(rad_edit_rgx)
 	var res = rgx.search(text_line)
 	if res:
 		# Fill in the box dimension controls
-		var lw = res.get_string().split(",")
-		x_length_ctrl.set_text(lw[0])
-		y_length_ctrl.set_text(lw[1])
-
-	# Centered
-	rgx.compile(centered_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		var cen = res.get_string()
-		centered_ctrl.pressed = true if cen == "True" else false
+		var rad = res.get_string()
+		radius_ctrl.set_text(rad)
 
 	# For construction
 	rgx.compile(const_edit_rgx)

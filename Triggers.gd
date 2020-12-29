@@ -25,6 +25,14 @@ var triggers  = {
 			"control": ChamferControl.new()
 		}
 	},
+	"circle": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".circle(.*)$",
+		"action": {
+			"name": "circle",
+			"control": CircleControl.new()
+		}
+	},
 	"cutBlind": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": "^.cutBlind(.*)$",
