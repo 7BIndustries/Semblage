@@ -2,6 +2,7 @@ extends Node
 
 var triggers  = {
 	"Workplane": {
+		"group": "all",
 		"trigger": "cq$",
 		"edit_trigger": "^.Workplane(.*).*",
 		"action": {
@@ -10,6 +11,7 @@ var triggers  = {
 		}
 	},
 	"box": {
+		"group": "3d_primitives",
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".box(.*)$",
 		"action": {
@@ -18,6 +20,7 @@ var triggers  = {
 		}
 	},
 	"chamfer": {
+		"group": "3d_operations",
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".chamfer(.*)$",
 		"action": {
@@ -26,6 +29,7 @@ var triggers  = {
 		}
 	},
 	"circle": {
+		"group": "2d_primitives",
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".circle(.*)$",
 		"action": {
@@ -34,6 +38,7 @@ var triggers  = {
 		}
 	},
 	"cutBlind": {
+		"group": "3d_operations",
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": "^.cutBlind(.*)$",
 		"action": {
@@ -42,6 +47,7 @@ var triggers  = {
 		}
 	},
 	"extrude": {
+		"group": "3d_operations",
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": "^.extrude(.*)$",
 		"action": {
@@ -50,6 +56,7 @@ var triggers  = {
 		}
 	},
 	"fillet": {
+		"group": "3d_operations",
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".fillet(.*)$",
 		"action": {
@@ -58,6 +65,7 @@ var triggers  = {
 		}
 	},
 	"rect": {
+		"group": "2d_primitives",
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".rect(.*)$",
 		"action": {
@@ -66,6 +74,7 @@ var triggers  = {
 		}
 	},
 	"shell": {
+		"group": "3d_operations",
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".shell(.*)$",
 		"action": {
@@ -74,11 +83,21 @@ var triggers  = {
 		}
 	},
 	"slot": {
+		"group": "2d_primitives",
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".slot2D(.*)$",
 		"action": {
 			"name": "slot",
 			"control": SlotControl.new()
+		}
+	},
+	"split": {
+		"group": "3d_operations",
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".split(.*)$",
+		"action": {
+			"name": "split",
+			"control": SplitControl.new()
 		}
 	}
 }
