@@ -20,6 +20,11 @@ _global_script_classes=[ {
 "path": "res://controls/BoxControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "CBoreHoleControl",
+"language": "GDScript",
+"path": "res://controls/CBoreHoleControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "ChamferControl",
 "language": "GDScript",
 "path": "res://controls/ChamferControl.gd"
@@ -92,6 +97,7 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "BlindCutControl": "",
 "BoxControl": "",
+"CBoreHoleControl": "",
 "ChamferControl": "",
 "CircleControl": "",
 "Common": "",

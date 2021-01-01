@@ -16,7 +16,7 @@ var select_edit_rgx = "^.faces\\(.*\\)\\.edges\\(.*\\)\\."
 func _ready():
 	var length_group = HBoxContainer.new()
 
-	# Add the fillet radius control
+	# Add the chamfer length control
 	var length_lbl = Label.new()
 	length_lbl.set_text("Length: ")
 	length_group.add_child(length_lbl)
@@ -92,6 +92,9 @@ func set_values_from_string(text_line):
 	res = rgx.search(text_line)
 	if res:
 		var sel = res.get_string()
+
+		hide_show_btn.pressed = true
+		select_ctrl.show()
 
 		# Allow the selector control to set itself up appropriately
 		select_ctrl.set_values_from_string(sel.left(sel.length() - 1))

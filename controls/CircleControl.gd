@@ -134,7 +134,8 @@ func set_values_from_string(text_line):
 	if res:
 		var sel = res.get_string()
 
-		_show_selectors()
+		hide_show_btn.pressed = true
+		select_ctrl.show()
 
 		# Allow the selector control to set itself up appropriately
 		select_ctrl.set_values_from_string(sel.left(sel.length() - 1))

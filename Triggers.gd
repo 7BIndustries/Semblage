@@ -19,6 +19,15 @@ var triggers  = {
 			"control": BoxControl.new()
 		}
 	},
+	"cboreHole": {
+		"group": "3d_operations",
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".cboreHole(.*)$",
+		"action": {
+			"name": "cboreHole",
+			"control": CBoreHoleControl.new()
+		}
+	},
 	"chamfer": {
 		"group": "3d_operations",
 		"trigger": "\\..*(.*)$",
