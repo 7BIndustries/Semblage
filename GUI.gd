@@ -15,7 +15,7 @@ var home_transform # Allows us to move the camera back to the starting location/
 var origin_transform # Allows us to move the orgin camera view back to a starting transform
 var cam # The main camera for the 3D view
 var origin_cam # The camera showing the orientation of the component(s) via an origin indicator
-var light
+var light # Supplemental light that follows the camera
 var vp # The 3D viewport
 var tabs # The tab container for component documents
 var context_handler # Handles the situation where the context Action menu needs to be populated
@@ -653,3 +653,69 @@ func _on_HistoryTree_item_activated():
 
 	# Get the parts of the item text that can be used to set the control values
 	popup_action.get(popup_action.keys()[0]).control.set_values_from_string(item_text)
+
+
+"""
+Called when the user clicks the Make button.
+"""
+func _on_MakeButton_button_down():
+	var pos = $GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton.rect_position
+	var size = $GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton.rect_size
+
+	# Clear any previous items
+	_clear_toolbar_popup()
+
+	# Toggle the visiblity of the popup
+	if $ToolbarPopupPanel.visible:
+		$ToolbarPopupPanel.hide()
+	else:
+		$ToolbarPopupPanel.rect_position = Vector2(pos.x, pos.y + size.y)
+		$ToolbarPopupPanel.show()
+
+	# Populate the appropriate menu items
+	var stl_item = Button.new()
+	stl_item.set_text("STL")
+	stl_item.connect("button_down", self, "_show_export_stl")
+	$ToolbarPopupPanel/ToolbarPopupVBox.add_child(stl_item)
+
+
+"""
+Clears any previous items that were in the popup.
+"""
+func _clear_toolbar_popup():
+	# Clear the previous control item(s) from the DynamicContainer
+	for child in $ToolbarPopupPanel/ToolbarPopupVBox.get_children():
+		$ToolbarPopupPanel/ToolbarPopupVBox.remove_child(child)
+
+
+"""
+Sets up the export dialog for STL.
+"""
+func _show_export_stl():
+	$ToolbarPopupPanel.hide()
+	$ExportDialog.current_file = "component.stl"
+	$ExportDialog.popup_centered()
+
+
+"""
+Called when the user selects an export file location.
+"""
+func _on_ExportDialog_file_selected(path):
+	# Come up with a unique ID for the error file
+	var date_time = OS.get_datetime()
+	var file_id = str(date_time["year"]) + "_" +  str(date_time["month"]) + "_" + str(date_time["day"]) + "_" + str(date_time["hour"]) + "_" + str(date_time["minute"]) + "_" + str(date_time["second"])
+
+	# The currently rendered component should be here
+	var temp_file = OS.get_user_data_dir() + "/temp_component_path.py"
+
+	# Set up our command line parameters
+	var cur_error_file = OS.get_user_data_dir() + "/error_" + file_id + ".txt"
+	var array = ["--codec", "stl", "--infile", temp_file, "--outfile", path, "--errfile", cur_error_file]
+	var args = PoolStringArray(array)
+
+	# Execute the render script
+	var success = OS.execute("/home/jwright/Downloads/repos/jmwright/cq-cli/cq-cli.py", args, false)
+
+	# Track whether or not execution happened successfully
+	if success == -1:
+		status.text = "Export error"
