@@ -15,6 +15,7 @@ var home_transform # Allows us to move the camera back to the starting location/
 var origin_transform # Allows us to move the orgin camera view back to a starting transform
 var cam # The main camera for the 3D view
 var origin_cam # The camera showing the orientation of the component(s) via an origin indicator
+var light
 var vp # The 3D viewport
 var tabs # The tab container for component documents
 var context_handler # Handles the situation where the context Action menu needs to be populated
@@ -25,6 +26,7 @@ var history_tree_root = null
 func _ready():
 	origin_cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginOrbitCamera
 	cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
+	light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
 	vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
 	tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
 
@@ -335,6 +337,7 @@ func load_component_json(json_string):
 		# Set the camera to the safe distance and have it look at the origin
 		cam.look_at_from_position(Vector3(0, -safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
 		origin_cam.look_at_from_position(Vector3(0, -3, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
+		light.look_at_from_position(Vector3(0, -safe_distance, -safe_distance), Vector3(0, 0, 0), Vector3(0, 0, 1))
 
 		# Save this transform as the home transform
 		home_transform = cam.get_transform()
@@ -418,7 +421,7 @@ func _clear_viewport():
 
 	# Remove any child that is not the camera, assuming everything else is a MeshInstance
 	for child in children:
-		if child.get_name() != "MainOrbitCamera":
+		if child.get_name() != "MainOrbitCamera" and child.get_name() != "OmniLight":
 			vp.remove_child(child)
 
 

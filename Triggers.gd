@@ -73,6 +73,15 @@ var triggers  = {
 			"control": FilletControl.new()
 		}
 	},
+	"pushPoints": {
+		"group": "2d_operations",
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".pushPoints(.*)$",
+		"action": {
+			"name": "pushPoints",
+			"control": PushPointsControl.new()
+		}
+	},
 	"rect": {
 		"group": "2d_primitives",
 		"trigger": "\\..*(.*)$",

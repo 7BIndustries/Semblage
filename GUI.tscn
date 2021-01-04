@@ -319,6 +319,11 @@ world = SubResource( 27 )
 handle_input_locally = false
 render_target_update_mode = 3
 
+[node name="OmniLight" type="OmniLight" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 15 )
+light_energy = 3.0
+omni_range = 4096.0
+
 [node name="MainOrbitCamera" type="Camera" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3 )
 far = 8192.0

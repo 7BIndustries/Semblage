@@ -65,6 +65,11 @@ _global_script_classes=[ {
 "path": "res://cameras/OrbitCamera.gd"
 }, {
 "base": "VBoxContainer",
+"class": "PushPointsControl",
+"language": "GDScript",
+"path": "res://controls/PushPointsControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "RectControl",
 "language": "GDScript",
 "path": "res://controls/RectControl.gd"
@@ -106,6 +111,7 @@ _global_script_class_icons={
 "FilletControl": "",
 "OperationsControl": "",
 "OrbitCamera": "",
+"PushPointsControl": "",
 "RectControl": "",
 "SelectorControl": "",
 "ShellControl": "",
