@@ -94,7 +94,7 @@ func get_completed_template():
 
 	# Collect all of the points from the ItemList
 	var points = ""
-	for i in range(point_list_ctrl.get_item_count()):
+	for i in range(0, point_list_ctrl.get_item_count(), 1):
 		# See if we need to prepend a comma
 		if i > 0:
 			points += ","
@@ -132,17 +132,23 @@ Loads values into the control's sub-controls based on a code string.
 func set_values_from_string(text_line):
 	prev_template = text_line
 
+	# Clear the previous point list
+	for i in range(0, point_list_ctrl.get_item_count(), 1):
+		point_list_ctrl.remove_item(i)
+
 	var rgx = RegEx.new()
 
 	# Point list
 	rgx.compile(point_list_edit_rgx)
 	var res = rgx.search(text_line)
 	if res:
-		# Fill in the box dimension controls
+		# Extract the points
 		var points = res.get_string().split(")")
 		for point in points:
-			var clean_point = point.replace("(", "").replace(",(", "")
-			point_list_ctrl.add_item(clean_point)
+			var clean_point = point.replace(",(", "").replace("(", "")
+			if clean_point != "":
+				print(clean_point)
+				point_list_ctrl.add_item(clean_point)
 
 	# Selector
 	rgx.compile(select_edit_rgx)
@@ -181,7 +187,7 @@ func _edit_current_point():
 Allows the user to delete the currently selected point.
 """
 func _delete_current_point():
-	# Item to delte
+	# Item to delete
 	var selected_id = point_list_ctrl.get_selected_items()[0]
 	point_list_ctrl.remove_item(selected_id)
 
