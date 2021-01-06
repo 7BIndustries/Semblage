@@ -28,6 +28,15 @@ var triggers  = {
 			"control": CBoreHoleControl.new()
 		}
 	},
+	"cskHole": {
+		"group": "3d_operations",
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".cskHole(.*)$",
+		"action": {
+			"name": "cskHole",
+			"control": CSinkHoleControl.new()
+		}
+	},
 	"chamfer": {
 		"group": "3d_operations",
 		"trigger": "\\..*(.*)$",
