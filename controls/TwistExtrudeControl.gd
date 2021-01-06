@@ -1,25 +1,24 @@
 extends VBoxContainer
 
-class_name ExtrudeControl
+class_name TwistExtrudeControl
 
 var prev_template = null
 
-var template = ".extrude({distance},combine={combine},clean={clean},both={both},taper={taper})"
+var template = ".twistExtrude({distance},angleDegrees={angle_degrees},combine={combine},clean={clean})"
 var wp_template = ".workplane(invert={invert})"
 
-var dist_edit_rgx = "(?<=.extrude\\()(.*?)(?=,combine)"
+var dist_edit_rgx = "(?<=.twistExtrude\\()(.*?)(?=,angleDegrees)"
+var angle_edit_rgx = "(?<=angleDegrees\\=)(.*?)(?=\\,)"
 var combine_edit_rgx = "(?<=combine\\=)(.*?)(?=\\,)"
-var clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\,)"
-var both_edit_rgx = "(?<=both\\=)(.*?)(?=\\,)"
-var taper_edit_rgx = "(?<=taper\\=)(.*?)(?=\\))"
+var clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\))"
 var wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
 
 var distance_ctrl = null
+var angle_ctrl = null
 var combine_ctrl = null
 var clean_ctrl = null
-var both_ctrl = null
-var taper_ctrl = null
 var invert_ctrl = null
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -29,10 +28,19 @@ func _ready():
 	distance_lbl.set_text("Distance: ")
 	distance_group.add_child(distance_lbl)
 	distance_ctrl = LineEdit.new()
-	distance_ctrl.set_text("1.0")
+	distance_ctrl.set_text("5.0")
 	distance_group.add_child(distance_ctrl)
-
 	add_child(distance_group)
+
+	# Add the angle to twist through while extruding
+	var angle_group = HBoxContainer.new()
+	var angle_lbl = Label.new()
+	angle_lbl.set_text("Angle (Degrees): ")
+	angle_group.add_child(angle_lbl)
+	angle_ctrl = LineEdit.new()
+	angle_ctrl.set_text("30")
+	angle_group.add_child(angle_ctrl)
+	add_child(angle_group)
 
 	# Add the combine checkbox
 	var combine_group = HBoxContainer.new()
@@ -42,7 +50,6 @@ func _ready():
 	combine_ctrl = CheckBox.new()
 	combine_ctrl.pressed = true
 	combine_group.add_child(combine_ctrl)
-
 	add_child(combine_group)
 
 	# Add the clean checkbox
@@ -53,30 +60,7 @@ func _ready():
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
 	clean_group.add_child(clean_ctrl)
-
 	add_child(clean_group)
-
-	# Add the both checkbox
-	var both_group = HBoxContainer.new()
-	var both_lbl = Label.new()
-	both_lbl.set_text("Both: ")
-	both_group.add_child(both_lbl)
-	both_ctrl = CheckBox.new()
-	both_ctrl.pressed = false
-	both_group.add_child(both_ctrl)
-
-	add_child(both_group)
-
-	# Add the control for the amount of taper to apply
-	var taper_group = HBoxContainer.new()
-	var taper_lbl = Label.new()
-	taper_lbl.set_text("Taper: ")
-	taper_group.add_child(taper_lbl)
-	taper_ctrl = LineEdit.new()
-	taper_ctrl.set_text("0.0")
-	taper_group.add_child(taper_ctrl)
-
-	add_child(taper_group)
 
 	# Allow the user to flip the direction of the operation
 	var invert_group = HBoxContainer.new()
@@ -103,10 +87,9 @@ func get_completed_template():
 
 	complete += template.format({
 		"distance": distance_ctrl.get_text(),
+		"angle_degrees": angle_ctrl.get_text(),
 		"combine": combine_ctrl.pressed,
-		"clean": clean_ctrl.pressed,
-		"both": both_ctrl.pressed,
-		"taper": taper_ctrl.get_text()
+		"clean": clean_ctrl.pressed
 	})
 
 	return complete
@@ -134,6 +117,12 @@ func set_values_from_string(text_line):
 	if res:
 		distance_ctrl.set_text(res.get_string())
 
+	# Twist angle (Degrees)
+	rgx.compile(angle_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		angle_ctrl.set_text(res.get_string())
+
 	# Combine boolean
 	rgx.compile(combine_edit_rgx)
 	res = rgx.search(text_line)
@@ -147,19 +136,6 @@ func set_values_from_string(text_line):
 	if res:
 		var clean = res.get_string()
 		clean_ctrl.pressed = true if clean == "True" else false
-
-	# Both boolean
-	rgx.compile(both_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		var both = res.get_string()
-		both_ctrl.pressed = true if both == "True" else false
-
-	# Taper amount
-	rgx.compile(taper_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		taper_ctrl.set_text(res.get_string())
 
 	# Workplane (invert) edit
 	rgx.compile(wp_edit_rgx)

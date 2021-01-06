@@ -135,5 +135,14 @@ var triggers  = {
 			"name": "split",
 			"control": SplitControl.new()
 		}
+	},
+	"twistExtrude": {
+		"group": "3d_operations",
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": "^.twistExtrude(.*)$",
+		"action": {
+			"name": "twistExtrude",
+			"control": TwistExtrudeControl.new()
+		}
 	}
 }

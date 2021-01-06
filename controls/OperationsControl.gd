@@ -6,14 +6,16 @@ class_name OperationsControl
 
 var prev_template = null
 
-var op_list = ["None", "Extrude", "Blind Cut"] #, "Revolve", "Thru Cut"
+var op_list = ["None", "Extrude", "Twist Extrude", "Blind Cut"] #, "Revolve", "Thru Cut"
 
 var op_ctrl = null
 var extrude_lbl = null
 var extrude_ctrl = null
+var twist_extrude_ctrl = null
 var cut_blind_ctrl = null
 
 var extrude_edit_rgx = ".extrude\\(.*\\)"
+var twist_extrude_edit_rgx = ".twistExtrude\\(.*\\)"
 var cut_blind_edit_rgx = ".cutBlind\\(.*\\)"
 
 # Called when the node enters the scene tree for the first time.
@@ -34,6 +36,11 @@ func _ready():
 	extrude_ctrl.hide()
 	add_child(extrude_ctrl)
 
+	# The Twist Extrude control, which will be hidden unless it is needed
+	twist_extrude_ctrl = TwistExtrudeControl.new()
+	twist_extrude_ctrl.hide()
+	add_child(twist_extrude_ctrl)
+
 	# The Cut Blind control, which will be hidden unless it is needed
 	cut_blind_ctrl = BlindCutControl.new()
 	cut_blind_ctrl.hide()
@@ -50,9 +57,15 @@ func _op_ctrl_item_selected(index):
 	# Figure out which controls, if any, to show
 	if op_ctrl.get_item_text(index) == "Extrude":
 		cut_blind_ctrl.hide()
+		twist_extrude_ctrl.hide()
 		extrude_ctrl.show()
+	elif op_ctrl.get_item_text(index) == "Twist Extrude":
+		extrude_ctrl.hide()
+		cut_blind_ctrl.hide()
+		twist_extrude_ctrl.show()
 	elif op_ctrl.get_item_text(index) == "Blind Cut":
 		extrude_ctrl.hide()
+		twist_extrude_ctrl.hide()
 		cut_blind_ctrl.show()
 
 
@@ -70,6 +83,8 @@ func get_completed_template():
 	# If the selector control is visible, prepend its contents
 	if extrude_ctrl.visible:
 		complete += extrude_ctrl.get_completed_template()
+	elif twist_extrude_ctrl.visible:
+		complete += twist_extrude_ctrl.get_completed_template()
 	elif cut_blind_ctrl.visible:
 		complete += cut_blind_ctrl.get_completed_template()
 
@@ -99,6 +114,14 @@ func set_values_from_string(text_line):
 		ControlsCommon.set_option_btn_by_text(op_ctrl, "Extrude")
 		extrude_ctrl.set_values_from_string(res.get_string())
 		extrude_ctrl.show()
+
+	# Twist extrude
+	rgx.compile(twist_extrude_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		ControlsCommon.set_option_btn_by_text(op_ctrl, "Twist Extrude")
+		twist_extrude_ctrl.set_values_from_string(res.get_string())
+		twist_extrude_ctrl.show()
 
 	# Cut blind
 	rgx.compile(cut_blind_edit_rgx)

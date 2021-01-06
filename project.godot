@@ -105,6 +105,11 @@ _global_script_classes=[ {
 "path": "res://controls/SplitControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "TwistExtrudeControl",
+"language": "GDScript",
+"path": "res://controls/TwistExtrudeControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "WorkplaneControl",
 "language": "GDScript",
 "path": "res://controls/WorkplaneControl.gd"
@@ -129,6 +134,7 @@ _global_script_class_icons={
 "ShellControl": "",
 "SlotControl": "",
 "SplitControl": "",
+"TwistExtrudeControl": "",
 "WorkplaneControl": ""
 }
 
