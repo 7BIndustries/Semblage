@@ -82,6 +82,15 @@ var triggers  = {
 			"control": FilletControl.new()
 		}
 	},
+	"hole": {
+		"group": "3d_operations",
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".hole(.*)$",
+		"action": {
+			"name": "hole",
+			"control": HoleControl.new()
+		}
+	},
 	"pushPoints": {
 		"group": "2d_operations",
 		"trigger": "\\..*(.*)$",

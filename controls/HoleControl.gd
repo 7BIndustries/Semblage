@@ -1,18 +1,16 @@
 extends VBoxContainer
 
-class_name CSinkHoleControl
+class_name HoleControl
 
 var prev_template = null
 
 var select_ctrl = null
 var hole_dia_ctrl = null
 var hole_depth_ctrl = null
-var csink_dia_ctrl = null
-var csink_angle_ctrl = null
 var clean_ctrl = null
 var hide_show_btn = null
 
-var template = ".cskHole({diameter},{csink_diameter},{csink_angle},depth={depth},clean={clean})"
+var template = ".hole({diameter},depth={depth},clean={clean})"
 
 var dims_edit_rgx = "(?<=.cboreHole\\()(.*?)(?=,depth)"
 var depth_edit_rgx = "(?<=depth\\=)(.*?)(?=\\,clean)"
@@ -40,26 +38,6 @@ func _ready():
 	hole_depth_ctrl.set_text("0")
 	hole_depth_group.add_child(hole_depth_ctrl)
 	add_child(hole_depth_group)
-
-	# Add csink hole diameter control
-	var csink_dia_group = HBoxContainer.new()
-	var csink_dia_lbl = Label.new()
-	csink_dia_lbl.set_text("Counter-Sink Diameter: ")
-	csink_dia_group.add_child(csink_dia_lbl)
-	csink_dia_ctrl = LineEdit.new()
-	csink_dia_ctrl.set_text("5.0")
-	csink_dia_group.add_child(csink_dia_ctrl)
-	add_child(csink_dia_group)
-
-	# Add csink angle control
-	var csink_angle_group = HBoxContainer.new()
-	var csink_angle_lbl = Label.new()
-	csink_angle_lbl.set_text("Counter-Sink Angle: ")
-	csink_angle_group.add_child(csink_angle_lbl)
-	csink_angle_ctrl = LineEdit.new()
-	csink_angle_ctrl.set_text("82")
-	csink_angle_group.add_child(csink_angle_ctrl)
-	add_child(csink_angle_group)
 
 	# Add the clean checkbox
 	var clean_group = HBoxContainer.new()
@@ -106,8 +84,6 @@ func get_completed_template():
 	complete += template.format({
 		"diameter": hole_dia_ctrl.get_text(),
 		"depth": depth,
-		"csink_diameter": csink_dia_ctrl.get_text(),
-		"csink_angle": csink_angle_ctrl.get_text(),
 		"clean": clean_ctrl.pressed
 	})
 
@@ -145,10 +121,8 @@ func set_values_from_string(text_line):
 	var res = rgx.search(text_line)
 	if res:
 		# Fill in the box dimension controls
-		var dims = res.get_string().split(",")
-		hole_dia_ctrl.set_text(dims[0])
-		csink_dia_ctrl.set_text(dims[1])
-		csink_angle_ctrl.set_text(dims[2])
+		var dims = res.get_string()
+		hole_dia_ctrl.set_text(dims)
 
 	# Hole depth edit
 	rgx.compile(depth_edit_rgx)
