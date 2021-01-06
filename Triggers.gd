@@ -118,6 +118,15 @@ var triggers  = {
 			"control": RectControl.new()
 		}
 	},
+	"revolve": {
+		"group": "3d_operations",
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".revolve(.*)$",
+		"action": {
+			"name": "revolve",
+			"control": RevolveControl.new()
+		}
+	},
 	"shell": {
 		"group": "3d_operations",
 		"trigger": "\\..*(.*)$",
