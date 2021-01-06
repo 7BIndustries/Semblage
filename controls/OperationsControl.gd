@@ -6,17 +6,19 @@ class_name OperationsControl
 
 var prev_template = null
 
-var op_list = ["None", "Extrude", "Twist Extrude", "Blind Cut"] #, "Revolve", "Thru Cut"
+var op_list = ["None", "Extrude", "Twist Extrude", "Blind Cut", "Thru Cut"] #, "Revolve"
 
 var op_ctrl = null
 var extrude_lbl = null
 var extrude_ctrl = null
 var twist_extrude_ctrl = null
 var cut_blind_ctrl = null
+var cut_thru_ctrl
 
 var extrude_edit_rgx = ".extrude\\(.*\\)"
 var twist_extrude_edit_rgx = ".twistExtrude\\(.*\\)"
 var cut_blind_edit_rgx = ".cutBlind\\(.*\\)"
+var cut_thru_edit_rgx = ".cutThru\\(.*\\)"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -41,10 +43,15 @@ func _ready():
 	twist_extrude_ctrl.hide()
 	add_child(twist_extrude_ctrl)
 
-	# The Cut Blind control, which will be hidden unless it is needed
+	# The Blind Cut control, which will be hidden unless it is needed
 	cut_blind_ctrl = BlindCutControl.new()
 	cut_blind_ctrl.hide()
 	add_child(cut_blind_ctrl)
+
+	# The Thru Cut control, which will be hidden unless it is needed
+	cut_thru_ctrl = ThruCutControl.new()
+	cut_thru_ctrl.hide()
+	add_child(cut_thru_ctrl)
 
 
 """
@@ -53,20 +60,19 @@ Called when the user selects a new Operation from the Operations option button.
 func _op_ctrl_item_selected(index):
 	# Hide all of the existing controls and start fresh
 	extrude_ctrl.hide()
+	twist_extrude_ctrl.hide()
+	cut_blind_ctrl.hide()
+	cut_thru_ctrl.hide()
 
 	# Figure out which controls, if any, to show
 	if op_ctrl.get_item_text(index) == "Extrude":
-		cut_blind_ctrl.hide()
-		twist_extrude_ctrl.hide()
 		extrude_ctrl.show()
 	elif op_ctrl.get_item_text(index) == "Twist Extrude":
-		extrude_ctrl.hide()
-		cut_blind_ctrl.hide()
 		twist_extrude_ctrl.show()
 	elif op_ctrl.get_item_text(index) == "Blind Cut":
-		extrude_ctrl.hide()
-		twist_extrude_ctrl.hide()
 		cut_blind_ctrl.show()
+	elif op_ctrl.get_item_text(index) == "Thru Cut":
+		cut_thru_ctrl.show()
 
 
 """
@@ -87,6 +93,8 @@ func get_completed_template():
 		complete += twist_extrude_ctrl.get_completed_template()
 	elif cut_blind_ctrl.visible:
 		complete += cut_blind_ctrl.get_completed_template()
+	elif cut_thru_ctrl.visible:
+		complete += cut_thru_ctrl.get_completed_template()
 
 	return complete
 
@@ -130,3 +138,11 @@ func set_values_from_string(text_line):
 		ControlsCommon.set_option_btn_by_text(op_ctrl, "Blind Cut")
 		cut_blind_ctrl.set_values_from_string(res.get_string())
 		cut_blind_ctrl.show()
+
+	# Cut thru
+	rgx.compile(cut_thru_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		ControlsCommon.set_option_btn_by_text(op_ctrl, "Thru Cut")
+		cut_thru_ctrl.set_values_from_string(res.get_string())
+		cut_thru_ctrl.show()

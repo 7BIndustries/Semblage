@@ -1,34 +1,23 @@
 extends VBoxContainer
 
-class_name BlindCutControl
+class_name ThruCutControl
 
 var prev_template = null
 
-var template = ".cutBlind({distance},clean={clean},taper={taper})"
+var template = ".cutThruAll(clean={clean},taper={taper})"
 var wp_template = ".workplane(invert={invert})"
 
-var dist_edit_rgx = "(?<=.cutBlind\\()(.*?)(?=,clean)"
 var clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\,)"
 var taper_edit_rgx = "(?<=taper\\=)(.*?)(?=\\))"
 var wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
 
-var distance_ctrl = null
 var clean_ctrl = null
 var taper_ctrl = null
 var invert_ctrl = null
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	# Add the control for the distance to cut
-	var distance_group = HBoxContainer.new()
-	var distance_lbl = Label.new()
-	distance_lbl.set_text("Distance to Cut: ")
-	distance_group.add_child(distance_lbl)
-	distance_ctrl = LineEdit.new()
-	distance_ctrl.set_text("1.0")
-	distance_group.add_child(distance_ctrl)
-	add_child(distance_group)
-
 	# Add the clean checkbox
 	var clean_group = HBoxContainer.new()
 	var clean_lbl = Label.new()
@@ -59,6 +48,7 @@ func _ready():
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
 
+
 """
 Fills out the template and returns it.
 """
@@ -72,7 +62,6 @@ func get_completed_template():
 		})
 
 	complete += template.format({
-		"distance": distance_ctrl.get_text(),
 		"clean": clean_ctrl.pressed,
 		"taper": taper_ctrl.get_text()
 	})
@@ -96,15 +85,9 @@ func set_values_from_string(text_line):
 
 	var rgx = RegEx.new()
 
-	# Cut distance
-	rgx.compile(dist_edit_rgx)
-	var res = rgx.search(text_line)
-	if res:
-		distance_ctrl.set_text(res.get_string())
-
 	# Clean boolean
 	rgx.compile(clean_edit_rgx)
-	res = rgx.search(text_line)
+	var res = rgx.search(text_line)
 	if res:
 		var clean = res.get_string()
 		clean_ctrl.pressed = true if clean == "True" else false

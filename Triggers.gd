@@ -64,6 +64,15 @@ var triggers  = {
 			"control": BlindCutControl.new()
 		}
 	},
+	"cutThruAll": {
+		"group": "3d_operations",
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": "^.cutThruAll(.*)$",
+		"action": {
+			"name": "cutThruAll",
+			"control": ThruCutControl.new()
+		}
+	},
 	"extrude": {
 		"group": "3d_operations",
 		"trigger": "\\..*(.*)$",
