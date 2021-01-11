@@ -21,6 +21,10 @@ var tabs # The tab container for component documents
 var context_handler # Handles the situation where the context Action menu needs to be populated
 var object_tree_root = null
 var history_tree_root = null
+var all_btn = null # The All group button in the Action panel
+var three_d_btn = null # The 3D group button in the Action panel
+var two_d_btn = null # The 2D group button in the Action panel
+var sketch_btn = null # The sketch button in the Action panel
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -29,12 +33,16 @@ func _ready():
 	light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
 	vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
 	tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
+	all_btn = $ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/AllButton
+	three_d_btn = $ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton
+	two_d_btn = $ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/TwoDButton
+	sketch_btn = $ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton
 
 	# Set the default tab to let the user know where to start
 	tabs.set_tab_title(0, "Start")
 
 	# Start off with the base script text
-	component_text = "import cadquery as cq\nresult=cq"
+	component_text = "# Semblage v1\nimport cadquery as cq\nresult=cq"
 
 	# Instantiate the context handler which tells us what type of Action we are dealing with
 	context_handler = ContextHandler.new()
@@ -42,6 +50,8 @@ func _ready():
 	# Get the object and history trees ready to use
 	_init_history_tree()
 	_init_object_tree()
+
+	all_btn.pressed = true
 
 	# Let the user know the app is ready to use
 	status = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
@@ -161,7 +171,30 @@ func _on_OpenDialog_file_selected(path):
 	# Load the component text to handle later
 	component_text = load_component_file(open_file_path)
 
+	# If this is a Semblage component file, load it into the history and object trees
+	if component_text.begins_with("# Semblage v"):
+		load_semblage_component(component_text)
+
 	generate_component(open_file_path)
+
+
+"""
+Loads a Semblage component file into the history and object trees.
+"""
+func load_semblage_component(text):
+	var lines = text.split("\n")
+
+	# Step through all the lines and look for statements that need to be replayed
+	for line in lines:
+		if line.begins_with("result = result"):
+			var addition = line.replace("result = result", "")
+			_add_item_to_history_tree(addition)
+
+			# If there is an object to add, add it
+			var new_object = context_handler.get_object_from_context(addition)
+			if new_object != null:
+				_add_item_to_object_tree(new_object)
+
 
 """
 Loads the text of a file into a string to be manipulated by the GUI.
@@ -483,18 +516,33 @@ func _on_ActionPopupPanel_ok_signal(edit_mode):
 			tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree
 			_update_tree_item(tree, prev_object, new_object)
 	else:
-		var new_hist_item = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.create_item(self.history_tree_root)
-		new_hist_item.set_text(0, $ActionPopupPanel.get_latest_context_addition())
+		# Add the current item to the history tree
+		var context_item_text = $ActionPopupPanel.get_latest_context_addition()
+		_add_item_to_history_tree(context_item_text)
 
 		# Find any object name (if present) that needs to be displayed in the list
 		var new_object = $ActionPopupPanel.get_latest_object_addition()
-		var ot = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree
-		if new_object and not _check_tree_item_exists(ot, new_object):
-			var new_obj_item = ot.create_item(self.object_tree_root)
-			new_obj_item.set_text(0, new_object)
+		_add_item_to_object_tree(new_object)
 	
 	generate_component(open_file_path, component_text)
 
+
+"""
+Adds a single item to the history tree.
+"""
+func _add_item_to_history_tree(item_text):
+	var new_hist_item = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.create_item(self.history_tree_root)
+	new_hist_item.set_text(0, item_text)
+
+
+"""
+Adds a single item to the object tree.
+"""
+func _add_item_to_object_tree(new_object):
+	var ot = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree
+	if new_object and not _check_tree_item_exists(ot, new_object):
+		var new_obj_item = ot.create_item(self.object_tree_root)
+		new_obj_item.set_text(0, new_object)
 
 """
 Updates a matching item in the given tree with a new entry during an edit.
@@ -719,3 +767,47 @@ func _on_ExportDialog_file_selected(path):
 	# Track whether or not execution happened successfully
 	if success == -1:
 		status.text = "Export error"
+
+
+"""
+Called when the user clicks the All button and toggles it.
+"""
+func _on_AllButton_toggled(button_pressed):
+	# Make sure that the other buttons are not toggled
+	if all_btn.pressed == true:
+		three_d_btn.pressed = false
+		two_d_btn.pressed = false
+		sketch_btn.pressed = false
+
+
+"""
+Called when the user clicks the 3D button and toggles it.
+"""
+func _on_ThreeDButton_toggled(button_pressed):
+	# Make sure that the other buttons are not toggled
+	if three_d_btn.pressed == true:
+		all_btn.pressed = false
+		two_d_btn.pressed = false
+		sketch_btn.pressed = false
+
+
+"""
+Called when the user clicks the 2D button and toggles it.
+"""
+func _on_TwoDButton_toggled(button_pressed):
+	# Make sure that the other buttons are not toggled
+	if two_d_btn.pressed == true:
+		all_btn.pressed = false
+		three_d_btn.pressed = false
+		sketch_btn.pressed = false
+
+
+"""
+Called when the user clicks the Sketch button and toggles it.
+"""
+func _on_SketchButton_toggled(button_pressed):
+	# Make sure that the other buttons are not toggled
+	if sketch_btn.pressed == true:
+		all_btn.pressed = false
+		three_d_btn.pressed = false
+		two_d_btn.pressed = false

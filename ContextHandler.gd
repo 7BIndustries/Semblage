@@ -38,7 +38,7 @@ func update_context_string(context, addition):
 	self.latest_context_addition = addition
 
 	# Save the current and previous object additions, if any
-	var tmp_obj = _get_object_from_context(self.latest_context_addition)
+	var tmp_obj = get_object_from_context(self.latest_context_addition)
 	if tmp_obj:
 		# Save the previous object for editing purposes
 		self.prev_object_addition = self.latest_object_addition
@@ -47,7 +47,7 @@ func update_context_string(context, addition):
 		self.latest_object_addition = tmp_obj
 
 	# Create the new context based on the appropriate template of what comes next
-	var new_context = context + self.latest_context_addition
+	var new_context = context + "\n" + "result = result" + self.latest_context_addition
 
 	return new_context
 
@@ -61,7 +61,7 @@ func edit_context_string(context, old_text, new_text):
 		self.latest_context_addition = new_text
 
 	# Save the current and previous object additions, if any
-	var tmp_obj = _get_object_from_context(new_text)
+	var tmp_obj = get_object_from_context(new_text)
 
 	if tmp_obj:
 		self.prev_object_addition = self.latest_object_addition
@@ -117,7 +117,7 @@ func find_matching_edit_trigger(code_text):
 """
 Returns any tagged objects specified via tags in the context.
 """
-func _get_object_from_context(context):
+func get_object_from_context(context):
 	# Use a regular expression to extract the tag names
 	var object_rgx = RegEx.new()
 	object_rgx.compile("(?<=tag\\(\")(.*)(?=\"\\))")
