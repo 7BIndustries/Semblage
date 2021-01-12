@@ -506,7 +506,16 @@ access = 2
 current_dir = "/"
 current_file = "component.stl"
 current_path = "/component.stl"
+
+[node name="SaveDialog" type="FileDialog" parent="."]
+margin_right = 640.0
+margin_bottom = 480.0
+access = 2
+filters = PoolStringArray( "*.py" )
+current_dir = "/home/jwright/Downloads/repos/Semblage"
+current_path = "/home/jwright/Downloads/repos/Semblage/"
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton" to="." method="_on_OpenButton_button_down"]
+[connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton" to="." method="_on_SaveButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton" to="." method="_on_MakeButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton" to="." method="_on_ReloadButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton" to="." method="_on_CloseButton_button_down"]
@@ -532,3 +541,4 @@ current_path = "/component.stl"
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/PreviewButton" to="ActionPopupPanel" method="_on_PreviewButton_button_down"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/CancelButton" to="ActionPopupPanel" method="_on_CancelButton_button_down"]
 [connection signal="file_selected" from="ExportDialog" to="." method="_on_ExportDialog_file_selected"]
+[connection signal="file_selected" from="SaveDialog" to="." method="_on_SaveDialog_file_selected"]

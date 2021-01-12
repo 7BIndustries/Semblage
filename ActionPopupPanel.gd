@@ -168,6 +168,13 @@ func _on_OkButton_button_down():
 
 
 """
+Allows the main GUI to essentially replay the context additions from a loaded file.
+"""
+func update_context_string(incoming_context, context_addition):
+	original_context = incoming_context
+	new_context = context_handler.update_context_string(original_context, context_addition)
+
+"""
 Called when the Cancel button is pressed so that this popup can just be closed.
 """
 func _on_CancelButton_button_down():

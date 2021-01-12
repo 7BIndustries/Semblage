@@ -133,21 +133,6 @@ func _process(delta):
 
 		cur_file.close()
 
-"""
-Handles user input, specifically the non-camera inputs like right-clicking for the 
-action menu.
-"""
-#func _input(event):
-#	match event.get_class():
-#		"InputEventMouseButton":
-#			# See if the user requested the action menu
-#			if Input.is_action_just_pressed("Action"):
-#				# Set the menu at the mouse cursor position
-#				var mouse_pos = get_viewport().get_mouse_position()
-#
-#				$ActionPopupPanel.show_modal(true)
-#				$ActionPopupPanel.activate_popup(mouse_pos, component_text)
-
 
 """
 Handler for when the Open Component button is clicked.
@@ -184,16 +169,25 @@ Loads a Semblage component file into the history and object trees.
 func load_semblage_component(text):
 	var lines = text.split("\n")
 
+	# Start the component text off with what we know the first 3 lines will be
+	component_text = "# Semblage v1\nimport cadquery as cq\nresult=cq"
+
 	# Step through all the lines and look for statements that need to be replayed
 	for line in lines:
 		if line.begins_with("result = result"):
+			# Update the context string in the ContextHandler
 			var addition = line.replace("result = result", "")
-			_add_item_to_history_tree(addition)
+			$ActionPopupPanel.update_context_string(component_text, addition)
 
-			# If there is an object to add, add it
-			var new_object = context_handler.get_object_from_context(addition)
-			if new_object != null:
-				_add_item_to_object_tree(new_object)
+			# Add the current item to the history tree
+			var context_item_text = $ActionPopupPanel.get_latest_context_addition()
+			_add_item_to_history_tree(context_item_text)
+
+			# Find any object name (if present) that needs to be displayed in the list
+			var new_object = $ActionPopupPanel.get_latest_object_addition()
+			_add_item_to_object_tree(new_object)
+
+			component_text = $ActionPopupPanel.get_new_context()
 
 
 """
@@ -720,11 +714,92 @@ func _on_MakeButton_button_down():
 		$ToolbarPopupPanel.rect_position = Vector2(pos.x, pos.y + size.y)
 		$ToolbarPopupPanel.show()
 
-	# Populate the appropriate menu items
+	# Add the STL export button
 	var stl_item = Button.new()
 	stl_item.set_text("STL")
 	stl_item.connect("button_down", self, "_show_export_stl")
 	$ToolbarPopupPanel/ToolbarPopupVBox.add_child(stl_item)
+
+	# Add the STEP export button
+	var step_item = Button.new()
+	step_item.set_text("STEP")
+	step_item.connect("button_down", self, "_show_export_step")
+	$ToolbarPopupPanel/ToolbarPopupVBox.add_child(step_item)
+
+
+"""
+Called when the user clicks the save button.
+"""
+func _on_SaveButton_button_down():
+	var pos = $GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton.rect_position
+	var size = $GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton.rect_size
+
+	# Clear any previous items
+	_clear_toolbar_popup()
+
+	# Toggle the visiblity of the popup
+	if $ToolbarPopupPanel.visible:
+		$ToolbarPopupPanel.hide()
+	else:
+		$ToolbarPopupPanel.rect_position = Vector2(pos.x, pos.y + size.y)
+		$ToolbarPopupPanel.show()
+
+	# Add the Save Component button
+	var save_item = Button.new()
+	save_item.set_text("Save")
+	save_item.connect("button_down", self, "_save_component")
+	$ToolbarPopupPanel/ToolbarPopupVBox.add_child(save_item)
+
+	# Add the Save As button
+	var save_as_item = Button.new()
+	save_as_item.set_text("Save As")
+	save_as_item.connect("button_down", self, "_save_component_as")
+	$ToolbarPopupPanel/ToolbarPopupVBox.add_child(save_as_item)
+
+
+"""
+Called when the Save component button is clicked.
+"""
+func _save_component():
+	$ToolbarPopupPanel.hide()
+
+	if self.open_file_path == null:
+		_save_component_as()
+	else:
+		# Save the current component's text to the specified file
+		_save_component_text()
+
+
+"""
+Called when the Save As component button is clicked.
+"""
+func _save_component_as():
+	$ToolbarPopupPanel.hide()
+
+	$SaveDialog.current_file = "component.py"
+	$SaveDialog.popup_centered()
+
+
+"""
+Called when a user selects the component's save location.
+"""
+func _on_SaveDialog_file_selected(path):
+	if path != null:
+		# Keep track of where the currently open file is
+		self.open_file_path = path
+
+		# Save the current component's text to the specified file
+		_save_component_text()
+
+
+"""
+Handles the heavy lifting of saving the component text to file.
+"""
+func _save_component_text():
+	var file = File.new()
+	file.open(self.open_file_path, File.WRITE)
+	file.store_string(self.component_text + "\nshow_object(result)")
+	file.close()
 
 
 """
@@ -746,9 +821,25 @@ func _show_export_stl():
 
 
 """
+Sets up the export dialog for STEP.
+"""
+func _show_export_step():
+	$ToolbarPopupPanel.hide()
+	$ExportDialog.current_file = "component.step"
+	$ExportDialog.popup_centered()
+
+
+"""
 Called when the user selects an export file location.
 """
 func _on_ExportDialog_file_selected(path):
+	var extension = path.split(".")[-1]
+
+	# Make sure the user gave a valid extension
+	if extension != "stl" and extension != "step":
+		status.text = "Export only supports the 'stl' and 'step' file extensions. Please try again."
+		return
+
 	# Come up with a unique ID for the error file
 	var date_time = OS.get_datetime()
 	var file_id = str(date_time["year"]) + "_" +  str(date_time["month"]) + "_" + str(date_time["day"]) + "_" + str(date_time["hour"]) + "_" + str(date_time["minute"]) + "_" + str(date_time["second"])
@@ -758,7 +849,7 @@ func _on_ExportDialog_file_selected(path):
 
 	# Set up our command line parameters
 	var cur_error_file = OS.get_user_data_dir() + "/error_" + file_id + ".txt"
-	var array = ["--codec", "stl", "--infile", temp_file, "--outfile", path, "--errfile", cur_error_file]
+	var array = ["--codec", extension, "--infile", temp_file, "--outfile", path, "--errfile", cur_error_file]
 	var args = PoolStringArray(array)
 
 	# Execute the render script
