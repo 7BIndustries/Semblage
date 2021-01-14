@@ -438,6 +438,7 @@ icon = ExtResource( 13 )
 [node name="SketchButton" type="Button" parent="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer"]
 margin_right = 12.0
 margin_bottom = 20.0
+toggle_mode = true
 icon = ExtResource( 14 )
 
 [node name="HSeparator3" type="HSeparator" parent="ActionPopupPanel/VBoxContainer"]

@@ -12,6 +12,7 @@ var new_context = null
 var new_template = null
 var prev_template = null
 var edit_mode = false
+var action_filter = "All"
 
 
 """
@@ -26,7 +27,9 @@ func _ready():
 Called to prepare the popup to be viewed by the user, complete with controls
 appropriate to the Action(s) that can be taken next.
 """
-func activate_popup(mouse_pos, context, action):
+func activate_popup(mouse_pos, context, action, action_filter):
+	self.action_filter = action_filter
+
 	# Save the incoming context to revert back to it later
 	original_context = context
 
@@ -51,18 +54,44 @@ func activate_popup(mouse_pos, context, action):
 
 
 """
+Allows Action items to be filtered based on what group is picked.
+"""
+func refresh_actions(context, action_filter):
+	self.action_filter = action_filter
+
+	# Make way for the new controls
+	clear_popup(true)
+
+	# Populate the new controls given the context
+	var action = context_handler.get_next_action(context)
+	populate_context_controls(action)
+
+
+"""
 Builds up the dynamic controls in the popup.
 """
 func populate_context_controls(actions):
 	# Save the actions so we can change control groups later
 	self.actions = actions
 
+	# Track the first action that we found that matches the group
+	var first_action = null
+
 	# Add all matching actions to the dropdown
 	for action in actions.keys():
-		self.get_node("VBoxContainer/ActionOptionButton").add_item(action)
+		var filter = actions[action].group
+
+		if filter == "All" or self.action_filter == "All" or filter == self.action_filter:
+			# See if we need to save this as the first action
+			if first_action == null:
+				first_action = action
+
+			self.get_node("VBoxContainer/ActionOptionButton").add_item(action)
 
 	# Populate the default controls
-	_set_up_action_controls(actions, actions.keys()[0])
+	if first_action == null:
+		first_action = actions.keys()[0]
+	_set_up_action_controls(actions, first_action)
 
 
 """

@@ -25,6 +25,7 @@ var all_btn = null # The All group button in the Action panel
 var three_d_btn = null # The 3D group button in the Action panel
 var two_d_btn = null # The 2D group button in the Action panel
 var sketch_btn = null # The sketch button in the Action panel
+var action_filter = "All" # The filter for which items should be displayed
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -672,7 +673,7 @@ Fired when the Action popup needs to be displayed.
 """
 func _on_DocumentTabs_activate_action_popup(mouse_pos):
 	$ActionPopupPanel.show_modal(true)
-	$ActionPopupPanel.activate_popup(mouse_pos, component_text, null)
+	$ActionPopupPanel.activate_popup(mouse_pos, component_text, null, self.action_filter)
 
 
 """
@@ -691,7 +692,7 @@ func _on_HistoryTree_item_activated():
 
 	var mouse_pos = get_viewport().get_mouse_position()
 	$ActionPopupPanel.show_modal(true)
-	$ActionPopupPanel.activate_popup(mouse_pos, component_text, popup_action)
+	$ActionPopupPanel.activate_popup(mouse_pos, component_text, popup_action, null)
 
 	# Get the parts of the item text that can be used to set the control values
 	popup_action.get(popup_action.keys()[0]).control.set_values_from_string(item_text)
@@ -870,6 +871,10 @@ func _on_AllButton_toggled(button_pressed):
 		two_d_btn.pressed = false
 		sketch_btn.pressed = false
 
+		action_filter = "All"
+
+	$ActionPopupPanel.refresh_actions(self.component_text, self.action_filter)
+
 
 """
 Called when the user clicks the 3D button and toggles it.
@@ -880,6 +885,10 @@ func _on_ThreeDButton_toggled(button_pressed):
 		all_btn.pressed = false
 		two_d_btn.pressed = false
 		sketch_btn.pressed = false
+
+		action_filter = "3D"
+
+	$ActionPopupPanel.refresh_actions(self.component_text, self.action_filter)
 
 
 """
@@ -892,6 +901,10 @@ func _on_TwoDButton_toggled(button_pressed):
 		three_d_btn.pressed = false
 		sketch_btn.pressed = false
 
+		action_filter = "2D"
+
+		$ActionPopupPanel.refresh_actions(self.component_text, self.action_filter)
+
 
 """
 Called when the user clicks the Sketch button and toggles it.
@@ -902,3 +915,8 @@ func _on_SketchButton_toggled(button_pressed):
 		all_btn.pressed = false
 		three_d_btn.pressed = false
 		two_d_btn.pressed = false
+
+		action_filter = "Sketch"
+
+		$ActionPopupPanel.refresh_actions(self.component_text, self.action_filter)
+
