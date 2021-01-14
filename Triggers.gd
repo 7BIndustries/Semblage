@@ -19,15 +19,6 @@ var triggers  = {
 			"control": BoxControl.new()
 		}
 	},
-	"sphere": {
-		"trigger": "\\..*(.*)$",
-		"edit_trigger": ".sphere(.*)$",
-		"action": {
-			"name": "sphere",
-			"group": "3D",
-			"control": SphereControl.new()
-		}
-	},
 	"cboreHole": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".cboreHole(.*)$",
@@ -35,15 +26,6 @@ var triggers  = {
 			"name": "cboreHole",
 			"group": "3D",
 			"control": CBoreHoleControl.new()
-		}
-	},
-	"cskHole": {
-		"trigger": "\\..*(.*)$",
-		"edit_trigger": ".cskHole(.*)$",
-		"action": {
-			"name": "cskHole",
-			"group": "3D",
-			"control": CSinkHoleControl.new()
 		}
 	},
 	"chamfer": {
@@ -55,13 +37,13 @@ var triggers  = {
 			"control": ChamferControl.new()
 		}
 	},
-	"circle": {
+	"cskHole": {
 		"trigger": "\\..*(.*)$",
-		"edit_trigger": ".circle(.*)$",
+		"edit_trigger": ".cskHole(.*)$",
 		"action": {
-			"name": "circle",
-			"group": "2D",
-			"control": CircleControl.new()
+			"name": "cskHole",
+			"group": "3D",
+			"control": CSinkHoleControl.new()
 		}
 	},
 	"cutBlind": {
@@ -109,24 +91,6 @@ var triggers  = {
 			"control": HoleControl.new()
 		}
 	},
-	"pushPoints": {
-		"trigger": "\\..*(.*)$",
-		"edit_trigger": ".pushPoints(.*)$",
-		"action": {
-			"name": "pushPoints",
-			"group": "2D",
-			"control": PushPointsControl.new()
-		}
-	},
-	"rect": {
-		"trigger": "\\..*(.*)$",
-		"edit_trigger": ".rect(.*)$",
-		"action": {
-			"name": "rect",
-			"group": "2D",
-			"control": RectControl.new()
-		}
-	},
 	"revolve": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".revolve(.*)$",
@@ -145,13 +109,13 @@ var triggers  = {
 			"control": ShellControl.new()
 		}
 	},
-	"slot": {
+	"sphere": {
 		"trigger": "\\..*(.*)$",
-		"edit_trigger": ".slot2D(.*)$",
+		"edit_trigger": ".sphere(.*)$",
 		"action": {
-			"name": "slot",
-			"group": "2D",
-			"control": SlotControl.new()
+			"name": "sphere",
+			"group": "3D",
+			"control": SphereControl.new()
 		}
 	},
 	"split": {
@@ -170,6 +134,42 @@ var triggers  = {
 			"name": "twistExtrude",
 			"group": "3D",
 			"control": TwistExtrudeControl.new()
+		}
+	},
+	"circle": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".circle(.*)$",
+		"action": {
+			"name": "circle",
+			"group": "2D",
+			"control": CircleControl.new()
+		}
+	},
+	"pushPoints": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".pushPoints(.*)$",
+		"action": {
+			"name": "pushPoints",
+			"group": "2D",
+			"control": PushPointsControl.new()
+		}
+	},
+	"rect": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".rect(.*)$",
+		"action": {
+			"name": "rect",
+			"group": "2D",
+			"control": RectControl.new()
+		}
+	},
+	"slot": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".slot2D(.*)$",
+		"action": {
+			"name": "slot",
+			"group": "2D",
+			"control": SlotControl.new()
 		}
 	}
 }
