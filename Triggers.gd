@@ -136,6 +136,15 @@ var triggers  = {
 			"control": TwistExtrudeControl.new()
 		}
 	},
+	"wedge": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".wedge(.*)$",
+		"action": {
+			"name": "wedge",
+			"group": "3D",
+			"control": WedgeControl.new()
+		}
+	},
 	"circle": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".circle(.*)$",

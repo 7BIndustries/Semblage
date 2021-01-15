@@ -40,7 +40,7 @@ func _ready():
 	radius_group.add_child(radius_ctrl)
 	add_child(radius_group)
 
-	# The advanced workplane controls
+	# The direction controls
 	var direct_group = VBoxContainer.new()
 	var direct_lbl = Label.new()
 	direct_lbl.set_text("Direction")
