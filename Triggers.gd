@@ -127,6 +127,15 @@ var triggers  = {
 			"control": SplitControl.new()
 		}
 	},
+	"text": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".text(.*)$",
+		"action": {
+			"name": "text",
+			"group": "3D",
+			"control": TextControl.new()
+		}
+	},
 	"twistExtrude": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": "^.twistExtrude(.*)$",
