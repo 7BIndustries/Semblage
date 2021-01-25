@@ -101,6 +101,11 @@ func _set_up_action_controls(actions, selected):
 	# If there is a control defined in GDScript use that, otherwise populate from the control_group
 	if actions[selected].control != null:
 		var cont1 = actions[selected].control
+
+		# If the SketchControl is loaded, load it up with the actions
+		if actions[selected].control.get_class() == "SketchControl":
+			cont1.actions = actions
+
 		$VBoxContainer/DynamicContainer.add_child(cont1)
 
 

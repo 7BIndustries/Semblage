@@ -189,5 +189,14 @@ var triggers  = {
 			"group": "2D",
 			"control": SlotControl.new()
 		}
+	},
+	"Sketch": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".lineTo(.*)$",
+		"action": {
+			"name": "Sketch",
+			"group": "Sketch",
+			"control": SketchControl.new()
+		}
 	}
 }

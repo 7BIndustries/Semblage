@@ -110,9 +110,6 @@ func _ready():
 	var font_settings_lbl = Label.new()
 	font_settings_lbl.set_text("Font Settings")
 	add_child(font_settings_lbl)
-	
-	# Add a horizontal rule to break things up
-	add_child(HSeparator.new())
 
 	# Font size
 	var font_size_group = HBoxContainer.new()

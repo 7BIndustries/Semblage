@@ -683,7 +683,7 @@ Tree.
 func _on_HistoryTree_item_activated():
 	var item_text = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.get_selected().get_text(0)
 
-	# Get the control taht matches the edit trigger for the history code, if any
+	# Get the control that matches the edit trigger for the history code, if any
 	var popup_action = context_handler.find_matching_edit_trigger(item_text)
 
 	# If the returned control is null, there is not need continuing

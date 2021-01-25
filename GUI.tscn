@@ -430,6 +430,7 @@ toggle_mode = true
 icon = ExtResource( 12 )
 
 [node name="TwoDButton" type="Button" parent="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer"]
+visible = false
 margin_right = 64.0
 margin_bottom = 20.0
 toggle_mode = true
