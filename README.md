@@ -6,6 +6,8 @@
 
 Semblage is an open source CAD GUI backed by a programmatic CAD API named CadQuery. There are two advantages of programmatic CAD (a.k.a code-CAD) that Semblage seeks to capitalize on, and thus the user interface is designed to provide abstracted access to the code-CAD level.
 
+![Semblage screenshot](https://raw.githubusercontent.com/7BIndustries/Semblage/master/docs/about/_static/Semblage_Pre_Alpha_Screenshot_01_Full.png)
+
 1. Easier to capture design intent more effectively through code-CAD.
 2. Enables very flexible, highly parametric designs.
 
