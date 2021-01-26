@@ -34,9 +34,7 @@ func _ready():
 	light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
 	vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
 	tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
-	all_btn = $ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/AllButton
 	three_d_btn = $ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton
-	two_d_btn = $ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/TwoDButton
 	sketch_btn = $ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton
 
 	# Set the default tab to let the user know where to start
@@ -52,7 +50,12 @@ func _ready():
 	_init_history_tree()
 	_init_object_tree()
 
-	all_btn.pressed = true
+	three_d_btn.pressed = true
+
+	cur_temp_file = OS.get_user_data_dir() + "/temp_component.json"
+
+	# Empty the temporary component file so that it can be reused
+	_save_temp_component_file(cur_temp_file, "")
 
 	# Let the user know the app is ready to use
 	status = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
@@ -77,8 +80,10 @@ func _process(delta):
 			$ErrorDialog.dialog_text = error_string
 			$ErrorDialog.popup_centered()
 
+			# Empty the temporary component file so that it can be reused
+			_save_temp_component_file(cur_temp_file, "")
+
 			# Prevent us from entering this code block again
-			cur_temp_file = null
 			cur_error_file = null
 
 			executing = false
@@ -107,7 +112,7 @@ func _process(delta):
 		cur_file.close()
 
 	# JSON file handling
-	if executing && cur_temp_file != null:
+	if executing:
 		var cur_file = File.new()
 
 		# If we are executing and the file exists, process it
@@ -123,7 +128,8 @@ func _process(delta):
 				# Load the JSON into the scene
 				load_component_json(json_string)
 
-				cur_temp_file = null
+				# Empty the temporary component file so that it can be reused
+				_save_temp_component_file(cur_temp_file, "")
 
 				executing = false
 
@@ -236,9 +242,8 @@ func generate_component(path, component_text=null):
 	var file_id = str(date_time["year"]) + "_" +  str(date_time["month"]) + "_" + str(date_time["day"]) + "_" + str(date_time["hour"]) + "_" + str(date_time["minute"]) + "_" + str(date_time["second"])
 
 	# Construct the directory where the temporary JSON file can be written
-	cur_temp_file = OS.get_user_data_dir() + "/temp_" + file_id + ".json"
 	cur_error_file = OS.get_user_data_dir() + "/error_" + file_id + ".txt"
-	
+
 	# Temporary location and name of the file to convert
 	var array = ["--codec", "semb", "--infile", path, "--outfile", cur_temp_file, "--errfile", cur_error_file]
 	var args = PoolStringArray(array)
@@ -271,7 +276,7 @@ Loads a generated component into a mesh.
 """
 func load_component_json(json_string):
 	status.text = "Redering component..."
-	
+
 	# Reset the maximum dimension so we do not save a larger one from a previous load
 	max_dim = 0
 	max_dist = 0
@@ -862,28 +867,11 @@ func _on_ExportDialog_file_selected(path):
 
 
 """
-Called when the user clicks the All button and toggles it.
-"""
-func _on_AllButton_toggled(button_pressed):
-	# Make sure that the other buttons are not toggled
-	if all_btn.pressed == true:
-		three_d_btn.pressed = false
-		two_d_btn.pressed = false
-		sketch_btn.pressed = false
-
-		action_filter = "All"
-
-	$ActionPopupPanel.refresh_actions(self.component_text, self.action_filter)
-
-
-"""
 Called when the user clicks the 3D button and toggles it.
 """
 func _on_ThreeDButton_toggled(button_pressed):
 	# Make sure that the other buttons are not toggled
 	if three_d_btn.pressed == true:
-		all_btn.pressed = false
-		two_d_btn.pressed = false
 		sketch_btn.pressed = false
 
 		action_filter = "3D"
@@ -892,31 +880,13 @@ func _on_ThreeDButton_toggled(button_pressed):
 
 
 """
-Called when the user clicks the 2D button and toggles it.
-"""
-func _on_TwoDButton_toggled(button_pressed):
-	# Make sure that the other buttons are not toggled
-	if two_d_btn.pressed == true:
-		all_btn.pressed = false
-		three_d_btn.pressed = false
-		sketch_btn.pressed = false
-
-		action_filter = "2D"
-
-		$ActionPopupPanel.refresh_actions(self.component_text, self.action_filter)
-
-
-"""
 Called when the user clicks the Sketch button and toggles it.
 """
 func _on_SketchButton_toggled(button_pressed):
 	# Make sure that the other buttons are not toggled
 	if sketch_btn.pressed == true:
-		all_btn.pressed = false
 		three_d_btn.pressed = false
-		two_d_btn.pressed = false
 
-		action_filter = "Sketch"
+		action_filter = "2D"
 
 		$ActionPopupPanel.refresh_actions(self.component_text, self.action_filter)
-

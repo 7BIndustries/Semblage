@@ -1,8 +1,6 @@
 extends Node
 class_name ContextHandler
 
-var cur_actions = {}
-var cur_templates = {}
 var latest_context_addition = null
 var prev_object_addition = null
 var latest_object_addition = null

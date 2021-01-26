@@ -19,6 +19,8 @@ var two_d_preview = null
 var actions = null
 var two_d_actions = {}
 
+var executing = false
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Add the 2D Actions panel on the left
@@ -90,6 +92,19 @@ func _ready():
 
 
 """
+Used to do things like check if a semb process is generating a component.
+"""
+func _process(delta):
+	# If a component is being processed, check to see if the file exists and
+	# has the correct contents.
+	if executing:
+		var file = File.new()
+		if file.file_exists(OS.get_user_data_dir() + "/temp.svg"):
+			print("HERE")
+			load_image(OS.get_user_data_dir() + "/temp.svg")
+
+
+"""
 Fills out the template and returns it.
 """
 func get_completed_template():
@@ -140,6 +155,34 @@ func _add_action():
 	op_list.add_item(add)
 	local_context += add
 
+	# Build up the context string for the 2D preview
+	var two_d_context = "import cadquery as cq\nresult=cq.Workplane()"
+
+	# Step through all the items in the 2D operation list and add them to the context
+	for i in range(0, op_list.get_item_count()):
+		two_d_context += op_list.get_item_text(i)
+
+	# Make sure the object will be shown
+	two_d_context += "\nshow_object(result)"
+
+	var temp_component_path = OS.get_user_data_dir() + "/temp_svg_path.py"
+
+	# We append the show_object here so that it is not part of the context going forward
+	_save_temp_component_file(temp_component_path, two_d_context)
+
+	# Construct the directory where the temporary JSON file can be written
+	var svg_file = OS.get_user_data_dir() + "/temp.svg"
+	var error_file = OS.get_user_data_dir() + "/svg_error.txt"
+
+	# Temporary location and name of the file to convert
+	var array = ["--codec", "svg", "--infile", temp_component_path, "--outfile", svg_file, "--errfile", error_file]
+	var args = PoolStringArray(array)
+
+	# Execute the render script
+	var success = OS.execute("/home/jwright/Downloads/repos/jmwright/cq-cli/cq-cli.py", args, false)
+
+	executing = true
+
 
 """
 Populates the dynamic control area based on the Action the user selected.
@@ -158,6 +201,7 @@ func _switch_action_control(index):
 		cont1.config(false, false)
 		dynamic_cont.add_child(cont1)
 
+
 """
 Allows an image to be loaded into the 2D preview.
 """
@@ -168,8 +212,42 @@ func load_image(path):
 	texture.create_from_image(image)
 	two_d_preview.set_texture(texture)
 
+
 """
 Allows the Action dialog to know this control is different.
 """
 func get_class():
 	return "SketchControl"
+
+
+"""
+Clears the control to get it ready for the next use.
+"""
+func _clear_controls():
+	print(op_list)
+	if op_list != null:
+		for i in range(0, op_list.get_item_count()):
+			print(op_list.get_item_text(i))
+			op_list.remove_item(i)
+
+
+"""
+Mainly used to write the contents of the actions popup dialog to a temporary file
+so that the result can be displayed.
+"""
+func _save_temp_component_file(path, component_text):
+	var file = File.new()
+	file.open(path, File.WRITE)
+	file.store_string(component_text)
+	file.close()
+
+
+"""
+Loads values into the control's sub-controls based on a code string.
+"""
+func set_values_from_string(text_line):
+	print(text_line)
+	print(self.op_list)
+	print(self.hide_show_btn)
+	# Clear any previous items
+	_clear_controls()

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/roadmap-med.png-e4ed0894c57eabc71e2abb6095ea28b9.stex"
+path="res://.import/roadmap-med.png-3ea95488a2378f8fbd6b621ef7187013.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://docs/Semblage/about/_static/roadmap-med.png"
-dest_files=[ "res://.import/roadmap-med.png-e4ed0894c57eabc71e2abb6095ea28b9.stex" ]
+source_file="res://docs/about/_static/roadmap-med.png"
+dest_files=[ "res://.import/roadmap-med.png-3ea95488a2378f8fbd6b621ef7187013.stex" ]
 
 [params]
 

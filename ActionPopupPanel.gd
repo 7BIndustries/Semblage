@@ -12,8 +12,11 @@ var new_context = null
 var new_template = null
 var prev_template = null
 var edit_mode = false
-var action_filter = "All"
+var action_filter = "3D"
 
+# The group buttons at the top of the dialog
+var three_d_btn = null
+var sketch_btn = null
 
 """
 Called when this control is ready to display.
@@ -22,6 +25,8 @@ func _ready():
 	# Instantiate the context handler which tells us what type of Action we are dealing with
 	context_handler = ContextHandler.new()
 
+	three_d_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton
+	sketch_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton
 
 """
 Called to prepare the popup to be viewed by the user, complete with controls
@@ -42,7 +47,7 @@ func activate_popup(mouse_pos, context, action, action_filter):
 	# If an action was not supplied, find one from the context
 	if action == null:
 		action = context_handler.get_next_action(context)
-		
+
 		# Track whether or not we should add to the context or update it
 		edit_mode = false
 	else:
@@ -102,10 +107,6 @@ func _set_up_action_controls(actions, selected):
 	if actions[selected].control != null:
 		var cont1 = actions[selected].control
 
-		# If the SketchControl is loaded, load it up with the actions
-		if actions[selected].control.get_class() == "SketchControl":
-			cont1.actions = actions
-
 		$VBoxContainer/DynamicContainer.add_child(cont1)
 
 
@@ -142,6 +143,7 @@ During an edit, returns the newly updated template.
 func get_new_template():
 	return new_template
 
+
 """
 Finds out which trigger was selected by the user.
 """
@@ -162,6 +164,7 @@ Get the previous object addition tot he context for this popup panel.
 """
 func get_prev_object_addition():
 	return self.context_handler.get_prev_object_addition()
+
 
 """
 Get the latest object addition to the context for this popup panel.
@@ -187,7 +190,7 @@ func _on_OkButton_button_down():
 	if edit_mode:
 		var cont = $VBoxContainer/DynamicContainer.get_children()[0]
 		new_template = cont.get_completed_template()
-		
+
 		# Save the old context when editing to allow replacement in the history tree
 		prev_template = cont.get_previous_template()
 
@@ -207,6 +210,7 @@ Allows the main GUI to essentially replay the context additions from a loaded fi
 func update_context_string(incoming_context, context_addition):
 	original_context = incoming_context
 	new_context = context_handler.update_context_string(original_context, context_addition)
+
 
 """
 Called when the Cancel button is pressed so that this popup can just be closed.

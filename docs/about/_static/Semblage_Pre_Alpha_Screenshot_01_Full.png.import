@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/roadmap.svg-3afea1198860af7e511a537c50f350c9.stex"
+path="res://.import/Semblage_Pre_Alpha_Screenshot_01_Full.png-ce9a6e49efa6d4874b5654077f661976.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://docs/about/_static/roadmap.svg"
-dest_files=[ "res://.import/roadmap.svg-3afea1198860af7e511a537c50f350c9.stex" ]
+source_file="res://docs/about/_static/Semblage_Pre_Alpha_Screenshot_01_Full.png"
+dest_files=[ "res://.import/Semblage_Pre_Alpha_Screenshot_01_Full.png-ce9a6e49efa6d4874b5654077f661976.stex" ]
 
 [params]
 
