@@ -21,11 +21,9 @@ var tabs # The tab container for component documents
 var context_handler # Handles the situation where the context Action menu needs to be populated
 var object_tree_root = null
 var history_tree_root = null
-var all_btn = null # The All group button in the Action panel
 var three_d_btn = null # The 3D group button in the Action panel
-var two_d_btn = null # The 2D group button in the Action panel
 var sketch_btn = null # The sketch button in the Action panel
-var action_filter = "All" # The filter for which items should be displayed
+var action_filter = "3D" # The filter for which items should be displayed
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -679,6 +677,7 @@ Fired when the Action popup needs to be displayed.
 func _on_DocumentTabs_activate_action_popup(mouse_pos):
 	$ActionPopupPanel.show_modal(true)
 	$ActionPopupPanel.activate_popup(mouse_pos, component_text, null, self.action_filter)
+	$ActionPopupPanel.popup_centered()
 
 
 """

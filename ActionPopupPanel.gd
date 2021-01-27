@@ -54,6 +54,10 @@ func activate_popup(mouse_pos, context, action, action_filter):
 		# Track whether or not we should add to the context or update it
 		edit_mode = true
 
+	$VBoxContainer/AddButton.hide()
+	$VBoxContainer/HBoxContainer/Preview.hide()
+	load_image("/home/jwright/Downloads/sample_2D_render.svg")
+
 	# Get the controls for the popup based on the context
 	populate_context_controls(action)
 
@@ -70,6 +74,15 @@ func refresh_actions(context, action_filter):
 	# Populate the new controls given the context
 	var action = context_handler.get_next_action(context)
 	populate_context_controls(action)
+
+	# Enable the 2D preview if the user is doing a sketch
+	if action_filter == "2D":
+		pass
+#		$VBoxContainer/AddButton.show()
+#		$VBoxContainer/HBoxContainer/Preview.show()
+	else:
+		$VBoxContainer/AddButton.hide()
+		$VBoxContainer/HBoxContainer/Preview.hide()
 
 
 """
@@ -107,7 +120,7 @@ func _set_up_action_controls(actions, selected):
 	if actions[selected].control != null:
 		var cont1 = actions[selected].control
 
-		$VBoxContainer/DynamicContainer.add_child(cont1)
+		$VBoxContainer/HBoxContainer/DynamicContainer.add_child(cont1)
 
 
 """
@@ -115,8 +128,8 @@ Clears the previous dynamic controls from this popup.
 """
 func clear_popup(clear_all):
 	# Clear the previous control item(s) from the DynamicContainer
-	for child in $VBoxContainer/DynamicContainer.get_children():
-		$VBoxContainer/DynamicContainer.remove_child(child)
+	for child in $VBoxContainer/HBoxContainer/DynamicContainer.get_children():
+		$VBoxContainer/HBoxContainer/DynamicContainer.remove_child(child)
 
 	# Clear the triggers dropdown, but only if the caller wanted a complete refresh
 	if clear_all:
@@ -176,11 +189,11 @@ func get_latest_object_addition():
 """
 Called when the Preview button is pressed so that it can collect the relevant data.
 """
-func _on_PreviewButton_button_down():
-	var cont = $VBoxContainer/DynamicContainer.get_children()[0]
-	new_context = context_handler.update_context_string(original_context, cont.get_completed_template())
-
-	emit_signal("preview_signal")
+#func _on_PreviewButton_button_down():
+#	var cont = $VBoxContainer/DynamicContainer.get_children()[0]
+#	new_context = context_handler.update_context_string(original_context, cont.get_completed_template())
+#
+#	emit_signal("preview_signal")
 
 
 """
@@ -197,7 +210,7 @@ func _on_OkButton_button_down():
 		# Have the context handler edit the current context
 		new_context = context_handler.edit_context_string(original_context, prev_template, new_template)
 	else:
-		var cont = $VBoxContainer/DynamicContainer.get_children()[0]
+		var cont = $VBoxContainer/HBoxContainer/DynamicContainer.get_children()[0]
 		new_context = context_handler.update_context_string(original_context, cont.get_completed_template())
 
 	emit_signal("ok_signal", edit_mode)
@@ -238,3 +251,14 @@ Called whenever the contents of the main VBoxContainer require a size change.
 func _on_VBoxContainer_resized():
 	# Make sure the panel is the correct size to contain all controls
 	rect_size = Vector2($VBoxContainer.rect_size[0] + 7, $VBoxContainer.rect_size[1] + 7)
+
+
+"""
+Allows an image to be loaded into the 2D preview.
+"""
+func load_image(path):
+	var texture = ImageTexture.new()
+	var image = Image.new()
+	image.load(path)
+	texture.create_from_image(image)
+	$VBoxContainer/HBoxContainer/Preview.set_texture(texture)
