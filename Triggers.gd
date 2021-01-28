@@ -163,6 +163,87 @@ var triggers  = {
 			"control": CircleControl.new()
 		}
 	},
+	"hLine": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".hLine(.*)$",
+		"action": {
+			"name": "hLine",
+			"group": "2D",
+			"control": HLineControl.new()
+		}
+	},
+	"hLineTo": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".hLineTo(.*)$",
+		"action": {
+			"name": "hLineTo",
+			"group": "2D",
+			"control": HLineToControl.new()
+		}
+	},
+	"line": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".line(.*)$",
+		"action": {
+			"name": "line",
+			"group": "2D",
+			"control": LineControl.new()
+		}
+	},
+	"lineTo": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".lineTo(.*)$",
+		"action": {
+			"name": "lineTo",
+			"group": "2D",
+			"control": LineToControl.new()
+		}
+	},
+	"move": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".move(.*)$",
+		"action": {
+			"name": "move",
+			"group": "2D",
+			"control": MoveControl.new()
+		}
+	},
+	"moveTo": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".moveTo(.*)$",
+		"action": {
+			"name": "moveTo",
+			"group": "2D",
+			"control": MoveToControl.new()
+		}
+	},
+	"polarArray": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".polarArray(.*)$",
+		"action": {
+			"name": "polarArray",
+			"group": "2D",
+			"control": PolarArrayControl.new()
+		}
+	},
+	"polarLine": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".polarLine(.*)$",
+		"action": {
+			"name": "polarLine",
+			"group": "2D",
+			"control": PolarLineControl.new()
+		}
+	},
+	"polarLineTo": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".polarLineTo(.*)$",
+		"action": {
+			"name": "polarLineTo",
+			"group": "2D",
+			"control": PolarLineToControl.new()
+		}
+	},
 	"pushPoints": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".pushPoints(.*)$",
@@ -170,6 +251,15 @@ var triggers  = {
 			"name": "pushPoints",
 			"group": "2D",
 			"control": PushPointsControl.new()
+		}
+	},
+	"rarray": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".rarray(.*)$",
+		"action": {
+			"name": "rarray",
+			"group": "2D",
+			"control": RArrayControl.new()
 		}
 	},
 	"rect": {
@@ -188,6 +278,24 @@ var triggers  = {
 			"name": "slot",
 			"group": "2D",
 			"control": SlotControl.new()
+		}
+	},
+	"vLine": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".vLine(.*)$",
+		"action": {
+			"name": "vLine",
+			"group": "2D",
+			"control": VLineControl.new()
+		}
+	},
+	"vLineTo": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".vLineTo(.*)$",
+		"action": {
+			"name": "vLineTo",
+			"group": "2D",
+			"control": VLineToControl.new()
 		}
 	}
 }
