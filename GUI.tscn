@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=2]
+[gd_scene load_steps=44 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -12,6 +12,7 @@
 [ext_resource path="res://assets/icons/make_button_flat_ready.svg" type="Texture" id=10]
 [ext_resource path="res://OmniLight.gd" type="Script" id=11]
 [ext_resource path="res://assets/icons/3d_button_flat_ready.svg" type="Texture" id=12]
+[ext_resource path="res://assets/icons/workplane_button_flat_ready.svg" type="Texture" id=13]
 [ext_resource path="res://assets/icons/sketch_button_flat_ready.svg" type="Texture" id=14]
 
 [sub_resource type="StyleBoxFlat" id=1]
@@ -417,6 +418,12 @@ margin_bottom = 40.0
 margin_right = 40.0
 margin_bottom = 40.0
 
+[node name="WorkplaneButton" type="Button" parent="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer"]
+margin_right = 12.0
+margin_bottom = 20.0
+toggle_mode = true
+icon = ExtResource( 13 )
+
 [node name="ThreeDButton" type="Button" parent="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer"]
 margin_right = 12.0
 margin_bottom = 20.0
@@ -534,13 +541,13 @@ current_path = "/home/jwright/Downloads/repos/Semblage/"
 [connection signal="cam_rotate" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight" method="_on_DocumentTabs_cam_rotate"]
 [connection signal="cam_zoom" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_zoom"]
 [connection signal="file_selected" from="OpenDialog" to="." method="_on_OpenDialog_file_selected"]
-[connection signal="about_to_show" from="ActionPopupPanel" to="." method="_on_ActionPopupPanel_about_to_show"]
 [connection signal="hide" from="ActionPopupPanel" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_on_ActionPopupPanel_hide"]
 [connection signal="ok_signal" from="ActionPopupPanel" to="." method="_on_ActionPopupPanel_ok_signal"]
-[connection signal="preview_signal" from="ActionPopupPanel" to="." method="_on_ActionPopupPanel_preview_signal"]
+[connection signal="visibility_changed" from="ActionPopupPanel" to="ActionPopupPanel" method="_on_ActionPopupPanel_visibility_changed"]
 [connection signal="resized" from="ActionPopupPanel/VBoxContainer" to="ActionPopupPanel" method="_on_VBoxContainer_resized"]
-[connection signal="toggled" from="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton" to="." method="_on_ThreeDButton_toggled"]
-[connection signal="toggled" from="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton" to="." method="_on_SketchButton_toggled"]
+[connection signal="toggled" from="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton" to="ActionPopupPanel" method="_on_WorkplaneButton_toggled"]
+[connection signal="toggled" from="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton" to="ActionPopupPanel" method="_on_ThreeDButton_toggled"]
+[connection signal="toggled" from="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton" to="ActionPopupPanel" method="_on_SketchButton_toggled"]
 [connection signal="item_selected" from="ActionPopupPanel/VBoxContainer/ActionOptionButton" to="ActionPopupPanel" method="_on_ActionOptionButton_item_selected"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/OkButton" to="ActionPopupPanel" method="_on_OkButton_button_down"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/CancelButton" to="ActionPopupPanel" method="_on_CancelButton_button_down"]

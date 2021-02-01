@@ -1,7 +1,5 @@
 extends Control
 
-var ContextHandler = load("res://ContextHandler.gd")
-
 var open_file_path # The component/CQ file that the user opened
 var component_text # The text of the current component's script
 var max_dim = 0 # Largest dimension of any component that is loaded
@@ -18,12 +16,8 @@ var origin_cam # The camera showing the orientation of the component(s) via an o
 var light # Supplemental light that follows the camera
 var vp # The 3D viewport
 var tabs # The tab container for component documents
-var context_handler # Handles the situation where the context Action menu needs to be populated
 var object_tree_root = null
 var history_tree_root = null
-var three_d_btn = null # The 3D group button in the Action panel
-var sketch_btn = null # The sketch button in the Action panel
-var action_filter = "3D" # The filter for which items should be displayed
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -32,8 +26,6 @@ func _ready():
 	light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
 	vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
 	tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
-	three_d_btn = $ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton
-	sketch_btn = $ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton
 
 	# Set the default tab to let the user know where to start
 	tabs.set_tab_title(0, "Start")
@@ -41,14 +33,9 @@ func _ready():
 	# Start off with the base script text
 	component_text = "# Semblage v1\nimport cadquery as cq\nresult=cq"
 
-	# Instantiate the context handler which tells us what type of Action we are dealing with
-	context_handler = ContextHandler.new()
-
 	# Get the object and history trees ready to use
 	_init_history_tree()
 	_init_object_tree()
-
-	three_d_btn.pressed = true
 
 	cur_temp_file = OS.get_user_data_dir() + "/temp_component.json"
 
@@ -471,27 +458,13 @@ func _clear_object_tree():
 
 
 """
-Retrieves the information on what is returned by the Actions panel and acts on them.
-"""
-func _on_ActionPopupPanel_preview_signal():
-	self._clear_viewport()
-
-	var untesses = context_handler.get_untessellateds($ActionPopupPanel.get_new_context())
-
-	# If we have untessellated objects (i.e. workplanes), display placeholders for them
-	if len(untesses) > 0:
-		for untess in untesses:
-			_make_wp_mesh(untess["origin"], untess["normal"])
-
-
-"""
 Retries the updated context and makes it the current one.
 """
 func _on_ActionPopupPanel_ok_signal(edit_mode):
 	self._clear_viewport()
 
 	# If we have untessellated objects (i.e. workplanes), display placeholders for them
-	var untesses = context_handler.get_untessellateds($ActionPopupPanel.get_new_context())
+	var untesses = $ActionPopupPanel.get_untessellateds()
 	if len(untesses) > 0:
 		for untess in untesses:
 			_make_wp_mesh(untess["origin"], untess["normal"])
@@ -675,9 +648,7 @@ func _find_basis(normal):
 Fired when the Action popup needs to be displayed.
 """
 func _on_DocumentTabs_activate_action_popup(mouse_pos):
-	$ActionPopupPanel.show_modal(true)
-	$ActionPopupPanel.activate_popup(mouse_pos, component_text, null, self.action_filter)
-	$ActionPopupPanel.popup_centered()
+	$ActionPopupPanel.activate_popup(component_text, false)
 
 
 """
@@ -687,19 +658,7 @@ Tree.
 func _on_HistoryTree_item_activated():
 	var item_text = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.get_selected().get_text(0)
 
-	# Get the control that matches the edit trigger for the history code, if any
-	var popup_action = context_handler.find_matching_edit_trigger(item_text)
-
-	# If the returned control is null, there is not need continuing
-	if popup_action == null:
-		return
-
-	var mouse_pos = get_viewport().get_mouse_position()
-	$ActionPopupPanel.show_modal(true)
-	$ActionPopupPanel.activate_popup(mouse_pos, component_text, popup_action, null)
-
-	# Get the parts of the item text that can be used to set the control values
-	popup_action.get(popup_action.keys()[0]).control.set_values_from_string(item_text)
+	$ActionPopupPanel.activate_edit_mode(component_text, item_text)
 
 
 """
@@ -845,6 +804,7 @@ func _on_ExportDialog_file_selected(path):
 		status.text = "Export only supports the 'stl' and 'step' file extensions. Please try again."
 		return
 
+
 	# Come up with a unique ID for the error file
 	var date_time = OS.get_datetime()
 	var file_id = str(date_time["year"]) + "_" +  str(date_time["month"]) + "_" + str(date_time["day"]) + "_" + str(date_time["hour"]) + "_" + str(date_time["minute"]) + "_" + str(date_time["second"])
@@ -863,29 +823,3 @@ func _on_ExportDialog_file_selected(path):
 	# Track whether or not execution happened successfully
 	if success == -1:
 		status.text = "Export error"
-
-
-"""
-Called when the user clicks the 3D button and toggles it.
-"""
-func _on_ThreeDButton_toggled(button_pressed):
-	# Make sure that the other buttons are not toggled
-	if three_d_btn.pressed == true:
-		sketch_btn.pressed = false
-
-		action_filter = "3D"
-
-	$ActionPopupPanel.refresh_actions(self.component_text, self.action_filter)
-
-
-"""
-Called when the user clicks the Sketch button and toggles it.
-"""
-func _on_SketchButton_toggled(button_pressed):
-	# Make sure that the other buttons are not toggled
-	if sketch_btn.pressed == true:
-		three_d_btn.pressed = false
-
-		action_filter = "2D"
-
-		$ActionPopupPanel.refresh_actions(self.component_text, self.action_filter)

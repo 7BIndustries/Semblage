@@ -108,7 +108,7 @@ func find_matching_edit_trigger(code_text):
 		if trig_res:
 			matching_action[trigger] = triggers[trigger].action
 			break
-	
+
 	return matching_action
 
 
@@ -168,3 +168,56 @@ func get_untessellateds(context):
 		untessellateds.append({"origin": origin_vec, "normal": normal_vec, "width": 5, "height": 5, "depth": 0.1})
 
 	return untessellateds
+
+
+"""
+Filters out to only 2D actions.
+"""
+func get_2d_actions():
+	var two_d_actions = []
+
+	# Grab only actions from the 2D group
+	for trigger in triggers.keys():
+		if triggers[trigger].action.group == "2D":
+			two_d_actions.append(triggers[trigger].action.name)
+
+	return two_d_actions
+
+
+"""
+Filters out to only 3D actions.
+"""
+func get_3d_actions():
+	var three_d_actions = []
+
+	# Grab only actions from the 2D group
+	for trigger in triggers.keys():
+		if triggers[trigger].action.group == "3D":
+			three_d_actions.append(triggers[trigger].action.name)
+
+	return three_d_actions
+
+
+"""
+Filters out to only workplane actions.
+"""
+func get_wp_actions():
+	var wp_actions = []
+
+	# Grab only actions from the 2D group
+	for trigger in triggers.keys():
+		if triggers[trigger].action.group == "WP":
+			wp_actions.append(triggers[trigger].action.name)
+
+	return wp_actions
+
+
+"""
+Gets the matching action given the action's name.
+"""
+func get_action_for_name(name):
+	for trigger in triggers.keys():
+		if triggers[trigger].action.name == name:
+			return triggers[trigger]
+
+	return null

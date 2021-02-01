@@ -6,7 +6,7 @@ var triggers  = {
 		"edit_trigger": "^.Workplane(.*).*",
 		"action": {
 			"name": "New Workplane",
-			"group": "All",
+			"group": "WP",
 			"control": WorkplaneControl.new()
 		}
 	},
@@ -280,11 +280,11 @@ var triggers  = {
 			"control": RectControl.new()
 		}
 	},
-	"slot": {
+	"slot2D": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".slot2D(.*)$",
 		"action": {
-			"name": "slot",
+			"name": "slot2D",
 			"group": "2D",
 			"control": SlotControl.new()
 		}
