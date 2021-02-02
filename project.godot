@@ -180,6 +180,11 @@ _global_script_classes=[ {
 "path": "res://controls/TextControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "ThreePointArcControl",
+"language": "GDScript",
+"path": "res://controls/ThreePointArcControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "ThruCutControl",
 "language": "GDScript",
 "path": "res://controls/ThruCutControl.gd"
@@ -244,6 +249,7 @@ _global_script_class_icons={
 "SphereControl": "",
 "SplitControl": "",
 "TextControl": "",
+"ThreePointArcControl": "",
 "ThruCutControl": "",
 "TwistExtrudeControl": "",
 "VLineControl": "",

@@ -289,6 +289,15 @@ var triggers  = {
 			"control": SlotControl.new()
 		}
 	},
+	"threePointArc": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".threePointArc(.*)$",
+		"action": {
+			"name": "threePointArc",
+			"group": "2D",
+			"control": ThreePointArcControl.new()
+		}
+	},
 	"vLine": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".vLine(.*)$",
