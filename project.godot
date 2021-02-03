@@ -39,6 +39,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/CircleControl.gd"
 }, {
+"base": "VBoxContainer",
+"class": "CloseControl",
+"language": "GDScript",
+"path": "res://controls/CloseControl.gd"
+}, {
 "base": "Node",
 "class": "Common",
 "language": "GDScript",
@@ -95,6 +100,16 @@ _global_script_classes=[ {
 "path": "res://controls/LineToControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "MirrorXControl",
+"language": "GDScript",
+"path": "res://controls/MirrorXControl.gd"
+}, {
+"base": "VBoxContainer",
+"class": "MirrorYControl",
+"language": "GDScript",
+"path": "res://controls/MirrorYControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "MoveControl",
 "language": "GDScript",
 "path": "res://controls/MoveControl.gd"
@@ -128,6 +143,11 @@ _global_script_classes=[ {
 "class": "PolarLineToControl",
 "language": "GDScript",
 "path": "res://controls/PolarLineToControl.gd"
+}, {
+"base": "VBoxContainer",
+"class": "PolygonControl",
+"language": "GDScript",
+"path": "res://controls/PolygonControl.gd"
 }, {
 "base": "VBoxContainer",
 "class": "PushPointsControl",
@@ -241,6 +261,7 @@ _global_script_class_icons={
 "CSinkHoleControl": "",
 "ChamferControl": "",
 "CircleControl": "",
+"CloseControl": "",
 "Common": "",
 "ContextHandler": "",
 "EllipseArcControl": "",
@@ -252,6 +273,8 @@ _global_script_class_icons={
 "HoleControl": "",
 "LineControl": "",
 "LineToControl": "",
+"MirrorXControl": "",
+"MirrorYControl": "",
 "MoveControl": "",
 "MoveToControl": "",
 "OperationsControl": "",
@@ -259,6 +282,7 @@ _global_script_class_icons={
 "PolarArrayControl": "",
 "PolarLineControl": "",
 "PolarLineToControl": "",
+"PolygonControl": "",
 "PushPointsControl": "",
 "RArrayControl": "",
 "RadiusArcControl": "",

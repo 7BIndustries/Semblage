@@ -163,6 +163,15 @@ var triggers  = {
 			"control": CircleControl.new()
 		}
 	},
+	"close": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".close(.*)$",
+		"action": {
+			"name": "close",
+			"group": "2D",
+			"control": CloseControl.new()
+		}
+	},
 	"ellipse": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".ellipse(.*)$",
@@ -217,6 +226,24 @@ var triggers  = {
 			"control": LineToControl.new()
 		}
 	},
+	"mirrorX": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".mirrorX(.*)$",
+		"action": {
+			"name": "mirrorX",
+			"group": "2D",
+			"control": MirrorXControl.new()
+		}
+	},
+	"mirrorY": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".mirrorY(.*)$",
+		"action": {
+			"name": "mirrorY",
+			"group": "2D",
+			"control": MirrorYControl.new()
+		}
+	},
 	"move": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".move(.*)$",
@@ -260,6 +287,15 @@ var triggers  = {
 			"name": "polarLineTo",
 			"group": "2D",
 			"control": PolarLineToControl.new()
+		}
+	},
+	"polygon": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".polygon(.*)$",
+		"action": {
+			"name": "polygon",
+			"group": "2D",
+			"control": PolygonControl.new()
 		}
 	},
 	"pushPoints": {
