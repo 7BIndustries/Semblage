@@ -262,6 +262,15 @@ var triggers  = {
 			"control": PushPointsControl.new()
 		}
 	},
+	"radiusArc": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".radiusArc(.*)$",
+		"action": {
+			"name": "radiusArc",
+			"group": "2D",
+			"control": RadiusArcControl.new()
+		}
+	},
 	"rarray": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".rarray(.*)$",

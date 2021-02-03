@@ -135,6 +135,11 @@ _global_script_classes=[ {
 "path": "res://controls/RArrayControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "RadiusArcControl",
+"language": "GDScript",
+"path": "res://controls/RadiusArcControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "RectControl",
 "language": "GDScript",
 "path": "res://controls/RectControl.gd"
@@ -245,6 +250,7 @@ _global_script_class_icons={
 "PolarLineToControl": "",
 "PushPointsControl": "",
 "RArrayControl": "",
+"RadiusArcControl": "",
 "RectControl": "",
 "RevolveControl": "",
 "SagittaArcControl": "",
