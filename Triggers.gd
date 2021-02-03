@@ -307,6 +307,15 @@ var triggers  = {
 			"control": SlotControl.new()
 		}
 	},
+	"tangentArcPoint": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".tangentArcPoint(.*)$",
+		"action": {
+			"name": "tangentArcPoint",
+			"group": "2D",
+			"control": TangentArcPointControl.new()
+		}
+	},
 	"threePointArc": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".threePointArc(.*)$",

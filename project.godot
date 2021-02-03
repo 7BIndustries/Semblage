@@ -185,6 +185,11 @@ _global_script_classes=[ {
 "path": "res://controls/SplitControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "TangentArcPointControl",
+"language": "GDScript",
+"path": "res://controls/TangentArcPointControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "TextControl",
 "language": "GDScript",
 "path": "res://controls/TextControl.gd"
@@ -260,6 +265,7 @@ _global_script_class_icons={
 "SlotControl": "",
 "SphereControl": "",
 "SplitControl": "",
+"TangentArcPointControl": "",
 "TextControl": "",
 "ThreePointArcControl": "",
 "ThruCutControl": "",
