@@ -280,6 +280,15 @@ var triggers  = {
 			"control": RectControl.new()
 		}
 	},
+	"sagittaArc": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".sagittaArc(.*)$",
+		"action": {
+			"name": "sagittaArc",
+			"group": "2D",
+			"control": SagittaArcControl.new()
+		}
+	},
 	"slot2D": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".slot2D(.*)$",

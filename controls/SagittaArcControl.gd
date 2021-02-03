@@ -1,20 +1,19 @@
 extends VBoxContainer
 
-class_name ThreePointArcControl
+class_name SagittaArcControl
 
 var prev_template = null
 
-var template = ".threePointArc(point1=({point_1_x},{point_1_y}),point2=({point_2_x},{point_2_y}),forConstruction={for_construction})"
+var template = ".sagittaArc(endPoint=({end_point_x},{end_point_y}),sag={sag},forConstruction={for_construction})"
 
-var point1_edit_rgx = "(?<=point1\\=)(.*?)(?=,point2)"
-var point2_edit_rgx = "(?<=point2\\=)(.*?)(?=\\,forConstruction)"
+var end_point_edit_rgx = "(?<=endPoint\\=)(.*?)(?=,sag)"
+var sag_edit_rgx = "(?<=sag\\=)(.*?)(?=\\,forConstruction)"
 var const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 var select_edit_rgx = "^.faces\\(.*\\)\\."
 
-var point_1_x_ctrl = null
-var point_1_y_ctrl = null
-var point_2_x_ctrl = null
-var point_2_y_ctrl = null
+var end_point_x_ctrl = null
+var end_point_y_ctrl = null
+var sag_ctrl = null
 var for_construction_ctrl = null
 
 var hide_show_btn = null
@@ -24,53 +23,41 @@ var op_ctrl = null
 var operation_visible = true
 var selector_visible = true
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var point_1_group_lbl = Label.new()
-	point_1_group_lbl.set_text("Point 1")
-	add_child(point_1_group_lbl)
+	var end_point_group_lbl = Label.new()
+	end_point_group_lbl.set_text("End Point")
+	add_child(end_point_group_lbl)
 
-	# Add the point 1 vector controls
-	var point_1_group = HBoxContainer.new()
-	# Point 1 X
+	# Add the end point vector controls
+	var end_point_group = HBoxContainer.new()
+	# End Point X
 	var x_length_lbl = Label.new()
 	x_length_lbl.set_text("X: ")
-	point_1_group.add_child(x_length_lbl)
-	point_1_x_ctrl = LineEdit.new()
-	point_1_x_ctrl.set_text("4.0")
-	point_1_group.add_child(point_1_x_ctrl)
-	# Point 1 Y
-	var y_length_lbl = Label.new()
-	y_length_lbl.set_text("Y: ")
-	point_1_group.add_child(y_length_lbl)
-	point_1_y_ctrl = LineEdit.new()
-	point_1_y_ctrl.set_text("0.0")
-	point_1_group.add_child(point_1_y_ctrl)
+	end_point_group.add_child(x_length_lbl)
+	end_point_x_ctrl = LineEdit.new()
+	end_point_x_ctrl.set_text("10.0")
+	end_point_group.add_child(end_point_x_ctrl)
+	# End Point Y
+	var y_lbl = Label.new()
+	y_lbl.set_text("Y: ")
+	end_point_group.add_child(y_lbl)
+	end_point_y_ctrl = LineEdit.new()
+	end_point_y_ctrl.set_text("0.0")
+	end_point_group.add_child(end_point_y_ctrl)
 
-	add_child(point_1_group)
+	add_child(end_point_group)
 
-	var point_2_group_lbl = Label.new()
-	point_2_group_lbl.set_text("Point 2")
-	add_child(point_2_group_lbl)
-
-	# Add the point 1 vector controls
-	var point_2_group = HBoxContainer.new()
-	# Point 2 X
-	x_length_lbl = Label.new()
-	x_length_lbl.set_text("X: ")
-	point_2_group.add_child(x_length_lbl)
-	point_2_x_ctrl = LineEdit.new()
-	point_2_x_ctrl.set_text("0.0")
-	point_2_group.add_child(point_2_x_ctrl)
-	# Point 2 Y
-	y_length_lbl = Label.new()
-	y_length_lbl.set_text("Y: ")
-	point_2_group.add_child(y_length_lbl)
-	point_2_y_ctrl = LineEdit.new()
-	point_2_y_ctrl.set_text("-4.0")
-	point_2_group.add_child(point_2_y_ctrl)
-
-	add_child(point_2_group)
+	# Sagitta
+	var sag_group = HBoxContainer.new()
+	var sag_lbl = Label.new()
+	sag_lbl.set_text("Sag: ")
+	sag_group.add_child(sag_lbl)
+	sag_ctrl = LineEdit.new()
+	sag_ctrl.set_text("-1.0")
+	sag_group.add_child(sag_ctrl)
+	add_child(sag_group)
 
 	# Add the for construction control
 	var const_group = HBoxContainer.new()
@@ -122,10 +109,9 @@ func get_completed_template():
 		complete += select_ctrl.get_completed_template()
 
 	complete += template.format({
-		"point_1_x": point_1_x_ctrl.get_text(),
-		"point_1_y": point_1_y_ctrl.get_text(),
-		"point_2_x": point_2_x_ctrl.get_text(),
-		"point_2_y": point_2_y_ctrl.get_text(),
+		"end_point_x": end_point_x_ctrl.get_text(),
+		"end_point_y": end_point_y_ctrl.get_text(),
+		"sag": sag_ctrl.get_text(),
 		"for_construction": for_construction_ctrl.pressed
 		})
 
@@ -162,23 +148,22 @@ func set_values_from_string(text_line):
 
 	var rgx = RegEx.new()
 
-	# Point 1 dimensions
-	rgx.compile(point1_edit_rgx)
+	# End Point
+	rgx.compile(end_point_edit_rgx)
 	var res = rgx.search(text_line)
 	if res:
-		# Fill in the point 1 controls
-		var xyz = res.get_string().split(",")
-		point_1_x_ctrl.set_text(xyz[0])
-		point_1_y_ctrl.set_text(xyz[1])
+		# Fill in the end point controls
+		var xy = res.get_string().split(",")
+		end_point_x_ctrl.set_text(xy[0])
+		end_point_y_ctrl.set_text(xy[1])
 
-	# Point 2 dimensions
-	rgx.compile(point2_edit_rgx)
+	# Sagitta
+	rgx.compile(sag_edit_rgx)
 	res = rgx.search(text_line)
 	if res:
-		# Fill in the point 2 controls
-		var xyz = res.get_string().split(",")
-		point_2_x_ctrl.set_text(xyz[0])
-		point_2_y_ctrl.set_text(xyz[1])
+		# Fill in the sagitta control
+		var sag = res.get_string()
+		sag_ctrl.set_text(sag)
 
 	# For construction
 	rgx.compile(const_edit_rgx)
