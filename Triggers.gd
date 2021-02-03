@@ -163,6 +163,15 @@ var triggers  = {
 			"control": CircleControl.new()
 		}
 	},
+	"ellipse": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".ellipse(.*)$",
+		"action": {
+			"name": "ellipse",
+			"group": "2D",
+			"control": EllipseControl.new()
+		}
+	},
 	"ellipseArc": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".ellipseArc(.*)$",

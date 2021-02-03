@@ -55,6 +55,11 @@ _global_script_classes=[ {
 "path": "res://controls/EllipseArcControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "EllipseControl",
+"language": "GDScript",
+"path": "res://controls/EllipseControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "ExtrudeControl",
 "language": "GDScript",
 "path": "res://controls/ExtrudeControl.gd"
@@ -239,6 +244,7 @@ _global_script_class_icons={
 "Common": "",
 "ContextHandler": "",
 "EllipseArcControl": "",
+"EllipseControl": "",
 "ExtrudeControl": "",
 "FilletControl": "",
 "HLineControl": "",
