@@ -262,6 +262,15 @@ var triggers  = {
 			"control": MoveToControl.new()
 		}
 	},
+	"offset2D": {
+		"trigger": "\\..*(.*)$",
+		"edit_trigger": ".offset2D(.*)$",
+		"action": {
+			"name": "offset2D",
+			"group": "2D",
+			"control": Offset2DControl.new()
+		}
+	},
 	"polarArray": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".polarArray(.*)$",

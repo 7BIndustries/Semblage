@@ -1,7 +1,5 @@
 extends VBoxContainer
 
-var ControlsCommon = load("res://controls/Common.gd").new()
-
 class_name WorkplaneControl
 
 var simple_template = ".Workplane(\"{named_wp}\").workplane(invert={invert}).tag(\"{comp_name}\")"
@@ -51,7 +49,7 @@ func _ready():
 	wp_lbl.set_text("Workplane: ")
 	wp_group.add_child(wp_lbl)
 	wp_ctrl = OptionButton.new()
-	ControlsCommon.load_option_button(wp_ctrl, workplane_list)
+	Common.load_option_button(wp_ctrl, workplane_list)
 	wp_group.add_child(wp_ctrl)
 	add_child(wp_group)
 
@@ -224,7 +222,7 @@ func set_values_from_string(text_line):
 	rgx.compile(wp_name_edit_rgx)
 	var res = rgx.search(text_line)
 	if res:
-		ControlsCommon.set_option_btn_by_text(wp_ctrl, res.get_string())
+		Common.set_option_btn_by_text(wp_ctrl, res.get_string())
 	
 	# The origin text
 	rgx.compile(origin_edit_rgx)
