@@ -21,3 +21,27 @@ Loads an option button up with an array of items.
 static func load_option_button(option_btn, items):
 	for item in items:
 		option_btn.add_item(item)
+
+
+"""
+Adds a single item to the object tree.
+"""
+static func add_item_to_tree(new_object, tree, tree_root):
+	if new_object and not _check_tree_item_exists(tree, new_object):
+		var new_obj_item = tree.create_item(tree_root)
+		new_obj_item.set_text(0, new_object)
+
+
+"""
+Lets the caller confirm if an item already exists in a tree.
+"""
+static func _check_tree_item_exists(tree, text):
+	var cur_item = tree.get_root().get_children()
+
+	# Search the tree to see if there is a match
+	if cur_item == null:
+		return false
+	else:
+		# If we have a text match, tell the caller that there was a matching item
+		if cur_item.get_text(0) == text:
+			return true

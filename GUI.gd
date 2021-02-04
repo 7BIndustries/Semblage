@@ -16,6 +16,8 @@ var origin_cam # The camera showing the orientation of the component(s) via an o
 var light # Supplemental light that follows the camera
 var vp # The 3D viewport
 var tabs # The tab container for component documents
+var object_tree = null
+var history_tree = null
 var object_tree_root = null
 var history_tree_root = null
 
@@ -173,11 +175,11 @@ func load_semblage_component(text):
 
 			# Add the current item to the history tree
 			var context_item_text = $ActionPopupPanel.get_latest_context_addition()
-			_add_item_to_history_tree(context_item_text)
+			Common.add_item_to_tree(context_item_text, history_tree, history_tree_root)
 
 			# Find any object name (if present) that needs to be displayed in the list
 			var new_object = $ActionPopupPanel.get_latest_object_addition()
-			_add_item_to_object_tree(new_object)
+			Common.add_item_to_tree(new_object, object_tree, object_tree_root)
 
 			component_text = $ActionPopupPanel.get_new_context()
 
@@ -392,8 +394,8 @@ func _on_CloseButton_button_down():
 	self._clear_viewport()
 	
 	# Get the tree views set up for the next object
-	self._clear_history_tree()
-	self._clear_object_tree()
+	self.history_tree.clear()
+	self.object_tree.clear()
 	self._init_history_tree()
 	self._init_object_tree()
 
@@ -402,7 +404,7 @@ func _on_CloseButton_button_down():
 Initializes the object tree so that it can be added to as the component changes.
 """
 func _init_object_tree():
-	var object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree")
+	object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree")
 
 	# Create the root of the object tree
 	self.object_tree_root = object_tree.create_item()
@@ -413,7 +415,7 @@ func _init_object_tree():
 Initializes the history tree so that it can be added to as the component changes.
 """
 func _init_history_tree():
-	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree")
+	history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree")
 
 	# Create the root of the history tree
 	self.history_tree_root = history_tree.create_item()
@@ -426,7 +428,7 @@ from file.
 """
 func _on_ReloadButton_button_down():
 	self._clear_viewport()
-	self._clear_history_tree()
+	self.history_tree.clear()
 
 	generate_component(open_file_path)
 
@@ -441,20 +443,6 @@ func _clear_viewport():
 	for child in children:
 		if child.get_name() != "MainOrbitCamera" and child.get_name() != "OmniLight":
 			vp.remove_child(child)
-
-
-"""
-Resets the history tree to prepare for the creation of a new CQ object.
-"""
-func _clear_history_tree():
-	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.clear()
-
-
-"""
-Resets the object tree to prepare for the creation of a new CQ object.
-"""
-func _clear_object_tree():
-	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree.clear()
 
 
 """
@@ -489,31 +477,14 @@ func _on_ActionPopupPanel_ok_signal(edit_mode):
 	else:
 		# Add the current item to the history tree
 		var context_item_text = $ActionPopupPanel.get_latest_context_addition()
-		_add_item_to_history_tree(context_item_text)
+		Common.add_item_to_tree(context_item_text, history_tree, history_tree_root)
 
 		# Find any object name (if present) that needs to be displayed in the list
 		var new_object = $ActionPopupPanel.get_latest_object_addition()
-		_add_item_to_object_tree(new_object)
+		Common.add_item_to_tree(new_object, object_tree, object_tree_root)
 	
 	generate_component(open_file_path, component_text)
 
-
-"""
-Adds a single item to the history tree.
-"""
-func _add_item_to_history_tree(item_text):
-	var new_hist_item = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.create_item(self.history_tree_root)
-	new_hist_item.set_text(0, item_text)
-
-
-"""
-Adds a single item to the object tree.
-"""
-func _add_item_to_object_tree(new_object):
-	var ot = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree
-	if new_object and not _check_tree_item_exists(ot, new_object):
-		var new_obj_item = ot.create_item(self.object_tree_root)
-		new_obj_item.set_text(0, new_object)
 
 """
 Updates a matching item in the given tree with a new entry during an edit.
@@ -533,20 +504,6 @@ func _update_tree_item(tree, old_text, new_text):
 
 			cur_item = cur_item.get_next()
 
-
-"""
-Lets the caller confirm if an item already exists in a tree.
-"""
-func _check_tree_item_exists(tree, text):
-	var cur_item = tree.get_root().get_children()
-
-	# Search the tree to see if there is a match
-	if cur_item == null:
-		return false
-	else:
-		# If we have a text match, tell the caller that there was a matching item
-		if cur_item.get_text(0) == text:
-			return true
 
 """
 Creates the placeholder workplane mesh to show the user what the workplane

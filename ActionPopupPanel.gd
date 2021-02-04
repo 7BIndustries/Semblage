@@ -20,6 +20,8 @@ var three_d_btn = null
 var sketch_btn = null
 var wp_btn = null
 
+var action_tree_root = null
+
 """
 Called when this control is ready to display.
 """
@@ -33,6 +35,12 @@ func _ready():
 
 	# Make sure 3D is selected by default
 	three_d_btn.pressed = true
+
+	var action_tree = $VBoxContainer/HBoxContainer/PreviewContainer/ActionTree
+
+	# Create the root of the object tree
+	action_tree_root = action_tree.create_item()
+	action_tree_root.set_text(0, "Actions")
 
 
 """
@@ -253,7 +261,7 @@ func load_image(path):
 	var image = Image.new()
 	image.load(path)
 	texture.create_from_image(image)
-	$VBoxContainer/HBoxContainer/Preview.set_texture(texture)
+	$VBoxContainer/HBoxContainer/PreviewContainer/Preview.set_texture(texture)
 
 
 """
@@ -279,7 +287,7 @@ func _on_ThreeDButton_toggled(button_pressed):
 
 		# Hide preview controls
 		$VBoxContainer/AddButton.hide()
-		$VBoxContainer/HBoxContainer/Preview.hide()
+		$VBoxContainer/HBoxContainer/PreviewContainer.hide()
 
 
 """
@@ -304,9 +312,9 @@ func _on_SketchButton_toggled(button_pressed):
 		_set_action_control()
 
 		# Show preview controls
-		$VBoxContainer/AddButton.hide()
-		$VBoxContainer/HBoxContainer/Preview.show()
-#		load_image("/home/jwright/Downloads/sample_2D_render.svg")
+		$VBoxContainer/AddButton.show()
+		$VBoxContainer/HBoxContainer/PreviewContainer.show()
+		load_image("res://assets/samples/sample_2D_render.svg")
 
 
 """
@@ -332,4 +340,64 @@ func _on_WorkplaneButton_toggled(button_pressed):
 
 		# Hide preview controls
 		$VBoxContainer/AddButton.hide()
-		$VBoxContainer/HBoxContainer/Preview.hide()
+		$VBoxContainer/HBoxContainer/PreviewContainer.hide()
+
+
+"""
+Called when the Add button is clicked.
+"""
+func _on_AddButton_button_down():
+	# Get the template from the active control
+	var cont = $VBoxContainer/HBoxContainer/DynamicContainer.get_children()[0]
+	var preview_context = cont.get_completed_template()
+
+	# Add the item to the action tree
+	Common.add_item_to_tree(preview_context, $VBoxContainer/HBoxContainer/PreviewContainer/ActionTree, action_tree_root)
+
+	# Start to build the preview string based on what is in the actions list
+	var script_text = "import cadquery as cq\nresult=cq.Workplane()"
+
+	# Search the tree and update the matchine entry in the tree
+	var cur_item = action_tree_root.get_children()
+	while true:
+		if cur_item == null:
+			break
+		else:
+			script_text += cur_item.get_text(0)
+
+			cur_item = cur_item.get_next()
+
+	script_text += ".consolidateWires()\nshow_object(result)"
+
+	# The currently rendered component should be here
+	var temp_path = OS.get_user_data_dir() + "/temp_component_svg.py"
+	_save_temp_component_file(temp_path, script_text)
+
+	# The temporary SVG file path
+	var svg_path = OS.get_user_data_dir() + "/temp_component_svg.svg"
+
+	# Set up our command line parameters
+	var cur_error_file = OS.get_user_data_dir() + "/error_svg.txt"
+	var array = ["--codec", "svg", "--infile", temp_path, "--outfile", svg_path, "--errfile", cur_error_file, "--outputopts", "width:100;height:100;marginLeft:12;marginTop:12;showAxes:False;projectionDir:(0,0,1);strokeWidth:0.05;strokeColor:(255,0,0);hiddenColor:(0,0,255);showHidden:True;"]
+	var args = PoolStringArray(array)
+
+	# Execute the render script
+	var success = OS.execute("/home/jwright/Downloads/repos/jmwright/cq-cli/cq-cli.py", args, true)
+
+	# Track whether or not execution happened successfully
+	if success == -1:
+		# TODO: Display and error image/text
+		print("Export error")
+	else:
+		load_image(svg_path)
+
+
+"""
+Mainly used to write the contents of the actions popup dialog to a temporary file
+so that the result can be displayed.
+"""
+func _save_temp_component_file(path, component_text):
+	var file = File.new()
+	file.open(path, File.WRITE)
+	file.store_string(component_text)
+	file.close()
