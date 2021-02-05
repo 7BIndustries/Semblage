@@ -20,6 +20,7 @@ var three_d_btn = null
 var sketch_btn = null
 var wp_btn = null
 
+var action_tree = null
 var action_tree_root = null
 
 """
@@ -36,7 +37,7 @@ func _ready():
 	# Make sure 3D is selected by default
 	three_d_btn.pressed = true
 
-	var action_tree = $VBoxContainer/HBoxContainer/PreviewContainer/ActionTree
+	action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
 
 	# Create the root of the object tree
 	action_tree_root = action_tree.create_item()
@@ -57,7 +58,7 @@ func _set_action_control():
 
 	# Set the action control
 	clear_popup()
-	$VBoxContainer/HBoxContainer/DynamicContainer.add_child(act.action.control)
+	$VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.add_child(act.action.control)
 
 
 """
@@ -65,8 +66,8 @@ Clears the previous dynamic controls from this popup.
 """
 func clear_popup():
 	# Clear the previous control item(s) from the DynamicContainer
-	for child in $VBoxContainer/HBoxContainer/DynamicContainer.get_children():
-		$VBoxContainer/HBoxContainer/DynamicContainer.remove_child(child)
+	for child in $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children():
+		$VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.remove_child(child)
 
 
 """
@@ -179,6 +180,13 @@ func activate_popup(component_text, edit_mode):
 	# Select the correct group button based on the next action
 	_select_group_button(next_action[next_action.keys()[0]].group)
 
+	# Clear any left-over actions from the action tree
+	if self.action_tree != null:
+		self.action_tree.clear()
+
+		# Create the root of the object tree
+		action_tree_root = action_tree.create_item()
+		action_tree_root.set_text(0, "Actions")
 
 """
 Selects the correct group button based on an Action's group.
@@ -200,7 +208,7 @@ Called when the Ok button is pressed so that the GUI can collect the changed con
 """
 func _on_OkButton_button_down():
 	if edit_mode:
-		var cont = $VBoxContainer/HBoxContainer/DynamicContainer.get_children()[0]
+		var cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
 		new_template = cont.get_completed_template()
 
 		if not edit_mode:
@@ -210,8 +218,23 @@ func _on_OkButton_button_down():
 		# Have the context handler edit the current context
 		new_context = context_handler.edit_context_string(original_context, prev_template, new_template)
 	else:
-		var cont = $VBoxContainer/HBoxContainer/DynamicContainer.get_children()[0]
-		new_context = context_handler.update_context_string(original_context, cont.get_completed_template())
+		# If there are multiple actions lined up, use them
+		var update_context = ""
+		var cur_item = action_tree_root.get_children()
+		if cur_item != null:
+			while true:
+				if cur_item == null:
+					break
+				else:
+					print(cur_item.get_text(0))
+					update_context += cur_item.get_text(0)
+					new_context = context_handler.update_context_string(original_context, update_context)
+
+					cur_item = cur_item.get_next()
+		else:
+			# There is just one template addition when the user hits ok
+			var cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
+			new_context = context_handler.update_context_string(original_context, cont.get_completed_template())
 
 	emit_signal("ok_signal", edit_mode)
 	hide()
@@ -261,7 +284,7 @@ func load_image(path):
 	var image = Image.new()
 	image.load(path)
 	texture.create_from_image(image)
-	$VBoxContainer/HBoxContainer/PreviewContainer/Preview.set_texture(texture)
+	$VBoxContainer/HBoxContainer/Preview.set_texture(texture)
 
 
 """
@@ -286,8 +309,9 @@ func _on_ThreeDButton_toggled(button_pressed):
 		_set_action_control()
 
 		# Hide preview controls
-		$VBoxContainer/AddButton.hide()
-		$VBoxContainer/HBoxContainer/PreviewContainer.hide()
+		$VBoxContainer/HBoxContainer/ActionContainer/AddButton.hide()
+		$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.hide()
+		$VBoxContainer/HBoxContainer/Preview.hide()
 
 
 """
@@ -312,8 +336,9 @@ func _on_SketchButton_toggled(button_pressed):
 		_set_action_control()
 
 		# Show preview controls
-		$VBoxContainer/AddButton.show()
-		$VBoxContainer/HBoxContainer/PreviewContainer.show()
+		$VBoxContainer/HBoxContainer/ActionContainer/AddButton.show()
+		$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.show()
+		$VBoxContainer/HBoxContainer/Preview.show()
 		load_image("res://assets/samples/sample_2D_render.svg")
 
 
@@ -339,8 +364,9 @@ func _on_WorkplaneButton_toggled(button_pressed):
 		_set_action_control()
 
 		# Hide preview controls
-		$VBoxContainer/AddButton.hide()
-		$VBoxContainer/HBoxContainer/PreviewContainer.hide()
+		$VBoxContainer/HBoxContainer/ActionContainer/AddButton.hide()
+		$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.hide()
+		$VBoxContainer/HBoxContainer/Preview.hide()
 
 
 """
@@ -348,11 +374,11 @@ Called when the Add button is clicked.
 """
 func _on_AddButton_button_down():
 	# Get the template from the active control
-	var cont = $VBoxContainer/HBoxContainer/DynamicContainer.get_children()[0]
+	var cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
 	var preview_context = cont.get_completed_template()
 
 	# Add the item to the action tree
-	Common.add_item_to_tree(preview_context, $VBoxContainer/HBoxContainer/PreviewContainer/ActionTree, action_tree_root)
+	Common.add_item_to_tree(preview_context, $VBoxContainer/HBoxContainer/ActionContainer/ActionTree, action_tree_root)
 
 	# Start to build the preview string based on what is in the actions list
 	var script_text = "import cadquery as cq\nresult=cq.Workplane()"
@@ -378,7 +404,7 @@ func _on_AddButton_button_down():
 
 	# Set up our command line parameters
 	var cur_error_file = OS.get_user_data_dir() + "/error_svg.txt"
-	var array = ["--codec", "svg", "--infile", temp_path, "--outfile", svg_path, "--errfile", cur_error_file, "--outputopts", "width:100;height:100;marginLeft:12;marginTop:12;showAxes:False;projectionDir:(0,0,1);strokeWidth:0.05;strokeColor:(255,0,0);hiddenColor:(0,0,255);showHidden:True;"]
+	var array = ["--codec", "svg", "--infile", temp_path, "--outfile", svg_path, "--errfile", cur_error_file, "--outputopts", "width:400;height:400;marginLeft:50;marginTop:50;showAxes:False;projectionDir:(0,0,1);strokeWidth:0.5;strokeColor:(255,255,255);hiddenColor:(0,0,255);showHidden:False;"]
 	var args = PoolStringArray(array)
 
 	# Execute the render script
