@@ -44,6 +44,8 @@ func _ready():
 	# Empty the temporary component file so that it can be reused
 	_save_temp_component_file(cur_temp_file, "")
 
+	OS.set_window_maximized(true)
+
 	# Let the user know the app is ready to use
 	status = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
 	status.text = " Ready"
