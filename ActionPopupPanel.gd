@@ -153,6 +153,28 @@ func activate_edit_mode(component_text, item_text):
 
 	_set_action_control()
 
+	# Check to see if there are multiple actions in the item_text
+	# and fill the actions tree with them
+	var parts = item_text.split(").")
+	if parts.size() > 1:
+		# Walk through all the actions
+		var i = 0
+		for part in parts:
+			# If we are past the first action, prepend the period
+			if i > 0:
+				part = "." + part
+
+			# If not at the last action, append the closing parenthesis
+			if i < parts.size() - 1:
+				part += ")"
+
+			# Add the current Action string back to the Action tree
+			Common.add_item_to_tree(part, action_tree, action_tree_root)
+
+			i += 1
+
+		_render_action_tree()
+
 
 """
 Attempt to contain popup actions in one place.
@@ -168,6 +190,9 @@ func activate_popup(component_text, edit_mode):
 	show_modal(true)
 	popup_centered()
 	_on_VBoxContainer_resized()
+
+	# Make sure the Update button is hidden
+	$VBoxContainer/HBoxContainer/ActionContainer/UpdateButton.hide()
 
 	var next_action = null
 
@@ -207,38 +232,40 @@ func _select_group_button(group):
 Called when the Ok button is pressed so that the GUI can collect the changed context.
 """
 func _on_OkButton_button_down():
+	# Get the completed template from the current control
+	var cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
+	new_template = cont.get_completed_template()
+
+	# Used if the user added multiple actions to the actions tree
+	var cur_item = action_tree_root.get_children()
+	if cur_item != null:
+		new_template = _update_multiple_actions(cur_item)
+
+	# Edit mode
 	if edit_mode:
-		var cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
-		new_template = cont.get_completed_template()
-
-		if not edit_mode:
-			# Save the old context when editing to allow replacement in the history tree
-			prev_template = cont.get_previous_template()
-
-		# Have the context handler edit the current context
 		new_context = context_handler.edit_context_string(original_context, prev_template, new_template)
+	# New mode
 	else:
-		# If there are multiple actions lined up, use them
-		var update_context = ""
-		var cur_item = action_tree_root.get_children()
-		if cur_item != null:
-			while true:
-				if cur_item == null:
-					break
-				else:
-					print(cur_item.get_text(0))
-					update_context += cur_item.get_text(0)
-					new_context = context_handler.update_context_string(original_context, update_context)
-
-					cur_item = cur_item.get_next()
-		else:
-			# There is just one template addition when the user hits ok
-			var cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
-			new_context = context_handler.update_context_string(original_context, cont.get_completed_template())
+		new_context = context_handler.update_context_string(original_context, new_template)
 
 	emit_signal("ok_signal", edit_mode)
 	hide()
 
+
+"""
+Pull multiple items from the action tree to update the context string.
+"""
+func _update_multiple_actions(tree_children):
+	var updated_context = ""
+	while true:
+		if tree_children == null:
+			break
+		else:
+			updated_context += tree_children.get_text(0)
+
+			tree_children = tree_children.get_next()
+
+	return updated_context
 
 """
 Allows the main GUI to essentially replay the context additions from a loaded file.
@@ -380,6 +407,14 @@ func _on_AddButton_button_down():
 	# Add the item to the action tree
 	Common.add_item_to_tree(preview_context, $VBoxContainer/HBoxContainer/ActionContainer/ActionTree, action_tree_root)
 
+	_render_action_tree()
+
+
+"""
+Collects all of the completed templates in the Action tree and
+renders them as an SVG image.
+"""
+func _render_action_tree():
 	# Start to build the preview string based on what is in the actions list
 	var script_text = "import cadquery as cq\nresult=cq.Workplane()"
 
@@ -417,7 +452,6 @@ func _on_AddButton_button_down():
 	else:
 		load_image(svg_path)
 
-
 """
 Mainly used to write the contents of the actions popup dialog to a temporary file
 so that the result can be displayed.
@@ -427,3 +461,40 @@ func _save_temp_component_file(path, component_text):
 	file.open(path, File.WRITE)
 	file.store_string(component_text)
 	file.close()
+
+
+"""
+Allows action items to be edited by selecting the correct control.
+"""
+func _on_ActionTree_item_activated():
+	# Get the action name so that we can set the action option correctly
+	var item_text = action_tree.get_selected().get_text(0)
+	var action_key = item_text.split(".")[1].split("(")[0]
+
+	# Make sure the correct item is selected
+	Common.set_option_btn_by_text($VBoxContainer/ActionOptionButton, action_key)
+
+	_set_action_control()
+
+	# Unhide the Update button so the user can change the selected tree item
+	$VBoxContainer/HBoxContainer/ActionContainer/UpdateButton.show()
+
+
+"""
+Updates the selected action tree item with new settings.
+"""
+func _on_UpdateButton_button_down():
+	var orig_text = action_tree.get_selected().get_text(0)
+
+	# Get the template from the active control
+	var cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
+	var new_text = cont.get_completed_template()
+
+	# Update the old action template to reflect the new settings
+	Common.update_tree_item(action_tree, orig_text, new_text)
+
+	# Hide the action button to let the user know the update is happening
+	$VBoxContainer/HBoxContainer/ActionContainer/UpdateButton.hide()
+
+	# Re-render everything in the action tree
+	_render_action_tree()

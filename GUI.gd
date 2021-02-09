@@ -44,6 +44,7 @@ func _ready():
 	# Empty the temporary component file so that it can be reused
 	_save_temp_component_file(cur_temp_file, "")
 
+	# Make sure the window is maximized on start
 	OS.set_window_maximized(true)
 
 	# Let the user know the app is ready to use
@@ -468,14 +469,14 @@ func _on_ActionPopupPanel_ok_signal(edit_mode):
 
 		# Update the edited line within the history tree
 		var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree
-		_update_tree_item(tree, prev_template, new_template)
+		Common.update_tree_item(tree, prev_template, new_template)
 
 		# Update the component name in the object tree if the object name was changed
 		var new_object = $ActionPopupPanel.get_latest_object_addition()
 		if new_object:
 			var prev_object = $ActionPopupPanel.get_prev_object_addition()
 			tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree
-			_update_tree_item(tree, prev_object, new_object)
+			Common.update_tree_item(tree, prev_object, new_object)
 	else:
 		# Add the current item to the history tree
 		var context_item_text = $ActionPopupPanel.get_latest_context_addition()
@@ -486,25 +487,6 @@ func _on_ActionPopupPanel_ok_signal(edit_mode):
 		Common.add_item_to_tree(new_object, object_tree, object_tree_root)
 	
 	generate_component(open_file_path, component_text)
-
-
-"""
-Updates a matching item in the given tree with a new entry during an edit.
-"""
-func _update_tree_item(tree, old_text, new_text):
-	var cur_item = tree.get_root().get_children()
-
-	# Search the tree and update the matchine entry in the tree
-	while true:
-		if cur_item == null:
-			break
-		else:
-			# If we have a text match, update the matching TreeItem's text
-			if cur_item.get_text(0) == old_text:
-				cur_item.set_text(0, new_text)
-				break
-
-			cur_item = cur_item.get_next()
 
 
 """

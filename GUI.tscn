@@ -469,6 +469,11 @@ margin_right = 62.0
 margin_bottom = 84.0
 text = "Add"
 
+[node name="UpdateButton" type="Button" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer"]
+margin_right = 12.0
+margin_bottom = 20.0
+text = "Update"
+
 [node name="ActionTree" type="Tree" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer"]
 margin_right = 100.0
 margin_bottom = 200.0
@@ -556,6 +561,8 @@ current_path = "/home/jwright/Downloads/repos/Semblage/"
 [connection signal="toggled" from="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton" to="ActionPopupPanel" method="_on_SketchButton_toggled"]
 [connection signal="item_selected" from="ActionPopupPanel/VBoxContainer/ActionOptionButton" to="ActionPopupPanel" method="_on_ActionOptionButton_item_selected"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/AddButton" to="ActionPopupPanel" method="_on_AddButton_button_down"]
+[connection signal="button_down" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/UpdateButton" to="ActionPopupPanel" method="_on_UpdateButton_button_down"]
+[connection signal="item_activated" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionTree" to="ActionPopupPanel" method="_on_ActionTree_item_activated"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/OkButton" to="ActionPopupPanel" method="_on_OkButton_button_down"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/CancelButton" to="ActionPopupPanel" method="_on_CancelButton_button_down"]
 [connection signal="file_selected" from="ExportDialog" to="." method="_on_ExportDialog_file_selected"]

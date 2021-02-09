@@ -45,3 +45,22 @@ static func _check_tree_item_exists(tree, text):
 		# If we have a text match, tell the caller that there was a matching item
 		if cur_item.get_text(0) == text:
 			return true
+
+
+"""
+Updates a matching item in the given tree with a new entry during an edit.
+"""
+static func update_tree_item(tree, old_text, new_text):
+	var cur_item = tree.get_root().get_children()
+
+	# Search the tree and update the matchine entry in the tree
+	while true:
+		if cur_item == null:
+			break
+		else:
+			# If we have a text match, update the matching TreeItem's text
+			if cur_item.get_text(0) == old_text:
+				cur_item.set_text(0, new_text)
+				break
+
+			cur_item = cur_item.get_next()
