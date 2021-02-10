@@ -23,6 +23,7 @@ var wp_btn = null
 var action_tree = null
 var action_tree_root = null
 
+
 """
 Called when this control is ready to display.
 """
@@ -443,7 +444,7 @@ func _render_action_tree():
 	var args = PoolStringArray(array)
 
 	# Execute the render script
-	var success = OS.execute("/home/jwright/Downloads/repos/jmwright/cq-cli/cq-cli.py", args, true)
+	var success = OS.execute(Settings.get_cq_cli_path(), args, true)
 
 	# Track whether or not execution happened successfully
 	if success == -1:

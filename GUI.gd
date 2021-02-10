@@ -239,8 +239,7 @@ func generate_component(path, component_text=null):
 	var args = PoolStringArray(array)
 
 	# Execute the render script
-	var success = OS.execute("/home/jwright/Downloads/repos/jmwright/cq-cli/cq-cli.py", args, false)
-	# OS.execute("/home/jwright/Downloads/cq-cli-Linux/cq-cli/cq-cli", args, false)
+	var success = OS.execute(Settings.get_cq_cli_path(), args, false)
 
 	# Track whether or not execution happened successfully
 	if success == -1:
@@ -759,7 +758,7 @@ func _on_ExportDialog_file_selected(path):
 	var args = PoolStringArray(array)
 
 	# Execute the render script
-	var success = OS.execute("/home/jwright/Downloads/repos/jmwright/cq-cli/cq-cli.py", args, false)
+	var success = OS.execute(Settings.get_cq_cli_path(), args, false)
 
 	# Track whether or not execution happened successfully
 	if success == -1:
