@@ -10,6 +10,42 @@ var triggers  = {
 			"control": WorkplaneControl.new()
 		}
 	},
+	"center": {
+		"trigger": "cq$",
+		"edit_trigger": "^.center(.*).*",
+		"action": {
+			"name": "center",
+			"group": "WP",
+			"control": CenterControl.new()
+		}
+	},
+	"rotate": {
+		"trigger": "cq$",
+		"edit_trigger": "^.rotate(.*).*",
+		"action": {
+			"name": "rotate",
+			"group": "WP",
+			"control": RotateControl.new()
+		}
+	},
+	"rotateAboutCenter": {
+		"trigger": "cq$",
+		"edit_trigger": "^.rotateAboutCenter(.*).*",
+		"action": {
+			"name": "rotateAboutCenter",
+			"group": "WP",
+			"control": RotateAboutCenterControl.new()
+		}
+	},
+	"translate": {
+		"trigger": "cq$",
+		"edit_trigger": "^.translate(.*).*",
+		"action": {
+			"name": "translate",
+			"group": "WP",
+			"control": TranslateControl.new()
+		}
+	},
 	"box": {
 		"trigger": "\\..*(.*)$",
 		"edit_trigger": ".box(.*)$",

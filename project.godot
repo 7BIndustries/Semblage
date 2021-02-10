@@ -30,6 +30,11 @@ _global_script_classes=[ {
 "path": "res://controls/CSinkHoleControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "CenterControl",
+"language": "GDScript",
+"path": "res://controls/CenterControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "ChamferControl",
 "language": "GDScript",
 "path": "res://controls/ChamferControl.gd"
@@ -180,6 +185,16 @@ _global_script_classes=[ {
 "path": "res://controls/RevolveControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "RotateAboutCenterControl",
+"language": "GDScript",
+"path": "res://controls/RotateAboutCenterControl.gd"
+}, {
+"base": "VBoxContainer",
+"class": "RotateControl",
+"language": "GDScript",
+"path": "res://controls/RotateControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "SagittaArcControl",
 "language": "GDScript",
 "path": "res://controls/SagittaArcControl.gd"
@@ -240,6 +255,11 @@ _global_script_classes=[ {
 "path": "res://controls/ThruCutControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "TranslateControl",
+"language": "GDScript",
+"path": "res://controls/TranslateControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "TwistExtrudeControl",
 "language": "GDScript",
 "path": "res://controls/TwistExtrudeControl.gd"
@@ -269,6 +289,7 @@ _global_script_class_icons={
 "BoxControl": "",
 "CBoreHoleControl": "",
 "CSinkHoleControl": "",
+"CenterControl": "",
 "ChamferControl": "",
 "CircleControl": "",
 "CloseControl": "",
@@ -299,6 +320,8 @@ _global_script_class_icons={
 "RadiusArcControl": "",
 "RectControl": "",
 "RevolveControl": "",
+"RotateAboutCenterControl": "",
+"RotateControl": "",
 "SagittaArcControl": "",
 "SelectorControl": "",
 "Settings": "",
@@ -311,6 +334,7 @@ _global_script_class_icons={
 "TextControl": "",
 "ThreePointArcControl": "",
 "ThruCutControl": "",
+"TranslateControl": "",
 "TwistExtrudeControl": "",
 "VLineControl": "",
 "VLineToControl": "",
