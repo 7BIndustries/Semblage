@@ -60,8 +60,16 @@ func _input(event):
 
 
 """
-Called when the Action panel closes, signalling that the mouse controls 
-can be enabled again.
+Called when the Action panel opens, signallying that the 3D mouse
+controls shoud be disabled.
 """
-func _on_ActionPopupPanel_hide():
+func _on_ActionPopupPanel_about_to_show():
+	accept_input = false
+
+
+"""
+Called when the Action panel closes, signalling that the 3D mouse
+controls should be enabled again.
+"""
+func _on_ActionPopupPanel_popup_hide():
 	accept_input = true
