@@ -174,20 +174,21 @@ margin_bottom = 48.0
 icon = ExtResource( 10 )
 
 [node name="ReloadButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
+visible = false
 margin_left = 167.0
 margin_right = 219.0
 margin_bottom = 48.0
 icon = ExtResource( 6 )
 
 [node name="CloseButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
-margin_left = 223.0
-margin_right = 275.0
+margin_left = 167.0
+margin_right = 219.0
 margin_bottom = 48.0
 icon = ExtResource( 5 )
 
 [node name="HomeViewButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
-margin_left = 279.0
-margin_right = 331.0
+margin_left = 223.0
+margin_right = 275.0
 margin_bottom = 48.0
 icon = ExtResource( 4 )
 

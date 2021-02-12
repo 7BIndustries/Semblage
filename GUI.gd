@@ -153,10 +153,16 @@ func _on_OpenDialog_file_selected(path):
 
 	# If this is a Semblage component file, load it into the history and object trees
 	if component_text.begins_with("# Semblage v"):
+		# Prevent the user from reloading the script manually
+		$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.hide()
+
 		# Load the component into the history and object trees and then render it
 		load_semblage_component(component_text)
 		_render_history_tree()
 	else:
+		# Allow the user to reload the script manually
+		$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.show()
+
 		_render_non_semblage(open_file_path)
 
 
@@ -306,6 +312,9 @@ func _on_CloseButton_button_down():
 	self.object_tree.clear()
 	self._init_history_tree()
 	self._init_object_tree()
+
+	# Prevent the user from reloading the script manually
+	$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.hide()
 
 
 """

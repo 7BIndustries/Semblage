@@ -39,7 +39,7 @@ func _ready():
 	name_group.add_child(wp_name_lbl)
 	wp_name_ctrl = LineEdit.new()
 	wp_name_ctrl.expand_to_text_length = true
-	wp_name_ctrl.set_text("Change This")
+	wp_name_ctrl.set_text("Change")
 	name_group.add_child(wp_name_ctrl)
 	add_child(name_group)
 
