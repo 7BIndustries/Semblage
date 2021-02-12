@@ -1,29 +1,24 @@
 extends Node
+
 class_name ContextHandler
-
-var latest_context_addition = null
-var prev_object_addition = null
-var latest_object_addition = null
-
-var triggers = load("res://Triggers.gd").new().triggers
 
 
 """
 Looks for the next Action besed on its trigger and extract the needed controls.
 """
-func get_next_action(context):
+static func get_next_action(context):
 	var action = {}
 
 	# Step through all the possible triggers, looking for matches
-	for trigger in triggers.keys():
+	for trigger in Triggers.get_triggers().keys():
 		# See if the trigger matches
 		var trig_rgx = RegEx.new()
-		trig_rgx.compile(triggers[trigger].trigger)
+		trig_rgx.compile(Triggers.get_triggers()[trigger].trigger)
 		var trig_res = trig_rgx.search(context)
 
 		# If this trigger matches, extract the info we can use to build controls
 		if trig_res:
-			action[trigger] = triggers[trigger].action
+			action[trigger] = Triggers.get_triggers()[trigger].action
 
 	return action
 
@@ -31,21 +26,9 @@ func get_next_action(context):
 """
 Update the script context based on the string returned from the control.
 """
-func update_context_string(context, addition):
-	# Save this addition
-	self.latest_context_addition = addition
-
-	# Save the current and previous object additions, if any
-	var tmp_obj = get_object_from_context(self.latest_context_addition)
-	if tmp_obj:
-		# Save the previous object for editing purposes
-		self.prev_object_addition = self.latest_object_addition
-
-		# Save any objects that were added to the context
-		self.latest_object_addition = tmp_obj
-
+static func update_context_string(context, addition):
 	# Create the new context based on the appropriate template of what comes next
-	var new_context = context + "\n" + "result = result" + self.latest_context_addition
+	var new_context = context + "\n" + "result = result" + addition
 
 	return new_context
 
@@ -53,73 +36,41 @@ func update_context_string(context, addition):
 """
 Alters the context string by replacing the old section with a new one.
 """
-func edit_context_string(context, old_text, new_text):
-	# Save this as the latest addition, if it is the one that changed
-	if self.latest_context_addition == old_text:
-		self.latest_context_addition = new_text
-
-	# Save the current and previous object additions, if any
-	var tmp_obj = get_object_from_context(new_text)
-
-	if tmp_obj:
-		self.prev_object_addition = self.latest_object_addition
-	
-		self.latest_object_addition = tmp_obj
-
+static func edit_context_string(context, old_text, new_text):
 	var new_context = context.replace(old_text, new_text)
 
 	return new_context
-
-"""
-Returns the latest action that was added to the script context.
-"""
-func get_latest_context_addition():
-	return self.latest_context_addition
-
-
-"""
-Returns what the previous object addition's name was, if any.
-"""
-func get_prev_object_addition():
-	return self.prev_object_addition
-
-
-"""
-Returns the latest object that was added to the script context.
-"""
-func get_latest_object_addition():
-	return self.latest_object_addition
 
 
 """
 Given a snippet of code, finds the Action control (if any) that matches it
 so that an edit may be performed.
 """
-func find_matching_edit_trigger(code_text):
+static func find_matching_edit_trigger(code_text):
 	var matching_action = {}
 
 	# Step through all the possible triggers, looking for matches
-	for trigger in triggers.keys():
+	for trigger in Triggers.get_triggers().keys():
 		var trig_rgx = RegEx.new()
-		trig_rgx.compile(triggers[trigger]["edit_trigger"])
+		trig_rgx.compile(Triggers.get_triggers()[trigger]["edit_trigger"])
 		var trig_res = trig_rgx.search(code_text)
 
 		# If this trigger matches, extract the info we can use to build controls
 		if trig_res:
-			matching_action[trigger] = triggers[trigger].action
+			matching_action[trigger] = Triggers.get_triggers()[trigger].action
 			break
 
 	return matching_action
 
 
 """
-Returns any tagged objects specified via tags in the context.
+Returns any tagged objects specified via tags in the given template.
 """
-func get_object_from_context(context):
+static func get_object_from_template(template):
 	# Use a regular expression to extract the tag names
 	var object_rgx = RegEx.new()
 	object_rgx.compile("(?<=tag\\(\")(.*)(?=\"\\))")
-	var res = object_rgx.search(context)
+	var res = object_rgx.search(template)
 
 	if res:
 		return res.get_string()
@@ -131,7 +82,7 @@ func get_object_from_context(context):
 Get things that will not be tessellated during execution, like workplanes so
 that they can be displayed as previews to the user.
 """
-func get_untessellateds(context):
+static func get_untessellateds(context):
 	var untessellateds = []
 
 	# Check to see if there is an object that will be untessellated at the end of the context
@@ -173,13 +124,13 @@ func get_untessellateds(context):
 """
 Filters out to only 2D actions.
 """
-func get_2d_actions():
+static func get_2d_actions():
 	var two_d_actions = []
 
 	# Grab only actions from the 2D group
-	for trigger in triggers.keys():
-		if triggers[trigger].action.group == "2D":
-			two_d_actions.append(triggers[trigger].action.name)
+	for trigger in Triggers.get_triggers().keys():
+		if Triggers.get_triggers()[trigger].action.group == "2D":
+			two_d_actions.append(Triggers.get_triggers()[trigger].action.name)
 
 	return two_d_actions
 
@@ -187,13 +138,13 @@ func get_2d_actions():
 """
 Filters out to only 3D actions.
 """
-func get_3d_actions():
+static func get_3d_actions():
 	var three_d_actions = []
 
 	# Grab only actions from the 2D group
-	for trigger in triggers.keys():
-		if triggers[trigger].action.group == "3D":
-			three_d_actions.append(triggers[trigger].action.name)
+	for trigger in Triggers.get_triggers().keys():
+		if Triggers.get_triggers()[trigger].action.group == "3D":
+			three_d_actions.append(Triggers.get_triggers()[trigger].action.name)
 
 	return three_d_actions
 
@@ -201,13 +152,13 @@ func get_3d_actions():
 """
 Filters out to only workplane actions.
 """
-func get_wp_actions():
+static func get_wp_actions():
 	var wp_actions = []
 
 	# Grab only actions from the 2D group
-	for trigger in triggers.keys():
-		if triggers[trigger].action.group == "WP":
-			wp_actions.append(triggers[trigger].action.name)
+	for trigger in Triggers.get_triggers().keys():
+		if Triggers.get_triggers()[trigger].action.group == "WP":
+			wp_actions.append(Triggers.get_triggers()[trigger].action.name)
 
 	return wp_actions
 
@@ -215,9 +166,9 @@ func get_wp_actions():
 """
 Gets the matching action given the action's name.
 """
-func get_action_for_name(name):
-	for trigger in triggers.keys():
-		if triggers[trigger].action.name == name:
-			return triggers[trigger]
+static func get_action_for_name(name):
+	for trigger in Triggers.get_triggers().keys():
+		if Triggers.get_triggers()[trigger].action.name == name:
+			return Triggers.get_triggers()[trigger]
 
 	return null

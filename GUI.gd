@@ -2,9 +2,7 @@ extends Control
 
 var open_file_path # The component/CQ file that the user opened
 var component_text # The text of the current component's script
-var max_dim = 0 # Largest dimension of any component that is loaded
-var max_dist = 0 # Maximum distance away from the origin any vertex is
-var safe_distance = max_dim * 1.5 # The distance away the camera should be placed to be able to view the components
+var safe_distance = 0 # The distance away the camera should be placed to be able to view the components
 var status # The status bar that keeps the user appraised of what is going on
 var cur_temp_file # The path to the current temp file
 var cur_error_file # The path to the current error file, if needed
@@ -33,7 +31,7 @@ func _ready():
 	tabs.set_tab_title(0, "Start")
 
 	# Start off with the base script text
-	component_text = "# Semblage v1\nimport cadquery as cq\nresult=cq"
+	_reset_component_text()
 
 	# Get the object and history trees ready to use
 	_init_history_tree()
@@ -42,7 +40,7 @@ func _ready():
 	cur_temp_file = OS.get_user_data_dir() + "/temp_component.json"
 
 	# Empty the temporary component file so that it can be reused
-	_save_temp_component_file(cur_temp_file, "")
+	FileSystem.clear_file(cur_temp_file)
 
 	# Make sure the window is maximized on start
 	OS.set_window_maximized(true)
@@ -71,7 +69,7 @@ func _process(delta):
 			$ErrorDialog.popup_centered()
 
 			# Empty the temporary component file so that it can be reused
-			_save_temp_component_file(cur_temp_file, "")
+			FileSystem.clear_file(cur_temp_file)
 
 			# Prevent us from entering this code block again
 			cur_error_file = null
@@ -119,7 +117,7 @@ func _process(delta):
 				load_component_json(json_string)
 
 				# Empty the temporary component file so that it can be reused
-				_save_temp_component_file(cur_temp_file, "")
+				FileSystem.clear_file(cur_temp_file)
 
 				executing = false
 
@@ -151,13 +149,15 @@ func _on_OpenDialog_file_selected(path):
 	tabs.set_tab_title(0, open_file_path)
 
 	# Load the component text to handle later
-	component_text = load_component_file(open_file_path)
+	component_text = FileSystem.load_component(open_file_path)
 
 	# If this is a Semblage component file, load it into the history and object trees
 	if component_text.begins_with("# Semblage v"):
+		# Load the component into the history and object trees and then render it
 		load_semblage_component(component_text)
-
-	generate_component(open_file_path)
+		_render_history_tree()
+	else:
+		_render_non_semblage(open_file_path)
 
 
 """
@@ -167,62 +167,35 @@ func load_semblage_component(text):
 	var lines = text.split("\n")
 
 	# Start the component text off with what we know the first 3 lines will be
-	component_text = "# Semblage v1\nimport cadquery as cq\nresult=cq"
+	_reset_component_text()
 
 	# Step through all the lines and look for statements that need to be replayed
 	for line in lines:
 		if line.begins_with("result = result"):
 			# Update the context string in the ContextHandler
 			var addition = line.replace("result = result", "")
-			$ActionPopupPanel.update_context_string(component_text, addition)
 
 			# Add the current item to the history tree
-			var context_item_text = $ActionPopupPanel.get_latest_context_addition()
-			Common.add_item_to_tree(context_item_text, history_tree, history_tree_root)
+			Common.add_item_to_tree(addition, history_tree, history_tree_root)
 
 			# Find any object name (if present) that needs to be displayed in the list
-			var new_object = $ActionPopupPanel.get_latest_object_addition()
+			var new_object = ContextHandler.get_object_from_template(addition)
 			Common.add_item_to_tree(new_object, object_tree, object_tree_root)
 
-			component_text = $ActionPopupPanel.get_new_context()
-
-
-"""
-Loads the text of a file into a string to be manipulated by the GUI.
-"""
-func load_component_file(path):
-	var f = File.new()
-	var err = f.open(path, File.READ)
-	if err != OK:
-		printerr("Could not open file, error code ", err)
-		return ""
-	var text = f.get_as_text()
-	f.close()
-	return text
-
-
-"""
-Mainly used to write the contents of the actions popup dialog to a temporary file
-so that the result can be displayed.
-"""
-func _save_temp_component_file(path, component_text):
-	var file = File.new()
-	file.open(path, File.WRITE)
-	file.store_string(component_text)
-	file.close()
+			component_text = ContextHandler.update_context_string(component_text, addition)
 
 
 """
 Generates a component using the semb CLI, which returns JSON.
 """
-func generate_component(path, component_text=null):
+func _render_non_semblage(path):
 	# If component text has been passed, it have probably been modified from any file contents
 	if component_text != null:
 		# We want to write the component text to a temporary file and render the result of executing that
 		var temp_component_path = OS.get_user_data_dir() + "/temp_component_path.py"
 		
 		# We append the show_object here so that it is not part of the context going forward
-		_save_temp_component_file(temp_component_path, component_text + "\nshow_object(result)")
+		FileSystem.save_component(temp_component_path, component_text + "\nshow_object(result)")
 		
 		# Switch path to pass that to cq-cli
 		path = temp_component_path
@@ -252,13 +225,14 @@ func generate_component(path, component_text=null):
 Calculates the proper Y position to set the camera to fit a component or
 assembly in the viewport.
 """
-#func get_safe_camera_distance(max_dim):
-#	var x = vp.get_visible_rect().size.x
-#	var y = vp.get_visible_rect().size.y
-#
-#	var dist = max_dim / sin(PI / 180.0 * cam.fov * 0.5)
-#
-#	return dist
+func get_safe_camera_distance(max_dim):
+	var x = vp.get_visible_rect().size.x
+	var y = vp.get_visible_rect().size.y
+
+	var dist = max_dim / sin(PI / 180.0 * cam.fov * 0.5)
+
+	return dist
+
 
 """
 Loads a generated component into a mesh.
@@ -266,95 +240,28 @@ Loads a generated component into a mesh.
 func load_component_json(json_string):
 	status.text = "Redering component..."
 
-	# Reset the maximum dimension so we do not save a larger one from a previous load
-	max_dim = 0
-	max_dist = 0
+	var new_safe_dist = 0
 
+	# Convert all of the returned results to meshes that can be displayed
 	var component_json = JSON.parse(json_string).result
-
 	for component in component_json["components"]:
 		# If we've found a larger dimension, save the safe distance, which is the maximum dimension of any component
-		var dim = component["largestDim"]
-		if dim > max_dim:
-			max_dim = dim
+		var max_dim = component["largestDim"]
 
-			# Make sure the zoom speed works with the size of the model
-			cam.ZOOMSPEED = 0.075 * max_dim
+		# Make sure the zoom speed works with the size of the model
+		cam.ZOOMSPEED = 0.075 * max_dim
 
-		# Get the new material color
-		var new_color = component["color"]
-		var material = SpatialMaterial.new()
+		# Get the new safe/sane camera distance
+		new_safe_dist = get_safe_camera_distance(max_dim)
 
-		# The alpha is passed here, but alpha/transparency has to be enabled on the material too.
-		# However, there are other things that need to be done to make sure transparency does
-		# not cause artifacts
-		material.albedo_color = Color(new_color[0], new_color[1], new_color[2], new_color[3])
-
-		# Enable/disable transparency based on the alpha set by the user
-		if new_color[3] == 1.0:
-			material.flags_transparent = false
-		else:
-			material.flags_transparent = true
-
-		# Set the SurfaceTool up to build a new mesh
-		var st = SurfaceTool.new()
-		st.begin(Mesh.PRIMITIVE_TRIANGLES)
-		st.set_material(material)
-
-		# Loop through the triangles and add them all to the mesh
-		for n in range(0, component["triangleCount"] * 3, 3):
-			# Extract the triangle index values
-			var t1 = component["triangles"][n]
-			var t2 = component["triangles"][n + 1]
-			var t3 = component["triangles"][n + 2]
-
-			# Extract the verices in order from the vert collection
-			var verts = component["vertices"]
-			var verts1 = [verts[t1 * 3], verts[t1 * 3 + 1], verts[t1 * 3 + 2]]
-			var verts2 = [verts[t2 * 3], verts[t2 * 3 + 1], verts[t2 * 3 + 2]]
-			var verts3 = [verts[t3 * 3], verts[t3 * 3 + 1], verts[t3 * 3 + 2]]
-
-			# Wind the triangles in the opposite direction so that they are visible
-			st.add_vertex(Vector3(verts3[0], verts3[1], verts3[2]))
-			st.add_vertex(Vector3(verts2[0], verts2[1], verts2[2]))
-			st.add_vertex(Vector3(verts1[0], verts1[1], verts1[2]))
-			
-			# Grab any vertex that is the furthest away from the origin to help set the safe camera distance
-			if verts1[0] > max_dist: max_dist = verts1[0]
-			if verts1[1] > max_dist: max_dist = verts1[1]
-			if verts1[2] > max_dist: max_dist = verts1[2]
-			if verts2[0] > max_dist: max_dist = verts2[0]
-			if verts2[1] > max_dist: max_dist = verts2[1]
-			if verts2[2] > max_dist: max_dist = verts2[2]
-			if verts3[0] > max_dist: max_dist = verts3[0]
-			if verts3[1] > max_dist: max_dist = verts3[1]
-			if verts3[2] > max_dist: max_dist = verts3[2]
-
-		# Finish the mesh and attach it to a MeshInstance
-		st.generate_normals()
-		var mesh = st.commit()
-		var mesh_inst = MeshInstance.new()
-		mesh_inst.mesh = mesh
-
-		# Add the mesh instance to the viewport
-		vp.add_child(mesh_inst)
-
-		# Handle the vertices
-#		for v in component["cqVertices"]:
-#			var newVert = CSGMesh.new()
-#			newVert.name = "VertexCapsule"
-#			newVert.mesh = SphereMesh.new()
-#			# newVert.mesh.radius = 0.1
-#			newVert.scale = Vector3(0.05, 0.05, 0.05)
-#			newVert.mesh.material = SpatialMaterial.new()
-#			newVert.mesh.material.albedo_color = Color(0.8, 0.8, 0.8)
-#			newVert.set_translation(Vector3(v[0], v[1], v[2]))
-#			vp.add_child(newVert)
+		# Get the mesh instance and the maximum distance
+		var mesh_data = Meshes.gen_component_mesh(component)
+		vp.add_child(mesh_data)
 
 	# Only reset the view if the same distance changed
-	if (max_dist * 2.0) != safe_distance:
+	if new_safe_dist != safe_distance:
 		# Find the safe distance for the camera based on the maximum distance of any vertex from the origin
-		safe_distance = max_dist * 2.0 # get_safe_camera_distance(max_dist)
+		safe_distance = new_safe_dist # get_safe_camera_distance(max_dist)
 
 		# Set the camera to the safe distance and have it look at the origin
 		cam.look_at_from_position(Vector3(0, -safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
@@ -367,6 +274,7 @@ func load_component_json(json_string):
 
 	status.text = "Redering component...done."
 
+
 """
 Handler that is called when the user clicks the button for the home view.
 """
@@ -377,6 +285,7 @@ func _on_HomeViewButton_button_down():
 	# Reset the origin indicator camera back to the view we saved on scene load
 	if origin_transform != null: origin_cam.transform = origin_transform
 
+
 """
 Handler that is called when the user clicks the button to close the current component/view.
 """
@@ -384,14 +293,11 @@ func _on_CloseButton_button_down():
 	# Reset the tranform for the camera back to the one we saved when the scene loaded
 	if cam != null && home_transform != null: cam.transform = home_transform
 
-	# Make sure the new maximum dim takes effect next time
-	max_dim = 0
-
 	# Set the default tab name
 	tabs.set_tab_title(0, "Start")
 	
 	open_file_path = null
-	component_text = "import cadquery as cq\nresult=cq"
+	_reset_component_text()
 
 	self._clear_viewport()
 	
@@ -432,7 +338,7 @@ func _on_ReloadButton_button_down():
 	self._clear_viewport()
 	self.history_tree.clear()
 
-	generate_component(open_file_path)
+	_render_non_semblage(open_file_path)
 
 """
 Removes all MeshInstances from a viewport to prepare for something new to be loaded.
@@ -450,138 +356,92 @@ func _clear_viewport():
 """
 Retries the updated context and makes it the current one.
 """
-func _on_ActionPopupPanel_ok_signal(edit_mode):
+func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 	self._clear_viewport()
 
 	# If we have untessellated objects (i.e. workplanes), display placeholders for them
-	var untesses = $ActionPopupPanel.get_untessellateds()
+	var untesses = ContextHandler.get_untessellateds(new_template)
 	if len(untesses) > 0:
 		for untess in untesses:
-			_make_wp_mesh(untess["origin"], untess["normal"])
+			var meshes = Meshes.gen_workplane_meshes(untess["origin"], untess["normal"])
+			for mesh in meshes:
+				vp.add_child(mesh)
 
-	component_text = $ActionPopupPanel.get_new_context()
+	# Save the updated component text
+	component_text = new_context
+
+	# Find any object name (if present) that needs to be displayed in the list
+	var new_object = ContextHandler.get_object_from_template(new_template)
 
 	# If we are in edit mode, do not try to add anything to the history
 	if edit_mode:
-		var new_template = $ActionPopupPanel.get_new_template()
-		var prev_template = $ActionPopupPanel.get_prev_template()
-
-		# Update the edited line within the history tree
-		var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree
-		Common.update_tree_item(tree, prev_template, new_template)
+		# Update the edited entry within the history tree
+		var prev_template = history_tree.get_selected().get_text(0) # $ActionPopupPanel.get_prev_template()
+		Common.update_tree_item(history_tree, prev_template, new_template)
 
 		# Update the component name in the object tree if the object name was changed
-		var new_object = $ActionPopupPanel.get_latest_object_addition()
-		if new_object:
-			var prev_object = $ActionPopupPanel.get_prev_object_addition()
-			tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree
-			Common.update_tree_item(tree, prev_object, new_object)
+#		if new_object:
+#			var prev_object = $ActionPopupPanel.get_prev_object_addition()
+#			Common.update_tree_item(object_tree, prev_object, new_object)
 	else:
 		# Add the current item to the history tree
-		var context_item_text = $ActionPopupPanel.get_latest_context_addition()
-		Common.add_item_to_tree(context_item_text, history_tree, history_tree_root)
+		Common.add_item_to_tree(new_template, history_tree, history_tree_root)
 
-		# Find any object name (if present) that needs to be displayed in the list
-		var new_object = $ActionPopupPanel.get_latest_object_addition()
-		Common.add_item_to_tree(new_object, object_tree, object_tree_root)
-	
-	generate_component(open_file_path, component_text)
+		# Add the componenent name to the object tree if it had a name
+		if new_object:
+			Common.add_item_to_tree(new_object, object_tree, object_tree_root)
 
-
-"""
-Creates the placeholder workplane mesh to show the user what the workplane
-and its normal looks like.
-"""
-func _make_wp_mesh(origin, normal):
-	# Get the new material color
-	var new_color = Color(0.6, 0.6, 0.6, 0.3)
-	var material = SpatialMaterial.new()
-	material.albedo_color = Color(new_color[0], new_color[1], new_color[2], new_color[3])
-	material.flags_transparent = true
-
-	# Set up the workplane mesh
-	var wp_mesh = MeshInstance.new()
-	var raw_cube_mesh = CubeMesh.new()
-	raw_cube_mesh.size = Vector3(5, 5, 0.01)
-	wp_mesh.material_override = material
-	wp_mesh.mesh = raw_cube_mesh
-	wp_mesh.transform.origin = origin
-	wp_mesh.transform.basis = _find_basis(normal)
-
-	# Add the mesh instance to the viewport
-	vp.add_child(wp_mesh)
-
-	# Get the new material color
-	var norm_color = Color(1.0, 1.0, 1.0, 0.5)
-	var norm_mat = SpatialMaterial.new()
-	norm_mat.albedo_color = Color(norm_color[0], norm_color[1], norm_color[2], norm_color[3])
-	norm_mat.flags_transparent = true
-
-	# Set up the normal mesh
-	var norm_mesh = MeshInstance.new()
-	norm_mesh.material_override = norm_mat
-
-	# Set the SurfaceTool up to build a new mesh
-	var st = SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	st.set_material(norm_mat)
-	
-	# Add norm triangle
-	st.add_vertex(Vector3(0.0, 0.0, 1.0))
-	st.add_vertex(Vector3(-0.1, 0.1, 0.0))
-	st.add_vertex(Vector3(0.1, 0.1, 0.0))
-
-	# Add norm triangle
-	st.add_vertex(Vector3(0.0, 0.0, 1.0))
-	st.add_vertex(Vector3(0.1, 0.1, 0.0))
-	st.add_vertex(Vector3(0.1, -0.1, 0.0))
-
-	# Add norm triangle
-	st.add_vertex(Vector3(0.0, 0.0, 1.0))
-	st.add_vertex(Vector3(0.1, -0.1, 0.0))
-	st.add_vertex(Vector3(-0.1, -0.1, 0.0))
-
-	# Add norm triangle
-	st.add_vertex(Vector3(0.0, 0.0, 1.0))
-	st.add_vertex(Vector3(-0.1, -0.1, 0.0))
-	st.add_vertex(Vector3(-0.1, 0.1, 0.0))
-
-	# Finish the mesh and attach it to a MeshInstance
-	st.generate_normals()
-	var mesh = st.commit()
-	norm_mesh.mesh = mesh
-
-	norm_mesh.transform.origin = Vector3(origin[0], origin[1], origin[2])
-	norm_mesh.transform.basis = _find_basis(normal)
-
-	# Add the normal mesh instance to the viewport
-	vp.add_child(norm_mesh)
+	# Render the component
+	_render_history_tree()
 
 
 """
-Find the basis for a 3D node based on a normal.
+Collects all of the history tree items and renders them into an
+object in the 3D view.
 """
-func _find_basis(normal):
-	var imin = 0
-	for i in range(0, 3):
-		if abs(normal[i]) < abs(normal[imin]):
-			imin = i
-	
-	var v2 = Vector3(0, 0, 0)
-	var dt = normal[imin]
-	
-	v2[imin] = 1
-	for i in range(0, 3):
-		v2[i] -= dt * normal[i];
+func _render_history_tree():
+	# Start to build the preview string based on what is in the actions list
+	_reset_component_text()
+#	var script_text = "# Semblage v1\nimport cadquery as cq\nresult=cq"
 
-	var v3 = normal.cross(v2)
+	# Search the tree and update the matchine entry in the tree
+	var cur_item = history_tree_root.get_children()
+	while true:
+		if cur_item == null:
+			break
+		else:
+			component_text += cur_item.get_text(0)
+
+			cur_item = cur_item.get_next()
+
+	var script_text = component_text + "\nshow_object(result)"
+
+	# We want to write the component text to a temporary file and render the result of executing that
+	var temp_component_path = OS.get_user_data_dir() + "/temp_component_path.py"
 	
-	var basis = Basis()
-	basis[0] = v3.normalized()
-	basis[1] = v2.normalized()
-	basis[2] = normal.normalized()
-	
-	return basis
+	# We append the show_object here so that it is not part of the context going forward
+	FileSystem.save_component(temp_component_path, script_text)
+
+	# Get the date and time and use it to construct the unique file id
+	var date_time = OS.get_datetime()
+	var file_id = str(date_time["year"]) + "_" +  str(date_time["month"]) + "_" + str(date_time["day"]) + "_" + str(date_time["hour"]) + "_" + str(date_time["minute"]) + "_" + str(date_time["second"])
+
+	# Construct the directory where the temporary JSON file can be written
+	cur_error_file = OS.get_user_data_dir() + "/error_" + file_id + ".txt"
+
+	# Temporary location and name of the file to convert
+	var array = ["--codec", "semb", "--infile", temp_component_path, "--outfile", cur_temp_file, "--errfile", cur_error_file]
+	var args = PoolStringArray(array)
+
+	# Execute the render script
+	var success = OS.execute(Settings.get_cq_cli_path(), args, false)
+
+	# Track whether or not execution happened successfully
+	if success == -1:
+		status.text = "Execution error"
+	else:
+		executing = true
+		status.text = "Generating component..."
 
 
 """
@@ -763,3 +623,48 @@ func _on_ExportDialog_file_selected(path):
 	# Track whether or not execution happened successfully
 	if success == -1:
 		status.text = "Export error"
+
+
+"""
+Gives a single place to reset the component text when starting up
+or closing a previous component.
+"""
+func _reset_component_text():
+	component_text = "# Semblage v1\nimport cadquery as cq\nresult=cq"
+
+
+"""
+Called when the user clicks on the button to delete an item from
+the history tree.
+"""
+func _on_DeleteButton_button_down():
+	var ht = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree
+	var selected = ht.get_selected()
+
+	# Make sure the user is not trying to delete something they should not
+	if selected.get_text(0) == "cq":
+		return
+	if selected.get_text(0).begins_with(".Workplane"):
+		return
+
+	# Remove the item from the history tree
+	selected.free()
+
+	self._clear_viewport()
+	self._render_history_tree()
+
+
+"""
+Called when the user clicks on the button to move an item up the
+history tree.
+"""
+func _on_MoveUpButton_button_down():
+	print("MOVE UP")
+
+
+"""
+Called when the user clicks on the button to move an item up the
+history tree.
+"""
+func _on_MoveDownButton_button_down():
+	print("MOVE DOWN")

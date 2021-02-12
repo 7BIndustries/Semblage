@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=2]
+[gd_scene load_steps=47 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -14,6 +14,9 @@
 [ext_resource path="res://assets/icons/3d_button_flat_ready.svg" type="Texture" id=12]
 [ext_resource path="res://assets/icons/workplane_button_flat_ready.svg" type="Texture" id=13]
 [ext_resource path="res://assets/icons/sketch_button_flat_ready.svg" type="Texture" id=14]
+[ext_resource path="res://assets/icons/delete_tree_item_button_flat_ready.svg" type="Texture" id=15]
+[ext_resource path="res://assets/icons/move_tree_item_down_button_flat_ready.svg" type="Texture" id=16]
+[ext_resource path="res://assets/icons/move_tree_item_up_button_flat_ready.svg" type="Texture" id=17]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
@@ -216,18 +219,40 @@ text = "Objects"
 [node name="ObjectTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure"]
 margin_top = 18.0
 margin_right = 142.0
-margin_bottom = 239.0
+margin_bottom = 225.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="HistoryTreeLabel" type="Label" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure"]
-margin_top = 243.0
+margin_top = 229.0
 margin_right = 142.0
-margin_bottom = 257.0
+margin_bottom = 243.0
 text = "History"
 
+[node name="HBoxContainer" type="HBoxContainer" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure"]
+margin_top = 247.0
+margin_right = 142.0
+margin_bottom = 271.0
+
+[node name="DeleteButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer"]
+margin_right = 30.0
+margin_bottom = 24.0
+icon = ExtResource( 15 )
+
+[node name="MoveUpButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer"]
+margin_left = 34.0
+margin_right = 64.0
+margin_bottom = 24.0
+icon = ExtResource( 17 )
+
+[node name="MoveDownButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer"]
+margin_left = 68.0
+margin_right = 98.0
+margin_bottom = 24.0
+icon = ExtResource( 16 )
+
 [node name="HistoryTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure"]
-margin_top = 261.0
+margin_top = 275.0
 margin_right = 142.0
 margin_bottom = 483.0
 size_flags_horizontal = 3
@@ -411,99 +436,104 @@ margin_right = 66.0
 margin_bottom = 112.0
 
 [node name="ActionGroupsVBoxContainer" type="VBoxContainer" parent="ActionPopupPanel/VBoxContainer"]
-margin_right = 40.0
-margin_bottom = 40.0
+margin_right = 155.0
+margin_bottom = 43.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer"]
-margin_right = 40.0
-margin_bottom = 40.0
+margin_right = 155.0
+margin_bottom = 43.0
 
 [node name="WorkplaneButton" type="Button" parent="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer"]
-margin_right = 12.0
-margin_bottom = 20.0
+margin_right = 49.0
+margin_bottom = 43.0
 toggle_mode = true
 icon = ExtResource( 13 )
 
 [node name="ThreeDButton" type="Button" parent="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer"]
-margin_right = 12.0
-margin_bottom = 20.0
+margin_left = 53.0
+margin_right = 102.0
+margin_bottom = 43.0
 toggle_mode = true
 icon = ExtResource( 12 )
 
 [node name="SketchButton" type="Button" parent="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer"]
-margin_right = 12.0
-margin_bottom = 20.0
+margin_left = 106.0
+margin_right = 155.0
+margin_bottom = 43.0
 toggle_mode = true
 icon = ExtResource( 14 )
 
 [node name="HSeparator3" type="HSeparator" parent="ActionPopupPanel/VBoxContainer"]
-margin_right = 40.0
-margin_bottom = 4.0
+margin_top = 47.0
+margin_right = 155.0
+margin_bottom = 51.0
 
 [node name="ActionOptionButton" type="OptionButton" parent="ActionPopupPanel/VBoxContainer"]
-margin_right = 62.0
-margin_bottom = 20.0
+margin_top = 55.0
+margin_right = 155.0
+margin_bottom = 75.0
 
 [node name="HSeparator" type="HSeparator" parent="ActionPopupPanel/VBoxContainer"]
-margin_top = 24.0
-margin_right = 62.0
-margin_bottom = 28.0
+margin_top = 79.0
+margin_right = 155.0
+margin_bottom = 83.0
 custom_styles/separator = SubResource( 28 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ActionPopupPanel/VBoxContainer"]
-margin_right = 40.0
-margin_bottom = 40.0
+margin_top = 87.0
+margin_right = 155.0
+margin_bottom = 339.0
 
 [node name="ActionContainer" type="VBoxContainer" parent="ActionPopupPanel/VBoxContainer/HBoxContainer"]
-margin_right = 40.0
-margin_bottom = 40.0
+margin_right = 100.0
+margin_bottom = 252.0
 
 [node name="DynamicContainer" type="MarginContainer" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer"]
-margin_top = 32.0
-margin_right = 62.0
-margin_bottom = 32.0
+margin_right = 100.0
 
 [node name="AddButton" type="Button" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer"]
-margin_top = 64.0
-margin_right = 62.0
-margin_bottom = 84.0
+margin_top = 4.0
+margin_right = 100.0
+margin_bottom = 24.0
 text = "Add"
 
 [node name="UpdateButton" type="Button" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer"]
-margin_right = 12.0
-margin_bottom = 20.0
+margin_top = 28.0
+margin_right = 100.0
+margin_bottom = 48.0
 text = "Update"
 
 [node name="ActionTree" type="Tree" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer"]
+margin_top = 52.0
 margin_right = 100.0
-margin_bottom = 200.0
+margin_bottom = 252.0
 rect_min_size = Vector2( 100, 200 )
 hide_root = true
 
 [node name="Preview" type="TextureRect" parent="ActionPopupPanel/VBoxContainer/HBoxContainer"]
-margin_left = -4.0
-margin_top = -4.0
-margin_right = 96.0
-margin_bottom = 96.0
+margin_left = 104.0
+margin_right = 104.0
+margin_bottom = 252.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="HSeparator2" type="HSeparator" parent="ActionPopupPanel/VBoxContainer"]
-margin_right = 40.0
-margin_bottom = 4.0
+margin_top = 343.0
+margin_right = 155.0
+margin_bottom = 347.0
 custom_styles/separator = SubResource( 29 )
 
 [node name="OkButton" type="Button" parent="ActionPopupPanel/VBoxContainer"]
-margin_top = 40.0
-margin_right = 62.0
-margin_bottom = 60.0
+margin_top = 351.0
+margin_right = 155.0
+margin_bottom = 371.0
 text = "OK"
 
 [node name="CancelButton" type="Button" parent="ActionPopupPanel/VBoxContainer"]
-margin_top = 88.0
-margin_right = 62.0
-margin_bottom = 108.0
+margin_top = 375.0
+margin_right = 155.0
+margin_bottom = 395.0
 text = "Cancel"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -543,6 +573,9 @@ current_path = "/home/jwright/Downloads/repos/Semblage/"
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton" to="." method="_on_ReloadButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton" to="." method="_on_CloseButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton" to="." method="_on_HomeViewButton_button_down"]
+[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_button_down"]
+[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer/MoveUpButton" to="." method="_on_MoveUpButton_button_down"]
+[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer/MoveDownButton" to="." method="_on_MoveDownButton_button_down"]
 [connection signal="item_activated" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree" to="." method="_on_HistoryTree_item_activated"]
 [connection signal="activate_action_popup" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="." method="_on_DocumentTabs_activate_action_popup"]
 [connection signal="cam_pan" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_pan"]

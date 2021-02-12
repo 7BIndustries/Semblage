@@ -58,38 +58,17 @@ func _set_action_control():
 	var act = context_handler.get_action_for_name(selected)
 
 	# Set the action control
-	clear_popup()
+	_clear_popup()
 	$VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.add_child(act.action.control)
 
 
 """
 Clears the previous dynamic controls from this popup.
 """
-func clear_popup():
+func _clear_popup():
 	# Clear the previous control item(s) from the DynamicContainer
 	for child in $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children():
 		$VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.remove_child(child)
-
-
-"""
-Makes it possible to get the updated code context after changes have been applied.
-"""
-func get_new_context():
-	return new_context
-
-
-"""
-Makes it possible to get the previous context addition so that it can be edited.
-"""
-func get_prev_template():
-	return prev_template
-
-
-"""
-During an edit, returns the newly updated template.
-"""
-func get_new_template():
-	return new_template
 
 
 """
@@ -98,34 +77,6 @@ Finds out which trigger was selected by the user.
 func _get_selected_trigger():
 	var aob = self.get_node("VBoxContainer/ActionOptionButton")
 	return aob.get_item_text(aob.get_selected_id())
-
-
-"""
-Gets the latest addition to the context for this popup panel.
-"""
-func get_latest_context_addition():
-	return self.context_handler.get_latest_context_addition()
-
-
-"""
-Get the previous object addition tot he context for this popup panel.
-"""
-func get_prev_object_addition():
-	return self.context_handler.get_prev_object_addition()
-
-
-"""
-Get the latest object addition to the context for this popup panel.
-"""
-func get_latest_object_addition():
-	return self.context_handler.get_latest_object_addition()
-
-
-"""
-Gets script objects (like Workplanes) that will not be displayed.
-"""
-func get_untessellateds():
-	return self.context_handler.get_untessellateds(self.get_new_context())
 
 
 """
@@ -249,7 +200,7 @@ func _on_OkButton_button_down():
 	else:
 		new_context = context_handler.update_context_string(original_context, new_template)
 
-	emit_signal("ok_signal", edit_mode)
+	emit_signal("ok_signal", edit_mode, new_template, new_context)
 	hide()
 
 
@@ -268,13 +219,6 @@ func _update_multiple_actions(tree_children):
 
 	return updated_context
 
-"""
-Allows the main GUI to essentially replay the context additions from a loaded file.
-"""
-func update_context_string(incoming_context, context_addition):
-	original_context = incoming_context
-	new_context = context_handler.update_context_string(original_context, context_addition)
-
 
 """
 Called when the Cancel button is pressed so that this popup can just be closed.
@@ -290,7 +234,7 @@ func _on_ActionOptionButton_item_selected(index):
 	var trig = $VBoxContainer/ActionOptionButton.get_item_text($VBoxContainer/ActionOptionButton.get_selected_id())
 
 	# Clear the dynamic action items from the popup
-	clear_popup()
+	_clear_popup()
 
 	# Populate the appropriate action control
 	_set_action_control()
@@ -307,7 +251,7 @@ func _on_VBoxContainer_resized():
 """
 Allows an image to be loaded into the 2D preview.
 """
-func load_image(path):
+func _load_image(path):
 	var texture = ImageTexture.new()
 	var image = Image.new()
 	image.load(path)
@@ -367,7 +311,7 @@ func _on_SketchButton_toggled(button_pressed):
 		$VBoxContainer/HBoxContainer/ActionContainer/AddButton.show()
 		$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.show()
 		$VBoxContainer/HBoxContainer/Preview.show()
-		load_image("res://assets/samples/sample_2D_render.svg")
+		_load_image("res://assets/samples/sample_2D_render.svg")
 
 
 """
@@ -433,7 +377,7 @@ func _render_action_tree():
 
 	# The currently rendered component should be here
 	var temp_path = OS.get_user_data_dir() + "/temp_component_svg.py"
-	_save_temp_component_file(temp_path, script_text)
+	FileSystem.save_component(temp_path, script_text)
 
 	# The temporary SVG file path
 	var svg_path = OS.get_user_data_dir() + "/temp_component_svg.svg"
@@ -451,17 +395,7 @@ func _render_action_tree():
 		# TODO: Display and error image/text
 		print("Export error")
 	else:
-		load_image(svg_path)
-
-"""
-Mainly used to write the contents of the actions popup dialog to a temporary file
-so that the result can be displayed.
-"""
-func _save_temp_component_file(path, component_text):
-	var file = File.new()
-	file.open(path, File.WRITE)
-	file.store_string(component_text)
-	file.close()
+		_load_image(svg_path)
 
 
 """
