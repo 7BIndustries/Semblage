@@ -144,7 +144,7 @@ func activate_popup(component_text, edit_mode):
 	_on_VBoxContainer_resized()
 
 	# Make sure the Update button is hidden
-	$VBoxContainer/HBoxContainer/ActionContainer/UpdateButton.hide()
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer.hide()
 
 	var next_action = null
 
@@ -281,7 +281,7 @@ func _on_ThreeDButton_toggled(button_pressed):
 		_set_action_control()
 
 		# Hide preview controls
-		$VBoxContainer/HBoxContainer/ActionContainer/AddButton.hide()
+		$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.hide()
 		$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.hide()
 		$VBoxContainer/HBoxContainer/Preview.hide()
 
@@ -308,7 +308,7 @@ func _on_SketchButton_toggled(button_pressed):
 		_set_action_control()
 
 		# Show preview controls
-		$VBoxContainer/HBoxContainer/ActionContainer/AddButton.show()
+		$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.show()
 		$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.show()
 		$VBoxContainer/HBoxContainer/Preview.show()
 		_load_image("res://assets/samples/sample_2D_render.svg")
@@ -336,7 +336,7 @@ func _on_WorkplaneButton_toggled(button_pressed):
 		_set_action_control()
 
 		# Hide preview controls
-		$VBoxContainer/HBoxContainer/ActionContainer/AddButton.hide()
+		$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.hide()
 		$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.hide()
 		$VBoxContainer/HBoxContainer/Preview.hide()
 
@@ -411,9 +411,6 @@ func _on_ActionTree_item_activated():
 
 	_set_action_control()
 
-	# Unhide the Update button so the user can change the selected tree item
-	$VBoxContainer/HBoxContainer/ActionContainer/UpdateButton.show()
-
 
 """
 Updates the selected action tree item with new settings.
@@ -428,8 +425,69 @@ func _on_UpdateButton_button_down():
 	# Update the old action template to reflect the new settings
 	Common.update_tree_item(action_tree, orig_text, new_text)
 
-	# Hide the action button to let the user know the update is happening
-	$VBoxContainer/HBoxContainer/ActionContainer/UpdateButton.hide()
-
 	# Re-render everything in the action tree
 	_render_action_tree()
+
+
+"""
+Called when an item is selected in the Action tree.
+"""
+func _on_ActionTree_item_selected():
+	# Unhide the item editing controls so the user can change the selected tree item
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer.show()
+
+
+"""
+Called when nothing is selected in the action tree.
+"""
+func _on_ActionTree_nothing_selected():
+	# Hide the item editing controls so that the user can no longer change the selected tree item
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer.hide()
+
+
+"""
+Called when the user clicks the delete tree item button.
+"""
+func _on_DeleteButton_button_down():
+	var selected = action_tree.get_selected()
+
+	# Make sure there is an item to delete
+	if selected == null:
+		return
+
+	# Remove the item from the history tree
+	selected.free()
+
+	# Make sure there is something left to render
+	if action_tree_root.get_children() == null:
+		_load_image("res://assets/samples/sample_2D_render.svg")
+	else:
+		self._render_action_tree()
+
+
+"""
+Called when the move action item up button is pressed.
+"""
+func _on_MoveUpButton_button_down():
+	var selected = action_tree.get_selected()
+
+	# Make sure there is an item to delete
+	if selected == null:
+		return
+
+	# Move the item up in the action tree one position
+	Common.move_tree_item_up(action_tree, selected)
+
+
+"""
+Called when the move action item down button is pressed.
+"""
+func _on_MoveDownButton_button_down():
+	var selected = action_tree.get_selected()
+
+	# Make sure there is an item to delete
+	if selected == null:
+		return
+
+	# Move the item up in the action tree one position
+	Common.move_tree_item_down(action_tree, selected)

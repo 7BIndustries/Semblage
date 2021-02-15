@@ -647,8 +647,11 @@ Called when the user clicks on the button to delete an item from
 the history tree.
 """
 func _on_DeleteButton_button_down():
-	var ht = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree
-	var selected = ht.get_selected()
+	var selected = history_tree.get_selected()
+
+	# Make sure there is an item to delete
+	if selected == null:
+		return
 
 	# Make sure the user is not trying to delete something they should not
 	if selected.get_text(0) == "cq":
@@ -668,12 +671,43 @@ Called when the user clicks on the button to move an item up the
 history tree.
 """
 func _on_MoveUpButton_button_down():
-	print("MOVE UP")
+	var selected = history_tree.get_selected()
 
+	# Make sure there is an item to delete
+	if selected == null:
+		return
+
+	# Make sure the user is not trying to move something they should not
+	if selected.get_text(0) == "cq":
+		return
+	if selected.get_text(0).begins_with(".Workplane"):
+		return
+
+	# Move the item up the history tree one position
+	Common.move_tree_item_up(history_tree, selected)
+
+	self._clear_viewport()
+	self._render_history_tree()
 
 """
 Called when the user clicks on the button to move an item up the
 history tree.
 """
 func _on_MoveDownButton_button_down():
-	print("MOVE DOWN")
+	var selected = history_tree.get_selected()
+
+	# Make sure there is an item to delete
+	if selected == null:
+		return
+
+	# Make sure the user is not trying to move something they should not
+	if selected.get_text(0) == "cq":
+		return
+	if selected.get_text(0).begins_with(".Workplane"):
+		return
+
+	# Move the item down in the history tree one position
+	Common.move_tree_item_down(history_tree, selected)
+
+	self._clear_viewport()
+	self._render_history_tree()

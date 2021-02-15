@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=2]
+[gd_scene load_steps=49 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -17,6 +17,8 @@
 [ext_resource path="res://assets/icons/delete_tree_item_button_flat_ready.svg" type="Texture" id=15]
 [ext_resource path="res://assets/icons/move_tree_item_down_button_flat_ready.svg" type="Texture" id=16]
 [ext_resource path="res://assets/icons/move_tree_item_up_button_flat_ready.svg" type="Texture" id=17]
+[ext_resource path="res://assets/icons/add_tree_item_button_flat_ready.svg" type="Texture" id=18]
+[ext_resource path="res://assets/icons/update_tree_item_button_flag_ready.svg" type="Texture" id=19]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
@@ -258,6 +260,7 @@ margin_right = 142.0
 margin_bottom = 483.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+hide_root = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -492,17 +495,40 @@ margin_bottom = 252.0
 [node name="DynamicContainer" type="MarginContainer" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer"]
 margin_right = 100.0
 
-[node name="AddButton" type="Button" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer"]
+[node name="ActionButtonContainer" type="HBoxContainer" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="AddButton" type="Button" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer"]
 margin_top = 4.0
 margin_right = 100.0
 margin_bottom = 24.0
-text = "Add"
+icon = ExtResource( 18 )
 
-[node name="UpdateButton" type="Button" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer"]
+[node name="ItemSelectedContainer" type="HBoxContainer" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="UpdateButton" type="Button" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer"]
 margin_top = 28.0
 margin_right = 100.0
-margin_bottom = 48.0
-text = "Update"
+margin_bottom = 52.0
+icon = ExtResource( 19 )
+
+[node name="DeleteButton" type="Button" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer"]
+margin_right = 30.0
+margin_bottom = 24.0
+icon = ExtResource( 15 )
+
+[node name="MoveUpButton" type="Button" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer"]
+margin_right = 30.0
+margin_bottom = 24.0
+icon = ExtResource( 17 )
+
+[node name="MoveDownButton" type="Button" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer"]
+margin_right = 30.0
+margin_bottom = 24.0
+icon = ExtResource( 16 )
 
 [node name="ActionTree" type="Tree" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer"]
 margin_top = 52.0
@@ -579,11 +605,11 @@ current_path = "/home/jwright/Downloads/repos/Semblage/"
 [connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer/MoveDownButton" to="." method="_on_MoveDownButton_button_down"]
 [connection signal="item_activated" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree" to="." method="_on_HistoryTree_item_activated"]
 [connection signal="activate_action_popup" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="." method="_on_DocumentTabs_activate_action_popup"]
-[connection signal="cam_pan" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_pan"]
 [connection signal="cam_pan" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight" method="_on_DocumentTabs_cam_pan"]
+[connection signal="cam_pan" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_pan"]
 [connection signal="cam_rotate" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginOrbitCamera" method="_on_DocumentTabs_cam_rotate"]
-[connection signal="cam_rotate" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_rotate"]
 [connection signal="cam_rotate" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight" method="_on_DocumentTabs_cam_rotate"]
+[connection signal="cam_rotate" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_rotate"]
 [connection signal="cam_zoom" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_zoom"]
 [connection signal="file_selected" from="OpenDialog" to="." method="_on_OpenDialog_file_selected"]
 [connection signal="about_to_show" from="ActionPopupPanel" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_on_ActionPopupPanel_about_to_show"]
@@ -594,9 +620,14 @@ current_path = "/home/jwright/Downloads/repos/Semblage/"
 [connection signal="toggled" from="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton" to="ActionPopupPanel" method="_on_ThreeDButton_toggled"]
 [connection signal="toggled" from="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton" to="ActionPopupPanel" method="_on_SketchButton_toggled"]
 [connection signal="item_selected" from="ActionPopupPanel/VBoxContainer/ActionOptionButton" to="ActionPopupPanel" method="_on_ActionOptionButton_item_selected"]
-[connection signal="button_down" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/AddButton" to="ActionPopupPanel" method="_on_AddButton_button_down"]
-[connection signal="button_down" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/UpdateButton" to="ActionPopupPanel" method="_on_UpdateButton_button_down"]
+[connection signal="button_down" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton" to="ActionPopupPanel" method="_on_AddButton_button_down"]
+[connection signal="button_down" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/UpdateButton" to="ActionPopupPanel" method="_on_UpdateButton_button_down"]
+[connection signal="button_down" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/DeleteButton" to="ActionPopupPanel" method="_on_DeleteButton_button_down"]
+[connection signal="button_down" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveUpButton" to="ActionPopupPanel" method="_on_MoveUpButton_button_down"]
+[connection signal="button_down" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveDownButton" to="ActionPopupPanel" method="_on_MoveDownButton_button_down"]
 [connection signal="item_activated" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionTree" to="ActionPopupPanel" method="_on_ActionTree_item_activated"]
+[connection signal="item_selected" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionTree" to="ActionPopupPanel" method="_on_ActionTree_item_selected"]
+[connection signal="nothing_selected" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionTree" to="ActionPopupPanel" method="_on_ActionTree_nothing_selected"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/OkButton" to="ActionPopupPanel" method="_on_OkButton_button_down"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/CancelButton" to="ActionPopupPanel" method="_on_CancelButton_button_down"]
 [connection signal="file_selected" from="ExportDialog" to="." method="_on_ExportDialog_file_selected"]
