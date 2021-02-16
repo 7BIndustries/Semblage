@@ -413,6 +413,15 @@ static func get_triggers():
 				"control": SlotControl.new()
 			}
 		},
+		"spline": {
+			"trigger": "\\..*(.*)$",
+			"edit_trigger": ".spline(.*)$",
+			"action": {
+				"name": "spline",
+				"group": "2D",
+				"control": SplineControl.new()
+			}
+		},
 		"tangentArcPoint": {
 			"trigger": "\\..*(.*)$",
 			"edit_trigger": ".tangentArcPoint(.*)$",

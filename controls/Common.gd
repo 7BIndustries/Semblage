@@ -67,6 +67,26 @@ static func update_tree_item(tree, old_text, new_text):
 
 
 """
+Collects pairs from a tree so they can be inserted into a template.
+"""
+static func collect_pairs(tree):
+	var pairs = ""
+
+	var cur_item = tree.get_root().get_children()
+
+	# Search the tree and update the matchine entry in the tree
+	while true:
+		if cur_item == null:
+			break
+		else:
+			pairs += "(" + cur_item.get_text(0) + "," + cur_item.get_text(1) + "),"
+
+			cur_item = cur_item.get_next()
+
+	return pairs
+
+
+"""
 Used to move an item up the order of items in the tree.
 """
 static func move_tree_item_up(tree, selected):
