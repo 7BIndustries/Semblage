@@ -215,6 +215,11 @@ _global_script_classes=[ {
 "path": "res://controls/SagittaArcControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "SectionControl",
+"language": "GDScript",
+"path": "res://controls/SectionControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "SelectorControl",
 "language": "GDScript",
 "path": "res://controls/SelectorControl.gd"
@@ -346,6 +351,7 @@ _global_script_class_icons={
 "RotateAboutCenterControl": "",
 "RotateControl": "",
 "SagittaArcControl": "",
+"SectionControl": "",
 "SelectorControl": "",
 "Settings": "",
 "ShellControl": "",

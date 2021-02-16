@@ -143,6 +143,15 @@ static func get_triggers():
 				"control": RevolveControl.new()
 			}
 		},
+		"section": {
+			"trigger": "\\..*(.*)$",
+			"edit_trigger": ".section(.*)$",
+			"action": {
+				"name": "section",
+				"group": "3D",
+				"control": SectionControl.new()
+			}
+		},
 		"shell": {
 			"trigger": "\\..*(.*)$",
 			"edit_trigger": ".shell(.*)$",
