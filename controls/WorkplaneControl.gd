@@ -2,12 +2,13 @@ extends VBoxContainer
 
 class_name WorkplaneControl
 
-var simple_template = ".Workplane(\"{named_wp}\").workplane(invert={invert}).tag(\"{comp_name}\")"
+var simple_template = ".Workplane(\"{named_wp}\").workplane(invert={invert},centerOption=\"{center_option}\").tag(\"{comp_name}\")"
 var template = ".Workplane(cq.Plane(origin=({origin_x},{origin_y},{origin_z}), xDir=({xdir_x},{xdir_y},{xdir_z}), normal=({normal_x},{normal_y},{normal_z}))).tag(\"{comp_name}\")"
 
 var prev_template = null
 
 var wp_ctrl = null
+var wp_cen_ctrl = null
 var invert_ctrl = null
 var wp_name_ctrl = null
 var origin_x_ctrl = null
@@ -21,10 +22,13 @@ var normal_y_ctrl = null
 var normal_z_ctrl = null
 
 var workplane_list = ["XY", "YZ", "ZX", "XZ", "YX", "ZY", "front", "back", "left", "right", "top", "bottom"]
+var center_option_list = ["CenterOfBoundBox", "CenterOfMass", "ProjectedOrigin"]
 
 var advanced_group = null
 
 var wp_name_edit_rgx = "(?<=.Workplane\\(\")(.*?)(?=\"\\))"
+var wp_cen_edit_rgx = "(?<=centerOption\\=\")(.*?)(?=\"\\))"
+var invert_edit_rgx = "(?<=invert\\=)(.*?)(?=,centerOption)"
 var origin_edit_rgx = "(?<=origin\\=\\()(.*?)(?=\\))"
 var xdir_edit_rgx = "(?<=xdir\\=\\()(.*?)(?=\\))"
 var normal_edit_rgx = "(?<=normal\\=\\()(.*?)(?=\\))"
@@ -52,6 +56,16 @@ func _ready():
 	Common.load_option_button(wp_ctrl, workplane_list)
 	wp_group.add_child(wp_ctrl)
 	add_child(wp_group)
+
+	# Add a control for the center option
+	var wp_cen_group = HBoxContainer.new()
+	var wp_cen_lbl = Label.new()
+	wp_cen_lbl.set_text("Center Option: ")
+	wp_cen_group.add_child(wp_cen_lbl)
+	wp_cen_ctrl = OptionButton.new()
+	Common.load_option_button(wp_cen_ctrl, center_option_list)
+	wp_cen_group.add_child(wp_cen_ctrl)
+	add_child(wp_cen_group)
 
 	# Allow the user to set whether the workplane normal is inverted
 	var invert_group = HBoxContainer.new()
@@ -186,6 +200,7 @@ func get_completed_template():
 		complete = simple_template.format({
 			"comp_name": wp_name_ctrl.get_text(),
 			"named_wp": wp_ctrl.get_item_text(wp_ctrl.get_selected_id()),
+			"center_option": wp_cen_ctrl.get_item_text(wp_cen_ctrl.get_selected_id()),
 			"invert": invert_ctrl.pressed
 		})
 
@@ -223,7 +238,20 @@ func set_values_from_string(text_line):
 	var res = rgx.search(text_line)
 	if res:
 		Common.set_option_btn_by_text(wp_ctrl, res.get_string())
-	
+
+	# The workplane center option
+	rgx.compile(wp_cen_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		Common.set_option_btn_by_text(wp_cen_ctrl, res.get_string())
+
+	# The invert option
+	rgx.compile(invert_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		var inv = res.get_string()
+		invert_ctrl.pressed = true if inv == "True" else false
+
 	# The origin text
 	rgx.compile(origin_edit_rgx)
 	res = rgx.search(text_line)

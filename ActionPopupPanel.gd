@@ -102,7 +102,7 @@ func activate_edit_mode(component_text, item_text):
 	# Check to see if there are multiple actions in the item_text
 	# and fill the actions tree with them
 	var parts = item_text.split(").")
-	if parts.size() > 1:
+	if parts.size() > 1 and item_text.begins_with(".Workplane(") == false:
 		# Walk through all the actions
 		var i = 0
 		for part in parts:
@@ -120,6 +120,9 @@ func activate_edit_mode(component_text, item_text):
 			i += 1
 
 		_render_action_tree()
+
+	# Set the values of the control being edited
+	$VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0].set_values_from_string(item_text)
 
 
 """
