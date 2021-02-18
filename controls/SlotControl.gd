@@ -1,7 +1,5 @@
 extends VBoxContainer
 
-var ControlsCommon = load("res://controls/Common.gd").new()
-
 class_name SlotControl
 
 var prev_template = null

@@ -1,7 +1,5 @@
 extends VBoxContainer
 
-var ControlsCommon = load("res://controls/Common.gd").new()
-
 class_name TextControl
 
 var txt_ctrl = null
@@ -150,7 +148,7 @@ func _ready():
 	kind_ctrl_lbl.set_text("Style: ")
 	kind_group.add_child(kind_ctrl_lbl)
 	kind_ctrl = OptionButton.new()
-	ControlsCommon.load_option_button(kind_ctrl, ["regular", "bold", "italic"])
+	Common.load_option_button(kind_ctrl, ["regular", "bold", "italic"])
 	kind_group.add_child(kind_ctrl)
 	add_child(kind_group)
 
@@ -160,7 +158,7 @@ func _ready():
 	halign_ctrl_lbl.set_text("Horizontal Alignment: ")
 	halign_group.add_child(halign_ctrl_lbl)
 	halign_ctrl = OptionButton.new()
-	ControlsCommon.load_option_button(halign_ctrl, ["center", "left", "right"])
+	Common.load_option_button(halign_ctrl, ["center", "left", "right"])
 	halign_group.add_child(halign_ctrl)
 	add_child(halign_group)
 
@@ -170,7 +168,7 @@ func _ready():
 	valign_ctrl_lbl.set_text("Horizontal Alignment: ")
 	valign_group.add_child(valign_ctrl_lbl)
 	valign_ctrl = OptionButton.new()
-	ControlsCommon.load_option_button(valign_ctrl, ["center", "top", "bottom"])
+	Common.load_option_button(valign_ctrl, ["center", "top", "bottom"])
 	valign_group.add_child(valign_ctrl)
 	add_child(valign_group)
 
@@ -308,7 +306,7 @@ func set_values_from_string(text_line):
 	if res:
 		# Fill in the sphere radius control
 		var kind = res.get_string()
-		ControlsCommon.set_option_btn_by_text(kind_ctrl, kind)
+		Common.set_option_btn_by_text(kind_ctrl, kind)
 
 	# Horizontal alignment
 	rgx.compile(halign_edit_rgx)
@@ -316,7 +314,7 @@ func set_values_from_string(text_line):
 	if res:
 		# Fill in the sphere radius control
 		var halign = res.get_string()
-		ControlsCommon.set_option_btn_by_text(halign_ctrl, halign)
+		Common.set_option_btn_by_text(halign_ctrl, halign)
 
 	# Vertical alignment
 	rgx.compile(valign_edit_rgx)
@@ -324,4 +322,4 @@ func set_values_from_string(text_line):
 	if res:
 		# Fill in the sphere radius control
 		var valign = res.get_string()
-		ControlsCommon.set_option_btn_by_text(valign_ctrl, valign)
+		Common.set_option_btn_by_text(valign_ctrl, valign)

@@ -1,7 +1,5 @@
 extends VBoxContainer
 
-var ControlsCommon = load("res://controls/Common.gd").new()
-
 class_name ShellControl
 
 var prev_template = null
@@ -38,7 +36,7 @@ func _ready():
 	kind_lbl.set_text("Kind: ")
 	kind_group.add_child(kind_lbl)
 	kind_ctrl = OptionButton.new()
-	ControlsCommon.load_option_button(kind_ctrl, kind_list)
+	Common.load_option_button(kind_ctrl, kind_list)
 	kind_group.add_child(kind_ctrl)
 	add_child(kind_group)
 
@@ -119,7 +117,7 @@ func set_values_from_string(text_line):
 	rgx.compile(kind_edit_rgx)
 	res = rgx.search(text_line)
 	if res:
-		ControlsCommon.set_option_btn_by_text(kind_ctrl, res.get_string())
+		Common.set_option_btn_by_text(kind_ctrl, res.get_string())
 
 	# Selector
 	rgx.compile(select_edit_rgx)

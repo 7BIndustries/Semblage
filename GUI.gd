@@ -2,6 +2,7 @@ extends Control
 
 var open_file_path # The component/CQ file that the user opened
 var component_text # The text of the current component's script
+var check_component_text = null # Temporary to make sure the compnent file
 var safe_distance = 0 # The distance away the camera should be placed to be able to view the components
 var status # The status bar that keeps the user appraised of what is going on
 var cur_temp_file # The path to the current temp file
@@ -48,6 +49,7 @@ func _ready():
 	# Let the user know the app is ready to use
 	status = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
 	status.text = " Ready"
+
 
 """
 Used to do things like check if a semb process is generating a component.
@@ -149,10 +151,27 @@ func _on_OpenDialog_file_selected(path):
 	tabs.set_tab_title(0, open_file_path)
 
 	# Load the component text to handle later
-	component_text = FileSystem.load_component(open_file_path)
+	check_component_text = FileSystem.load_component(open_file_path)
 
+	# Check to make sure that only cadquery is imported for safety reasons
+	var imports = Security.CheckImports(check_component_text)
+	if imports.size() > 0:
+		var txt = "It appears that the file you are opening contains extra imports.\nSemblage components are simply Python scripts, so certain\n types of imports can be a security risk. Please review the extra\nimports below to ensure they are acceptable.\n\n"
+		txt += PoolStringArray(imports).join("\n")
+		txt += "\n\nDo you still want to open the component file?"
+		$ConfirmationDialog.dialog_text = txt
+		$ConfirmationDialog.popup_centered()
+	else:
+		component_text = check_component_text
+		_load_component()
+
+
+"""
+Used with the open dialog to load a component.
+"""
+func _load_component():
 	# If this is a Semblage component file, load it into the history and object trees
-	if component_text.begins_with("# Semblage v"):
+	if Security.IsSemblageFile(component_text):
 		# Prevent the user from reloading the script manually
 		$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.hide()
 
@@ -711,3 +730,12 @@ func _on_MoveDownButton_button_down():
 
 	self._clear_viewport()
 	self._render_history_tree()
+
+
+"""
+Called when the user confirms that they still want to open
+a component file.
+"""
+func _on_ConfirmationDialog_confirmed():
+	component_text = check_component_text
+	_load_component()

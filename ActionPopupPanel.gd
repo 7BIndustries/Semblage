@@ -2,9 +2,6 @@ extends WindowDialog
 
 signal ok_signal
 
-var ContextHandler = load("res://ContextHandler.gd")
-
-var context_handler # Handles the situation where the context Action menu needs to be populated
 var original_context = null
 var new_context = null
 var new_template = null
@@ -28,9 +25,6 @@ var action_tree_root = null
 Called when this control is ready to display.
 """
 func _ready():
-	# Instantiate the context handler which tells us what type of Action we are dealing with
-	context_handler = ContextHandler.new()
-
 	three_d_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton
 	sketch_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton
 	wp_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton
@@ -55,7 +49,7 @@ func _set_action_control():
 	var selected = aob.get_item_text(aob.get_selected_id())
 
 	# Get the action for the name
-	var act = context_handler.get_action_for_name(selected)
+	var act = ContextHandler.get_action_for_name(selected)
 
 	# Set the action control
 	_clear_popup()
@@ -86,7 +80,7 @@ func activate_edit_mode(component_text, item_text):
 	prev_template = item_text
 
 	# Get the control that matches the edit trigger for the history code, if any
-	var popup_action = context_handler.find_matching_edit_trigger(item_text)
+	var popup_action = ContextHandler.find_matching_edit_trigger(item_text)
 
 	# If the returned control is null, there is not need continuing
 	if popup_action == null:
@@ -150,9 +144,9 @@ func activate_popup(component_text, edit_mode):
 
 	# Get the next action based on whether edit mode is engaged
 	if edit_mode:
-		next_action = context_handler.find_matching_edit_trigger(prev_template)
+		next_action = ContextHandler.find_matching_edit_trigger(prev_template)
 	else:
-		next_action = context_handler.get_next_action(component_text)
+		next_action = ContextHandler.get_next_action(component_text)
 
 	# Select the correct group button based on the next action
 	_select_group_button(next_action[next_action.keys()[0]].group)
@@ -195,10 +189,10 @@ func _on_OkButton_button_down():
 
 	# Edit mode
 	if edit_mode:
-		new_context = context_handler.edit_context_string(original_context, prev_template, new_template)
+		new_context = ContextHandler.edit_context_string(original_context, prev_template, new_template)
 	# New mode
 	else:
-		new_context = context_handler.update_context_string(original_context, new_template)
+		new_context = ContextHandler.update_context_string(original_context, new_template)
 
 	emit_signal("ok_signal", edit_mode, new_template, new_context)
 	hide()
@@ -251,10 +245,16 @@ func _on_VBoxContainer_resized():
 """
 Allows an image to be loaded into the 2D preview.
 """
-func _load_image(path):
+func _load_image(path, globalize):
 	var texture = ImageTexture.new()
 	var image = Image.new()
-	image.load(path)
+
+	# Static images will not be exported correctly unless the path is globalized
+	if globalize:
+		image.load(ProjectSettings.globalize_path(path))
+	else:
+		image.load(path)
+
 	texture.create_from_image(image)
 	$VBoxContainer/HBoxContainer/Preview.set_texture(texture)
 
@@ -272,7 +272,7 @@ func _on_ThreeDButton_toggled(button_pressed):
 
 		# Fill the 3D actions list up the first time it is requested
 		if three_d_actions == null:
-			three_d_actions = context_handler.get_3d_actions()
+			three_d_actions = ContextHandler.get_3d_actions()
 
 		# Repopulate the action option button
 		$VBoxContainer/ActionOptionButton.clear()
@@ -299,7 +299,7 @@ func _on_SketchButton_toggled(button_pressed):
 
 		# Fill the 2D actions list up the first time it is requested
 		if two_d_actions == null:
-			two_d_actions = context_handler.get_2d_actions()
+			two_d_actions = ContextHandler.get_2d_actions()
 
 		# Repopulate the action option button
 		$VBoxContainer/ActionOptionButton.clear()
@@ -311,7 +311,7 @@ func _on_SketchButton_toggled(button_pressed):
 		$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.show()
 		$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.show()
 		$VBoxContainer/HBoxContainer/Preview.show()
-		_load_image("res://assets/samples/sample_2D_render.svg")
+		_load_image("res://assets/samples/sample_2D_render.svg", true)
 
 
 """
@@ -327,7 +327,7 @@ func _on_WorkplaneButton_toggled(button_pressed):
 
 		# Fill in the workplane action list the first time it is requested
 		if wp_actions == null:
-			wp_actions = context_handler.get_wp_actions()
+			wp_actions = ContextHandler.get_wp_actions()
 
 		# Repopulate the action option button
 		$VBoxContainer/ActionOptionButton.clear()
@@ -392,10 +392,11 @@ func _render_action_tree():
 
 	# Track whether or not execution happened successfully
 	if success == -1:
-		# TODO: Display and error image/text
-		print("Export error")
+		# Let the user know there was an SVG export error
+		$ErrorDialog.dialog_text = "There was an error exporting the SVG"
+		$ErrorDialog.popup_centered()
 	else:
-		_load_image(svg_path)
+		_load_image(svg_path, false)
 
 
 """
@@ -460,7 +461,7 @@ func _on_DeleteButton_button_down():
 
 	# Make sure there is something left to render
 	if action_tree_root.get_children() == null:
-		_load_image("res://assets/samples/sample_2D_render.svg")
+		_load_image("res://assets/samples/sample_2D_render.svg", true)
 	else:
 		self._render_action_tree()
 

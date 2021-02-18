@@ -15,11 +15,6 @@ var focalpoint = Vector3(0, 0, 0)
 var actpandist = 0
 
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass
-
-
 """
 Meant to be used with the mouse scroll wheel, zooms in or out one step for each
 step of the wheel.

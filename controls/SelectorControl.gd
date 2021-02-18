@@ -1,7 +1,5 @@
 extends VBoxContainer
 
-var ControlsCommon = load("res://controls/Common.gd").new()
-
 class_name SelectorControl
 
 var face_comps = null
@@ -59,13 +57,13 @@ func _ready():
 
 	# The first face filter (i.e. >, <, |)
 	face_comps_opt_1 = OptionButton.new()
-	ControlsCommon.load_option_button(face_comps_opt_1, filter_items)
+	Common.load_option_button(face_comps_opt_1, filter_items)
 	face_comps_opt_1.connect("item_selected", self, "_first_face_filter_selected")
 	face_comps.add_child(face_comps_opt_1)
 
 	# First axis filter (X, Y, Z)
 	face_comps_opt_2 = OptionButton.new()
-	ControlsCommon.load_option_button(face_comps_opt_2, axis_items)
+	Common.load_option_button(face_comps_opt_2, axis_items)
 	face_comps_opt_2.connect("item_selected", self, "_first_face_axis_selected")
 	face_comps_opt_2.hide()
 	face_comps.add_child(face_comps_opt_2)
@@ -88,14 +86,14 @@ func _ready():
 	# The second face filter (i.e. >, <, |)
 	face_comps_opt_3 = OptionButton.new()
 	var short_filter_items = filter_items.slice(1, -1)
-	ControlsCommon.load_option_button(face_comps_opt_3, short_filter_items)
+	Common.load_option_button(face_comps_opt_3, short_filter_items)
 	face_comps_opt_3.connect("item_selected", self, "_second_face_filter_selected")
 	face_comps_opt_3.hide()
 	face_comps.add_child(face_comps_opt_3)
 
 	# Second axis filter (X, Y, Z)
 	face_comps_opt_4 = OptionButton.new()
-	ControlsCommon.load_option_button(face_comps_opt_4, axis_items)
+	Common.load_option_button(face_comps_opt_4, axis_items)
 	face_comps_opt_4.connect("item_selected", self, "_second_face_axis_selected")
 	face_comps_opt_4.hide()
 	face_comps.add_child(face_comps_opt_4)
@@ -129,13 +127,13 @@ func _ready():
 
 	# The first face filter (i.e. >, <, |)
 	edge_comps_opt_1 = OptionButton.new()
-	ControlsCommon.load_option_button(edge_comps_opt_1, filter_items)
+	Common.load_option_button(edge_comps_opt_1, filter_items)
 	edge_comps_opt_1.connect("item_selected", self, "_first_edge_filter_selected")
 	edge_comps.add_child(edge_comps_opt_1)
 
 	# First axis filter (X, Y, Z)
 	edge_comps_opt_2 = OptionButton.new()
-	ControlsCommon.load_option_button(edge_comps_opt_2, axis_items)
+	Common.load_option_button(edge_comps_opt_2, axis_items)
 	edge_comps_opt_2.connect("item_selected", self, "_first_edge_axis_selected")
 	edge_comps_opt_2.hide()
 	edge_comps.add_child(edge_comps_opt_2)
@@ -157,14 +155,14 @@ func _ready():
 
 	# The second face filter (i.e. >, <, |)
 	edge_comps_opt_3 = OptionButton.new()
-	ControlsCommon.load_option_button(edge_comps_opt_3, short_filter_items)
+	Common.load_option_button(edge_comps_opt_3, short_filter_items)
 	edge_comps_opt_3.connect("item_selected", self, "_second_edge_filter_selected")
 	edge_comps_opt_3.hide()
 	edge_comps.add_child(edge_comps_opt_3)
 
 	# Second axis filter (X, Y, Z)
 	edge_comps_opt_4 = OptionButton.new()
-	ControlsCommon.load_option_button(edge_comps_opt_4, axis_items)
+	Common.load_option_button(edge_comps_opt_4, axis_items)
 	edge_comps_opt_4.connect("item_selected", self, "_second_edge_axis_selected")
 	edge_comps_opt_4.hide()
 	edge_comps.add_child(edge_comps_opt_4)
@@ -516,10 +514,10 @@ Parses the selector and sets the face selector dropdowns appropriately.
 func set_face_sel_dropdowns_from_string(sel_string):
 	# Set the filter control
 	var filter_text = _get_filter_text(sel_string.substr(0, 1))
-	ControlsCommon.set_option_btn_by_text(face_comps_opt_1, filter_text)
+	Common.set_option_btn_by_text(face_comps_opt_1, filter_text)
 
 	# Handle the axis
-	ControlsCommon.set_option_btn_by_text(face_comps_opt_2, sel_string.substr(1, 1))
+	Common.set_option_btn_by_text(face_comps_opt_2, sel_string.substr(1, 1))
 	face_comps_opt_2.show()
 
 	# If there is a logic operator, we need to display the add/remove button properly
@@ -532,7 +530,7 @@ func set_face_sel_dropdowns_from_string(sel_string):
 
 		# Show the face logic operator and set it to the correct value
 		face_logic_option_button.show()
-		ControlsCommon.set_option_btn_by_text(face_logic_option_button, res.get_string())
+		Common.set_option_btn_by_text(face_logic_option_button, res.get_string())
 
 		# Extract the second face selector
 		var second_filter = null
@@ -545,9 +543,9 @@ func set_face_sel_dropdowns_from_string(sel_string):
 			second_axis = second_sel.substr(1, 1)
 
 		# Show the second face's controls and set them appropriately
-		ControlsCommon.set_option_btn_by_text(face_comps_opt_3, _get_filter_text(second_filter))
+		Common.set_option_btn_by_text(face_comps_opt_3, _get_filter_text(second_filter))
 		face_comps_opt_3.show()
-		ControlsCommon.set_option_btn_by_text(face_comps_opt_4, second_axis)
+		Common.set_option_btn_by_text(face_comps_opt_4, second_axis)
 		face_comps_opt_4.show()
 
 	# Make sure that the face selector string reflects the control settings
@@ -560,10 +558,10 @@ Parses the selector and sets the edge selector dropdowns appropriately.
 func set_edge_sel_dropdowns_from_string(sel_string):
 	# Set the filter control
 	var filter_text = _get_filter_text(sel_string.substr(0, 1))
-	ControlsCommon.set_option_btn_by_text(edge_comps_opt_1, filter_text)
+	Common.set_option_btn_by_text(edge_comps_opt_1, filter_text)
 
 	# Handle the axis
-	ControlsCommon.set_option_btn_by_text(edge_comps_opt_2, sel_string.substr(1, 1))
+	Common.set_option_btn_by_text(edge_comps_opt_2, sel_string.substr(1, 1))
 	edge_comps_opt_2.show()
 
 	# If there is a logic operator, we need to display the add/remove button properly
@@ -576,7 +574,7 @@ func set_edge_sel_dropdowns_from_string(sel_string):
 
 		# Show the edge logic operator and set it to the correct value
 		edge_logic_option_button.show()
-		ControlsCommon.set_option_btn_by_text(edge_logic_option_button, res.get_string())
+		Common.set_option_btn_by_text(edge_logic_option_button, res.get_string())
 
 		# Extract the second edge selector
 		var second_filter = null
@@ -589,9 +587,9 @@ func set_edge_sel_dropdowns_from_string(sel_string):
 			second_axis = second_sel.substr(1, 1)
 
 		# Show the second edge's controls and set them appropriately
-		ControlsCommon.set_option_btn_by_text(edge_comps_opt_3, _get_filter_text(second_filter))
+		Common.set_option_btn_by_text(edge_comps_opt_3, _get_filter_text(second_filter))
 		edge_comps_opt_3.show()
-		ControlsCommon.set_option_btn_by_text(edge_comps_opt_4, second_axis)
+		Common.set_option_btn_by_text(edge_comps_opt_4, second_axis)
 		edge_comps_opt_4.show()
 
 	# Make sure that the edge selector string reflects the control settings

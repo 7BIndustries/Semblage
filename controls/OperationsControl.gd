@@ -1,7 +1,5 @@
 extends VBoxContainer
 
-var ControlsCommon = load("res://controls/Common.gd").new()
-
 class_name OperationsControl
 
 var prev_template = null
@@ -30,7 +28,7 @@ func _ready():
 	op_lbl.set_text("Operation: ")
 	op_group.add_child(op_lbl)
 	op_ctrl = OptionButton.new()
-	ControlsCommon.load_option_button(op_ctrl, op_list)
+	Common.load_option_button(op_ctrl, op_list)
 	op_ctrl.connect("item_selected", self, "_op_ctrl_item_selected")
 	op_group.add_child(op_ctrl)
 	add_child(op_group)
@@ -131,7 +129,7 @@ func set_values_from_string(text_line):
 	rgx.compile(extrude_edit_rgx)
 	var res = rgx.search(text_line)
 	if res:
-		ControlsCommon.set_option_btn_by_text(op_ctrl, "Extrude")
+		Common.set_option_btn_by_text(op_ctrl, "Extrude")
 		extrude_ctrl.set_values_from_string(res.get_string())
 		extrude_ctrl.show()
 
@@ -139,7 +137,7 @@ func set_values_from_string(text_line):
 	rgx.compile(twist_extrude_edit_rgx)
 	res = rgx.search(text_line)
 	if res:
-		ControlsCommon.set_option_btn_by_text(op_ctrl, "Twist Extrude")
+		Common.set_option_btn_by_text(op_ctrl, "Twist Extrude")
 		twist_extrude_ctrl.set_values_from_string(res.get_string())
 		twist_extrude_ctrl.show()
 
@@ -147,7 +145,7 @@ func set_values_from_string(text_line):
 	rgx.compile(cut_blind_edit_rgx)
 	res = rgx.search(text_line)
 	if res:
-		ControlsCommon.set_option_btn_by_text(op_ctrl, "Blind Cut")
+		Common.set_option_btn_by_text(op_ctrl, "Blind Cut")
 		cut_blind_ctrl.set_values_from_string(res.get_string())
 		cut_blind_ctrl.show()
 
@@ -155,7 +153,7 @@ func set_values_from_string(text_line):
 	rgx.compile(cut_thru_edit_rgx)
 	res = rgx.search(text_line)
 	if res:
-		ControlsCommon.set_option_btn_by_text(op_ctrl, "Thru Cut")
+		Common.set_option_btn_by_text(op_ctrl, "Thru Cut")
 		cut_thru_ctrl.set_values_from_string(res.get_string())
 		cut_thru_ctrl.show()
 
@@ -163,6 +161,6 @@ func set_values_from_string(text_line):
 	rgx.compile(revolve_edit_rgx)
 	res = rgx.search(text_line)
 	if res:
-		ControlsCommon.set_option_btn_by_text(op_ctrl, "Revolve")
+		Common.set_option_btn_by_text(op_ctrl, "Revolve")
 		revolve_ctrl.set_values_from_string(res.get_string())
 		revolve_ctrl.show()
