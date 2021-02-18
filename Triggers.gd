@@ -359,6 +359,15 @@ static func get_triggers():
 				"control": PolygonControl.new()
 			}
 		},
+		"polyline": {
+			"trigger": "\\..*(.*)$",
+			"edit_trigger": ".polyline(.*)$",
+			"action": {
+				"name": "polyline",
+				"group": "2D",
+				"control": PolylineControl.new()
+			}
+		},
 		"pushPoints": {
 			"trigger": "\\..*(.*)$",
 			"edit_trigger": ".pushPoints(.*)$",

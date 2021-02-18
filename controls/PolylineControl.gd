@@ -1,31 +1,22 @@
 extends VBoxContainer
 
-class_name SplineControl
+class_name PolylineControl
 
-var template = ".spline(listOfXYTuple=[{listOfXYTuple}],tangents=[{tangents}],periodic={periodic},forConstruction={forConstruction},includeCurrent={includeCurrent},makeWire={makeWire})"
+var template = ".polyline(listOfXYTuple=[{listOfXYTuple}],forConstruction={forConstruction},includeCurrent={includeCurrent})"
 
 var prev_template = null
 
-var tuple_edit_rgx = "(?<=listOfXYTuple\\=)(.*?)(?=\\,tangents)"
-var tangents_edit_rgx = "(?<=tangents\\=)(.*?)(?=\\,periodic)"
-var periodic_edit_rgx = "(?<=periodic\\=)(.*?)(?=\\,forConstruction)"
+var tuple_edit_rgx = "(?<=listOfXYTuple\\=)(.*?)(?=\\,forConstruction)"
 var construction_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\,includeCurrent)"
-var current_edit_rgx = "(?<=includeCurrent\\=)(.*?)(?=\\,makeWire)"
-var wire_edit_rgx = "(?<=makeWire\\=)(.*?)(?=\"\\))"
+var current_edit_rgx = "(?<=includeCurrent\\=)(.*?)(?=\"\\))"
 var select_edit_rgx = "^.faces\\(.*\\)\\."
 
 var tuple_x_ctrl = null
 var tuple_y_ctrl = null
 var tuple_ctrl = null
 var tuple_ctrl_root = null
-var tan_x_ctrl = null
-var tan_y_ctrl = null
-var tan_ctrl = null
-var tan_ctrl_root = null
-var periodic_ctrl = null
 var construction_ctrl = null
 var current_ctrl = null
-var wire_ctrl = null
 
 var hide_show_btn = null
 var select_ctrl = null
@@ -33,7 +24,6 @@ var op_ctrl = null
 
 var operation_visible = true
 var selector_visible = true
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -89,65 +79,6 @@ func _ready():
 	tuple_ctrl_root.set_text(0, "tuples")
 	add_child(tuple_ctrl)
 
-	# TANGENTS
-	var new_tangent_lbl = Label.new()
-	new_tangent_lbl.set_text("New Tangent")
-	add_child(new_tangent_lbl)
-
-	# Tan X
-	var tan_group = HBoxContainer.new()
-	var x_tan_lbl = Label.new()
-	x_tan_lbl.set_text("X: ")
-	tan_group.add_child(x_tan_lbl)
-	tan_x_ctrl = LineEdit.new()
-	tan_x_ctrl.set_text("1.0")
-	tan_group.add_child(tan_x_ctrl)
-	# Tan Y
-	var y_tan_lbl = Label.new()
-	y_tan_lbl.set_text("Y: ")
-	tan_group.add_child(y_tan_lbl)
-	tan_y_ctrl = LineEdit.new()
-	tan_y_ctrl.set_text("1.0")
-	tan_group.add_child(tan_y_ctrl)
-	add_child(tan_group)
-
-	var tan_btn_group = HBoxContainer.new()
-	# Button to add the current tuple to the list
-	var add_tan_btn = Button.new()
-	add_tan_btn.icon = load("res://assets/icons/add_tree_item_button_flat_ready.svg")
-	add_tan_btn.connect("button_down", self, "_add_tan")
-	tan_btn_group.add_child(add_tan_btn)
-	add_child(tan_btn_group)
-	var delete_tan_btn = Button.new()
-	delete_tan_btn.icon = load("res://assets/icons/delete_tree_item_button_flat_ready.svg")
-	delete_tan_btn.connect("button_down", self, "_delete_tan")
-	tan_btn_group.add_child(delete_tan_btn)
-	add_child(tan_btn_group)
-
-	# Label for the points list
-	var tans_lbl = Label.new()
-	tans_lbl.set_text("Tangents")
-	add_child(tans_lbl)
-
-	# The tree to hold the tuples
-	tan_ctrl = Tree.new()
-	tan_ctrl.columns = 2
-	tan_ctrl.rect_min_size = Vector2(50, 50)
-	tan_ctrl.hide_root = true
-	tan_ctrl_root = tan_ctrl.create_item()
-	tan_ctrl_root.set_text(0, "tangents")
-	add_child(tan_ctrl)
-
-	# PERIODIC
-	var periodic_group = HBoxContainer.new()
-	var periodic_lbl = Label.new()
-	periodic_lbl.set_text("Periodic: ")
-	periodic_group.add_child(periodic_lbl)
-	periodic_ctrl = CheckBox.new()
-	periodic_ctrl.pressed = false
-	periodic_group.add_child(periodic_ctrl)
-	add_child(periodic_group)
-
 	# FOR CONSTRUCTION
 	var construction_group = HBoxContainer.new()
 	var construction_lbl = Label.new()
@@ -167,16 +98,6 @@ func _ready():
 	current_ctrl.pressed = false
 	current_group.add_child(current_ctrl)
 	add_child(current_group)
-
-	# MAKE WIRE
-	var wire_group = HBoxContainer.new()
-	var wire_lbl = Label.new()
-	wire_lbl.set_text("Make Wire: ")
-	wire_group.add_child(wire_lbl)
-	wire_ctrl = CheckBox.new()
-	wire_ctrl.pressed = false
-	wire_group.add_child(wire_ctrl)
-	add_child(wire_group)
 
 	# Show the selector control if it is enabled
 	if selector_visible:
@@ -232,51 +153,6 @@ func _delete_tuple():
 
 
 """
-Called when the user clicks the add button to add the current
-tangent X and Y to the list.
-"""
-func _add_tan():
-	# Add the tangent X and Y values to different columns
-	var new_tan_item = tan_ctrl.create_item(tan_ctrl_root)
-	new_tan_item.set_text(0, tan_x_ctrl.get_text())
-	new_tan_item.set_text(1, tan_y_ctrl.get_text())
-
-
-"""
-Allows a tuple tree item to be removed.
-"""
-func _delete_tan():
-	# Get the selected item in the tuple list/tree
-	var selected = tan_ctrl.get_selected()
-
-	# Make sure there is something to remove
-	if selected != null:
-		selected.free()
-
-
-"""
-Allows the tuple list to be populated via string.
-"""
-func _add_tuple_xy(x, y):
-	# Add the tuple X and Y values to different columns
-	var new_tuple_item = tuple_ctrl.create_item(tuple_ctrl_root)
-
-	# Add the items to the tree
-	new_tuple_item.set_text(0, x)
-	new_tuple_item.set_text(1, y)
-
-
-"""
-Allows the tangents list to be populated via string.
-"""
-func _add_tan_xy(x, y):
-	# Add the tangent X and Y values to different columns
-	var new_tan_item = tan_ctrl.create_item(tan_ctrl_root)
-	new_tan_item.set_text(0, x)
-	new_tan_item.set_text(1, y)
-
-
-"""
 Fills out the template and returns it.
 """
 func get_completed_template():
@@ -289,16 +165,10 @@ func get_completed_template():
 	# Collect the tuple pairs
 	var tuple_pairs = Common.collect_pairs(tuple_ctrl)
 
-	# Collect the tangent pairs
-	var tan_pairs = Common.collect_pairs(tan_ctrl)
-
 	complete += template.format({
 		"listOfXYTuple": tuple_pairs,
-		"tangents": tan_pairs,
-		"periodic": periodic_ctrl.pressed,
 		"forConstruction": construction_ctrl.pressed,
-		"includeCurrent": current_ctrl.pressed,
-		"makeWire": wire_ctrl.pressed,
+		"includeCurrent": current_ctrl.pressed
 		})
 
 	if operation_visible:
@@ -344,23 +214,6 @@ func set_values_from_string(text_line):
 			var xy = pair.split(",")
 			_add_tuple_xy(xy[0], xy[1])
 
-	# Tangents
-	rgx.compile(tangents_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		# Add the items back to the tuple list
-		var pairs = res.get_string().split(",")
-		for pair in pairs:
-			var xy = pair.split(",")
-			_add_tan_xy(xy[0], xy[1])
-
-	# Periodic
-	rgx.compile(periodic_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		var per = res.get_string()
-		periodic_ctrl.pressed = true if per == "True" else false
-
 	# For construction
 	rgx.compile(construction_edit_rgx)
 	res = rgx.search(text_line)
@@ -374,13 +227,6 @@ func set_values_from_string(text_line):
 	if res:
 		var cur = res.get_string()
 		current_ctrl.pressed = true if cur == "True" else false
-
-	# Make wire
-	rgx.compile(wire_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		var wire = res.get_string()
-		wire_ctrl.pressed = true if wire == "True" else false
 
 	# Selector
 	rgx.compile(select_edit_rgx)
@@ -396,6 +242,18 @@ func set_values_from_string(text_line):
 
 	# Operation
 	op_ctrl.set_values_from_string(text_line)
+
+
+"""
+Allows the tuple list to be populated via string.
+"""
+func _add_tuple_xy(x, y):
+	# Add the tuple X and Y values to different columns
+	var new_tuple_item = tuple_ctrl.create_item(tuple_ctrl_root)
+
+	# Add the items to the tree
+	new_tuple_item.set_text(0, x)
+	new_tuple_item.set_text(1, y)
 
 
 """

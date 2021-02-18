@@ -175,6 +175,11 @@ _global_script_classes=[ {
 "path": "res://controls/PolygonControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "PolylineControl",
+"language": "GDScript",
+"path": "res://controls/PolylineControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "PushPointsControl",
 "language": "GDScript",
 "path": "res://controls/PushPointsControl.gd"
@@ -348,6 +353,7 @@ _global_script_class_icons={
 "PolarLineControl": "",
 "PolarLineToControl": "",
 "PolygonControl": "",
+"PolylineControl": "",
 "PushPointsControl": "",
 "RArrayControl": "",
 "RadiusArcControl": "",
