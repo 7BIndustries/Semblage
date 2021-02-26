@@ -10,6 +10,7 @@ var cur_error_file # The path to the current error file, if needed
 var executing = false # Whether or not a script is currently executing
 var home_transform # Allows us to move the camera back to the starting location/rotation/etc
 var origin_transform # Allows us to move the orgin camera view back to a starting transform
+var light_transform # Allws us to move the light position back to the starting transform
 var cam # The main camera for the 3D view
 var origin_cam # The camera showing the orientation of the component(s) via an origin indicator
 var light # Supplemental light that follows the camera
@@ -296,6 +297,7 @@ func load_component_json(json_string):
 		# Save this transform as the home transform
 		home_transform = cam.get_transform()
 		origin_transform = origin_cam.get_transform()
+		light_transform = light.get_transform()
 
 	status.text = "Redering component...done."
 
@@ -309,6 +311,9 @@ func _on_HomeViewButton_button_down():
 
 	# Reset the origin indicator camera back to the view we saved on scene load
 	if origin_transform != null: origin_cam.transform = origin_transform
+
+	# Reset the light back to the transform we saved as its home
+	if light_transform != null: light.transform = light_transform
 
 
 """
@@ -504,6 +509,7 @@ func _on_MakeButton_button_down():
 		$ToolbarPopupPanel.hide()
 	else:
 		$ToolbarPopupPanel.rect_position = Vector2(pos.x, pos.y + size.y)
+		$ToolbarPopupPanel.rect_size = Vector2(100, 75)
 		$ToolbarPopupPanel.show()
 
 	# Add the STL export button
@@ -517,6 +523,12 @@ func _on_MakeButton_button_down():
 	step_item.set_text("STEP")
 	step_item.connect("button_down", self, "_show_export_step")
 	$ToolbarPopupPanel/ToolbarPopupVBox.add_child(step_item)
+
+	# Add the SVG export button
+	var svg_item = Button.new()
+	svg_item.set_text("SVG")
+	svg_item.connect("button_down", self, "_show_export_svg")
+	$ToolbarPopupPanel/ToolbarPopupVBox.add_child(svg_item)
 
 
 """
@@ -569,6 +581,8 @@ func _save_component_as():
 	$ToolbarPopupPanel.hide()
 
 	$SaveDialog.current_file = "component.py"
+	$SaveDialog.clear_filters()
+	$SaveDialog.add_filter('*.py')
 	$SaveDialog.popup_centered()
 
 
@@ -620,6 +634,13 @@ func _show_export_step():
 	$ExportDialog.current_file = "component.step"
 	$ExportDialog.popup_centered()
 
+
+"""
+Sets up and shows the export dialog for SVG
+"""
+func _show_export_svg():
+	$ToolbarPopupPanel.hide()
+	$ExportSVGDialog.popup_centered()
 
 """
 Called when the user selects an export file location.

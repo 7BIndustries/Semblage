@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=2]
+[gd_scene load_steps=51 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -19,6 +19,8 @@
 [ext_resource path="res://assets/icons/move_tree_item_up_button_flat_ready.svg" type="Texture" id=17]
 [ext_resource path="res://assets/icons/add_tree_item_button_flat_ready.svg" type="Texture" id=18]
 [ext_resource path="res://assets/icons/update_tree_item_button_flag_ready.svg" type="Texture" id=19]
+[ext_resource path="res://ExportSVGDialog.gd" type="Script" id=21]
+[ext_resource path="res://assets/icons/folder_button_small_flat_ready.svg" type="Texture" id=22]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
@@ -406,23 +408,6 @@ margin_bottom = 25.0
 size_flags_vertical = 3
 valign = 1
 
-[node name="OpenDialog" type="FileDialog" parent="."]
-margin_right = 760.0
-margin_bottom = 381.0
-window_title = "Open a File"
-mode = 0
-access = 2
-filters = PoolStringArray( "*.py" )
-current_dir = "/home/jwright/Downloads/repos/Semblage"
-current_path = "/home/jwright/Downloads/repos/Semblage/"
-
-[node name="ErrorDialog" type="AcceptDialog" parent="."]
-margin_left = 200.0
-margin_top = 200.0
-margin_right = 500.0
-margin_bottom = 300.0
-window_title = "Component Error"
-
 [node name="ActionPopupPanel" type="WindowDialog" parent="."]
 margin_right = 96.0
 margin_bottom = 1.0
@@ -576,6 +561,23 @@ margin_top = 4.0
 margin_right = 196.0
 margin_bottom = 26.0
 
+[node name="OpenDialog" type="FileDialog" parent="."]
+margin_right = 760.0
+margin_bottom = 381.0
+window_title = "Open a File"
+mode = 0
+access = 2
+filters = PoolStringArray( "*.py" )
+current_dir = "/home/jwright/Downloads/repos/Semblage"
+current_path = "/home/jwright/Downloads/repos/Semblage/"
+
+[node name="ErrorDialog" type="AcceptDialog" parent="."]
+margin_left = 200.0
+margin_top = 200.0
+margin_right = 500.0
+margin_bottom = 300.0
+window_title = "Component Error"
+
 [node name="ExportDialog" type="FileDialog" parent="."]
 margin_left = 100.0
 margin_top = 100.0
@@ -595,9 +597,405 @@ filters = PoolStringArray( "*.py" )
 current_dir = "/home/jwright/Downloads/repos/Semblage"
 current_path = "/home/jwright/Downloads/repos/Semblage/"
 
+[node name="ExportFileDialog" type="FileDialog" parent="."]
+margin_right = 500.0
+margin_bottom = 300.0
+window_title = "Export to File"
+access = 2
+current_dir = "/home/jwright/Downloads/repos/Semblage"
+current_path = "/home/jwright/Downloads/repos/Semblage/"
+
 [node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
 margin_right = 200.0
 margin_bottom = 70.0
+
+[node name="ExportSVGDialog" type="WindowDialog" parent="."]
+visible = true
+margin_right = 355.0
+margin_bottom = 390.0
+window_title = "Export SVG"
+script = ExtResource( 21 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="ExportSVGDialog"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 352.0
+margin_bottom = 124.0
+size_flags_horizontal = 11
+size_flags_vertical = 11
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ExportSVGDialog/MarginContainer"]
+margin_right = 348.0
+margin_bottom = 384.0
+size_flags_horizontal = 11
+size_flags_vertical = 9
+
+[node name="PathContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_right = 348.0
+margin_bottom = 30.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PathLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/PathContainer"]
+margin_top = 5.0
+margin_right = 60.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 60, 20 )
+text = "File Path"
+valign = 1
+
+[node name="PathText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/PathContainer"]
+margin_left = 64.0
+margin_right = 314.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 250, 30 )
+size_flags_horizontal = 3
+
+[node name="SelectPathButton" type="Button" parent="ExportSVGDialog/MarginContainer/VBoxContainer/PathContainer"]
+margin_left = 318.0
+margin_right = 348.0
+margin_bottom = 30.0
+icon = ExtResource( 22 )
+
+[node name="DimsLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 34.0
+margin_right = 348.0
+margin_bottom = 48.0
+text = "Dimensions"
+
+[node name="DimsContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 52.0
+margin_right = 348.0
+margin_bottom = 72.0
+
+[node name="WidthLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/DimsContainer"]
+margin_top = 3.0
+margin_right = 42.0
+margin_bottom = 17.0
+text = "Width:"
+
+[node name="WidthText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/DimsContainer"]
+margin_left = 46.0
+margin_right = 86.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 40, 20 )
+text = "200"
+
+[node name="HeightLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/DimsContainer"]
+margin_left = 90.0
+margin_top = 3.0
+margin_right = 136.0
+margin_bottom = 17.0
+text = "Height:"
+
+[node name="HeightText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/DimsContainer"]
+margin_left = 140.0
+margin_right = 190.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 50, 20 )
+text = "200"
+
+[node name="MarginsLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 76.0
+margin_right = 348.0
+margin_bottom = 90.0
+text = "Margins"
+
+[node name="MarginContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 94.0
+margin_right = 348.0
+margin_bottom = 114.0
+
+[node name="LeftLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/MarginContainer"]
+margin_top = 3.0
+margin_right = 28.0
+margin_bottom = 17.0
+text = "Left:"
+
+[node name="LeftText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/MarginContainer"]
+margin_left = 32.0
+margin_right = 72.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 40, 20 )
+text = "20"
+
+[node name="TopLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/MarginContainer"]
+margin_left = 76.0
+margin_top = 3.0
+margin_right = 103.0
+margin_bottom = 17.0
+text = "Top:"
+
+[node name="TopText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/MarginContainer"]
+margin_left = 107.0
+margin_right = 147.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 40, 20 )
+text = "20"
+
+[node name="ProjectionDirLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 118.0
+margin_right = 348.0
+margin_bottom = 132.0
+text = "Projection Direction"
+
+[node name="ProjDirContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 136.0
+margin_right = 348.0
+margin_bottom = 156.0
+
+[node name="XLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/ProjDirContainer"]
+margin_top = 3.0
+margin_right = 12.0
+margin_bottom = 17.0
+text = "X:"
+
+[node name="XText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/ProjDirContainer"]
+margin_left = 16.0
+margin_right = 46.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 30, 20 )
+text = "0"
+
+[node name="YLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/ProjDirContainer"]
+margin_left = 50.0
+margin_top = 3.0
+margin_right = 61.0
+margin_bottom = 17.0
+text = "Y:"
+
+[node name="YText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/ProjDirContainer"]
+margin_left = 65.0
+margin_right = 95.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 30, 20 )
+text = "0"
+
+[node name="ZLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/ProjDirContainer"]
+margin_left = 99.0
+margin_top = 3.0
+margin_right = 111.0
+margin_bottom = 17.0
+text = "Z:"
+
+[node name="ZText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/ProjDirContainer"]
+margin_left = 115.0
+margin_right = 145.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 30, 20 )
+text = "1"
+
+[node name="StrokeWidthContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 160.0
+margin_right = 348.0
+margin_bottom = 180.0
+
+[node name="WidthLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/StrokeWidthContainer"]
+margin_top = 3.0
+margin_right = 86.0
+margin_bottom = 17.0
+text = "Stroke Width:"
+
+[node name="WidthText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/StrokeWidthContainer"]
+margin_left = 90.0
+margin_right = 130.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 40, 20 )
+text = "0.25"
+
+[node name="StrokeColorLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 184.0
+margin_right = 348.0
+margin_bottom = 198.0
+text = "Stroke Color"
+
+[node name="StrokeColorContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 202.0
+margin_right = 348.0
+margin_bottom = 222.0
+
+[node name="RLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/StrokeColorContainer"]
+margin_top = 3.0
+margin_right = 12.0
+margin_bottom = 17.0
+text = "R:"
+
+[node name="RText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/StrokeColorContainer"]
+margin_left = 16.0
+margin_right = 56.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 40, 20 )
+text = "255"
+
+[node name="GLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/StrokeColorContainer"]
+margin_left = 60.0
+margin_top = 3.0
+margin_right = 74.0
+margin_bottom = 17.0
+text = "G:"
+
+[node name="GText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/StrokeColorContainer"]
+margin_left = 78.0
+margin_right = 118.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 40, 20 )
+text = "0"
+
+[node name="BLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/StrokeColorContainer"]
+margin_left = 122.0
+margin_top = 3.0
+margin_right = 135.0
+margin_bottom = 17.0
+text = "B:"
+
+[node name="BText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/StrokeColorContainer"]
+margin_left = 139.0
+margin_right = 179.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 40, 20 )
+text = "0"
+
+[node name="HiddenColorLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 226.0
+margin_right = 348.0
+margin_bottom = 240.0
+text = "Hidden Color"
+
+[node name="HColorContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 244.0
+margin_right = 348.0
+margin_bottom = 264.0
+
+[node name="RLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/HColorContainer"]
+margin_top = 3.0
+margin_right = 12.0
+margin_bottom = 17.0
+text = "R:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/HColorContainer"]
+margin_left = 16.0
+margin_right = 56.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 40, 20 )
+text = "0"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/HColorContainer"]
+margin_left = 60.0
+margin_top = 3.0
+margin_right = 74.0
+margin_bottom = 17.0
+text = "G:"
+
+[node name="GText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/HColorContainer"]
+margin_left = 78.0
+margin_right = 118.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 40, 20 )
+text = "0"
+
+[node name="BLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/HColorContainer"]
+margin_left = 122.0
+margin_top = 3.0
+margin_right = 135.0
+margin_bottom = 17.0
+text = "B:"
+
+[node name="BText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/HColorContainer"]
+margin_left = 139.0
+margin_right = 179.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 40, 20 )
+text = "255"
+
+[node name="CheckBox" type="CheckBox" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 268.0
+margin_right = 348.0
+margin_bottom = 292.0
+text = "Show Hidden"
+
+[node name="SectionCheckContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 296.0
+margin_right = 348.0
+margin_bottom = 336.0
+
+[node name="CheckButton" type="CheckButton" parent="ExportSVGDialog/MarginContainer/VBoxContainer/SectionCheckContainer"]
+margin_right = 127.0
+margin_bottom = 40.0
+text = "Section"
+align = 2
+
+[node name="SectionContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+visible = false
+margin_top = 96.0
+margin_right = 364.0
+margin_bottom = 116.0
+
+[node name="StartHeightLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/SectionContainer"]
+margin_top = 3.0
+margin_right = 75.0
+margin_bottom = 17.0
+text = "Start Height"
+
+[node name="StartHeightText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/SectionContainer"]
+margin_left = 79.0
+margin_right = 119.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 40, 20 )
+text = "0"
+
+[node name="EndHeightLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/SectionContainer"]
+margin_left = 123.0
+margin_top = 3.0
+margin_right = 192.0
+margin_bottom = 17.0
+text = "End Height"
+
+[node name="EndHeightText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/SectionContainer"]
+margin_left = 196.0
+margin_right = 236.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 40, 20 )
+text = "10"
+
+[node name="StepsLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/SectionContainer"]
+margin_left = 240.0
+margin_top = 3.0
+margin_right = 275.0
+margin_bottom = 17.0
+text = "Steps"
+
+[node name="StepsText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/SectionContainer"]
+margin_left = 279.0
+margin_right = 319.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 40, 20 )
+text = "5"
+
+[node name="OkButton" type="Button" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 340.0
+margin_right = 348.0
+margin_bottom = 360.0
+text = "OK"
+
+[node name="CancelButton" type="Button" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+margin_top = 364.0
+margin_right = 348.0
+margin_bottom = 384.0
+text = "Cancel"
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton" to="." method="_on_OpenButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton" to="." method="_on_SaveButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton" to="." method="_on_MakeButton_button_down"]
@@ -615,7 +1013,6 @@ margin_bottom = 70.0
 [connection signal="cam_rotate" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_rotate"]
 [connection signal="cam_rotate" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight" method="_on_DocumentTabs_cam_rotate"]
 [connection signal="cam_zoom" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_zoom"]
-[connection signal="file_selected" from="OpenDialog" to="." method="_on_OpenDialog_file_selected"]
 [connection signal="about_to_show" from="ActionPopupPanel" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_on_ActionPopupPanel_about_to_show"]
 [connection signal="ok_signal" from="ActionPopupPanel" to="." method="_on_ActionPopupPanel_ok_signal"]
 [connection signal="popup_hide" from="ActionPopupPanel" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_on_ActionPopupPanel_popup_hide"]
@@ -634,6 +1031,11 @@ margin_bottom = 70.0
 [connection signal="nothing_selected" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionTree" to="ActionPopupPanel" method="_on_ActionTree_nothing_selected"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/OkButton" to="ActionPopupPanel" method="_on_OkButton_button_down"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/CancelButton" to="ActionPopupPanel" method="_on_CancelButton_button_down"]
+[connection signal="file_selected" from="OpenDialog" to="." method="_on_OpenDialog_file_selected"]
 [connection signal="file_selected" from="ExportDialog" to="." method="_on_ExportDialog_file_selected"]
 [connection signal="file_selected" from="SaveDialog" to="." method="_on_SaveDialog_file_selected"]
 [connection signal="confirmed" from="ConfirmationDialog" to="." method="_on_ConfirmationDialog_confirmed"]
+[connection signal="button_down" from="ExportSVGDialog/MarginContainer/VBoxContainer/PathContainer/SelectPathButton" to="ExportSVGDialog" method="_on_SelectPathButton_button_down"]
+[connection signal="toggled" from="ExportSVGDialog/MarginContainer/VBoxContainer/SectionCheckContainer/CheckButton" to="ExportSVGDialog" method="_on_CheckButton_toggled"]
+[connection signal="button_down" from="ExportSVGDialog/MarginContainer/VBoxContainer/OkButton" to="ExportSVGDialog" method="_on_OkButton_button_down"]
+[connection signal="button_down" from="ExportSVGDialog/MarginContainer/VBoxContainer/CancelButton" to="ExportSVGDialog" method="_on_CancelButton_button_down"]
