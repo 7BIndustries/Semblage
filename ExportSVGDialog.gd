@@ -92,16 +92,16 @@ func _on_OkButton_button_down():
 		# Step through and generate an SVG for each layer
 		for i in range(0, steps):
 			var file_name = pt.get_text().replace(".svg", "_" + str(i) + ".svg")
-			_export_to_file(file_name, cur_height)
+			_export_to_file(file_name, _collect_output_opts(), cur_height)
 
 			cur_height += layer_height
 
 		# Do a final export right at the end height
 		var file_name = pt.get_text().replace(".svg", "_" + str(steps) + ".svg")
-		_export_to_file(file_name, end_height)
+		_export_to_file(file_name, _collect_output_opts(), end_height)
 	else:
 		# Export the single SVG file
-		_export_to_file(pt.get_text(), null)
+		_export_to_file(pt.get_text(), _collect_output_opts(), null)
 
 	# Hide this popup
 	hide()
@@ -110,7 +110,7 @@ func _on_OkButton_button_down():
 """
 Called to export a single file to the local file system.
 """
-func _export_to_file(svg_path, section_height):
+func _export_to_file(svg_path, output_opts, section_height):
 	var script_text = get_parent().component_text
 
 	# If the caller provided a section height, use it
@@ -126,7 +126,7 @@ func _export_to_file(svg_path, section_height):
 
 	# Set up our command line parameters
 	var cur_error_file = OS.get_user_data_dir() + "/error_svg.txt"
-	var array = ["--codec", "svg", "--infile", temp_path, "--outfile", svg_path, "--errfile", cur_error_file, "--outputopts", "width:400;height:400;marginLeft:50;marginTop:50;showAxes:False;projectionDir:(0,0,1);strokeWidth:0.5;strokeColor:(255,255,255);hiddenColor:(0,0,255);showHidden:False;"]
+	var array = ["--codec", "svg", "--infile", temp_path, "--outfile", svg_path, "--errfile", cur_error_file, "--outputopts", output_opts]
 	var args = PoolStringArray(array)
 
 	# Execute the render script
@@ -136,6 +136,47 @@ func _export_to_file(svg_path, section_height):
 	if success != 0:
 		# Let the user know there was an SVG export error
 		_show_error_dialog("There was an error exporting the SVG.")
+
+
+"""
+Collects the output option control settings into a string that
+can be passed to cq-cli.
+"""
+func _collect_output_opts():
+	var output_opts = ""
+
+	# Shortcuts for the projection direction controls
+	var x_dir = $MarginContainer/VBoxContainer/ProjDirContainer/XText.get_text()
+	var y_dir = $MarginContainer/VBoxContainer/ProjDirContainer/YText.get_text()
+	var z_dir = $MarginContainer/VBoxContainer/ProjDirContainer/ZText.get_text()
+
+	# Shortcuts for the stroke color controls
+	var s_red = $MarginContainer/VBoxContainer/StrokeColorContainer/RText.get_text()
+	var s_green = $MarginContainer/VBoxContainer/StrokeColorContainer/GText.get_text()
+	var s_blue = $MarginContainer/VBoxContainer/StrokeColorContainer/BText.get_text()
+
+	# Shortcuts for the hidden color controls
+	var h_red = $MarginContainer/VBoxContainer/HColorContainer/RText.get_text()
+	var h_green = $MarginContainer/VBoxContainer/HColorContainer/GText.get_text()
+	var h_blue = $MarginContainer/VBoxContainer/HColorContainer/BText.get_text()
+
+	# Convert the show hidden checkbox into a string we can use
+	var show_hidden = "False"
+	if $MarginContainer/VBoxContainer/HiddenCheckBox.pressed:
+		show_hidden = "True"
+
+	output_opts += "width:" + $MarginContainer/VBoxContainer/DimsContainer/WidthText.get_text() + ";"
+	output_opts += "height:" + $MarginContainer/VBoxContainer/DimsContainer/HeightText.get_text() + ";"
+	output_opts += "marginLeft:" + $MarginContainer/VBoxContainer/MarginContainer/LeftText.get_text() + ";"
+	output_opts += "marginTop:" + $MarginContainer/VBoxContainer/MarginContainer/TopText.get_text() + ";"
+	output_opts += "showAxes:False;"
+	output_opts += "projectionDir:(" + x_dir + "," + y_dir + "," + z_dir + ");"
+	output_opts += "strokeWidth:" + $MarginContainer/VBoxContainer/StrokeWidthContainer/WidthText.get_text() + ";"
+	output_opts += "strokeColor:(" + s_red + "," + s_green + "," + s_blue + ");"
+	output_opts += "hiddenColor:(" + h_red + "," + h_green + "," + h_blue + ");"
+	output_opts += "showHidden:" + show_hidden + ";"
+
+	return output_opts
 
 
 """

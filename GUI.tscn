@@ -610,7 +610,6 @@ margin_right = 200.0
 margin_bottom = 70.0
 
 [node name="ExportSVGDialog" type="WindowDialog" parent="."]
-visible = true
 margin_right = 355.0
 margin_bottom = 390.0
 window_title = "Export SVG"
@@ -760,37 +759,37 @@ text = "X:"
 
 [node name="XText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/ProjDirContainer"]
 margin_left = 16.0
-margin_right = 46.0
+margin_right = 56.0
 margin_bottom = 20.0
-rect_min_size = Vector2( 30, 20 )
+rect_min_size = Vector2( 40, 20 )
 text = "0"
 
 [node name="YLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/ProjDirContainer"]
-margin_left = 50.0
+margin_left = 60.0
 margin_top = 3.0
-margin_right = 61.0
+margin_right = 71.0
 margin_bottom = 17.0
 text = "Y:"
 
 [node name="YText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/ProjDirContainer"]
-margin_left = 65.0
-margin_right = 95.0
+margin_left = 75.0
+margin_right = 115.0
 margin_bottom = 20.0
-rect_min_size = Vector2( 30, 20 )
+rect_min_size = Vector2( 40, 20 )
 text = "0"
 
 [node name="ZLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/ProjDirContainer"]
-margin_left = 99.0
+margin_left = 119.0
 margin_top = 3.0
-margin_right = 111.0
+margin_right = 131.0
 margin_bottom = 17.0
 text = "Z:"
 
 [node name="ZText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/ProjDirContainer"]
-margin_left = 115.0
-margin_right = 145.0
+margin_left = 135.0
+margin_right = 175.0
 margin_bottom = 20.0
-rect_min_size = Vector2( 30, 20 )
+rect_min_size = Vector2( 40, 20 )
 text = "1"
 
 [node name="StrokeWidthContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
@@ -921,7 +920,7 @@ margin_bottom = 20.0
 rect_min_size = Vector2( 40, 20 )
 text = "255"
 
-[node name="CheckBox" type="CheckBox" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
+[node name="HiddenCheckBox" type="CheckBox" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
 margin_top = 268.0
 margin_right = 348.0
 margin_bottom = 292.0
