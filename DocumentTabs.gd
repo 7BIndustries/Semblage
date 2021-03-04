@@ -12,10 +12,6 @@ signal cam_rotate
 signal cam_zoom
 signal cam_pan
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass
-
 
 func _input(event):
 	if not accept_input:

@@ -5,9 +5,6 @@ var component_text # The text of the current component's script
 var check_component_text = null # Temporary to make sure the compnent file
 var safe_distance = 0 # The distance away the camera should be placed to be able to view the components
 var status # The status bar that keeps the user appraised of what is going on
-var cur_temp_file # The path to the current temp file
-var cur_error_file # The path to the current error file, if needed
-var executing = false # Whether or not a script is currently executing
 var home_transform # Allows us to move the camera back to the starting location/rotation/etc
 var origin_transform # Allows us to move the orgin camera view back to a starting transform
 var light_transform # Allws us to move the light position back to the starting transform
@@ -20,6 +17,8 @@ var object_tree = null
 var history_tree = null
 var object_tree_root = null
 var history_tree_root = null
+
+onready var cqgiint = $GUI/CQGIInterface
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -39,97 +38,12 @@ func _ready():
 	_init_history_tree()
 	_init_object_tree()
 
-	cur_temp_file = OS.get_user_data_dir() + "/temp_component.json"
-
-	# Empty the temporary component file so that it can be reused
-	FileSystem.clear_file(cur_temp_file)
-
 	# Make sure the window is maximized on start
 	OS.set_window_maximized(true)
 
 	# Let the user know the app is ready to use
 	status = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
 	status.text = " Ready"
-
-
-"""
-Used to do things like check if a semb process is generating a component.
-"""
-func _process(delta):
-	# Error file handling
-	if executing && cur_error_file != null:
-		var cur_file = File.new()
-
-		# If we are executing and there is an error file, display the error
-		if cur_file.file_exists(cur_error_file):
-			cur_file.open(cur_error_file, File.READ)
-
-			# Load the JSON from the file
-			var error_string = cur_file.get_as_text()
-
-			# Display the error to the user
-			$ErrorDialog.dialog_text = error_string
-			$ErrorDialog.popup_centered()
-
-			# Empty the temporary component file so that it can be reused
-			FileSystem.clear_file(cur_temp_file)
-
-			# Prevent us from entering this code block again
-			cur_error_file = null
-
-			executing = false
-			
-			status.text = " Generation Error"
-			
-#			if error_string.ends_with("semb_process_finished"):
-#				error_string = error_string.replace("semb_process_finished", "")
-#
-#				$ErrorDialog.dialog_text = error_string
-#				$ErrorDialog.popup_centered()
-#
-#				# Prevent us from entering this code block again
-#				cur_temp_file = null
-#				cur_error_file = null
-#
-#				executing = false
-#
-#				status.text = " Generation Error"
-
-			# Remove the current temp file since we no longer need it
-#			var array = [cur_temp_file, cur_error_file]
-#			var args = PoolStringArray(array)
-#			OS.execute("rm", args, false)
-
-		cur_file.close()
-
-	# JSON file handling
-	if executing:
-		var cur_file = File.new()
-
-		# If we are executing and the file exists, process it
-		if cur_file.file_exists(cur_temp_file):
-			cur_file.open(cur_temp_file, File.READ)
-
-			# Get the JSON text from the file
-			var json_string = cur_file.get_as_text()
-
-			if json_string.ends_with("semb_process_finished"):
-				json_string = json_string.replace("semb_process_finished", "")
-
-				# Load the JSON into the scene
-				load_component_json(json_string)
-
-				# Empty the temporary component file so that it can be reused
-				FileSystem.clear_file(cur_temp_file)
-
-				executing = false
-
-			# Remove the current temp file since we no longer need it
-#			var array = [cur_temp_file]
-#			var args = PoolStringArray(array)
-#			OS.execute("rm", args, false)
-
-		cur_file.close()
 
 
 """
@@ -212,40 +126,64 @@ func load_semblage_component(text):
 
 
 """
+Collects all of the history tree items and renders them into an
+object in the 3D view.
+"""
+func _render_history_tree():
+	status.text = "Rednering component..."
+
+	# Start to build the preview string based on what is in the actions list
+	_reset_component_text()
+
+	# Search the tree and update the matchine entry in the tree
+	var cur_item = history_tree_root.get_children()
+	while true:
+		if cur_item == null:
+			break
+		else:
+			component_text += cur_item.get_text(0)
+
+			cur_item = cur_item.get_next()
+
+	# Render the script text collected from the history tree
+	_render_component_text()
+
+
+"""
 Generates a component using the semb CLI, which returns JSON.
 """
 func _render_non_semblage(path):
-	# If component text has been passed, it have probably been modified from any file contents
-	if component_text != null:
-		# We want to write the component text to a temporary file and render the result of executing that
-		var temp_component_path = OS.get_user_data_dir() + "/temp_component_path.py"
-		
-		# We append the show_object here so that it is not part of the context going forward
-		FileSystem.save_component(temp_component_path, component_text + "\nshow_object(result)")
-		
-		# Switch path to pass that to cq-cli
-		path = temp_component_path
+	# Load the component's text from file
+	component_text = FileSystem.load_component(path)
 
-	# Get the date and time and use it to construct the unique file id
-	var date_time = OS.get_datetime()
-	var file_id = str(date_time["year"]) + "_" +  str(date_time["month"]) + "_" + str(date_time["day"]) + "_" + str(date_time["hour"]) + "_" + str(date_time["minute"]) + "_" + str(date_time["second"])
+	# Render the loaded script text
+	_render_component_text()
 
-	# Construct the directory where the temporary JSON file can be written
-	cur_error_file = OS.get_user_data_dir() + "/error_" + file_id + ".txt"
 
-	# Temporary location and name of the file to convert
-	var array = ["--codec", "semb", "--infile", path, "--outfile", cur_temp_file, "--errfile", cur_error_file]
-	var args = PoolStringArray(array)
+"""
+Uses Python to execute the current component_text, tessellate
+the results, and display that in the 3D view.
+"""
+func _render_component_text():
+	status.text = "Rednering component..."
 
-	# Execute the render script
-	var success = OS.execute(Settings.get_cq_cli_path(), args, false)
+	var script_text = component_text + "\nshow_object(result)"
 
-	# Track whether or not execution happened successfully
-	if success == -1:
-		status.text = "Execution error"
+	# Pass the script to the Python layer to convert it to tessellated JSON
+	var component_json = cqgipy.build(script_text)
+
+	# If there was an error, display it
+	if component_json.begins_with("error~"):
+		# Let the user know there was an error
+		var err = component_json.split("~")[1]
+		$ErrorDialog.dialog_text = err
+		$ErrorDialog.popup_centered()
 	else:
-		executing = true
-		status.text = "Generating component..."
+		# Load the JSON into the scene
+		load_component_json(component_json)
+
+	status.text = "Rednering component...done"
+
 
 """
 Calculates the proper Y position to set the camera to fit a component or
@@ -429,55 +367,6 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 
 
 """
-Collects all of the history tree items and renders them into an
-object in the 3D view.
-"""
-func _render_history_tree():
-	# Start to build the preview string based on what is in the actions list
-	_reset_component_text()
-#	var script_text = "# Semblage v1\nimport cadquery as cq\nresult=cq"
-
-	# Search the tree and update the matchine entry in the tree
-	var cur_item = history_tree_root.get_children()
-	while true:
-		if cur_item == null:
-			break
-		else:
-			component_text += cur_item.get_text(0)
-
-			cur_item = cur_item.get_next()
-
-	var script_text = component_text + "\nshow_object(result)"
-
-	# We want to write the component text to a temporary file and render the result of executing that
-	var temp_component_path = OS.get_user_data_dir() + "/temp_component_path.py"
-	
-	# We append the show_object here so that it is not part of the context going forward
-	FileSystem.save_component(temp_component_path, script_text)
-
-	# Get the date and time and use it to construct the unique file id
-	var date_time = OS.get_datetime()
-	var file_id = str(date_time["year"]) + "_" +  str(date_time["month"]) + "_" + str(date_time["day"]) + "_" + str(date_time["hour"]) + "_" + str(date_time["minute"]) + "_" + str(date_time["second"])
-
-	# Construct the directory where the temporary JSON file can be written
-	cur_error_file = OS.get_user_data_dir() + "/error_" + file_id + ".txt"
-
-	# Temporary location and name of the file to convert
-	var array = ["--codec", "semb", "--infile", temp_component_path, "--outfile", cur_temp_file, "--errfile", cur_error_file]
-	var args = PoolStringArray(array)
-
-	# Execute the render script
-	var success = OS.execute(Settings.get_cq_cli_path(), args, false)
-
-	# Track whether or not execution happened successfully
-	if success == -1:
-		status.text = "Execution error"
-	else:
-		executing = true
-		status.text = "Generating component..."
-
-
-"""
 Fired when the Action popup needs to be displayed.
 """
 func _on_DocumentTabs_activate_action_popup(mouse_pos):
@@ -653,25 +542,23 @@ func _on_ExportDialog_file_selected(path):
 		status.text = "Export only supports the 'stl' and 'step' file extensions. Please try again."
 		return
 
+	var export_text = component_text
+	export_text += "\nshow_object(result)"
 
-	# Come up with a unique ID for the error file
-	var date_time = OS.get_datetime()
-	var file_id = str(date_time["year"]) + "_" +  str(date_time["month"]) + "_" + str(date_time["day"]) + "_" + str(date_time["hour"]) + "_" + str(date_time["minute"]) + "_" + str(date_time["second"])
+	# Export the file to the user data directory temporarily
+	var ret = cqgipy.export(export_text, extension, OS.get_user_data_dir())
 
-	# The currently rendered component should be here
-	var temp_file = OS.get_user_data_dir() + "/temp_component_path.py"
-
-	# Set up our command line parameters
-	var cur_error_file = OS.get_user_data_dir() + "/error_" + file_id + ".txt"
-	var array = ["--codec", extension, "--infile", temp_file, "--outfile", path, "--errfile", cur_error_file]
-	var args = PoolStringArray(array)
-
-	# Execute the render script
-	var success = OS.execute(Settings.get_cq_cli_path(), args, false)
-
-	# Track whether or not execution happened successfully
-	if success == -1:
-		status.text = "Export error"
+	# If the export succeeded, move the contents of the export to the final location
+	if ret.begins_with("error~"):
+		# Let the user know there was an error
+		var err = ret.split("~")[1]
+		$ErrorDialog.dialog_text = err
+		$ErrorDialog.popup_centered()
+	else:
+		# Read the exported file contents and write them to their final location
+		# Work-around for not being able to write to the broader filesystem via Python
+		var stl_text = FileSystem.load_component(ret)
+		FileSystem.save_component(path, stl_text)
 
 
 """
@@ -760,3 +647,7 @@ a component file.
 func _on_ConfirmationDialog_confirmed():
 	component_text = check_component_text
 	_load_component()
+
+
+func _on_CQGIInterface_build_success(component_json):
+	pass

@@ -10,3 +10,11 @@ export_presets.cfg
 .mono/
 data_*/
 
+# Python-specific ignores
+__pycache__
+
+# We do not want to upload platform specific godot-plugin files
+addons
+pythonscript.gdnlib
+LICENSE.txt
+README.txt
