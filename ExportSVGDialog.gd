@@ -119,23 +119,19 @@ func _export_to_file(svg_path, output_opts, section_height):
 
 	# Make sure something gets exported
 	script_text += "\nshow_object(result)"
-	print(script_text)
-	# The currently rendered component should be here
-	var temp_path = OS.get_user_data_dir() + "/temp_component_svg.py"
-	FileSystem.save_component(temp_path, script_text)
 
-	# Set up our command line parameters
-	var cur_error_file = OS.get_user_data_dir() + "/error_svg.txt"
-	var array = ["--codec", "svg", "--infile", temp_path, "--outfile", svg_path, "--errfile", cur_error_file, "--outputopts", output_opts]
-	var args = PoolStringArray(array)
+	var ret = cqgipy.export(script_text, "svg", OS.get_user_data_dir(), output_opts)
 
-	# Execute the render script
-	var success = OS.execute(Settings.get_cq_cli_path(), args, true)
-
-	# Track whether or not execution happened successfully
-	if success != 0:
-		# Let the user know there was an SVG export error
-		_show_error_dialog("There was an error exporting the SVG.")
+	# If the export succeeded, move the contents of the export to the final location
+	if ret.begins_with("error~"):
+		# Let the user know there was an error
+		var err = ret.split("~")[1]
+		_show_error_dialog(err)
+	else:
+		# Read the exported file contents and write them to their final location
+		# Work-around for not being able to write to the broader filesystem via Python
+		var stl_text = FileSystem.load_component(ret)
+		FileSystem.save_component(svg_path, stl_text)
 
 
 """

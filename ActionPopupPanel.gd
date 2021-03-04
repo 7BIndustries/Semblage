@@ -378,28 +378,16 @@ func _render_action_tree():
 
 	script_text += ".consolidateWires()\nshow_object(result)"
 
-	# The currently rendered component should be here
-	var temp_path = OS.get_user_data_dir() + "/temp_component_svg.py"
-	FileSystem.save_component(temp_path, script_text)
+	# Export the file to the user data directory temporarily
+	var ret = cqgipy.export(script_text, "svg", OS.get_user_data_dir(), "width:400;height:400;marginLeft:50;marginTop:50;showAxes:False;projectionDir:(0,0,1);strokeWidth:0.5;strokeColor:(255,255,255);hiddenColor:(0,0,255);showHidden:False;")
 
-	# The temporary SVG file path
-	var svg_path = OS.get_user_data_dir() + "/temp_component_svg.svg"
-
-	# Set up our command line parameters
-	var cur_error_file = OS.get_user_data_dir() + "/error_svg.txt"
-	var array = ["--codec", "svg", "--infile", temp_path, "--outfile", svg_path, "--errfile", cur_error_file, "--outputopts", "width:400;height:400;marginLeft:50;marginTop:50;showAxes:False;projectionDir:(0,0,1);strokeWidth:0.5;strokeColor:(255,255,255);hiddenColor:(0,0,255);showHidden:False;"]
-	var args = PoolStringArray(array)
-
-	# Execute the render script
-	var success = OS.execute(Settings.get_cq_cli_path(), args, true)
-
-	# Track whether or not execution happened successfully
-	if success == -1:
-		# Let the user know there was an SVG export error
-		$ErrorDialog.dialog_text = "There was an error exporting the SVG"
+	if ret.begins_with("error~"):
+		# Let the user know there was an error
+		var err = ret.split("~")[1]
+		$ErrorDialog.dialog_text = err
 		$ErrorDialog.popup_centered()
 	else:
-		_load_image(svg_path, false)
+		_load_image(ret, false)
 
 
 """
