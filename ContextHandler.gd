@@ -105,6 +105,10 @@ static func get_untessellateds(context):
 			origin_vec[0] = float(origin_parts[0])
 			origin_vec[1] = float(origin_parts[1])
 			origin_vec[2] = float(origin_parts[2])
+		else:
+			origin_vec[0] = 0.0
+			origin_vec[1] = 0.0
+			origin_vec[2] = 0.0
 
 		# Extract the normal from the Workplane string
 		regex.compile("normal=(.*)")
@@ -115,9 +119,27 @@ static func get_untessellateds(context):
 			normal_vec[0] = float(normal_parts[0])
 			normal_vec[1] = float(normal_parts[1])
 			normal_vec[2] = float(normal_parts[2])
+		else:
+			# Allow us to invert the normal indicator prism
+			var norm_multiplier = 1
+			if untess.find("invert=True") > 0:
+				norm_multiplier = -1
+
+			if untess.find("XY") > 0:
+				normal_vec[0] = 0
+				normal_vec[1] = 0
+				normal_vec[2] = 1 * norm_multiplier
+			elif untess.find("YZ") > 0:
+				normal_vec[0] = 1 * norm_multiplier
+				normal_vec[1] = 0
+				normal_vec[2] = 0
+			elif untess.find("XZ") > 0:
+				normal_vec[0] = 0
+				normal_vec[1] = 1 * norm_multiplier
+				normal_vec[2] = 0
 
 		untessellateds.append({"origin": origin_vec, "normal": normal_vec, "width": 5, "height": 5, "depth": 0.1})
-
+	print(untessellateds)
 	return untessellateds
 
 
@@ -155,13 +177,26 @@ Filters out to only workplane actions.
 static func get_wp_actions():
 	var wp_actions = []
 
-	# Grab only actions from the 2D group
+	# Grab only actions from the Workplane group
 	for trigger in Triggers.get_triggers().keys():
 		if Triggers.get_triggers()[trigger].action.group == "WP":
 			wp_actions.append(Triggers.get_triggers()[trigger].action.name)
 
 	return wp_actions
 
+
+"""
+Filters out only selector actions.
+"""
+static func get_selector_actions():
+	var selector_actions = []
+
+	# Grab only actions from the selector group
+	for trigger in Triggers.get_triggers().keys():
+		if Triggers.get_triggers()[trigger].action.group == "SELECTORS":
+			selector_actions.append(Triggers.get_triggers()[trigger].action.name)
+
+	return selector_actions
 
 """
 Gets the matching action given the action's name.

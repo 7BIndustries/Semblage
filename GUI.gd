@@ -41,6 +41,11 @@ func _ready():
 	# Make sure the window is maximized on start
 	OS.set_window_maximized(true)
 
+	# Save this transform as the home transform
+	home_transform = cam.get_transform()
+	origin_transform = origin_cam.get_transform()
+	light_transform = light.get_transform()
+
 	# Let the user know the app is ready to use
 	status = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
 	status.text = " Ready"

@@ -11,7 +11,7 @@ static func gen_workplane_meshes(origin, normal):
 	var meshes = []
 
 	# Get the new material color
-	var new_color = Color(0.6, 0.6, 0.6, 0.3)
+	var new_color = Color(0.6, 0.6, 0.6, 0.01)
 	var material = SpatialMaterial.new()
 	material.albedo_color = Color(new_color[0], new_color[1], new_color[2], new_color[3])
 	material.flags_transparent = true
@@ -32,7 +32,7 @@ static func gen_workplane_meshes(origin, normal):
 #	vp.add_child(wp_mesh)
 
 	# Get the new material color
-	var norm_color = Color(1.0, 1.0, 1.0, 0.5)
+	var norm_color = Color(1.0, 1.0, 1.0, 0.01)
 	var norm_mat = SpatialMaterial.new()
 	norm_mat.albedo_color = Color(norm_color[0], norm_color[1], norm_color[2], norm_color[3])
 	norm_mat.flags_transparent = true
@@ -76,7 +76,7 @@ static func gen_workplane_meshes(origin, normal):
 
 	# Save the normal mesh instance to return
 	meshes.append(wp_mesh)
-#	vp.add_child(norm_mesh)
+	meshes.append(norm_mesh)
 
 	return meshes
 

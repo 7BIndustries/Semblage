@@ -11,11 +11,13 @@ var action_filter = "3D"
 var three_d_actions = null
 var two_d_actions = null
 var wp_actions = null
+var selector_actions = null
 
 # The group buttons at the top of the dialog
 var three_d_btn = null
 var sketch_btn = null
 var wp_btn = null
+var selector_btn = null
 
 var action_tree = null
 var action_tree_root = null
@@ -28,6 +30,7 @@ func _ready():
 	three_d_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton
 	sketch_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton
 	wp_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton
+	selector_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton
 
 	# Make sure 3D is selected by default
 	three_d_btn.pressed = true
@@ -172,6 +175,8 @@ func _select_group_button(group):
 	elif group == "3D":
 		three_d_btn.pressed = true
 		_on_ThreeDButton_toggled(three_d_btn)
+	elif group == "SELECTORS":
+		selector_btn.pressed = true
 	else:
 		sketch_btn.pressed = true
 		_on_SketchButton_toggled(sketch_btn)
@@ -268,8 +273,8 @@ Called when the user clicks the 3D button and toggles it.
 func _on_ThreeDButton_toggled(button_pressed):
 	# Make sure that the other buttons are not toggled
 	if three_d_btn.pressed:
-		sketch_btn.pressed = false
-		wp_btn.pressed = false
+		# Untoggle all other group buttons
+		_untoggle_all_group_buttons(three_d_btn)
 
 		action_filter = "3D"
 
@@ -283,10 +288,8 @@ func _on_ThreeDButton_toggled(button_pressed):
 
 		_set_action_control()
 
-		# Hide preview controls
-		$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.hide()
-		$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.hide()
-		$VBoxContainer/HBoxContainer/Preview.hide()
+		# Hide any previously shown sketch tools
+		_hide_sketch_controls()
 
 
 """
@@ -294,9 +297,8 @@ Called when the user clicks the Sketch button and toggles it.
 """
 func _on_SketchButton_toggled(button_pressed):
 	if sketch_btn.pressed:
-		# Make sure that the other buttons are not toggled
-		three_d_btn.pressed = false
-		wp_btn.pressed = false
+		# Untoggle all other group buttons
+		_untoggle_all_group_buttons(sketch_btn)
 
 		action_filter = "2D"
 
@@ -322,9 +324,8 @@ Called when the user clicks on the Workplane button and toggles it.
 """
 func _on_WorkplaneButton_toggled(button_pressed):
 	if wp_btn.pressed:
-		# Make sure that the other buttons are not toggled
-		three_d_btn.pressed = false
-		sketch_btn.pressed = false
+		# Untoggle all other group buttons
+		_untoggle_all_group_buttons(wp_btn)
 
 		action_filter = "WP"
 
@@ -338,12 +339,59 @@ func _on_WorkplaneButton_toggled(button_pressed):
 
 		_set_action_control()
 
-		# Hide preview controls
-		$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.hide()
-		$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.hide()
-		$VBoxContainer/HBoxContainer/Preview.hide()
+		# Hide any previously shown sketch tools
+		_hide_sketch_controls()
+
+"""
+Called when the user clicks on the selector button to display
+the selector controls.
+"""
+func _on_SelectorButton_toggled(button_pressed):
+	if selector_btn.pressed:
+		# Untoggle all other group buttons
+		_untoggle_all_group_buttons(selector_btn)
+
+		action_filter = "SELECTORS"
+
+		# Fill the selector actions listup the first time it is requested
+		if selector_actions == null:
+			selector_actions = ContextHandler.get_selector_actions()
+
+		# Repopulate the action option button
+		$VBoxContainer/ActionOptionButton.clear()
+		Common.load_option_button($VBoxContainer/ActionOptionButton, selector_actions)
+
+		_set_action_control()
+
+		# Hide any previously shown sketch tools
+		_hide_sketch_controls()
 
 
+"""
+Called when switching to another group control and needing to hide
+any previously displayed sketch controls.
+"""
+func _hide_sketch_controls():
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.hide()
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.hide()
+	$VBoxContainer/HBoxContainer/Preview.hide()
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer.hide()
+
+
+"""
+Called when a new group button is toggled so that all
+others can be untoggled.
+"""
+func _untoggle_all_group_buttons(except):
+	# Untoggle all buttons except the one that was passed
+	if except != wp_btn:
+		wp_btn.pressed = false
+	if except != three_d_btn:
+		three_d_btn.pressed = false
+	if except != sketch_btn:
+		sketch_btn.pressed = false
+	if except != selector_btn:
+		selector_btn.pressed = false
 """
 Called when the Add button is clicked.
 """

@@ -2,4 +2,9 @@ site_name: Semblage Documentation
 
 nav:
     - Home: index.md
-    - About: about.md
+    - Introduction: introduction.md
+    - Installation: installation.md
+    - Usage: usage.md
+    - Tutorials: tutorials/index.md
+    - Community: community.md
+    - Roadmap: roadmap.md

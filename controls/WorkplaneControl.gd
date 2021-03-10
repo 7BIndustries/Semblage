@@ -21,7 +21,7 @@ var normal_x_ctrl = null
 var normal_y_ctrl = null
 var normal_z_ctrl = null
 
-var workplane_list = ["XY", "YZ", "ZX", "XZ", "YX", "ZY", "front", "back", "left", "right", "top", "bottom"]
+var workplane_list = ["XY", "YZ", "XZ"]
 var center_option_list = ["CenterOfBoundBox", "CenterOfMass", "ProjectedOrigin"]
 
 var advanced_group = null
@@ -50,7 +50,7 @@ func _ready():
 	# Allow the user to select the named workplane
 	var wp_group = HBoxContainer.new()
 	var wp_lbl = Label.new()
-	wp_lbl.set_text("Workplane: ")
+	wp_lbl.set_text("Orientation: ")
 	wp_group.add_child(wp_lbl)
 	wp_ctrl = OptionButton.new()
 	Common.load_option_button(wp_ctrl, workplane_list)

@@ -341,25 +341,28 @@ class cqgi_interface(Node):
 		Called by Godot to build and return the tessellated result of the script.
 		"""
 
-		# Execute the script and get the build result
-		build_result = self.execute(script_text)
+		try:
+			# Execute the script and get the build result
+			build_result = self.execute(script_text)
 
-		# Handle the case of the build not being successful, otherwise pass the codec the build result
-		if not build_result.success:
-			component_json = "error~" + str(build_result.exception)
-		else:
-			components = []
-			# Display all the results that the caller
-			for result in build_result.results:
-				component = []
-				component.append(result.shape.val())
-				component.append(result.shape.largestDimension())
-				component.append(None)
-				component.append(None)
+			# Handle the case of the build not being successful, otherwise pass the codec the build result
+			if not build_result.success:
+				component_json = "error~" + str(build_result.exception)
+			else:
+				components = []
+				# Display all the results that the caller
+				for result in build_result.results:
+					component = []
+					component.append(result.shape.val())
+					component.append(result.shape.largestDimension())
+					component.append(None)
+					component.append(None)
 
-				components.append(component)
+					components.append(component)
 
-			component_json = convert_components(components)
+				component_json = convert_components(components)
+		except Exception as err:
+			component_json = "error~" + str(err)
 
 #		self.call("emit_signal", "build_success", result)
 

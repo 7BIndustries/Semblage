@@ -12,7 +12,7 @@ static func get_triggers():
 			"trigger": "cq$",
 			"edit_trigger": "^.Workplane(.*).*",
 			"action": {
-				"name": "New Workplane",
+				"name": "Workplane",
 				"group": "WP",
 				"control": WorkplaneControl.new()
 			}
@@ -51,6 +51,33 @@ static func get_triggers():
 				"name": "translate",
 				"group": "WP",
 				"control": TranslateControl.new()
+			}
+		},
+		"faces": {
+			"trigger": "cq$",
+			"edit_trigger": "^.faces(.*).*",
+			"action": {
+				"name": "faces",
+				"group": "SELECTORS",
+				"control": SelectorControl.new()
+			}
+		},
+		"edges": {
+			"trigger": "cq$",
+			"edit_trigger": "^.edges(.*).*",
+			"action": {
+				"name": "edges",
+				"group": "SELECTORS",
+				"control": SelectorControl.new()
+			}
+		},
+		"vertices": {
+			"trigger": "cq$",
+			"edit_trigger": "^.vertices(.*).*",
+			"action": {
+				"name": "vertices",
+				"group": "SELECTORS",
+				"control": SelectorControl.new()
 			}
 		},
 		"box": {
