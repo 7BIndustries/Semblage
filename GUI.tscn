@@ -1038,6 +1038,7 @@ text = "Cancel"
 [connection signal="toggled" from="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton" to="ActionPopupPanel" method="_on_SketchButton_toggled"]
 [connection signal="toggled" from="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton" to="ActionPopupPanel" method="_on_SelectorButton_toggled"]
 [connection signal="item_selected" from="ActionPopupPanel/VBoxContainer/ActionOptionButton" to="ActionPopupPanel" method="_on_ActionOptionButton_item_selected"]
+[connection signal="resized" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer" to="ActionPopupPanel" method="_on_DynamicContainer_resized"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton" to="ActionPopupPanel" method="_on_AddButton_button_down"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/UpdateButton" to="ActionPopupPanel" method="_on_UpdateButton_button_down"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/DeleteButton" to="ActionPopupPanel" method="_on_DeleteButton_button_down"]

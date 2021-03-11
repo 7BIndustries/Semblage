@@ -291,6 +291,9 @@ func _on_ThreeDButton_toggled(button_pressed):
 		# Hide any previously shown sketch tools
 		_hide_sketch_controls()
 
+		# Make sure the dialog is sized correctly
+		_on_VBoxContainer_resized()
+
 
 """
 Called when the user clicks the Sketch button and toggles it.
@@ -318,6 +321,9 @@ func _on_SketchButton_toggled(button_pressed):
 		$VBoxContainer/HBoxContainer/Preview.show()
 		_load_image("res://assets/samples/sample_2D_render.svg", true)
 
+		# Make sure the dialog is sized correctly
+		_on_VBoxContainer_resized()
+
 
 """
 Called when the user clicks on the Workplane button and toggles it.
@@ -342,6 +348,10 @@ func _on_WorkplaneButton_toggled(button_pressed):
 		# Hide any previously shown sketch tools
 		_hide_sketch_controls()
 
+		# Make sure the dialog is sized correctly
+		_on_VBoxContainer_resized()
+
+
 """
 Called when the user clicks on the selector button to display
 the selector controls.
@@ -365,6 +375,9 @@ func _on_SelectorButton_toggled(button_pressed):
 
 		# Hide any previously shown sketch tools
 		_hide_sketch_controls()
+
+		# Make sure the dialog is sized correctly
+		_on_VBoxContainer_resized()
 
 
 """
@@ -392,6 +405,8 @@ func _untoggle_all_group_buttons(except):
 		sketch_btn.pressed = false
 	if except != selector_btn:
 		selector_btn.pressed = false
+
+
 """
 Called when the Add button is clicked.
 """
@@ -531,3 +546,11 @@ func _on_MoveDownButton_button_down():
 
 	# Move the item up in the action tree one position
 	Common.move_tree_item_down(action_tree, selected)
+
+
+"""
+Called when the control loaded in the dynamic contrainer
+is changed.
+"""
+func _on_DynamicContainer_resized():
+	_on_VBoxContainer_resized()

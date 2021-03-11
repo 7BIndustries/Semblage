@@ -23,13 +23,14 @@ Below is a diagram showing the main sections of the user interface.
 
 ## Operations Dialog
 
-Right clicking anywhere on the 3D view will display the Operations dialog. This is where the majority of the work of creating components is done. This dialog pops up near the mouse cursor in preparation for when features such as vertices, edges, faces can be selected for an operation. There are three modes that this dialog can operate in with corresponding buttons, and the diagram below highlights each button.
+Right clicking anywhere on the 3D view will display the Operations dialog. This is where the majority of the work of creating components is done. This dialog pops up near the mouse cursor in preparation for when features such as vertices, edges, faces can be selected for an operation. There are three modes, which select groups of operations that this dialog can operate in. There are buttons corresponding to each mode, and the diagram below highlights each button.
 
-![Operations Dialog Modes](_static/Operations_Dialog_Modes.png)
+![Operations Dialog Group Buttons](_static/Operations_Dialog_Group_Buttons.png)
 
 1. _Workplane_ - Used to create a new base workplane for components, or modify the existing workplane with operations such as `rotate` and `translate`. 
 2. _3D_ - 3D operations, typically used with a previous 2D operation to create or modify a component.
 3. _2D_ - Collection of 2D objects that can be used alone, or in conjunction with a 3D operation later. Clicking this button will also add sketch preview controls, causing the dialog to become wider. The [sketch preview](#sketch-preview) is covered below.
+4. _Selectors_ - Selectors are very important in both CadQuery and Semblage, and are used to select faces, edges and vertices in a way that captures design intent and makes designs less brittle to changes.
 
 ### Common Controls
 
