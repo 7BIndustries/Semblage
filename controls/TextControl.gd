@@ -13,8 +13,8 @@ var halign_ctrl = null
 var valign_ctrl = null
 var combine_ctrl = null
 var clean_ctrl = null
-var select_ctrl = null
-var hide_show_btn = null
+#var select_ctrl = null
+#var hide_show_btn = null
 
 var prev_template = null
 
@@ -87,20 +87,20 @@ func _ready():
 	add_child(clean_group)
 
 	# Add a horizontal rule to break things up
-	add_child(HSeparator.new())
+#	add_child(HSeparator.new())
 
 	# Allow the user to show/hide the selector controls that allow the rect to 
 	# be placed on something other than the current workplane
-	hide_show_btn = CheckButton.new()
-	hide_show_btn.set_text("Selectors: ")
-	hide_show_btn.connect("button_down", self, "_show_selectors")
-	add_child(hide_show_btn)
+#	hide_show_btn = CheckButton.new()
+#	hide_show_btn.set_text("Selectors: ")
+#	hide_show_btn.connect("button_down", self, "_show_selectors")
+#	add_child(hide_show_btn)
 
 	# The selector control for where to locate the slot
-	select_ctrl = SelectorControl.new()
-	select_ctrl.config_visibility(true, false)
-	select_ctrl.hide()
-	add_child(select_ctrl)
+#	select_ctrl = SelectorControl.new()
+#	select_ctrl.config_visibility(true, false)
+#	select_ctrl.hide()
+#	add_child(select_ctrl)
 
 	# Add a horizontal rule to break things up
 	add_child(HSeparator.new())
@@ -180,8 +180,8 @@ func get_completed_template():
 	var complete = ""
 
 	# If the selector control is visible, prepend its contents
-	if hide_show_btn.pressed:
-		complete += select_ctrl.get_completed_template()
+#	if hide_show_btn.pressed:
+#		complete += select_ctrl.get_completed_template()
 
 	# Make sure to handle the possible Python None value in the font path
 	var font_path = font_path_ctrl.get_text()
@@ -211,11 +211,11 @@ func get_completed_template():
 """
 Show the selector controls.
 """
-func _show_selectors():
-	if hide_show_btn.pressed:
-		select_ctrl.hide()
-	else:
-		select_ctrl.show()
+#func _show_selectors():
+#	if hide_show_btn.pressed:
+#		select_ctrl.hide()
+#	else:
+#		select_ctrl.show()
 
 
 """

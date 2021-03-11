@@ -12,7 +12,7 @@ var angle_edit_rgx = "(?<=angle\\=)(.*?)(?=\\,count)"
 var count_edit_rgx = "(?<=count\\=)(.*?)(?=\\,fill)"
 var fill_edit_rgx = "(?<=fill\\=)(.*?)(?=\\,rotate)"
 var rotate_edit_rgx = "(?<=rotate\\=)(.*?)(?=\\))"
-var select_edit_rgx = "^.faces\\(.*\\)\\."
+#var select_edit_rgx = "^.faces\\(.*\\)\\."
 
 var radius_ctrl = null
 var start_angle_ctrl = null
@@ -21,12 +21,12 @@ var count_ctrl = null
 var fill_ctrl = null
 var rotate_ctrl = null
 
-var hide_show_btn = null
-var select_ctrl = null
-var op_ctrl = null
+#var hide_show_btn = null
+#var select_ctrl = null
+#var op_ctrl = null
 
-var operation_visible = true
-var selector_visible = true
+#var operation_visible = true
+#var selector_visible = true
 
 
 # Called when the node enters the scene tree for the first time.
@@ -92,31 +92,31 @@ func _ready():
 	add_child(rotate_group)
 
 	# Show the selector control if it is enabled
-	if selector_visible:
-		# Add a horizontal rule to break things up
-		add_child(HSeparator.new())
-
-		# Allow the user to show/hide the selector controls that allow the rect to
-		# be placed on something other than the current workplane
-		hide_show_btn = CheckButton.new()
-		hide_show_btn.set_text("Selectors: ")
-		hide_show_btn.connect("button_down", self, "_show_selectors")
-		add_child(hide_show_btn)
-
-		# Add the face/edge selector control
-		select_ctrl = SelectorControl.new()
-		select_ctrl.hide()
-		select_ctrl.config_visibility(true, false) # Only allow face selection
-		add_child(select_ctrl)
+#	if selector_visible:
+#		# Add a horizontal rule to break things up
+#		add_child(HSeparator.new())
+#
+#		# Allow the user to show/hide the selector controls that allow the rect to
+#		# be placed on something other than the current workplane
+#		hide_show_btn = CheckButton.new()
+#		hide_show_btn.set_text("Selectors: ")
+#		hide_show_btn.connect("button_down", self, "_show_selectors")
+#		add_child(hide_show_btn)
+#
+#		# Add the face/edge selector control
+#		select_ctrl = SelectorControl.new()
+#		select_ctrl.hide()
+#		select_ctrl.config_visibility(true, false) # Only allow face selection
+#		add_child(select_ctrl)
 
 	# Set the operation control if it is enabled
-	if operation_visible:
-		# Add a horizontal rule to break things up
-		add_child(HSeparator.new())
-
-		# Add the Operations control that will allow the user to select what to do (if anything)
-		op_ctrl = OperationsControl.new()
-		add_child(op_ctrl)
+#	if operation_visible:
+#		# Add a horizontal rule to break things up
+#		add_child(HSeparator.new())
+#
+#		# Add the Operations control that will allow the user to select what to do (if anything)
+#		op_ctrl = OperationsControl.new()
+#		add_child(op_ctrl)
 
 """
 Fills out the template and returns it.
@@ -125,8 +125,8 @@ func get_completed_template():
 	var complete = ""
 
 	# If the selector control is visible, prepend its contents
-	if selector_visible and select_ctrl.visible:
-		complete += select_ctrl.get_completed_template()
+#	if selector_visible and select_ctrl.visible:
+#		complete += select_ctrl.get_completed_template()
 
 	complete += template.format({
 		"radius": radius_ctrl.get_text(),
@@ -137,20 +137,20 @@ func get_completed_template():
 		"rotate": rotate_ctrl.pressed
 		})
 
-	if operation_visible:
-		# Check to see if there is an operation to apply to this geometry
-		complete += op_ctrl.get_completed_template()
+#	if operation_visible:
+#		# Check to see if there is an operation to apply to this geometry
+#		complete += op_ctrl.get_completed_template()
 
 	return complete
 
 """
 Show the selector controls.
 """
-func _show_selectors():
-	if select_ctrl.visible:
-		select_ctrl.hide()
-	else:
-		select_ctrl.show()
+#func _show_selectors():
+#	if select_ctrl.visible:
+#		select_ctrl.hide()
+#	else:
+#		select_ctrl.show()
 
 
 """
@@ -216,19 +216,19 @@ func set_values_from_string(text_line):
 		rotate_ctrl.pressed = true if rotate == "True" else false
 
 	# Selector
-	rgx.compile(select_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		var sel = res.get_string()
-
-		hide_show_btn.pressed = true
-		select_ctrl.show()
-
-		# Allow the selector control to set itself up appropriately
-		select_ctrl.set_values_from_string(sel.left(sel.length() - 1))
+#	rgx.compile(select_edit_rgx)
+#	res = rgx.search(text_line)
+#	if res:
+#		var sel = res.get_string()
+#
+#		hide_show_btn.pressed = true
+#		select_ctrl.show()
+#
+#		# Allow the selector control to set itself up appropriately
+#		select_ctrl.set_values_from_string(sel.left(sel.length() - 1))
 
 	# Operation
-	op_ctrl.set_values_from_string(text_line)
+#	op_ctrl.set_values_from_string(text_line)
 
 
 
@@ -236,6 +236,7 @@ func set_values_from_string(text_line):
 Allows the caller to configure what is visible, useful for the Sketch tool.
 """
 func config(selector_visible=true, operation_visible=true):
+	pass
 	# Set whether or not the selector control is visible
-	self.selector_visible = selector_visible
-	self.operation_visible = operation_visible
+#	self.selector_visible = selector_visible
+#	self.operation_visible = operation_visible

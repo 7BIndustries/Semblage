@@ -8,12 +8,12 @@ var template = ".shell(thickness={thickness},kind=\"{kind}\")"
 
 var thickness_edit_rgx = "(?<=thickness\\=)(.*?)(?=\\,)"
 var kind_edit_rgx = "(?<=kind\\=\")(.*?)(?=\"\\)"
-var select_edit_rgx = "^.faces\\(.*\\)\\."
+#var select_edit_rgx = "^.faces\\(.*\\)\\."
 
 var thickness_ctrl = null
 var kind_ctrl = null
 
-var select_ctrl = null
+#var select_ctrl = null
 #var select_ctrl_2 = null
 
 var kind_list = ["arc", "intersection"]
@@ -41,12 +41,12 @@ func _ready():
 	add_child(kind_group)
 
 	# Add a horizontal rule to break things up
-	add_child(HSeparator.new())
+#	add_child(HSeparator.new())
 
 	# Add the face/edge selector control
-	select_ctrl = SelectorControl.new()
-	select_ctrl.config_visibility(true, false) # Only allow face selection
-	add_child(select_ctrl)
+#	select_ctrl = SelectorControl.new()
+#	select_ctrl.config_visibility(true, false) # Only allow face selection
+#	add_child(select_ctrl)
 
 	# TODO: Allow selection of additional faces
 
@@ -70,7 +70,7 @@ func get_completed_template():
 	var complete = ""
 
 	# If the selector control is visible, prepend its contents
-	complete += select_ctrl.get_completed_template()
+#	complete += select_ctrl.get_completed_template()
 
 	complete += template.format({
 		"thickness": thickness_ctrl.get_text(),
@@ -120,10 +120,10 @@ func set_values_from_string(text_line):
 		Common.set_option_btn_by_text(kind_ctrl, res.get_string())
 
 	# Selector
-	rgx.compile(select_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		var sel = res.get_string()
-
-		# Allow the selector control to set itself up appropriately
-		select_ctrl.set_values_from_string(sel.left(sel.length() - 1))
+#	rgx.compile(select_edit_rgx)
+#	res = rgx.search(text_line)
+#	if res:
+#		var sel = res.get_string()
+#
+#		# Allow the selector control to set itself up appropriately
+#		select_ctrl.set_values_from_string(sel.left(sel.length() - 1))

@@ -57,7 +57,7 @@ static func get_triggers():
 			"trigger": "cq$",
 			"edit_trigger": "^.faces(.*).*",
 			"action": {
-				"name": "faces",
+				"name": "selectors",
 				"group": "SELECTORS",
 				"control": SelectorControl.new()
 			}
@@ -66,7 +66,7 @@ static func get_triggers():
 			"trigger": "cq$",
 			"edit_trigger": "^.edges(.*).*",
 			"action": {
-				"name": "edges",
+				"name": "selectors",
 				"group": "SELECTORS",
 				"control": SelectorControl.new()
 			}
@@ -75,7 +75,7 @@ static func get_triggers():
 			"trigger": "cq$",
 			"edit_trigger": "^.vertices(.*).*",
 			"action": {
-				"name": "vertices",
+				"name": "selectors",
 				"group": "SELECTORS",
 				"control": SelectorControl.new()
 			}

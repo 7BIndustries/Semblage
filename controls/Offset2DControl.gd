@@ -8,17 +8,9 @@ var template = ".offset2D({thickness},kind=\"{kind}\")"
 
 var thickness_edit_rgx = "(?<=.offset2D\\()(.*?)(?=,kind)"
 var kind_edit_rgx = "(?<=kind\\=)(.*?)(?=\\))"
-var select_edit_rgx = "^.faces\\(.*\\)\\."
 
 var thickness_ctrl = null
 var kind_ctrl = null
-
-var hide_show_btn = null
-var select_ctrl = null
-var op_ctrl = null
-
-var operation_visible = true
-var selector_visible = true
 
 var kind_list = ["arc", "intersection", "tangent"]
 
