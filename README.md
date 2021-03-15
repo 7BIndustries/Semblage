@@ -22,4 +22,5 @@ If you would like to support the development of this project, you can do so on [
 ## Links
 
 * [Documentation](https://semblage.7bindustries.com/en/latest/)
+* [Contributing](CONTRIBUTING.md)
 * [Roadmap](https://semblage.7bindustries.com/en/latest/about/roadmap/)
