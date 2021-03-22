@@ -1,0 +1,6 @@
+ipython
+pyparsing
+ezdxf
+typing_extensions
+nptyping
+scipy
