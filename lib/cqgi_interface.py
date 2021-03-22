@@ -219,7 +219,7 @@ class cqgi_interface(Node):
 		Executes/builds the given script text and returns the
 		CQGI build result.
 		"""
-		
+
 		# Add the Python library and package paths
 		if sys.platform.startswith('linux'):
 			sys.path.insert(0, 'addons/pythonscript/x11-64/lib')
@@ -284,7 +284,6 @@ class cqgi_interface(Node):
 		# Convert the options string to something useable by the exporter
 		if opts != None:
 			opts = self.opts_string_to_dict(str(opts))
-			print(opts)
 
 		# Temporary path that the file is being exported to	
 		export_path = os.path.join(str(user_dir_path), "temp_file")
