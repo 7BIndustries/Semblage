@@ -221,12 +221,12 @@ class cqgi_interface(Node):
 		"""
 
 		# Add the Python library and package paths
-		if sys.platform.startswith('linux'):
-			sys.path.insert(0, 'addons/pythonscript/x11-64/lib')
-		elif sys.platform.startswith('darwin'):
-			sys.path.insert(0, 'addons/pythonscript/osx-64/lib')
-		elif sys.platform.startswith('win32'):
-			sys.path.insert(0, 'addons/pythonscript/windows-64/lib')
+		# if sys.platform.startswith('linux'):
+		# 	sys.path.insert(0, 'addons/pythonscript/x11-64/lib')
+		# elif sys.platform.startswith('darwin'):
+		# 	sys.path.insert(0, 'addons/pythonscript/osx-64/lib')
+		# elif sys.platform.startswith('win32'):
+		# 	sys.path.insert(0, 'addons/pythonscript/windows-64/lib')
 	
 		from cadquery import cqgi
 		
@@ -270,12 +270,12 @@ class cqgi_interface(Node):
 		"""
 
 		# Add the Python library and package paths
-		if sys.platform.startswith('linux'):
-			sys.path.insert(0, 'addons/pythonscript/x11-64/lib')
-		elif sys.platform.startswith('darwin'):
-			sys.path.insert(0, 'addons/pythonscript/osx-64/lib')
-		elif sys.platform.startswith('win32'):
-			sys.path.insert(0, 'addons/pythonscript/windows-64/lib')
+		# if sys.platform.startswith('linux'):
+		# 	sys.path.insert(0, 'addons/pythonscript/x11-64/lib')
+		# elif sys.platform.startswith('darwin'):
+		# 	sys.path.insert(0, 'addons/pythonscript/osx-64/lib')
+		# elif sys.platform.startswith('win32'):
+		# 	sys.path.insert(0, 'addons/pythonscript/windows-64/lib')
 
 		from cadquery import exporters
 
