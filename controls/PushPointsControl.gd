@@ -151,7 +151,6 @@ func set_values_from_string(text_line):
 		for point in points:
 			var clean_point = point.replace(",(", "").replace("(", "")
 			if clean_point != "":
-				print(clean_point)
 				point_list_ctrl.add_item(clean_point)
 
 	# Selector

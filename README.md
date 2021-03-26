@@ -1,6 +1,6 @@
 # Semblage
 
-***Please Note*** Semblage is in pre-alpha, and is not overly useable yet. There will be a release once it has reached alpha quality with the minimum-viable feature set.
+***Please Note*** Semblage is in alpha, and so bugs and missing functionality should be expected.
 
 ## Introduction
 
@@ -8,7 +8,7 @@ Semblage is an open source CAD GUI backed by a programmatic CAD API named CadQue
 
 ![Semblage screenshot](https://raw.githubusercontent.com/7BIndustries/semblage-docs/main/docs/_static/Semblage_Pre_Alpha_Screenshot_01_Full.png)
 
-There are two advantages of programmatic CAD (a.k.a code-CAD) that Semblage seeks to capitalize on, and thus the user interface is designed to provide abstracted access to the code-CAD level.
+There are two main advantages of programmatic CAD (a.k.a code-CAD) that Semblage seeks to capitalize on in a mouse and GUI driven way.
 
 1. Easier to capture design intent more effectively through code-CAD.
 2. Enables very flexible, highly parametric designs.
@@ -23,4 +23,4 @@ If you would like to support the development of this project, you can do so on [
 
 * [Documentation](https://semblage.7bindustries.com/en/latest/)
 * [Contributing](CONTRIBUTING.md)
-* [Roadmap](https://semblage.7bindustries.com/en/latest/about/roadmap/)
+* [Roadmap](https://semblage.7bindustries.com/en/latest/roadmap/)

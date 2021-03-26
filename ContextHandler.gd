@@ -139,7 +139,7 @@ static func get_untessellateds(context):
 				normal_vec[2] = 0
 
 		untessellateds.append({"origin": origin_vec, "normal": normal_vec, "width": 5, "height": 5, "depth": 0.1})
-	print(untessellateds)
+
 	return untessellateds
 
 

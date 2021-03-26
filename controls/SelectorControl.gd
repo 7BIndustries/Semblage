@@ -676,7 +676,6 @@ func _update_vertex_selector_string():
 
 	# If the second vertex filter option button is visible, pull its value
 	if vertex_comps_opt_3.visible:
-		print(vertex_comps_opt_3.get_item_text(vertex_comps_opt_3.get_selected_id()))
 		var sec_vertex_selector_txt = _get_filter_symbol(vertex_comps_opt_3.get_item_text(vertex_comps_opt_3.get_selected_id()))
 		vertex_selector_string = vertex_selector_txt.get_text()
 		vertex_selector_string += sec_vertex_selector_txt

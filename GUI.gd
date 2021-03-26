@@ -334,10 +334,12 @@ Retries the updated context and makes it the current one.
 """
 func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 	self._clear_viewport()
+	var render = true
 
 	# If we have untessellated objects (i.e. workplanes), display placeholders for them
 	var untesses = ContextHandler.get_untessellateds(new_template)
 	if len(untesses) > 0:
+		render = false
 		for untess in untesses:
 			var meshes = Meshes.gen_workplane_meshes(untess["origin"], untess["normal"])
 			for mesh in meshes:
@@ -368,7 +370,8 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 			Common.add_item_to_tree(new_object, object_tree, object_tree_root)
 
 	# Render the component
-	_render_history_tree()
+	if render:
+		_render_history_tree()
 
 
 """
