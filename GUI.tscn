@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=2]
+[gd_scene load_steps=62 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -19,9 +19,15 @@
 [ext_resource path="res://assets/icons/move_tree_item_up_button_flat_ready.svg" type="Texture" id=17]
 [ext_resource path="res://assets/icons/add_tree_item_button_flat_ready.svg" type="Texture" id=18]
 [ext_resource path="res://assets/icons/update_tree_item_button_flag_ready.svg" type="Texture" id=19]
+[ext_resource path="res://assets/fonts/Hack/ttf/Hack-BoldItalic.ttf" type="DynamicFontData" id=20]
 [ext_resource path="res://ExportSVGDialog.gd" type="Script" id=21]
 [ext_resource path="res://assets/icons/folder_button_small_flat_ready.svg" type="Texture" id=22]
 [ext_resource path="res://assets/icons/selector_button_flat_ready.svg" type="Texture" id=23]
+[ext_resource path="res://assets/fonts/Hack/ttf/Hack-Regular.ttf" type="DynamicFontData" id=24]
+[ext_resource path="res://assets/fonts/Hack/ttf/Hack-Bold.ttf" type="DynamicFontData" id=25]
+[ext_resource path="res://assets/fonts/Hack/ttf/Hack-Italic.ttf" type="DynamicFontData" id=26]
+[ext_resource path="res://AboutDialog.gd" type="Script" id=27]
+[ext_resource path="res://assets/icons/about_button_flat_ready.svg" type="Texture" id=28]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
@@ -127,6 +133,18 @@ thickness = 2
 color = Color( 1, 1, 1, 1 )
 thickness = 2
 
+[sub_resource type="DynamicFont" id=31]
+font_data = ExtResource( 20 )
+
+[sub_resource type="DynamicFont" id=32]
+font_data = ExtResource( 26 )
+
+[sub_resource type="DynamicFont" id=33]
+font_data = ExtResource( 25 )
+
+[sub_resource type="DynamicFont" id=34]
+font_data = ExtResource( 24 )
+
 [node name="Control" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -198,6 +216,12 @@ margin_left = 223.0
 margin_right = 275.0
 margin_bottom = 48.0
 icon = ExtResource( 4 )
+
+[node name="AboutButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
+margin_left = 279.0
+margin_right = 331.0
+margin_bottom = 48.0
+icon = ExtResource( 28 )
 
 [node name="WorkArea" type="HSplitContainer" parent="GUI/VBoxContainer"]
 margin_top = 52.0
@@ -1009,12 +1033,106 @@ margin_top = 364.0
 margin_right = 348.0
 margin_bottom = 384.0
 text = "Cancel"
+
+[node name="AboutDialog" type="AcceptDialog" parent="."]
+margin_right = 480.0
+margin_bottom = 320.0
+window_title = "About"
+script = ExtResource( 27 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AboutTabContainer" type="TabContainer" parent="AboutDialog"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 472.0
+margin_bottom = 284.0
+tab_align = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Acknowledgements" type="MarginContainer" parent="AboutDialog/AboutTabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = 36.0
+margin_bottom = 36.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="AckLabel" type="RichTextLabel" parent="AboutDialog/AboutTabContainer/Acknowledgements"]
+margin_right = 496.0
+margin_bottom = 280.0
+size_flags_horizontal = 3
+custom_fonts/bold_italics_font = SubResource( 31 )
+custom_fonts/italics_font = SubResource( 32 )
+custom_fonts/bold_font = SubResource( 33 )
+custom_fonts/normal_font = SubResource( 34 )
+bbcode_enabled = true
+fit_content_height = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Docs" type="MarginContainer" parent="AboutDialog/AboutTabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = 36.0
+margin_bottom = 36.0
+
+[node name="DocsLabel" type="RichTextLabel" parent="AboutDialog/AboutTabContainer/Docs"]
+margin_right = 496.0
+margin_bottom = 280.0
+size_flags_horizontal = 3
+custom_fonts/bold_italics_font = SubResource( 31 )
+custom_fonts/italics_font = SubResource( 32 )
+custom_fonts/bold_font = SubResource( 33 )
+custom_fonts/normal_font = SubResource( 34 )
+bbcode_enabled = true
+fit_content_height = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Info" type="MarginContainer" parent="AboutDialog/AboutTabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -8.0
+margin_bottom = -36.0
+
+[node name="InfoLabel" type="RichTextLabel" parent="AboutDialog/AboutTabContainer/Info"]
+margin_right = 456.0
+margin_bottom = 240.0
+size_flags_horizontal = 3
+custom_fonts/bold_italics_font = SubResource( 31 )
+custom_fonts/italics_font = SubResource( 32 )
+custom_fonts/bold_font = SubResource( 33 )
+custom_fonts/normal_font = SubResource( 34 )
+bbcode_enabled = true
+bbcode_text = "[center][b]Semblage v0.1.0-alpha[/b]
+Open Source CAD
+[/center]"
+text = "Semblage v0.1.0-alpha
+Open Source CAD
+"
+fit_content_height = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton" to="." method="_on_OpenButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton" to="." method="_on_SaveButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton" to="." method="_on_MakeButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton" to="." method="_on_ReloadButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton" to="." method="_on_CloseButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton" to="." method="_on_HomeViewButton_button_down"]
+[connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton" to="." method="_on_AboutButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer/MoveUpButton" to="." method="_on_MoveUpButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer/MoveDownButton" to="." method="_on_MoveDownButton_button_down"]
@@ -1054,3 +1172,5 @@ text = "Cancel"
 [connection signal="toggled" from="ExportSVGDialog/MarginContainer/VBoxContainer/SectionCheckContainer/CheckButton" to="ExportSVGDialog" method="_on_CheckButton_toggled"]
 [connection signal="button_down" from="ExportSVGDialog/MarginContainer/VBoxContainer/OkButton" to="ExportSVGDialog" method="_on_OkButton_button_down"]
 [connection signal="button_down" from="ExportSVGDialog/MarginContainer/VBoxContainer/CancelButton" to="ExportSVGDialog" method="_on_CancelButton_button_down"]
+[connection signal="about_to_show" from="AboutDialog" to="AboutDialog" method="_on_AboutDialog_about_to_show"]
+[connection signal="meta_clicked" from="AboutDialog/AboutTabContainer/Docs/DocsLabel" to="AboutDialog" method="_on_DocsLabel_meta_clicked"]

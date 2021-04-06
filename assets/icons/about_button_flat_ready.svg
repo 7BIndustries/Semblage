@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   height="40"
+   width="40"
+   version="1.1"
+   viewBox="0 0 39.999587 39.999318"
+   sodipodi:docname="about_button_flat_ready.svg"
+   inkscape:version="1.0.2 (394de47547, 2021-03-26)"
+   inkscape:export-filename="/home/jwright/Downloads/repos/Semblage/assets/icons/close_button_flat_ready.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
+  <defs
+     id="defs123">
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect848"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#000000"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1853"
+     inkscape:window-height="1052"
+     id="namedview121"
+     showgrid="false"
+     inkscape:pagecheckerboard="false"
+     inkscape:zoom="15.503316"
+     inkscape:cx="14.870742"
+     inkscape:cy="19.346565"
+     inkscape:window-x="1987"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2"
+     inkscape:document-rotation="0"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <rect
+     style="fill:#454545;fill-opacity:1;fill-rule:evenodd;stroke-width:0.167685;stroke-miterlimit:4;stroke-dasharray:none"
+     id="rect39"
+     width="39.999588"
+     height="39.999588"
+     x="2.3684759e-15"
+     y="-0.00080500002"
+     ry="2.325911"
+     inkscape:export-xdpi="96.730003"
+     inkscape:export-ydpi="96.730003" />
+  <g
+     id="g858"
+     transform="matrix(0.92401843,0,0,0.76720577,1.6366153,4.9278266)">
+    <circle
+       style="fill:#bebebe;fill-opacity:1;stroke:#bebebe;stroke-width:0.166998;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
+       id="path844"
+       cx="20.125408"
+       cy="34.282688"
+       r="2.1824164" />
+    <path
+       style="fill:none;stroke:#bebebe;stroke-width:4.5107;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 12.413133,11.949946 c 0.434867,-1.571663 0.871735,-3.1505544 1.852188,-4.3586762 0.980452,-1.2081219 2.504777,-2.0477994 4.057662,-2.3998319 1.552885,-0.3520325 3.13347,-0.2167064 4.514143,0.3128805 1.380673,0.529587 2.561324,1.4525839 3.360904,2.631452 0.79958,1.1788681 1.218845,2.6131916 1.12009,3.9662746 -0.09875,1.353084 -0.715114,2.62603 -1.379107,3.562735 -0.663992,0.936704 -1.375974,1.537821 -2.090201,2.156686 -0.714228,0.618864 -1.465617,1.286504 -2.046516,1.941742 -0.5809,0.655238 -1.00854,1.313263 -1.322742,2.02735 -0.314201,0.714088 -0.519495,1.50124 -0.611952,2.253555 -0.09246,0.752314 -0.07399,1.5018 -0.05585,2.238402"
+       id="path846"
+       inkscape:path-effect="#path-effect848"
+       inkscape:original-d="m 12.413133,11.949946 c 0.424321,-1.574581 0.872979,-3.1502102 1.307895,-4.7268886 1.525433,-0.8386613 3.049757,-1.6783395 4.57306,-2.5190805 1.581699,0.1363786 3.162284,0.271706 4.74185,0.4059865 1.181749,0.9240846 2.3624,1.8470825 3.542026,2.7690463 0.42033,1.4354289 0.839595,2.8697523 1.257819,4.3030553 -0.629812,1.266578 -1.231516,2.546621 -1.848848,3.818359 -0.710961,0.602189 -1.422942,1.203307 -2.135987,1.803387 -0.711199,0.642332 -1.466769,1.305266 -2.201728,1.956326 -0.426608,0.659099 -0.854248,1.317124 -1.282944,1.974113 -0.201969,0.770123 -0.404978,1.557871 -0.609041,2.335233 0.01922,0.726912 0.0374,1.476405 0.05452,2.213032" />
+  </g>
+</svg>
