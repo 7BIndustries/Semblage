@@ -459,6 +459,13 @@ func _on_SaveButton_button_down():
 
 
 """
+Called when the About button is clicked.
+"""
+func _on_AboutButton_button_down():
+	$AboutDialog.popup_centered()
+
+
+"""
 Called when the Save component button is clicked.
 """
 func _save_component():
