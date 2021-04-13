@@ -35,6 +35,10 @@ var vertex_comps_opt_4 = null
 var hide_show_vertex_str = null
 var vertex_selector_txt = null
 
+# Workplane toggle
+var hide_show_btn = null
+var wp_ctrl = null
+
 var filter_items = ["None", "All", "Maximum", "Minimum", "Positive Normal", "Negative Normal", "Parallel", "Orthogonal"]
 var vertex_filter_items = ["None", "All", "Maximum", "Minimum"]
 var axis_items = ["X", "Y", "Z"]
@@ -268,6 +272,17 @@ func _ready():
 	add_child(vertex_comps)
 	add_child(vertex_selector_txt)
 
+	# Workplane toggle
+	hide_show_btn = CheckButton.new()
+	hide_show_btn.set_text("Create Workplane: ")
+	hide_show_btn.connect("button_down", self, "_show_workplane")
+	add_child(hide_show_btn)
+
+	# The selector control for where to locate the slot
+	wp_ctrl = ChainedWorkplaneControl.new()
+	wp_ctrl.hide()
+	add_child(wp_ctrl)
+
 
 """
 Fills out the template and returns it.
@@ -300,6 +315,10 @@ func get_completed_template():
 
 		completed += vertices_template.format({"vertex_selector": vertex_selector})
 
+	# If the workplane toggle is set, add it to the complete template
+	if wp_ctrl.visible:
+		completed += wp_ctrl.get_completed_template()
+
 	return completed
 
 
@@ -309,6 +328,16 @@ Allows the caller to hide any selectors that do not apply.
 func config_visibility(faces=true, edges=true):
 	self.show_faces = faces
 	self.show_edges = edges
+
+
+"""
+Allows a toggle to set whether or not the workplane control is visible.
+"""
+func _show_workplane():
+	if hide_show_btn.pressed:
+		wp_ctrl.hide()
+	else:
+		wp_ctrl.show()
 
 
 """
