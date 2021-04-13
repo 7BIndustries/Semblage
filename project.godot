@@ -35,6 +35,11 @@ _global_script_classes=[ {
 "path": "res://controls/CenterControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "ChainedWorkplaneControl",
+"language": "GDScript",
+"path": "res://controls/ChainedWorkplaneControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "ChamferControl",
 "language": "GDScript",
 "path": "res://controls/ChamferControl.gd"
@@ -330,6 +335,7 @@ _global_script_class_icons={
 "CBoreHoleControl": "",
 "CSinkHoleControl": "",
 "CenterControl": "",
+"ChainedWorkplaneControl": "",
 "ChamferControl": "",
 "CircleControl": "",
 "CloseControl": "",

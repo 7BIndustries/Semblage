@@ -133,16 +133,16 @@ thickness = 2
 color = Color( 1, 1, 1, 1 )
 thickness = 2
 
-[sub_resource type="DynamicFont" id=31]
+[sub_resource type="DynamicFont" id=30]
 font_data = ExtResource( 20 )
 
-[sub_resource type="DynamicFont" id=32]
+[sub_resource type="DynamicFont" id=31]
 font_data = ExtResource( 26 )
 
-[sub_resource type="DynamicFont" id=33]
+[sub_resource type="DynamicFont" id=32]
 font_data = ExtResource( 25 )
 
-[sub_resource type="DynamicFont" id=34]
+[sub_resource type="DynamicFont" id=33]
 font_data = ExtResource( 24 )
 
 [node name="Control" type="Control"]
@@ -1058,19 +1058,19 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 32.0
-margin_right = 36.0
-margin_bottom = 36.0
+margin_right = -4.0
+margin_bottom = -4.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="AckLabel" type="RichTextLabel" parent="AboutDialog/AboutTabContainer/Acknowledgements"]
-margin_right = 496.0
-margin_bottom = 280.0
+margin_right = 456.0
+margin_bottom = 240.0
 size_flags_horizontal = 3
-custom_fonts/bold_italics_font = SubResource( 31 )
-custom_fonts/italics_font = SubResource( 32 )
-custom_fonts/bold_font = SubResource( 33 )
-custom_fonts/normal_font = SubResource( 34 )
+custom_fonts/bold_italics_font = SubResource( 30 )
+custom_fonts/italics_font = SubResource( 31 )
+custom_fonts/bold_font = SubResource( 32 )
+custom_fonts/normal_font = SubResource( 33 )
 bbcode_enabled = true
 fit_content_height = true
 __meta__ = {
@@ -1083,17 +1083,17 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 32.0
-margin_right = 36.0
-margin_bottom = 36.0
+margin_right = -4.0
+margin_bottom = -4.0
 
 [node name="DocsLabel" type="RichTextLabel" parent="AboutDialog/AboutTabContainer/Docs"]
-margin_right = 496.0
-margin_bottom = 280.0
+margin_right = 456.0
+margin_bottom = 240.0
 size_flags_horizontal = 3
-custom_fonts/bold_italics_font = SubResource( 31 )
-custom_fonts/italics_font = SubResource( 32 )
-custom_fonts/bold_font = SubResource( 33 )
-custom_fonts/normal_font = SubResource( 34 )
+custom_fonts/bold_italics_font = SubResource( 30 )
+custom_fonts/italics_font = SubResource( 31 )
+custom_fonts/bold_font = SubResource( 32 )
+custom_fonts/normal_font = SubResource( 33 )
 bbcode_enabled = true
 fit_content_height = true
 __meta__ = {
@@ -1104,17 +1104,19 @@ __meta__ = {
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = -8.0
-margin_bottom = -36.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
 
 [node name="InfoLabel" type="RichTextLabel" parent="AboutDialog/AboutTabContainer/Info"]
 margin_right = 456.0
 margin_bottom = 240.0
 size_flags_horizontal = 3
-custom_fonts/bold_italics_font = SubResource( 31 )
-custom_fonts/italics_font = SubResource( 32 )
-custom_fonts/bold_font = SubResource( 33 )
-custom_fonts/normal_font = SubResource( 34 )
+custom_fonts/bold_italics_font = SubResource( 30 )
+custom_fonts/italics_font = SubResource( 31 )
+custom_fonts/bold_font = SubResource( 32 )
+custom_fonts/normal_font = SubResource( 33 )
 bbcode_enabled = true
 bbcode_text = "[center][b]Semblage v0.1.0-alpha[/b]
 Open Source CAD
