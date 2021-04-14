@@ -55,6 +55,8 @@ var vertex_sel_edit_rgx = "(?<=.vertices\\(\")(.*?)(?=\"\\))"
 var logic_edit_rgx = "(and|or)"
 var second_edit_rgx = "(and|or).*"
 
+var wp_edit_rgx = "(?<=.workplane\\()(.*?)(?=\\))"
+
 var show_faces = true
 var show_edges = true
 var show_vertices = true
@@ -750,6 +752,16 @@ func set_values_from_string(text_line):
 		var sel = res.get_string()
 		set_vertex_sel_dropwdowns_from_string(sel)
 
+	# Workplane edit selector
+	rgx.compile(wp_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		hide_show_btn.pressed = true
+		wp_ctrl.show()
+
+		# Set the vertex selector controls
+		var sel = res.get_string()
+		wp_ctrl.set_values_from_string(text_line)
 
 """
 Parses the selector and sets the face selector dropdowns appropriately.

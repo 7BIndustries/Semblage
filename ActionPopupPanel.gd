@@ -105,7 +105,12 @@ func activate_edit_mode(component_text, item_text):
 	# Check to see if there are multiple actions in the item_text
 	# and fill the actions tree with them
 	var parts = item_text.split(").")
-	if parts.size() > 1 and item_text.begins_with(".Workplane(") == false:
+
+	if parts.size() > 1 and \
+			item_text.begins_with(".Workplane(") == false and \
+			item_text.begins_with(".faces(") == false and \
+			item_text.begins_with(".edges(") == false and \
+			item_text.begins_with(".vertices(") == false:
 		# Walk through all the actions
 		var i = 0
 		for part in parts:
