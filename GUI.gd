@@ -1,5 +1,7 @@
 extends Control
 
+var VERSIONNUM = "0.2.0-alpha"
+
 var open_file_path # The component/CQ file that the user opened
 var component_text # The text of the current component's script
 var check_component_text = null # Temporary to make sure the compnent file
@@ -15,8 +17,10 @@ var vp # The 3D viewport
 var tabs # The tab container for component documents
 var object_tree = null
 var history_tree = null
+var params_tree = null
 var object_tree_root = null
 var history_tree_root = null
+var params_tree_root = null
 
 onready var cqgiint = $GUI/CQGIInterface
 
@@ -37,6 +41,7 @@ func _ready():
 	# Get the object and history trees ready to use
 	_init_history_tree()
 	_init_object_tree()
+	_init_params_tree()
 
 	# Make sure the window is maximized on start
 	OS.set_window_maximized(true)
@@ -114,11 +119,26 @@ func load_semblage_component(text):
 	# Start the component text off with what we know the first 3 lines will be
 	_reset_component_text()
 
+	# Load any parameters that are in the script file
+	var rgx = RegEx.new()
+	rgx.compile("(?<=# start_params)((.|\n)*)(?=# end_params)")
+	var res = rgx.search(text)
+	if res:
+		# Step through all the parameters lines and add them to the tree
+		var params = res.get_string().split("\n")
+		for param in params:
+			if param == "":
+				continue
+
+			# Get the name and value and add them to the tree
+			var param_parts = param.split("=")
+			Common.add_columns_to_tree(param_parts, params_tree, params_tree_root)
+
 	# Step through all the lines and look for statements that need to be replayed
 	for line in lines:
-		if line.begins_with("result = result"):
+		if line.begins_with("result=result"):
 			# Update the context string in the ContextHandler
-			var addition = line.replace("result = result", "")
+			var addition = line.replace("result=result", "")
 
 			# Add the current item to the history tree
 			Common.add_item_to_tree(addition, history_tree, history_tree_root)
@@ -135,10 +155,23 @@ Collects all of the history tree items and renders them into an
 object in the 3D view.
 """
 func _render_history_tree():
-	status.text = "Rednering component..."
-
 	# Start to build the preview string based on what is in the actions list
 	_reset_component_text()
+
+	# Prepend any parameters
+	component_text += "# start_params\n"
+	var cur_param_item = params_tree_root.get_children()
+	while true:
+		if cur_param_item == null:
+			break
+		else:
+			component_text += cur_param_item.get_text(0) + "=" + cur_param_item.get_text(1) + "\n"
+
+			cur_param_item = cur_param_item.get_next()
+	component_text += "# end_params\n"
+
+	# Start the body of the script
+	component_text += "result=cq\n"
 
 	# Search the tree and update the matchine entry in the tree
 	var cur_item = history_tree_root.get_children()
@@ -146,12 +179,14 @@ func _render_history_tree():
 		if cur_item == null:
 			break
 		else:
-			component_text += cur_item.get_text(0)
+			component_text += "result=result" + cur_item.get_text(0) + "\n"
 
 			cur_item = cur_item.get_next()
 
-	# Render the script text collected from the history tree
-	_render_component_text()
+	# Render the script text collected from the history tree, but only if there is something to render
+	if not self.component_text.ends_with("result=cq\n"):
+		status.text = "Rednering component..."
+		_render_component_text()
 
 
 """
@@ -277,8 +312,10 @@ func _on_CloseButton_button_down():
 	# Get the tree views set up for the next object
 	self.history_tree.clear()
 	self.object_tree.clear()
+	self.params_tree.clear()
 	self._init_history_tree()
 	self._init_object_tree()
+	self._init_params_tree()
 
 	# Prevent the user from reloading the script manually
 	$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.hide()
@@ -288,7 +325,7 @@ func _on_CloseButton_button_down():
 Initializes the object tree so that it can be added to as the component changes.
 """
 func _init_object_tree():
-	object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/ObjectTree")
+	object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
 
 	# Create the root of the object tree
 	self.object_tree_root = object_tree.create_item()
@@ -299,11 +336,22 @@ func _init_object_tree():
 Initializes the history tree so that it can be added to as the component changes.
 """
 func _init_history_tree():
-	history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree")
+	history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
 
 	# Create the root of the history tree
 	self.history_tree_root = history_tree.create_item()
 	self.history_tree_root.set_text(0, "cq")
+
+
+"""
+Initializes the parameters tree so that items can be added to it.
+"""
+func _init_params_tree():
+	params_tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
+
+	# Create the root of the parameters tree
+	self.params_tree_root = params_tree.create_item()
+	self.params_tree_root.set_text(0, "params")
 
 
 """
@@ -386,7 +434,7 @@ Allows a user to edit a history entry by double-clicking on the entry in the His
 Tree.
 """
 func _on_HistoryTree_item_activated():
-	var item_text = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree.get_selected().get_text(0)
+	var item_text = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree.get_selected().get_text(0)
 
 	$ActionPopupPanel.activate_edit_mode(component_text, item_text)
 
@@ -462,6 +510,7 @@ func _on_SaveButton_button_down():
 Called when the About button is clicked.
 """
 func _on_AboutButton_button_down():
+	$AboutDialog.semblage_version = VERSIONNUM
 	$AboutDialog.popup_centered()
 
 
@@ -581,7 +630,7 @@ Gives a single place to reset the component text when starting up
 or closing a previous component.
 """
 func _reset_component_text():
-	component_text = "# Semblage v1\nimport cadquery as cq\nresult=cq"
+	component_text = "# Semblage v" + VERSIONNUM + "\nimport cadquery as cq\n"
 
 
 """
@@ -662,6 +711,119 @@ a component file.
 func _on_ConfirmationDialog_confirmed():
 	component_text = check_component_text
 	_load_component()
+
+
+"""
+Called when the user clicks the button to add a parameter.
+"""
+func _on_AddParamButton_button_down():
+	var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
+
+	# Collect any existing items from the parameters tree for safety checks
+	var items = _collect_param_tree_pairs(tree)
+	$AddParameterDialog.set_existing_parameters(items)
+
+	$AddParameterDialog.popup_centered()
+
+
+"""
+Called when a new parameter is being added via the Parameter dialog.
+"""
+func _on_AddParameterDialog_add_parameter(new_param):
+	var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
+
+	Common.add_columns_to_tree(new_param, tree, tree.get_root())
+
+	self._clear_viewport()
+	self._render_history_tree()
+
+"""
+Called when the user clicks the button to remove a parameter.
+"""
+func _on_DeleteParamButton_button_down():
+	var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
+
+	var selected = tree.get_selected()
+
+	# Make sure there is an item to delete
+	if selected == null:
+		return
+
+	# Make sure the user is not trying to delete something like the root node
+	if selected.get_text(0) == "params":
+		return
+
+	# Remove the item from the parameters tree
+	selected.free()
+
+
+"""
+Called when a parameter entry is selected for editing.
+"""
+func _on_ParametersTree_item_activated():
+	var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
+
+	var name_text = tree.get_selected().get_text(0)
+	var value_text = tree.get_selected().get_text(1)
+
+	$AddParameterDialog.activate_edit_mode(name_text, value_text)
+
+
+"""
+Called when the user is completed editing a parameter.
+"""
+func _on_AddParameterDialog_edit_parameter(new_param):
+	var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
+
+	self._update_param_tree_items(tree, new_param[0], new_param[1])
+
+	# Render the history tree unless the user is just pre-loading parameters
+	self._clear_viewport()
+	self._render_history_tree()
+
+
+"""
+Called when the user wants to update a parameter in the tree.
+"""
+func _update_param_tree_items(tree, name, new_value):
+	var cur_item = tree.get_root().get_children()
+
+	# Search the tree and update the matchine entry in the tree
+	while true:
+		if cur_item == null:
+			break
+		else:
+			# If we have a text match, update the matching TreeItem's text
+			if cur_item.get_text(0) == name:
+				cur_item.set_text(1, new_value)
+				break
+
+			cur_item = cur_item.get_next()
+
+
+"""
+Called to collect the pairs from the parameters tree.
+"""
+func _collect_param_tree_pairs(tree):
+	var items = []
+
+	var cur_item = tree.get_root().get_children()
+
+	# Search the tree and update the matchine entry in the tree
+	while true:
+		if cur_item == null:
+			break
+		else:
+			var new_item = []
+
+			# Add this pair to the items that are collected
+			new_item.append(cur_item.get_text(0))
+			new_item.append(cur_item.get_text(1))
+			items.append(new_item)
+
+			cur_item = cur_item.get_next()
+
+	return items
 
 
 func _on_CQGIInterface_build_success(component_json):
