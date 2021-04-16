@@ -31,6 +31,19 @@ static func add_item_to_tree(new_object, tree, tree_root):
 		var new_obj_item = tree.create_item(tree_root)
 		new_obj_item.set_text(0, new_object)
 
+"""
+Adds an item with multiple columns to the object tree.
+"""
+static func add_columns_to_tree(cols, tree, tree_root):
+	# Create the tree item that will be added
+	var new_obj_item = tree.create_item(tree_root)
+
+	# Loop through and add data to all the columns
+	var i = 0
+	for col in cols:
+		new_obj_item.set_text(i, col)
+		i += 1
+
 
 """
 Lets the caller confirm if an item already exists in a tree.

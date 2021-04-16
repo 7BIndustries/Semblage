@@ -1,4 +1,4 @@
-[gd_scene load_steps=62 format=2]
+[gd_scene load_steps=63 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -28,6 +28,7 @@
 [ext_resource path="res://assets/fonts/Hack/ttf/Hack-Italic.ttf" type="DynamicFontData" id=26]
 [ext_resource path="res://AboutDialog.gd" type="Script" id=27]
 [ext_resource path="res://assets/icons/about_button_flat_ready.svg" type="Texture" id=28]
+[ext_resource path="res://AddParameterDialog.gd" type="Script" id=29]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
@@ -235,7 +236,7 @@ margin_bottom = 519.0
 rect_min_size = Vector2( 150, 0 )
 tab_align = 0
 
-[node name="Structure" type="VBoxContainer" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs"]
+[node name="Data" type="VBoxContainer" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -243,57 +244,87 @@ margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
 
-[node name="ObjectsTreeLabel" type="Label" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure"]
+[node name="ObjectsTreeLabel" type="Label" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
 margin_right = 142.0
 margin_bottom = 14.0
 text = "Components"
 
-[node name="ObjectTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure"]
+[node name="ObjectTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
 margin_top = 18.0
 margin_right = 142.0
-margin_bottom = 225.0
+margin_bottom = 139.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 hide_root = true
 
-[node name="HistoryTreeLabel" type="Label" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure"]
-margin_top = 229.0
+[node name="HistoryTreeLabel" type="Label" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
+margin_top = 143.0
 margin_right = 142.0
-margin_bottom = 243.0
+margin_bottom = 157.0
 text = "History"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure"]
-margin_top = 247.0
+[node name="HBoxContainer" type="HBoxContainer" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
+margin_top = 161.0
 margin_right = 142.0
-margin_bottom = 271.0
+margin_bottom = 185.0
 
-[node name="DeleteButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer"]
+[node name="DeleteButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer"]
 margin_right = 30.0
 margin_bottom = 24.0
 icon = ExtResource( 15 )
 
-[node name="MoveUpButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer"]
+[node name="MoveUpButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer"]
 margin_left = 34.0
 margin_right = 64.0
 margin_bottom = 24.0
 icon = ExtResource( 17 )
 
-[node name="MoveDownButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer"]
+[node name="MoveDownButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer"]
 margin_left = 68.0
 margin_right = 98.0
 margin_bottom = 24.0
 icon = ExtResource( 16 )
 
-[node name="HistoryTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure"]
-margin_top = 275.0
+[node name="HistoryTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
+margin_top = 189.0
 margin_right = 142.0
-margin_bottom = 483.0
+margin_bottom = 310.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 hide_root = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="ParametersTreeLabel" type="Label" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
+margin_top = 314.0
+margin_right = 142.0
+margin_bottom = 328.0
+text = "Parameters"
+
+[node name="HBoxContainerParams" type="HBoxContainer" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
+margin_top = 332.0
+margin_right = 142.0
+margin_bottom = 356.0
+
+[node name="AddParamButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainerParams"]
+margin_right = 30.0
+margin_bottom = 24.0
+icon = ExtResource( 18 )
+
+[node name="DeleteParamButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainerParams"]
+margin_left = 34.0
+margin_right = 64.0
+margin_bottom = 24.0
+icon = ExtResource( 15 )
+
+[node name="ParametersTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
+margin_top = 360.0
+margin_right = 142.0
+margin_bottom = 483.0
+size_flags_vertical = 3
+columns = 2
+hide_root = true
 
 [node name="DocumentTabs" type="TabContainer" parent="GUI/VBoxContainer/WorkArea"]
 margin_left = 162.0
@@ -648,6 +679,7 @@ margin_right = 200.0
 margin_bottom = 70.0
 
 [node name="ExportSVGDialog" type="WindowDialog" parent="."]
+visible = true
 margin_right = 355.0
 margin_bottom = 390.0
 window_title = "Export SVG"
@@ -668,88 +700,85 @@ __meta__ = {
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ExportSVGDialog/MarginContainer"]
-margin_right = 348.0
-margin_bottom = 384.0
+margin_right = 410.0
+margin_bottom = 388.0
 size_flags_horizontal = 11
 size_flags_vertical = 9
 
 [node name="PathContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_right = 348.0
-margin_bottom = 30.0
+margin_right = 410.0
+margin_bottom = 24.0
 size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="PathLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/PathContainer"]
-margin_top = 5.0
+margin_top = 2.0
 margin_right = 60.0
-margin_bottom = 25.0
+margin_bottom = 22.0
 rect_min_size = Vector2( 60, 20 )
 text = "File Path"
 valign = 1
 
-[node name="PathText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/PathContainer"]
+[node name="PathText" type="LineEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/PathContainer"]
 margin_left = 64.0
 margin_right = 314.0
-margin_bottom = 30.0
-rect_min_size = Vector2( 250, 30 )
-size_flags_horizontal = 3
+margin_bottom = 24.0
+rect_min_size = Vector2( 250, 0 )
 
 [node name="SelectPathButton" type="Button" parent="ExportSVGDialog/MarginContainer/VBoxContainer/PathContainer"]
 margin_left = 318.0
 margin_right = 348.0
-margin_bottom = 30.0
+margin_bottom = 24.0
 icon = ExtResource( 22 )
 
 [node name="DimsLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 34.0
-margin_right = 348.0
-margin_bottom = 48.0
+margin_top = 28.0
+margin_right = 410.0
+margin_bottom = 42.0
 text = "Dimensions"
 
 [node name="DimsContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 52.0
-margin_right = 348.0
-margin_bottom = 72.0
+margin_top = 46.0
+margin_right = 410.0
+margin_bottom = 70.0
 
 [node name="WidthLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/DimsContainer"]
-margin_top = 3.0
+margin_top = 5.0
 margin_right = 42.0
-margin_bottom = 17.0
+margin_bottom = 19.0
 text = "Width:"
 
-[node name="WidthText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/DimsContainer"]
+[node name="WidthText" type="LineEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/DimsContainer"]
 margin_left = 46.0
-margin_right = 86.0
-margin_bottom = 20.0
-rect_min_size = Vector2( 40, 20 )
+margin_right = 104.0
+margin_bottom = 24.0
 text = "200"
 
 [node name="HeightLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/DimsContainer"]
-margin_left = 90.0
-margin_top = 3.0
-margin_right = 136.0
-margin_bottom = 17.0
+margin_left = 108.0
+margin_top = 5.0
+margin_right = 154.0
+margin_bottom = 19.0
 text = "Height:"
 
-[node name="HeightText" type="TextEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/DimsContainer"]
-margin_left = 140.0
-margin_right = 190.0
-margin_bottom = 20.0
-rect_min_size = Vector2( 50, 20 )
+[node name="HeightText" type="LineEdit" parent="ExportSVGDialog/MarginContainer/VBoxContainer/DimsContainer"]
+margin_left = 158.0
+margin_right = 216.0
+margin_bottom = 24.0
 text = "200"
 
 [node name="MarginsLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 76.0
-margin_right = 348.0
-margin_bottom = 90.0
+margin_top = 74.0
+margin_right = 410.0
+margin_bottom = 88.0
 text = "Margins"
 
 [node name="MarginContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 94.0
-margin_right = 348.0
-margin_bottom = 114.0
+margin_top = 92.0
+margin_right = 410.0
+margin_bottom = 112.0
 
 [node name="LeftLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/MarginContainer"]
 margin_top = 3.0
@@ -779,15 +808,15 @@ rect_min_size = Vector2( 40, 20 )
 text = "20"
 
 [node name="ProjectionDirLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 118.0
-margin_right = 348.0
-margin_bottom = 132.0
+margin_top = 116.0
+margin_right = 410.0
+margin_bottom = 130.0
 text = "Projection Direction"
 
 [node name="ProjDirContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 136.0
-margin_right = 348.0
-margin_bottom = 156.0
+margin_top = 134.0
+margin_right = 410.0
+margin_bottom = 154.0
 
 [node name="XLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/ProjDirContainer"]
 margin_top = 3.0
@@ -831,9 +860,9 @@ rect_min_size = Vector2( 40, 20 )
 text = "1"
 
 [node name="StrokeWidthContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 160.0
-margin_right = 348.0
-margin_bottom = 180.0
+margin_top = 158.0
+margin_right = 410.0
+margin_bottom = 178.0
 
 [node name="WidthLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/StrokeWidthContainer"]
 margin_top = 3.0
@@ -849,15 +878,15 @@ rect_min_size = Vector2( 40, 20 )
 text = "0.25"
 
 [node name="StrokeColorLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 184.0
-margin_right = 348.0
-margin_bottom = 198.0
+margin_top = 182.0
+margin_right = 410.0
+margin_bottom = 196.0
 text = "Stroke Color"
 
 [node name="StrokeColorContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 202.0
-margin_right = 348.0
-margin_bottom = 222.0
+margin_top = 200.0
+margin_right = 410.0
+margin_bottom = 220.0
 
 [node name="RLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/StrokeColorContainer"]
 margin_top = 3.0
@@ -901,15 +930,15 @@ rect_min_size = Vector2( 40, 20 )
 text = "0"
 
 [node name="HiddenColorLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 226.0
-margin_right = 348.0
-margin_bottom = 240.0
+margin_top = 224.0
+margin_right = 410.0
+margin_bottom = 238.0
 text = "Hidden Color"
 
 [node name="HColorContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 244.0
-margin_right = 348.0
-margin_bottom = 264.0
+margin_top = 242.0
+margin_right = 410.0
+margin_bottom = 262.0
 
 [node name="RLabel" type="Label" parent="ExportSVGDialog/MarginContainer/VBoxContainer/HColorContainer"]
 margin_top = 3.0
@@ -959,15 +988,15 @@ rect_min_size = Vector2( 40, 20 )
 text = "255"
 
 [node name="HiddenCheckBox" type="CheckBox" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 268.0
-margin_right = 348.0
-margin_bottom = 292.0
+margin_top = 266.0
+margin_right = 410.0
+margin_bottom = 290.0
 text = "Show Hidden"
 
 [node name="SectionCheckContainer" type="HBoxContainer" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 296.0
-margin_right = 348.0
-margin_bottom = 336.0
+margin_top = 294.0
+margin_right = 410.0
+margin_bottom = 334.0
 
 [node name="CheckButton" type="CheckButton" parent="ExportSVGDialog/MarginContainer/VBoxContainer/SectionCheckContainer"]
 margin_right = 127.0
@@ -1023,15 +1052,15 @@ rect_min_size = Vector2( 40, 20 )
 text = "5"
 
 [node name="OkButton" type="Button" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 340.0
-margin_right = 348.0
-margin_bottom = 360.0
+margin_top = 338.0
+margin_right = 410.0
+margin_bottom = 358.0
 text = "OK"
 
 [node name="CancelButton" type="Button" parent="ExportSVGDialog/MarginContainer/VBoxContainer"]
-margin_top = 364.0
-margin_right = 348.0
-margin_bottom = 384.0
+margin_top = 362.0
+margin_right = 410.0
+margin_bottom = 382.0
 text = "Cancel"
 
 [node name="AboutDialog" type="AcceptDialog" parent="."]
@@ -1128,6 +1157,67 @@ fit_content_height = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="AddParameterDialog" type="WindowDialog" parent="."]
+margin_right = 278.0
+margin_bottom = 180.0
+window_title = "Add Parameter"
+script = ExtResource( 29 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="AddParameterDialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 140, 100 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ParamNameLabel" type="Label" parent="AddParameterDialog/VBoxContainer"]
+margin_right = 278.0
+margin_bottom = 14.0
+text = "Name"
+
+[node name="ParamNameTextEdit" type="LineEdit" parent="AddParameterDialog/VBoxContainer"]
+margin_right = 58.0
+margin_bottom = 24.0
+text = "parameter_name"
+
+[node name="ParamValueLabel" type="Label" parent="AddParameterDialog/VBoxContainer"]
+margin_top = 47.0
+margin_right = 278.0
+margin_bottom = 61.0
+text = "Value"
+
+[node name="ParamValueTextEdit" type="LineEdit" parent="AddParameterDialog/VBoxContainer"]
+margin_right = 58.0
+margin_bottom = 24.0
+text = "parameter_value"
+
+[node name="StatusLabel" type="Label" parent="AddParameterDialog/VBoxContainer"]
+margin_top = 94.0
+margin_right = 278.0
+margin_bottom = 129.0
+rect_min_size = Vector2( 0, 35 )
+autowrap = true
+
+[node name="OKButton" type="Button" parent="AddParameterDialog/VBoxContainer"]
+margin_top = 133.0
+margin_right = 278.0
+margin_bottom = 153.0
+size_flags_horizontal = 3
+text = "OK"
+
+[node name="CancelButton" type="Button" parent="AddParameterDialog/VBoxContainer"]
+margin_top = 157.0
+margin_right = 278.0
+margin_bottom = 177.0
+size_flags_horizontal = 3
+text = "Cancel"
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton" to="." method="_on_OpenButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton" to="." method="_on_SaveButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton" to="." method="_on_MakeButton_button_down"]
@@ -1135,10 +1225,13 @@ __meta__ = {
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton" to="." method="_on_CloseButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton" to="." method="_on_HomeViewButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton" to="." method="_on_AboutButton_button_down"]
-[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_button_down"]
-[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer/MoveUpButton" to="." method="_on_MoveUpButton_button_down"]
-[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HBoxContainer/MoveDownButton" to="." method="_on_MoveDownButton_button_down"]
-[connection signal="item_activated" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Structure/HistoryTree" to="." method="_on_HistoryTree_item_activated"]
+[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_button_down"]
+[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer/MoveUpButton" to="." method="_on_MoveUpButton_button_down"]
+[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer/MoveDownButton" to="." method="_on_MoveDownButton_button_down"]
+[connection signal="item_activated" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree" to="." method="_on_HistoryTree_item_activated"]
+[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainerParams/AddParamButton" to="." method="_on_AddParamButton_button_down"]
+[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainerParams/DeleteParamButton" to="." method="_on_DeleteParamButton_button_down"]
+[connection signal="item_activated" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree" to="." method="_on_ParametersTree_item_activated"]
 [connection signal="activate_action_popup" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="." method="_on_DocumentTabs_activate_action_popup"]
 [connection signal="cam_pan" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_pan"]
 [connection signal="cam_pan" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight" method="_on_DocumentTabs_cam_pan"]
@@ -1176,3 +1269,7 @@ __meta__ = {
 [connection signal="button_down" from="ExportSVGDialog/MarginContainer/VBoxContainer/CancelButton" to="ExportSVGDialog" method="_on_CancelButton_button_down"]
 [connection signal="about_to_show" from="AboutDialog" to="AboutDialog" method="_on_AboutDialog_about_to_show"]
 [connection signal="meta_clicked" from="AboutDialog/AboutTabContainer/Docs/DocsLabel" to="AboutDialog" method="_on_DocsLabel_meta_clicked"]
+[connection signal="add_parameter" from="AddParameterDialog" to="." method="_on_AddParameterDialog_add_parameter"]
+[connection signal="edit_parameter" from="AddParameterDialog" to="." method="_on_AddParameterDialog_edit_parameter"]
+[connection signal="button_down" from="AddParameterDialog/VBoxContainer/OKButton" to="AddParameterDialog" method="_on_OKButton_button_down"]
+[connection signal="button_down" from="AddParameterDialog/VBoxContainer/CancelButton" to="AddParameterDialog" method="_on_CancelButton_button_down"]
