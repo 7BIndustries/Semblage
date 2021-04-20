@@ -44,21 +44,21 @@ func _ready():
 	var x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	dir_group.add_child(x_lbl)
-	dx_ctrl = LineEdit.new()
+	dx_ctrl = NumberEdit.new()
 	dx_ctrl.set_text("2.5")
 	dir_group.add_child(dx_ctrl)
 	# Distance Y
 	var y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	dir_group.add_child(y_lbl)
-	dy_ctrl = LineEdit.new()
+	dy_ctrl = NumberEdit.new()
 	dy_ctrl.set_text("5.0")
 	dir_group.add_child(dy_ctrl)
 	# Distance Z
 	var z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	dir_group.add_child(z_lbl)
-	dz_ctrl = LineEdit.new()
+	dz_ctrl = NumberEdit.new()
 	dz_ctrl.set_text("1.0")
 	dir_group.add_child(dz_ctrl)
 
@@ -75,14 +75,14 @@ func _ready():
 	x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	min_group.add_child(x_lbl)
-	xmin_ctrl = LineEdit.new()
+	xmin_ctrl = NumberEdit.new()
 	xmin_ctrl.set_text("2.5")
 	min_group.add_child(xmin_ctrl)
 	# Distance Z
 	z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	min_group.add_child(z_lbl)
-	zmin_ctrl = LineEdit.new()
+	zmin_ctrl = NumberEdit.new()
 	zmin_ctrl.set_text("1.0")
 	min_group.add_child(zmin_ctrl)
 
@@ -99,14 +99,14 @@ func _ready():
 	x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	max_group.add_child(x_lbl)
-	xmax_ctrl = LineEdit.new()
+	xmax_ctrl = NumberEdit.new()
 	xmax_ctrl.set_text("2.5")
 	max_group.add_child(xmax_ctrl)
 	# Distance Z
 	z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	max_group.add_child(z_lbl)
-	zmax_ctrl = LineEdit.new()
+	zmax_ctrl = NumberEdit.new()
 	zmax_ctrl.set_text("1.0")
 	max_group.add_child(zmax_ctrl)
 
@@ -123,21 +123,21 @@ func _ready():
 	x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	pnt_group.add_child(x_lbl)
-	pnt_x_ctrl = LineEdit.new()
+	pnt_x_ctrl = NumberEdit.new()
 	pnt_x_ctrl.set_text("2.5")
 	pnt_group.add_child(pnt_x_ctrl)
 	# Origin point Y
 	y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	pnt_group.add_child(y_lbl)
-	pnt_y_ctrl = LineEdit.new()
+	pnt_y_ctrl = NumberEdit.new()
 	pnt_y_ctrl.set_text("5.0")
 	pnt_group.add_child(pnt_y_ctrl)
 	# Origin point Z
 	z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	pnt_group.add_child(z_lbl)
-	pnt_z_ctrl = LineEdit.new()
+	pnt_z_ctrl = NumberEdit.new()
 	pnt_z_ctrl.set_text("1.0")
 	pnt_group.add_child(pnt_z_ctrl)
 
@@ -154,21 +154,21 @@ func _ready():
 	x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	d_group.add_child(x_lbl)
-	dir_x_ctrl = LineEdit.new()
+	dir_x_ctrl = NumberEdit.new()
 	dir_x_ctrl.set_text("0")
 	d_group.add_child(dir_x_ctrl)
 	# Direction Y
 	y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	d_group.add_child(y_lbl)
-	dir_y_ctrl = LineEdit.new()
+	dir_y_ctrl = NumberEdit.new()
 	dir_y_ctrl.set_text("0")
 	d_group.add_child(dir_y_ctrl)
 	# Direction Z
 	z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	d_group.add_child(z_lbl)
-	dir_z_ctrl = LineEdit.new()
+	dir_z_ctrl = NumberEdit.new()
 	dir_z_ctrl.set_text("1")
 	d_group.add_child(dir_z_ctrl)
 
@@ -223,6 +223,41 @@ func _ready():
 	clean_ctrl.pressed = true
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
+
+
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not dx_ctrl.is_valid:
+		return false
+	if not dy_ctrl.is_valid:
+		return false
+	if not dz_ctrl.is_valid:
+		return false
+	if not xmin_ctrl.is_valid:
+		return false
+	if not zmin_ctrl.is_valid:
+		return false
+	if not xmax_ctrl.is_valid:
+		return false
+	if not zmax_ctrl.is_valid:
+		return false
+	if not pnt_x_ctrl.is_valid:
+		return false
+	if not pnt_y_ctrl.is_valid:
+		return false
+	if not pnt_z_ctrl.is_valid:
+		return false
+	if not dir_x_ctrl.is_valid:
+		return false
+	if not dir_y_ctrl.is_valid:
+		return false
+	if not dir_z_ctrl.is_valid:
+		return false
+
+	return true
 
 
 """

@@ -14,6 +14,7 @@ var kind_ctrl = null
 
 var kind_list = ["arc", "intersection", "tangent"]
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Add the thickness controls
@@ -21,7 +22,7 @@ func _ready():
 	var x_length_lbl = Label.new()
 	x_length_lbl.set_text("Thickness: ")
 	thickness_group.add_child(x_length_lbl)
-	thickness_ctrl = LineEdit.new()
+	thickness_ctrl = NumberEdit.new()
 	thickness_ctrl.set_text("1.0")
 	thickness_group.add_child(thickness_ctrl)
 	add_child(thickness_group)
@@ -35,6 +36,17 @@ func _ready():
 	Common.load_option_button(kind_ctrl, kind_list)
 	kind_group.add_child(kind_ctrl)
 	add_child(kind_group)
+
+
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not thickness_ctrl.is_valid:
+		return false
+
+	return true
 
 
 """

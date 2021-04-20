@@ -2,20 +2,18 @@ extends VBoxContainer
 
 class_name PushPointsControl
 
+signal error
+
 var prev_template = null
 
 var point_list_ctrl = null
 var point_lr_ctrl = null
 var point_tb_ctrl = null
-#var select_ctrl = null
-#var hide_show_btn = null
-
-#var selector_visible = true
 
 var template = ".pushPoints([{point_list}])"
 
 var point_list_edit_rgx = "(?<=.pushPoints\\(\\[)(.*?)(?=\\]\\))"
-#var select_edit_rgx = "^.faces\\(.*\\)\\."
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -36,7 +34,7 @@ func _ready():
 	var point_lr_lbl = Label.new()
 	point_lr_lbl.set_text("Point Left-to-Right: ")
 	point_lr_group.add_child(point_lr_lbl)
-	point_lr_ctrl = LineEdit.new()
+	point_lr_ctrl = NumberEdit.new()
 	point_lr_ctrl.set_text("1.0")
 	point_lr_group.add_child(point_lr_ctrl)
 	add_child(point_lr_group)
@@ -46,7 +44,7 @@ func _ready():
 	var point_tb_lbl = Label.new()
 	point_tb_lbl.set_text("Point Top-to-Bottom: ")
 	point_tb_group.add_child(point_tb_lbl)
-	point_tb_ctrl = LineEdit.new()
+	point_tb_ctrl = NumberEdit.new()
 	point_tb_ctrl.set_text("1.0")
 	point_tb_group.add_child(point_tb_ctrl)
 	add_child(point_tb_group)
@@ -67,23 +65,18 @@ func _ready():
 	btn_group.add_child(delete_point_btn)
 	add_child(btn_group)
 
-	# Make the selector control visible unless it has been set otherwise
-#	if selector_visible:
-#		# Add a horizontal rule to break things up
-#		add_child(HSeparator.new())
-#
-#		# Allow the user to show/hide the selector controls that allow the points to
-#		# be placed on something other than the current workplane
-#		hide_show_btn = CheckButton.new()
-#		hide_show_btn.set_text("Selectors: ")
-#		hide_show_btn.connect("button_down", self, "_show_selectors")
-#		add_child(hide_show_btn)
-#
-#		# Add the face/edge selector control
-#		select_ctrl = SelectorControl.new()
-#		select_ctrl.hide()
-#		select_ctrl.config_visibility(true, false) # Only allow face selection
-#		add_child(select_ctrl)
+
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not point_lr_ctrl.is_valid:
+		return false
+	if not point_tb_ctrl.is_valid:
+		return false
+
+	return true
 
 
 """
@@ -91,10 +84,6 @@ Fills out the template and returns it.
 """
 func get_completed_template():
 	var complete = ""
-
-	# If the selector control is visible, prepend its contents
-#	if selector_visible and select_ctrl.visible:
-#		complete += select_ctrl.get_completed_template()
 
 	# Collect all of the points from the ItemList
 	var points = ""
@@ -110,16 +99,6 @@ func get_completed_template():
 	})
 
 	return complete
-
-
-"""
-Show the selector controls.
-"""
-#func _show_selectors():
-#	if select_ctrl.visible:
-#		select_ctrl.hide()
-#	else:
-#		select_ctrl.show()
 
 
 """
@@ -153,23 +132,17 @@ func set_values_from_string(text_line):
 			if clean_point != "":
 				point_list_ctrl.add_item(clean_point)
 
-	# Selector
-#	rgx.compile(select_edit_rgx)
-#	res = rgx.search(text_line)
-#	if res:
-#		var sel = res.get_string()
-#
-#		hide_show_btn.pressed = true
-#		select_ctrl.show()
-#
-#		# Allow the selector control to set itself up appropriately
-#		select_ctrl.set_values_from_string(sel.left(sel.length() - 1))
-
 
 """
 Adds the current values of the left-to-right and top-to-bottom fields as points.
 """
 func _add_current_point_to_list():
+	if not is_valid():
+		connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
+		emit_signal("error", "There is invalid tuple data in the form.")
+
+		return
+
 	point_list_ctrl.add_item(point_lr_ctrl.get_text() + "," + point_tb_ctrl.get_text())
 
 
@@ -177,6 +150,12 @@ func _add_current_point_to_list():
 Allows the user to edit the currently selected point.
 """
 func _edit_current_point():
+	if not is_valid():
+		connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
+		emit_signal("error", "There is invalid tuple data in the form.")
+
+		return
+
 	# Item to edit
 	var selected_id = point_list_ctrl.get_selected_items()[0]
 
@@ -212,5 +191,3 @@ Allows the caller to configure what is visible, useful for the Sketch tool.
 """
 func config(selector_visible=true, operation_visible=true):
 	pass
-	# Set whether or not the selector control is visible
-#	self.selector_visible = selector_visible

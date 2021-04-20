@@ -1,5 +1,7 @@
 extends WindowDialog
 
+signal error
+
 var orig_size = null # The original size of the dialog
 
 # Called when the node enters the scene tree for the first time.
@@ -57,11 +59,15 @@ Called when the user clicks the ok button.
 func _on_OkButton_button_down():
 	# Make sure the form is valid
 	if not self.is_valid():
-		_show_error_dialog("There are errors on the form, please correct them.")
-
+		emit_signal("error", "There are errors on the form, please correct them.")
 		return
 
+	# Let the user know they have not set an export directory
 	var pt = $MarginContainer/VBoxContainer/PathContainer/PathText
+	if pt.get_text() == "":
+		emit_signal("error", "You must set a file path to export to.")
+
+		return
 
 	# Check to see if the user wants to do slicing
 	if $MarginContainer/VBoxContainer/SectionCheckContainer/CheckButton.pressed:
@@ -76,13 +82,13 @@ func _on_OkButton_button_down():
 
 		# Do some safety checks
 		if end_height < start_height:
-			_show_error_dialog("End height cannot be less than starting height.")
+			emit_signal("error", "End height cannot be less than starting height.")
 			return
 		if end_height == 0.0:
-			_show_error_dialog("End height cannot be zero.")
+			emit_signal("error", "End height cannot be zero.")
 			return
 		if steps == 0:
-			_show_error_dialog("Steps must be greater than zero.")
+			emit_signal("error", "Steps must be greater than zero.")
 
 		# Figure out our layer height
 		var layer_height = (end_height - start_height) / float(steps)
@@ -108,17 +114,9 @@ func _on_OkButton_button_down():
 
 
 """
-Checks whether or not all the values in the number controls are valid.
+Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
-	var pt = $MarginContainer/VBoxContainer/PathContainer/PathText
-
-	# Let the user know they have not set an export directory
-	if pt.get_text() == "":
-		_show_error_dialog("You must set a file path to export to.")
-
-		return false
-
 	# Make sure all the number controls have valid values in them
 	if not $MarginContainer/VBoxContainer/DimsContainer/WidthText.is_valid:
 		return false
@@ -153,6 +151,8 @@ func is_valid():
 	if not $MarginContainer/VBoxContainer/SectionContainer/StepsText.is_valid:
 		return false
 
+	return true
+
 """
 Called to export a single file to the local file system.
 """
@@ -172,7 +172,7 @@ func _export_to_file(svg_path, output_opts, section_height):
 	if ret.begins_with("error~"):
 		# Let the user know there was an error
 		var err = ret.split("~")[1]
-		_show_error_dialog(err)
+		emit_signal("error", err)
 	else:
 		# Read the exported file contents and write them to their final location
 		# Work-around for not being able to write to the broader filesystem via Python
@@ -219,14 +219,3 @@ func _collect_output_opts():
 	output_opts += "showHidden:" + show_hidden + ";"
 
 	return output_opts
-
-
-"""
-Used any time we need to display the error dialog.
-"""
-func _show_error_dialog(error_text):
-	var ed = get_parent().get_node("ErrorDialog")
-	ed.dialog_text = error_text
-	ed.popup_centered()
-
-	return

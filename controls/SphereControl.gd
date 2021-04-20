@@ -35,7 +35,7 @@ func _ready():
 	var radius_ctrl_lbl = Label.new()
 	radius_ctrl_lbl.set_text("Radius: ")
 	radius_group.add_child(radius_ctrl_lbl)
-	radius_ctrl = LineEdit.new()
+	radius_ctrl = NumberEdit.new()
 	radius_ctrl.set_text("10.0")
 	radius_group.add_child(radius_ctrl)
 	add_child(radius_group)
@@ -50,21 +50,21 @@ func _ready():
 	var x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	dir_group.add_child(x_lbl)
-	direct_x_ctrl = LineEdit.new()
+	direct_x_ctrl = NumberEdit.new()
 	direct_x_ctrl.set_text("0")
 	dir_group.add_child(direct_x_ctrl)
 	# Direction Y
 	var y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	dir_group.add_child(y_lbl)
-	direct_y_ctrl = LineEdit.new()
+	direct_y_ctrl = NumberEdit.new()
 	direct_y_ctrl.set_text("0")
 	dir_group.add_child(direct_y_ctrl)
 	# Direction Z
 	var z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	dir_group.add_child(z_lbl)
-	direct_z_ctrl = LineEdit.new()
+	direct_z_ctrl = NumberEdit.new()
 	direct_z_ctrl.set_text("1")
 	dir_group.add_child(direct_z_ctrl)
 
@@ -76,7 +76,8 @@ func _ready():
 	var angle1_ctrl_lbl = Label.new()
 	angle1_ctrl_lbl.set_text("Angle 1: ")
 	angle1_group.add_child(angle1_ctrl_lbl)
-	angle1_ctrl = LineEdit.new()
+	angle1_ctrl = NumberEdit.new()
+	angle1_ctrl.MaxValue = 360.0
 	angle1_ctrl.set_text("-90")
 	angle1_group.add_child(angle1_ctrl)
 	add_child(angle1_group)
@@ -86,7 +87,8 @@ func _ready():
 	var angle2_ctrl_lbl = Label.new()
 	angle2_ctrl_lbl.set_text("Angle 2: ")
 	angle2_group.add_child(angle2_ctrl_lbl)
-	angle2_ctrl = LineEdit.new()
+	angle2_ctrl = NumberEdit.new()
+	angle2_ctrl.MaxValue = 360.0
 	angle2_ctrl.set_text("90.0")
 	angle2_group.add_child(angle2_ctrl)
 	add_child(angle2_group)
@@ -96,7 +98,8 @@ func _ready():
 	var angle3_ctrl_lbl = Label.new()
 	angle3_ctrl_lbl.set_text("Angle 3: ")
 	angle3_group.add_child(angle3_ctrl_lbl)
-	angle3_ctrl = LineEdit.new()
+	angle3_ctrl = NumberEdit.new()
+	angle3_ctrl.MaxValue = 360.0
 	angle3_ctrl.set_text("360.0")
 	angle3_group.add_child(angle3_ctrl)
 	add_child(angle3_group)
@@ -149,6 +152,35 @@ func _ready():
 	clean_ctrl.pressed = true
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
+
+
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not radius_ctrl.is_valid:
+		return false
+	if not direct_x_ctrl.is_valid:
+		return false
+	if not direct_y_ctrl.is_valid:
+		return false
+	if not direct_y_ctrl.is_valid:
+		return false
+	if not angle1_ctrl.is_valid:
+		return false
+	if not angle2_ctrl.is_valid:
+		return false
+	if not angle3_ctrl.is_valid:
+		return false
+	if not centered_x_ctrl.is_valid:
+		return false
+	if not centered_y_ctrl.is_valid:
+		return false
+	if not centered_z_ctrl.is_valid:
+		return false
+
+	return true
 
 
 """

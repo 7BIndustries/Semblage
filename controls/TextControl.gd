@@ -13,8 +13,6 @@ var halign_ctrl = null
 var valign_ctrl = null
 var combine_ctrl = null
 var clean_ctrl = null
-#var select_ctrl = null
-#var hide_show_btn = null
 
 var prev_template = null
 
@@ -31,6 +29,7 @@ var halign_edit_rgx = "(?<=halign\\=\\()(.*?)(?=,valign)"
 var valign_edit_rgx = "(?<=valign\\=\\()(.*?)(?=,combine)"
 var combine_edit_rgx = "(?<=combine\\=\\()(.*?)(?=,clean)"
 var clean_edit_rgx = "(?<=clean\\=\\()(.*?)(?=\\))"
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -50,7 +49,7 @@ func _ready():
 	var distance_ctrl_lbl = Label.new()
 	distance_ctrl_lbl.set_text("Text Depth: ")
 	distance_group.add_child(distance_ctrl_lbl)
-	distance_ctrl = LineEdit.new()
+	distance_ctrl = NumberEdit.new()
 	distance_ctrl.expand_to_text_length = true
 	distance_ctrl.set_text("5")
 	distance_group.add_child(distance_ctrl)
@@ -87,22 +86,6 @@ func _ready():
 	add_child(clean_group)
 
 	# Add a horizontal rule to break things up
-#	add_child(HSeparator.new())
-
-	# Allow the user to show/hide the selector controls that allow the rect to 
-	# be placed on something other than the current workplane
-#	hide_show_btn = CheckButton.new()
-#	hide_show_btn.set_text("Selectors: ")
-#	hide_show_btn.connect("button_down", self, "_show_selectors")
-#	add_child(hide_show_btn)
-
-	# The selector control for where to locate the slot
-#	select_ctrl = SelectorControl.new()
-#	select_ctrl.config_visibility(true, false)
-#	select_ctrl.hide()
-#	add_child(select_ctrl)
-
-	# Add a horizontal rule to break things up
 	add_child(HSeparator.new())
 
 	var font_settings_lbl = Label.new()
@@ -114,8 +97,9 @@ func _ready():
 	var font_size_ctrl_lbl = Label.new()
 	font_size_ctrl_lbl.set_text("Size: ")
 	font_size_group.add_child(font_size_ctrl_lbl)
-	font_size_ctrl = LineEdit.new()
+	font_size_ctrl = NumberEdit.new()
 	font_size_ctrl.expand_to_text_length = true
+	font_size_ctrl.NumberFormat = "int"
 	font_size_ctrl.set_text("12")
 	font_size_group.add_child(font_size_ctrl)
 	add_child(font_size_group)
@@ -174,14 +158,23 @@ func _ready():
 
 
 """
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not distance_ctrl.is_valid:
+		return false
+	if not font_size_ctrl.is_valid:
+		return false
+
+	return true
+
+
+"""
 Fills out the template and returns it.
 """
 func get_completed_template():
 	var complete = ""
-
-	# If the selector control is visible, prepend its contents
-#	if hide_show_btn.pressed:
-#		complete += select_ctrl.get_completed_template()
 
 	# Make sure to handle the possible Python None value in the font path
 	var font_path = font_path_ctrl.get_text()
@@ -206,16 +199,6 @@ func get_completed_template():
 		})
 
 	return complete
-
-
-"""
-Show the selector controls.
-"""
-#func _show_selectors():
-#	if hide_show_btn.pressed:
-#		select_ctrl.hide()
-#	else:
-#		select_ctrl.show()
 
 
 """

@@ -28,21 +28,21 @@ func _ready():
 	# Length
 	length_ctrl_lbl.set_text("Length: ")
 	size_group.add_child(length_ctrl_lbl)
-	length_ctrl = LineEdit.new()
+	length_ctrl = NumberEdit.new()
 	length_ctrl.set_text("10.0")
 	size_group.add_child(length_ctrl)
 	# Width
 	var width_ctrl_lbl = Label.new()
 	width_ctrl_lbl.set_text("Width: ")
 	size_group.add_child(width_ctrl_lbl)
-	width_ctrl = LineEdit.new()
+	width_ctrl = NumberEdit.new()
 	width_ctrl.set_text("10.0")
 	size_group.add_child(width_ctrl)
 	# Height
 	var height_ctrl_lbl = Label.new()
 	height_ctrl_lbl.set_text("Height: ")
 	size_group.add_child(height_ctrl_lbl)
-	height_ctrl = LineEdit.new()
+	height_ctrl = NumberEdit.new()
 	height_ctrl.set_text("10.0")
 	size_group.add_child(height_ctrl)
 	
@@ -77,6 +77,21 @@ func _ready():
 	centered_group.add_child(cen_z_ctrl)
 
 	add_child(centered_group)
+
+
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not length_ctrl.is_valid:
+		return false
+	if not width_ctrl.is_valid:
+		return false
+	if not height_ctrl.is_valid:
+		return false
+
+	return true
 
 
 """

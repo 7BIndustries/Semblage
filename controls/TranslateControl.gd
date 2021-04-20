@@ -26,26 +26,44 @@ func _ready():
 	var x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	vec_group.add_child(x_lbl)
-	vec_x_ctrl = LineEdit.new()
+	vec_x_ctrl = NumberEdit.new()
+	vec_x_ctrl.CanBeNegative = true
 	vec_x_ctrl.set_text("0")
 	vec_group.add_child(vec_x_ctrl)
 	# vec Y
 	var y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	vec_group.add_child(y_lbl)
-	vec_y_ctrl = LineEdit.new()
+	vec_y_ctrl = NumberEdit.new()
+	vec_y_ctrl.CanBeNegative = true
 	vec_y_ctrl.set_text("0")
 	vec_group.add_child(vec_y_ctrl)
 	# vec Z
 	var z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	vec_group.add_child(z_lbl)
-	vec_z_ctrl = LineEdit.new()
+	vec_z_ctrl = NumberEdit.new()
+	vec_z_ctrl.CanBeNegative = true
 	vec_z_ctrl.set_text("10")
 	vec_group.add_child(vec_z_ctrl)
 
 	vec_lbl_group.add_child(vec_group)
 	add_child(vec_lbl_group)
+
+
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not vec_x_ctrl.is_valid:
+		return false
+	if not vec_y_ctrl.is_valid:
+		return false
+	if not vec_z_ctrl.is_valid:
+		return false
+
+	return true
 
 
 """

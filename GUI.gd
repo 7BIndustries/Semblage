@@ -826,5 +826,14 @@ func _collect_param_tree_pairs(tree):
 	return items
 
 
+"""
+Allows an arbitrary error to be displayed to the user.
+"""
+func _on_error(error_text):
+	var dlg = $ErrorDialog
+	dlg.dialog_text = error_text
+	dlg.popup_centered()
+
+
 func _on_CQGIInterface_build_success(component_json):
 	pass

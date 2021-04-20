@@ -20,18 +20,31 @@ func _ready():
 	var x_length_lbl = Label.new()
 	x_length_lbl.set_text("X: ")
 	dims_group.add_child(x_length_lbl)
-	x_coord_ctrl = LineEdit.new()
+	x_coord_ctrl = NumberEdit.new()
 	x_coord_ctrl.set_text("1.0")
 	dims_group.add_child(x_coord_ctrl)
 	# Y coordinate
 	var y_length_lbl = Label.new()
 	y_length_lbl.set_text("Y: ")
 	dims_group.add_child(y_length_lbl)
-	y_coord_ctrl = LineEdit.new()
+	y_coord_ctrl = NumberEdit.new()
 	y_coord_ctrl.set_text("1.0")
 	dims_group.add_child(y_coord_ctrl)
 
 	add_child(dims_group)
+
+
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not x_coord_ctrl.is_valid:
+		return false
+	if not y_coord_ctrl.is_valid:
+		return false
+
+	return true
 
 
 """
