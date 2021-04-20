@@ -28,7 +28,7 @@ func _ready():
 	var distance_lbl = Label.new()
 	distance_lbl.set_text("Distance: ")
 	distance_group.add_child(distance_lbl)
-	distance_ctrl = LineEdit.new()
+	distance_ctrl = NumberEdit.new()
 	distance_ctrl.set_text("1.0")
 	distance_group.add_child(distance_ctrl)
 
@@ -72,7 +72,8 @@ func _ready():
 	var taper_lbl = Label.new()
 	taper_lbl.set_text("Taper: ")
 	taper_group.add_child(taper_lbl)
-	taper_ctrl = LineEdit.new()
+	taper_ctrl = NumberEdit.new()
+	taper_ctrl.CanBeNegative = true
 	taper_ctrl.set_text("0.0")
 	taper_group.add_child(taper_ctrl)
 
@@ -87,6 +88,19 @@ func _ready():
 	invert_ctrl.pressed = false
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
+
+
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not distance_ctrl.is_valid:
+		return false
+	if not taper_ctrl.is_valid:
+		return false
+
+	return true
 
 
 """

@@ -26,7 +26,7 @@ func _ready():
 	var hole_dia_lbl = Label.new()
 	hole_dia_lbl.set_text("Hole Diameter: ")
 	hole_dia_group.add_child(hole_dia_lbl)
-	hole_dia_ctrl = LineEdit.new()
+	hole_dia_ctrl = NumberEdit.new()
 	hole_dia_ctrl.set_text("2.5")
 	hole_dia_group.add_child(hole_dia_ctrl)
 	add_child(hole_dia_group)
@@ -36,7 +36,7 @@ func _ready():
 	var hole_depth_lbl = Label.new()
 	hole_depth_lbl.set_text("Hole Depth (0 = thru): ")
 	hole_depth_group.add_child(hole_depth_lbl)
-	hole_depth_ctrl = LineEdit.new()
+	hole_depth_ctrl = NumberEdit.new()
 	hole_depth_ctrl.set_text("0")
 	hole_depth_group.add_child(hole_depth_ctrl)
 	add_child(hole_depth_group)
@@ -46,7 +46,7 @@ func _ready():
 	var cbore_dia_lbl = Label.new()
 	cbore_dia_lbl.set_text("Counter-Bore Diameter: ")
 	cbore_dia_group.add_child(cbore_dia_lbl)
-	cbore_dia_ctrl = LineEdit.new()
+	cbore_dia_ctrl = NumberEdit.new()
 	cbore_dia_ctrl.set_text("5.0")
 	cbore_dia_group.add_child(cbore_dia_ctrl)
 	add_child(cbore_dia_group)
@@ -56,7 +56,7 @@ func _ready():
 	var cbore_depth_lbl = Label.new()
 	cbore_depth_lbl.set_text("Counter-Bore Depth: ")
 	cbore_depth_group.add_child(cbore_depth_lbl)
-	cbore_depth_ctrl = LineEdit.new()
+	cbore_depth_ctrl = NumberEdit.new()
 	cbore_depth_ctrl.set_text("3.0")
 	cbore_depth_group.add_child(cbore_depth_ctrl)
 	add_child(cbore_depth_group)
@@ -71,21 +71,22 @@ func _ready():
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
 
-	# Add a horizontal rule to break things up
-#	add_child(HSeparator.new())
 
-	# Allow the user to show/hide the selector controls that allow the rect to 
-	# be placed on something other than the current workplane
-#	hide_show_btn = CheckButton.new()
-#	hide_show_btn.set_text("Selectors: ")
-#	hide_show_btn.connect("button_down", self, "_show_selectors")
-#	add_child(hide_show_btn)
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not hole_dia_ctrl.is_valid:
+		return false
+	if not hole_depth_ctrl.is_valid:
+		return false
+	if not cbore_dia_ctrl.is_valid:
+		return false
+	if not cbore_depth_ctrl.is_valid:
+		return false
 
-	# Add the face/edge selector control
-#	select_ctrl = SelectorControl.new()
-#	select_ctrl.hide()
-#	select_ctrl.config_visibility(true, false) # Only allow face selection
-#	add_child(select_ctrl)
+	return true
 
 
 """
@@ -93,10 +94,6 @@ Fills out the template and returns it.
 """
 func get_completed_template():
 	var complete = ""
-
-	# If the selector control is visible, prepend its contents
-#	if select_ctrl.visible:
-#		complete += select_ctrl.get_completed_template()
 
 	# Convert the hole depth to None if the user wants it all the way thru
 	var depth = hole_depth_ctrl.get_text()
@@ -112,16 +109,6 @@ func get_completed_template():
 	})
 
 	return complete
-
-
-"""
-Show the selector controls.
-"""
-#func _show_selectors():
-#	if select_ctrl.visible:
-#		select_ctrl.hide()
-#	else:
-#		select_ctrl.show()
 
 
 """
@@ -165,15 +152,3 @@ func set_values_from_string(text_line):
 	if res:
 		var clean = res.get_string()
 		clean_ctrl.pressed = true if clean == "True" else false
-
-	# Selector
-#	rgx.compile(select_edit_rgx)
-#	res = rgx.search(text_line)
-#	if res:
-#		var sel = res.get_string()
-#
-#		hide_show_btn.pressed = true
-#		select_ctrl.show()
-#
-#		# Allow the selector control to set itself up appropriately
-#		select_ctrl.set_values_from_string(sel.left(sel.length() - 1))

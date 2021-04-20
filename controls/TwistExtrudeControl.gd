@@ -27,7 +27,7 @@ func _ready():
 	var distance_lbl = Label.new()
 	distance_lbl.set_text("Distance: ")
 	distance_group.add_child(distance_lbl)
-	distance_ctrl = LineEdit.new()
+	distance_ctrl = NumberEdit.new()
 	distance_ctrl.set_text("5.0")
 	distance_group.add_child(distance_ctrl)
 	add_child(distance_group)
@@ -37,7 +37,8 @@ func _ready():
 	var angle_lbl = Label.new()
 	angle_lbl.set_text("Angle (Degrees): ")
 	angle_group.add_child(angle_lbl)
-	angle_ctrl = LineEdit.new()
+	angle_ctrl = NumberEdit.new()
+	angle_ctrl.MaxValue = 360.0
 	angle_ctrl.set_text("30")
 	angle_group.add_child(angle_ctrl)
 	add_child(angle_group)
@@ -71,6 +72,19 @@ func _ready():
 	invert_ctrl.pressed = false
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
+
+
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not distance_ctrl.is_valid:
+		return false
+	if not angle_ctrl.is_valid:
+		return false
+
+	return true
 
 
 """

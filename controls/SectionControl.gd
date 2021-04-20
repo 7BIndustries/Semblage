@@ -18,10 +18,21 @@ func _ready():
 	var height_lbl = Label.new()
 	height_lbl.set_text("Height: ")
 	height_group.add_child(height_lbl)
-	height_ctrl = LineEdit.new()
+	height_ctrl = NumberEdit.new()
 	height_ctrl.set_text("2.5")
 	height_group.add_child(height_ctrl)
 	add_child(height_group)
+
+
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not height_ctrl.is_valid:
+		return false
+
+	return true
 
 
 """

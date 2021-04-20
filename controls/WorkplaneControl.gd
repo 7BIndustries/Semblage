@@ -94,21 +94,21 @@ func _ready():
 	var x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	origin_group.add_child(x_lbl)
-	origin_x_ctrl = LineEdit.new()
+	origin_x_ctrl = NumberEdit.new()
 	origin_x_ctrl.set_text("0")
 	origin_group.add_child(origin_x_ctrl)
 	# Origin Y
 	var y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	origin_group.add_child(y_lbl)
-	origin_y_ctrl = LineEdit.new()
+	origin_y_ctrl = NumberEdit.new()
 	origin_y_ctrl.set_text("0")
 	origin_group.add_child(origin_y_ctrl)
 	# Origin Z
 	var z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	origin_group.add_child(z_lbl)
-	origin_z_ctrl = LineEdit.new()
+	origin_z_ctrl = NumberEdit.new()
 	origin_z_ctrl.set_text("0")
 	origin_group.add_child(origin_z_ctrl)
 
@@ -123,21 +123,21 @@ func _ready():
 	var xdir_x_lbl = Label.new()
 	xdir_x_lbl.set_text("X: ")
 	xdir_group.add_child(xdir_x_lbl)
-	xdir_x_ctrl = LineEdit.new()
+	xdir_x_ctrl = NumberEdit.new()
 	xdir_x_ctrl.set_text("1")
 	xdir_group.add_child(xdir_x_ctrl)
 	# XDir Y
 	var xdir_y_lbl = Label.new()
 	xdir_y_lbl.set_text("Y: ")
 	xdir_group.add_child(xdir_y_lbl)
-	xdir_y_ctrl = LineEdit.new()
+	xdir_y_ctrl = NumberEdit.new()
 	xdir_y_ctrl.set_text("0")
 	xdir_group.add_child(xdir_y_ctrl)
 	# XDir Z
 	var xdir_z_lbl = Label.new()
 	xdir_z_lbl.set_text("Z: ")
 	xdir_group.add_child(xdir_z_lbl)
-	xdir_z_ctrl = LineEdit.new()
+	xdir_z_ctrl = NumberEdit.new()
 	xdir_z_ctrl.set_text("0")
 	xdir_group.add_child(xdir_z_ctrl)
 
@@ -152,27 +152,54 @@ func _ready():
 	var norm_x_lbl = Label.new()
 	norm_x_lbl.set_text("X: ")
 	normal_group.add_child(norm_x_lbl)
-	normal_x_ctrl = LineEdit.new()
+	normal_x_ctrl = NumberEdit.new()
 	normal_x_ctrl.set_text("0")
 	normal_group.add_child(normal_x_ctrl)
 	# Normal Y
 	var norm_y_lbl = Label.new()
 	norm_y_lbl.set_text("Y: ")
 	normal_group.add_child(norm_y_lbl)
-	normal_y_ctrl = LineEdit.new()
+	normal_y_ctrl = NumberEdit.new()
 	normal_y_ctrl.set_text("0")
 	normal_group.add_child(normal_y_ctrl)
 	# Normal Z
 	var norm_z_lbl = Label.new()
 	norm_z_lbl.set_text("Z: ")
 	normal_group.add_child(norm_z_lbl)
-	normal_z_ctrl = LineEdit.new()
+	normal_z_ctrl = NumberEdit.new()
 	normal_z_ctrl.set_text("1")
 	normal_group.add_child(normal_z_ctrl)
 
 	advanced_group.add_child(normal_group)
 
 	add_child(advanced_group)
+
+
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not origin_x_ctrl.is_valid:
+		return false
+	if not origin_y_ctrl.is_valid:
+		return false
+	if not origin_z_ctrl.is_valid:
+		return false
+	if not xdir_x_ctrl.is_valid:
+		return false
+	if not xdir_y_ctrl.is_valid:
+		return false
+	if not xdir_z_ctrl.is_valid:
+		return false
+	if not normal_x_ctrl.is_valid:
+		return false
+	if not normal_y_ctrl.is_valid:
+		return false
+	if not normal_z_ctrl.is_valid:
+		return false
+
+	return true
 
 
 """

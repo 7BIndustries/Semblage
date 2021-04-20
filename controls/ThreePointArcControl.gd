@@ -9,7 +9,6 @@ var template = ".threePointArc(point1=({point_1_x},{point_1_y}),point2=({point_2
 var point1_edit_rgx = "(?<=point1\\=)(.*?)(?=,point2)"
 var point2_edit_rgx = "(?<=point2\\=)(.*?)(?=\\,forConstruction)"
 var const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
-#var select_edit_rgx = "^.faces\\(.*\\)\\."
 
 var point_1_x_ctrl = null
 var point_1_y_ctrl = null
@@ -17,12 +16,6 @@ var point_2_x_ctrl = null
 var point_2_y_ctrl = null
 var for_construction_ctrl = null
 
-#var hide_show_btn = null
-#var select_ctrl = null
-#var op_ctrl = null
-
-#var operation_visible = false
-#var selector_visible = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -36,14 +29,16 @@ func _ready():
 	var x_length_lbl = Label.new()
 	x_length_lbl.set_text("X: ")
 	point_1_group.add_child(x_length_lbl)
-	point_1_x_ctrl = LineEdit.new()
+	point_1_x_ctrl = NumberEdit.new()
+	point_1_x_ctrl.CanBeNegative = true
 	point_1_x_ctrl.set_text("4.0")
 	point_1_group.add_child(point_1_x_ctrl)
 	# Point 1 Y
 	var y_length_lbl = Label.new()
 	y_length_lbl.set_text("Y: ")
 	point_1_group.add_child(y_length_lbl)
-	point_1_y_ctrl = LineEdit.new()
+	point_1_y_ctrl = NumberEdit.new()
+	point_1_y_ctrl.CanBeNegative = true
 	point_1_y_ctrl.set_text("0.0")
 	point_1_group.add_child(point_1_y_ctrl)
 
@@ -59,14 +54,16 @@ func _ready():
 	x_length_lbl = Label.new()
 	x_length_lbl.set_text("X: ")
 	point_2_group.add_child(x_length_lbl)
-	point_2_x_ctrl = LineEdit.new()
+	point_2_x_ctrl = NumberEdit.new()
+	point_2_x_ctrl.CanBeNegative = true
 	point_2_x_ctrl.set_text("0.0")
 	point_2_group.add_child(point_2_x_ctrl)
 	# Point 2 Y
 	y_length_lbl = Label.new()
 	y_length_lbl.set_text("Y: ")
 	point_2_group.add_child(y_length_lbl)
-	point_2_y_ctrl = LineEdit.new()
+	point_2_y_ctrl = NumberEdit.new()
+	point_2_y_ctrl.CanBeNegative = true
 	point_2_y_ctrl.set_text("-4.0")
 	point_2_group.add_child(point_2_y_ctrl)
 
@@ -83,32 +80,22 @@ func _ready():
 
 	add_child(const_group)
 
-	# Show the selector control if it is enabled
-#	if selector_visible:
-#		# Add a horizontal rule to break things up
-#		add_child(HSeparator.new())
-#
-#		# Allow the user to show/hide the selector controls that allow the rect to
-#		# be placed on something other than the current workplane
-#		hide_show_btn = CheckButton.new()
-#		hide_show_btn.set_text("Selectors: ")
-#		hide_show_btn.connect("button_down", self, "_show_selectors")
-#		add_child(hide_show_btn)
-#
-#		# Add the face/edge selector control
-#		select_ctrl = SelectorControl.new()
-#		select_ctrl.hide()
-#		select_ctrl.config_visibility(true, false) # Only allow face selection
-#		add_child(select_ctrl)
 
-	# Set the operation control if it is enabled
-#	if operation_visible:
-#		# Add a horizontal rule to break things up
-#		add_child(HSeparator.new())
-#
-#		# Add the Operations control that will allow the user to select what to do (if anything)
-#		op_ctrl = OperationsControl.new()
-#		add_child(op_ctrl)
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not point_1_x_ctrl.is_valid:
+		return false
+	if not point_1_y_ctrl.is_valid:
+		return false
+	if not point_2_x_ctrl.is_valid:
+		return false
+	if not point_2_y_ctrl.is_valid:
+		return false
+
+	return true
 
 
 """
@@ -116,10 +103,6 @@ Fills out the template and returns it.
 """
 func get_completed_template():
 	var complete = ""
-
-	# If the selector control is visible, prepend its contents
-#	if selector_visible and select_ctrl.visible:
-#		complete += select_ctrl.get_completed_template()
 
 	complete += template.format({
 		"point_1_x": point_1_x_ctrl.get_text(),
@@ -129,21 +112,7 @@ func get_completed_template():
 		"for_construction": for_construction_ctrl.pressed
 		})
 
-#	if operation_visible:
-#		# Check to see if there is an operation to apply to this geometry
-#		complete += op_ctrl.get_completed_template()
-
 	return complete
-
-
-"""
-Show the selector controls.
-"""
-#func _show_selectors():
-#	if select_ctrl.visible:
-#		select_ctrl.hide()
-#	else:
-#		select_ctrl.show()
 
 
 """
@@ -187,28 +156,9 @@ func set_values_from_string(text_line):
 		var constr = res.get_string()
 		for_construction_ctrl.pressed = true if constr == "True" else false
 
-	# Selector
-#	rgx.compile(select_edit_rgx)
-#	res = rgx.search(text_line)
-#	if res:
-#		var sel = res.get_string()
-#
-#		hide_show_btn.pressed = true
-#		select_ctrl.show()
-#
-#		# Allow the selector control to set itself up appropriately
-#		select_ctrl.set_values_from_string(sel.left(sel.length() - 1))
-
-	# Operation
-#	op_ctrl.set_values_from_string(text_line)
-
-
 
 """
 Allows the caller to configure what is visible, useful for the Sketch tool.
 """
 func config(selector_visible=true, operation_visible=true):
 	pass
-	# Set whether or not the selector control is visible
-#	self.selector_visible = false #selector_visible
-#	self.operation_visible = false #operation_visible

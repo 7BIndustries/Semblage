@@ -1,6 +1,7 @@
 extends WindowDialog
 
 signal ok_signal
+signal error
 
 var original_context = null
 var new_context = null
@@ -191,8 +192,16 @@ func _select_group_button(group):
 Called when the Ok button is pressed so that the GUI can collect the changed context.
 """
 func _on_OkButton_button_down():
-	# Get the completed template from the current control
+	# Current control loaded
 	var cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
+
+	# Make sure the form is valid
+	if not cont.is_valid():
+		emit_signal("error", "There are errors on the form, please correct them.")
+
+		return
+
+	# Get the completed template from the current control
 	new_template = cont.get_completed_template()
 
 	# Used if the user added multiple actions to the actions tree
@@ -446,14 +455,20 @@ func _render_action_tree():
 
 	script_text += ".consolidateWires()\nshow_object(result)"
 
+	# Protect against edge cases that will result in misleading errors
+	var rgx = RegEx.new()
+	rgx.compile("\\.pushPoints\\(\\[.*\\]\\)\\.consolidateWires")
+	var res = rgx.search(script_text)
+	if res:
+		return
+
 	# Export the file to the user data directory temporarily
 	var ret = cqgipy.export(script_text, "svg", OS.get_user_data_dir(), "width:400;height:400;marginLeft:50;marginTop:50;showAxes:False;projectionDir:(0,0,1);strokeWidth:0.5;strokeColor:(255,255,255);hiddenColor:(0,0,255);showHidden:False;")
 
 	if ret.begins_with("error~"):
 		# Let the user know there was an error
 		var err = ret.split("~")[1]
-		$ErrorDialog.dialog_text = err
-		$ErrorDialog.popup_centered()
+		emit_signal("error", err)
 	else:
 		_load_image(ret, false)
 
@@ -559,3 +574,9 @@ is changed.
 """
 func _on_DynamicContainer_resized():
 	_on_VBoxContainer_resized()
+
+"""
+Allows a child control to pop up the error dialog.
+"""
+func _on_error(error_msg):
+	emit_signal("error", error_msg)

@@ -52,6 +52,13 @@ func _ready():
 
 
 """
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	return true
+
+
+"""
 Fills out the template and returns it.
 """
 func get_completed_template():

@@ -27,21 +27,21 @@ func _ready():
 	var x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	axis_end_group.add_child(x_lbl)
-	axis_end_x_ctrl = LineEdit.new()
+	axis_end_x_ctrl = NumberEdit.new()
 	axis_end_x_ctrl.set_text("0")
 	axis_end_group.add_child(axis_end_x_ctrl)
 	# Axis Y
 	var y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	axis_end_group.add_child(y_lbl)
-	axis_end_y_ctrl = LineEdit.new()
+	axis_end_y_ctrl = NumberEdit.new()
 	axis_end_y_ctrl.set_text("0")
 	axis_end_group.add_child(axis_end_y_ctrl)
 	# Axis Z
 	var z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	axis_end_group.add_child(z_lbl)
-	axis_end_z_ctrl = LineEdit.new()
+	axis_end_z_ctrl = NumberEdit.new()
 	axis_end_z_ctrl.set_text("1")
 	axis_end_group.add_child(axis_end_z_ctrl)
 
@@ -53,10 +53,29 @@ func _ready():
 	var angle_lbl = Label.new()
 	angle_lbl.set_text("Angle (Degrees): ")
 	angle_group.add_child(angle_lbl)
-	angle_ctrl = LineEdit.new()
+	angle_ctrl = NumberEdit.new()
+	angle_ctrl.MaxValue = 360.0
 	angle_ctrl.set_text("90.0")
 	angle_group.add_child(angle_ctrl)
 	add_child(angle_group)
+
+
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not axis_end_x_ctrl.is_valid:
+		return false
+	if not axis_end_y_ctrl.is_valid:
+		return false
+	if not axis_end_z_ctrl.is_valid:
+		return false
+	if not angle_ctrl.is_valid:
+		return false
+
+	return true
+
 
 """
 Fills out the template and returns it.

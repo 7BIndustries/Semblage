@@ -14,7 +14,6 @@ var sense_edit_rgx = "(?<=sense\\=)(.*?)(?=\\,forConstruction)"
 var for_construction_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\,startAtCurrent)"
 var start_at_current_edit_rgx = "(?<=startAtCurrent\\=)(.*?)(?=\\,makeWire)"
 var make_wire_edit_rgx = "(?<=makeWire\\=)(.*?)(?=\\))"
-#var select_edit_rgx = "^.faces\\(.*\\)\\."
 
 var x_radius_ctrl = null
 var y_radius_ctrl = null
@@ -26,13 +25,6 @@ var for_construction_ctrl = null
 var start_at_current_ctrl = null
 var make_wire_ctrl = null
 
-#var hide_show_btn = null
-#var select_ctrl = null
-#var op_ctrl = null
-
-#var operation_visible = true
-#var selector_visible = true
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -41,7 +33,7 @@ func _ready():
 	var x_radius_lbl = Label.new()
 	x_radius_lbl.set_text("X Radius: ")
 	x_radius_group.add_child(x_radius_lbl)
-	x_radius_ctrl = LineEdit.new()
+	x_radius_ctrl = NumberEdit.new()
 	x_radius_ctrl.set_text("5.0")
 	x_radius_group.add_child(x_radius_ctrl)
 	add_child(x_radius_group)
@@ -51,7 +43,7 @@ func _ready():
 	var y_radius_lbl = Label.new()
 	y_radius_lbl.set_text("Y Radius: ")
 	y_radius_group.add_child(y_radius_lbl)
-	y_radius_ctrl = LineEdit.new()
+	y_radius_ctrl = NumberEdit.new()
 	y_radius_ctrl.set_text("10.0")
 	y_radius_group.add_child(y_radius_ctrl)
 	add_child(y_radius_group)
@@ -61,7 +53,8 @@ func _ready():
 	var angle_1_lbl = Label.new()
 	angle_1_lbl.set_text("Angle 1: ")
 	angle_1_group.add_child(angle_1_lbl)
-	angle_1_ctrl = LineEdit.new()
+	angle_1_ctrl = NumberEdit.new()
+	angle_1_ctrl.MaxValue = 360.0
 	angle_1_ctrl.set_text("360.0")
 	angle_1_group.add_child(angle_1_ctrl)
 	add_child(angle_1_group)
@@ -71,7 +64,8 @@ func _ready():
 	var angle_2_lbl = Label.new()
 	angle_2_lbl.set_text("Angle 2: ")
 	angle_2_group.add_child(angle_2_lbl)
-	angle_2_ctrl = LineEdit.new()
+	angle_2_ctrl = NumberEdit.new()
+	angle_2_ctrl.MaxValue = 360.0
 	angle_2_ctrl.set_text("360.0")
 	angle_2_group.add_child(angle_2_ctrl)
 	add_child(angle_2_group)
@@ -81,7 +75,8 @@ func _ready():
 	var rotation_angle_lbl = Label.new()
 	rotation_angle_lbl.set_text("Rotation Angle: ")
 	rotation_angle_group.add_child(rotation_angle_lbl)
-	rotation_angle_ctrl = LineEdit.new()
+	rotation_angle_ctrl = NumberEdit.new()
+	rotation_angle_ctrl.MaxValue = 360.0
 	rotation_angle_ctrl.set_text("360.0")
 	rotation_angle_group.add_child(rotation_angle_ctrl)
 	add_child(rotation_angle_group)
@@ -91,7 +86,7 @@ func _ready():
 	var sense_lbl = Label.new()
 	sense_lbl.set_text("Sense: ")
 	sense_group.add_child(sense_lbl)
-	sense_ctrl = LineEdit.new()
+	sense_ctrl = NumberEdit.new()
 	sense_ctrl.set_text("1")
 	sense_group.add_child(sense_ctrl)
 	add_child(sense_group)
@@ -126,32 +121,26 @@ func _ready():
 	make_wire_group.add_child(make_wire_ctrl)
 	add_child(make_wire_group)
 
-	# Show the selector control if it is enabled
-#	if selector_visible:
-#		# Add a horizontal rule to break things up
-#		add_child(HSeparator.new())
-#
-#		# Allow the user to show/hide the selector controls that allow the rect to
-#		# be placed on something other than the current workplane
-#		hide_show_btn = CheckButton.new()
-#		hide_show_btn.set_text("Selectors: ")
-#		hide_show_btn.connect("button_down", self, "_show_selectors")
-#		add_child(hide_show_btn)
-#
-#		# Add the face/edge selector control
-#		select_ctrl = SelectorControl.new()
-#		select_ctrl.hide()
-#		select_ctrl.config_visibility(true, false) # Only allow face selection
-#		add_child(select_ctrl)
 
-	# Set the operation control if it is enabled
-#	if operation_visible:
-#		# Add a horizontal rule to break things up
-#		add_child(HSeparator.new())
-#
-#		# Add the Operations control that will allow the user to select what to do (if anything)
-#		op_ctrl = OperationsControl.new()
-#		add_child(op_ctrl)
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	# Make sure all of the numeric controls have valid values
+	if not x_radius_ctrl.is_valid:
+		return false
+	if not y_radius_ctrl.is_valid:
+		return false
+	if not angle_1_ctrl.is_valid:
+		return false
+	if not angle_2_ctrl.is_valid:
+		return false
+	if not rotation_angle_ctrl.is_valid:
+		return false
+	if not sense_ctrl.is_valid:
+		return false
+
+	return true
 
 
 """
@@ -159,10 +148,6 @@ Fills out the template and returns it.
 """
 func get_completed_template():
 	var complete = ""
-
-	# If the selector control is visible, prepend its contents
-#	if selector_visible and select_ctrl.visible:
-#		complete += select_ctrl.get_completed_template()
 
 	complete += template.format({
 		"x_radius": x_radius_ctrl.get_text(),
@@ -176,21 +161,7 @@ func get_completed_template():
 		"makeWire": make_wire_ctrl.pressed
 		})
 
-#	if operation_visible:
-#		# Check to see if there is an operation to apply to this geometry
-#		complete += op_ctrl.get_completed_template()
-
 	return complete
-
-
-"""
-Show the selector controls.
-"""
-#func _show_selectors():
-#	if select_ctrl.visible:
-#		select_ctrl.hide()
-#	else:
-#		select_ctrl.show()
 
 
 """
@@ -271,28 +242,9 @@ func set_values_from_string(text_line):
 		var make_wire = res.get_string()
 		make_wire_ctrl.pressed = true if make_wire == "True" else false
 
-	# Selector
-#	rgx.compile(select_edit_rgx)
-#	res = rgx.search(text_line)
-#	if res:
-#		var sel = res.get_string()
-#
-#		hide_show_btn.pressed = true
-#		select_ctrl.show()
-#
-#		# Allow the selector control to set itself up appropriately
-#		select_ctrl.set_values_from_string(sel.left(sel.length() - 1))
-
-	# Operation
-#	op_ctrl.set_values_from_string(text_line)
-
-
 
 """
 Allows the caller to configure what is visible, useful for the Sketch tool.
 """
 func config(selector_visible=true, operation_visible=true):
 	pass
-	# Set whether or not the selector control is visible
-#	self.selector_visible = selector_visible
-#	self.operation_visible = operation_visible
