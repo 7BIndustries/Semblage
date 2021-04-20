@@ -16,15 +16,15 @@ func _on_CheckButton_toggled(button_pressed):
 	if $MarginContainer/VBoxContainer/SectionCheckContainer/CheckButton.pressed:
 		$MarginContainer/VBoxContainer/SectionContainer.show()
 
-		orig_size = rect_size
+		self.orig_size = self.rect_size
 	
 		# Make sure the panel is the correct size to contain all controls
-		rect_size = Vector2(rect_size[0], 415)
+		self.rect_size = Vector2(382, 440)
 	else:
 		$MarginContainer/VBoxContainer/SectionContainer.hide()
 
 		if orig_size != null:
-			rect_size = orig_size
+			self.rect_size = self.orig_size
 
 """
 Called when the Cancel button is clicked.
@@ -55,13 +55,13 @@ func _export_select_finished(path):
 Called when the user clicks the ok button.
 """
 func _on_OkButton_button_down():
-	var pt = $MarginContainer/VBoxContainer/PathContainer/PathText
-
-	# Let the user know they have not set an export directory
-	if pt.get_text() == "":
-		_show_error_dialog("You must set a file path to export to.")
+	# Make sure the form is valid
+	if not self.is_valid():
+		_show_error_dialog("There are errors on the form, please correct them.")
 
 		return
+
+	var pt = $MarginContainer/VBoxContainer/PathContainer/PathText
 
 	# Check to see if the user wants to do slicing
 	if $MarginContainer/VBoxContainer/SectionCheckContainer/CheckButton.pressed:
@@ -106,6 +106,52 @@ func _on_OkButton_button_down():
 	# Hide this popup
 	hide()
 
+
+"""
+Checks whether or not all the values in the number controls are valid.
+"""
+func is_valid():
+	var pt = $MarginContainer/VBoxContainer/PathContainer/PathText
+
+	# Let the user know they have not set an export directory
+	if pt.get_text() == "":
+		_show_error_dialog("You must set a file path to export to.")
+
+		return false
+
+	# Make sure all the number controls have valid values in them
+	if not $MarginContainer/VBoxContainer/DimsContainer/WidthText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/DimsContainer/HeightText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/MarginContainer/LeftText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/MarginContainer/TopText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/ProjDirContainer/XText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/ProjDirContainer/YText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/StrokeWidthContainer/WidthText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/StrokeColorContainer/RText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/StrokeColorContainer/GText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/StrokeColorContainer/BText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/HColorContainer/RText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/HColorContainer/GText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/HColorContainer/BText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/SectionContainer/StartHeightText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/SectionContainer/EndHeightText.is_valid:
+		return false
+	if not $MarginContainer/VBoxContainer/SectionContainer/StepsText.is_valid:
+		return false
 
 """
 Called to export a single file to the local file system.
