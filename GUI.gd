@@ -454,7 +454,7 @@ func _on_MakeButton_button_down():
 		$ToolbarPopupPanel.hide()
 	else:
 		$ToolbarPopupPanel.rect_position = Vector2(pos.x, pos.y + size.y)
-		$ToolbarPopupPanel.rect_size = Vector2(100, 75)
+		$ToolbarPopupPanel.rect_size = Vector2(100, 100)
 		$ToolbarPopupPanel.show()
 
 	# Add the STL export button
@@ -474,6 +474,12 @@ func _on_MakeButton_button_down():
 	svg_item.set_text("SVG")
 	svg_item.connect("button_down", self, "_show_export_svg")
 	$ToolbarPopupPanel/ToolbarPopupVBox.add_child(svg_item)
+
+	# Add the DXF export button
+	var dxf_item = Button.new()
+	dxf_item.set_text("DXF")
+	dxf_item.connect("button_down", self, "_show_export_dxf")
+	$ToolbarPopupPanel/ToolbarPopupVBox.add_child(dxf_item)
 
 
 """
@@ -589,11 +595,19 @@ func _show_export_step():
 
 
 """
-Sets up and shows the export dialog for SVG
+Sets up and shows the export dialog for SVG.
 """
 func _show_export_svg():
 	$ToolbarPopupPanel.hide()
 	$ExportSVGDialog.popup_centered()
+
+
+"""
+Sets up and shows the export dialog for DXF.
+"""
+func _show_export_dxf():
+	$ToolbarPopupPanel.hide()
+	$ExportDXFDialog.popup_centered()
 
 """
 Called when the user selects an export file location.
