@@ -309,6 +309,13 @@ class cqgi_interface(Node):
 				for result in build_result.results:
 					# Export the STEP to the temporary location in the user data directory
 					success = result.shape.val().exportStep(export_path)
+			elif export_type == "dxf":
+				for result in build_result.results:
+					# Export the DXF to the temporary location in the user data directory
+					exporters.export(result.shape, export_path, exporters.ExportTypes.DXF)
+
+					# Export the SVG to the temporary location in the user data directory
+					success = True
 			elif export_type == "svg":
 					# Export the SVG to the temporary location in the user data directory
 					success = True
