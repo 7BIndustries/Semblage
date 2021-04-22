@@ -103,41 +103,41 @@ static func collect_pairs(tree):
 Used to move an item up the order of items in the tree.
 """
 static func move_tree_item_up(tree, selected):
+	var i = 0
+	var up_index = -1
+	var up_item = null
+	var items = []
 	var cur_item = tree.get_root().get_children()
 
-	# To keep track of where we are in the order of child nodes
-	var i = 0
-	var selected_index = 0
-	var tree_nodes = []
-
-	# Search the tree and update the matchine entry in the tree
+	# Get all the items in the tree so that we can reorder them
 	while true:
 		if cur_item == null or selected == null:
 			break
 		else:
-			# If we have a text match, update the matching TreeItem's text
-			if cur_item.get_text(0) == selected.get_text(0):
-				selected_index = i - 1
-
-				# Insert the selected item before the current one unless
-				# it cannot go any higher
-				if selected_index > 0:
-					tree_nodes.insert(selected_index, cur_item.get_text(0))
-				else:
-					tree_nodes.append(cur_item.get_text(0))
+			# Make sure the selected item gets re-inserted before the current item
+			if cur_item.get_text(0) == selected.get_text(0) and i > 0:
+				up_index = i - 1
+				up_item = cur_item.get_text(0)
 			else:
-				tree_nodes.append(cur_item.get_text(0))
+				items.append(cur_item.get_text(0))
 
-			# Get the next item while deleting the current one
-			var cur_item_temp = cur_item
-			cur_item = cur_item.get_next()
-			cur_item_temp.free()
+		# Remove the item since we have a copy of it to re-insert
+		tree.get_root().remove_child(cur_item)
+
+		# Move to the next item
+		i += 1
+		cur_item = cur_item.get_next()
+
+	i = 0
+	# Add all of the nodes back, inserting the one that we need to move up
+	for item in items:
+		# Insert the selected item up one index from where it was
+		if up_index == i:
+			add_item_to_tree(up_item, tree, tree.get_root())
+
+		add_item_to_tree(item, tree, tree.get_root())
 
 		i += 1
-
-	# Add all of the nodes back to the tree in the new order
-	for node in tree_nodes:
-		add_item_to_tree(node, tree, tree.get_root())
 
 
 """
