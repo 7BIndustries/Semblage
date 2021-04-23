@@ -90,7 +90,15 @@ func activate_edit_mode(component_text, item_text):
 	if popup_action == null:
 		return
 
-	var action_key = item_text.split(".")[1].split("(")[0]
+	# Filter out leading workplanes from any potential action keys
+	var action_key = item_text
+	var rgx = RegEx.new()
+	rgx.compile("^\\.workplane\\(.*\\)\\.")
+	var res = rgx.search(item_text)
+	if res:
+		action_key = item_text.replace(res.get_string(), ".")
+
+	action_key = action_key.split(".")[1].split("(")[0]
 
 	# Show the popup
 	activate_popup(component_text, true)
@@ -109,6 +117,7 @@ func activate_edit_mode(component_text, item_text):
 
 	if parts.size() > 1 and \
 			item_text.begins_with(".Workplane(") == false and \
+			item_text.begins_with(".workplane(") == false and \
 			item_text.begins_with(".faces(") == false and \
 			item_text.begins_with(".edges(") == false and \
 			item_text.begins_with(".vertices(") == false:

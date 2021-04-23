@@ -49,6 +49,13 @@ so that an edit may be performed.
 static func find_matching_edit_trigger(code_text):
 	var matching_action = {}
 
+	# Check to see if there is a leading workplane entry
+	var rgx = RegEx.new()
+	rgx.compile("^\\.workplane\\(.*\\)\\.")
+	var res = rgx.search(code_text)
+	if res:
+		code_text = code_text.replace(res.get_string(), ".")
+
 	# Step through all the possible triggers, looking for matches
 	for trigger in Triggers.get_triggers().keys():
 		var trig_rgx = RegEx.new()

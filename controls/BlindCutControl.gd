@@ -10,7 +10,7 @@ var wp_template = ".workplane(invert={invert})"
 var dist_edit_rgx = "(?<=.cutBlind\\()(.*?)(?=,clean)"
 var clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\,)"
 var taper_edit_rgx = "(?<=taper\\=)(.*?)(?=\\))"
-var wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
+var wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\).cutBlind)"
 
 var distance_ctrl = null
 var clean_ctrl = null
@@ -25,7 +25,9 @@ func _ready():
 	distance_lbl.set_text("Distance to Cut: ")
 	distance_group.add_child(distance_lbl)
 	distance_ctrl = NumberEdit.new()
+	distance_ctrl.CanBeNegative = true
 	distance_ctrl.set_text("1.0")
+	distance_ctrl.hint_tooltip = "Distance to extrude before cutting (> 0.0 means in the positive direction of the workplane normal, < 0.0 means in the negative direction)."
 	distance_group.add_child(distance_ctrl)
 	add_child(distance_group)
 
@@ -36,6 +38,7 @@ func _ready():
 	clean_group.add_child(clean_lbl)
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
+	clean_ctrl.hint_tooltip = "Call clean on the underlying CAD object afterwards to have a clean shape."
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
 
@@ -47,6 +50,7 @@ func _ready():
 	taper_ctrl = NumberEdit.new()
 	taper_ctrl.CanBeNegative = true
 	taper_ctrl.set_text("0.0")
+	taper_ctrl.hint_tooltip = "Angle for optional tapered extrusion."
 	taper_group.add_child(taper_ctrl)
 	add_child(taper_group)
 
