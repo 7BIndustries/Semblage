@@ -28,6 +28,7 @@ func _ready():
 	hole_dia_group.add_child(hole_dia_lbl)
 	hole_dia_ctrl = NumberEdit.new()
 	hole_dia_ctrl.set_text("2.5")
+	hole_dia_ctrl.hint_tooltip = "Diameter of the main hole."
 	hole_dia_group.add_child(hole_dia_ctrl)
 	add_child(hole_dia_group)
 
@@ -38,6 +39,7 @@ func _ready():
 	hole_depth_group.add_child(hole_depth_lbl)
 	hole_depth_ctrl = NumberEdit.new()
 	hole_depth_ctrl.set_text("0")
+	hole_depth_ctrl.hint_tooltip = "Depth of the main hole. Setting to 0 causes it to go all\nthe way through the object it is being placed in."
 	hole_depth_group.add_child(hole_depth_ctrl)
 	add_child(hole_depth_group)
 
@@ -48,6 +50,7 @@ func _ready():
 	cbore_dia_group.add_child(cbore_dia_lbl)
 	cbore_dia_ctrl = NumberEdit.new()
 	cbore_dia_ctrl.set_text("5.0")
+	cbore_dia_ctrl.hint_tooltip = "Diameter of the counter-bore hole. This diameter\nshould be larger than that of the main hole."
 	cbore_dia_group.add_child(cbore_dia_ctrl)
 	add_child(cbore_dia_group)
 
@@ -58,6 +61,7 @@ func _ready():
 	cbore_depth_group.add_child(cbore_depth_lbl)
 	cbore_depth_ctrl = NumberEdit.new()
 	cbore_depth_ctrl.set_text("3.0")
+	cbore_depth_ctrl.hint_tooltip = "Depth of the counter-bore hole. This depth should be\nless than that of the main hole."
 	cbore_depth_group.add_child(cbore_depth_ctrl)
 	add_child(cbore_depth_group)
 
@@ -68,6 +72,7 @@ func _ready():
 	clean_group.add_child(clean_lbl)
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
+	clean_ctrl.hint_tooltip = "Whether to clean the resulting geometry. If the CAD kernel\nis yielding invalid results, try disabling this."
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
 

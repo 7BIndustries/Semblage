@@ -61,6 +61,7 @@ func _ready():
 	invert_group.add_child(invert_lbl)
 	invert_ctrl = CheckBox.new()
 	invert_ctrl.pressed = false
+	invert_ctrl.hint_tooltip = "Flip the normal for the operation to the opposite direction."
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
 

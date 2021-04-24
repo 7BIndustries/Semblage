@@ -37,6 +37,7 @@ func _ready():
 	wp_cen_group.add_child(wp_cen_lbl)
 	wp_cen_ctrl = OptionButton.new()
 	Common.load_option_button(wp_cen_ctrl, center_option_list)
+	wp_cen_ctrl.hint_tooltip = "How the local origin of the workplane is determined. CenterOfBoundBox chooses the\ncenter of the smallest box that the geometry will fit inside of. CenterOfMass is essentially\nthe center of gravity of the geometry, and varies dependeing on whether material is added\nor removed from an object, and whether that material is removed asymmetrically.\nProjectedOrigin projects the center of the old workplane onto the workplane that is being\ncreated."
 	wp_cen_group.add_child(wp_cen_ctrl)
 	add_child(wp_cen_group)
 
@@ -47,6 +48,7 @@ func _ready():
 	invert_group.add_child(invert_lbl)
 	invert_ctrl = CheckBox.new()
 	invert_ctrl.pressed = false
+	invert_ctrl.hint_tooltip = "Flip the normal of the workplane to the opposite direction."
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
 
