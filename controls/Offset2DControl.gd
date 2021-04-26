@@ -6,13 +6,13 @@ var prev_template = null
 
 var template = ".offset2D({thickness},kind=\"{kind}\")"
 
-var thickness_edit_rgx = "(?<=.offset2D\\()(.*?)(?=,kind)"
-var kind_edit_rgx = "(?<=kind\\=)(.*?)(?=\\))"
+const thickness_edit_rgx = "(?<=.offset2D\\()(.*?)(?=,kind)"
+const kind_edit_rgx = "(?<=kind\\=)(.*?)(?=\\))"
 
 var thickness_ctrl = null
 var kind_ctrl = null
 
-var kind_list = ["arc", "intersection", "tangent"]
+const kind_list = ["arc", "intersection", "tangent"]
 
 
 # Called when the node enters the scene tree for the first time.
@@ -24,6 +24,8 @@ func _ready():
 	thickness_group.add_child(x_length_lbl)
 	thickness_ctrl = NumberEdit.new()
 	thickness_ctrl.set_text("1.0")
+	thickness_ctrl.CanBeNegative = true
+	thickness_ctrl.hint_tooltip = ToolTips.get_tts().offset2d_thickness_ctrl_hint_tooltip
 	thickness_group.add_child(thickness_ctrl)
 	add_child(thickness_group)
 
@@ -34,6 +36,7 @@ func _ready():
 	kind_group.add_child(kind_lbl)
 	kind_ctrl = OptionButton.new()
 	Common.load_option_button(kind_ctrl, kind_list)
+	kind_ctrl.hint_tooltip = ToolTips.get_tts().offset2d_kind_ctrl_hint_tooltip
 	kind_group.add_child(kind_ctrl)
 	add_child(kind_group)
 

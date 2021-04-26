@@ -7,12 +7,12 @@ var prev_template = null
 var template = ".extrude({distance},combine={combine},clean={clean},both={both},taper={taper})"
 var wp_template = ".workplane(invert={invert})"
 
-var dist_edit_rgx = "(?<=.extrude\\()(.*?)(?=,combine)"
-var combine_edit_rgx = "(?<=combine\\=)(.*?)(?=\\,)"
-var clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\,)"
-var both_edit_rgx = "(?<=both\\=)(.*?)(?=\\,)"
-var taper_edit_rgx = "(?<=taper\\=)(.*?)(?=\\))"
-var wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
+const dist_edit_rgx = "(?<=.extrude\\()(.*?)(?=,combine)"
+const combine_edit_rgx = "(?<=combine\\=)(.*?)(?=\\,)"
+const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\,)"
+const both_edit_rgx = "(?<=both\\=)(.*?)(?=\\,)"
+const taper_edit_rgx = "(?<=taper\\=)(.*?)(?=\\))"
+const wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
 
 var distance_ctrl = null
 var combine_ctrl = null
@@ -30,6 +30,7 @@ func _ready():
 	distance_group.add_child(distance_lbl)
 	distance_ctrl = NumberEdit.new()
 	distance_ctrl.set_text("1.0")
+	distance_ctrl.hint_tooltip = ToolTips.get_tts().extrude_distance_ctrl_hint_tooltip
 	distance_group.add_child(distance_ctrl)
 
 	add_child(distance_group)
@@ -41,6 +42,7 @@ func _ready():
 	combine_group.add_child(combine_lbl)
 	combine_ctrl = CheckBox.new()
 	combine_ctrl.pressed = true
+	combine_ctrl.hint_tooltip = ToolTips.get_tts().combine_ctrl_hint_tooltip
 	combine_group.add_child(combine_ctrl)
 
 	add_child(combine_group)
@@ -52,6 +54,7 @@ func _ready():
 	clean_group.add_child(clean_lbl)
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
+	clean_ctrl.hint_tooltip = ToolTips.get_tts().clean_ctrl_hint_tooltip
 	clean_group.add_child(clean_ctrl)
 
 	add_child(clean_group)
@@ -63,6 +66,7 @@ func _ready():
 	both_group.add_child(both_lbl)
 	both_ctrl = CheckBox.new()
 	both_ctrl.pressed = false
+	both_ctrl.hint_tooltip = ToolTips.get_tts().extrude_both_ctrl_hint_tooltip
 	both_group.add_child(both_ctrl)
 
 	add_child(both_group)
@@ -75,6 +79,7 @@ func _ready():
 	taper_ctrl = NumberEdit.new()
 	taper_ctrl.CanBeNegative = true
 	taper_ctrl.set_text("0.0")
+	taper_ctrl.hint_tooltip = ToolTips.get_tts().taper_ctrl_hint_tooltip
 	taper_group.add_child(taper_ctrl)
 
 	add_child(taper_group)
@@ -86,6 +91,7 @@ func _ready():
 	invert_group.add_child(invert_lbl)
 	invert_ctrl = CheckBox.new()
 	invert_ctrl.pressed = false
+	invert_ctrl.hint_tooltip = ToolTips.get_tts().invert_ctrl_hint_tooltip
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
 

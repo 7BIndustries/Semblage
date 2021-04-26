@@ -9,9 +9,9 @@ var asym_length_ctrl = null
 
 var template = ".chamfer({chamfer_length},length2={asym_length})"
 
-var len_edit_rgx = "(?<=.chamfer\\()(.*?)(?=,length2)"
-var asym_len_edit_rgx = "(?<=length2\\=)(.*?)(?=\\))"
-var select_edit_rgx = "^.faces\\(.*\\)\\.edges\\(.*\\)\\."
+const len_edit_rgx = "(?<=.chamfer\\()(.*?)(?=,length2)"
+const asym_len_edit_rgx = "(?<=length2\\=)(.*?)(?=\\))"
+const select_edit_rgx = "^.faces\\(.*\\)\\.edges\\(.*\\)\\."
 
 func _ready():
 	var length_group = HBoxContainer.new()
@@ -22,10 +22,9 @@ func _ready():
 	length_lbl.set_text("Length: ")
 	length_group.add_child(length_lbl)
 	length_ctrl = NumberEdit.new()
-	length_ctrl.MinValue = 0.000001
-	length_ctrl.MaxValue = 99999999
+	length_ctrl.CanBeZero = false
 	length_ctrl.set_text("0.1")
-	length_ctrl.hint_tooltip = "Length of the chamfer. Must be > 0."
+	length_ctrl.hint_tooltip = ToolTips.get_tts().chamfer_length_ctrl_hint_tooltip
 	length_group.add_child(length_ctrl)
 	add_child(length_group)
 
@@ -35,7 +34,7 @@ func _ready():
 	asym_length_group.add_child(asym_length_lbl)
 	asym_length_ctrl = NumberEdit.new()
 	asym_length_ctrl.set_text("0")
-	asym_length_ctrl.hint_tooltip = "Can be set to > 0 for an asymmetrical chamfer."
+	asym_length_ctrl.hint_tooltip = ToolTips.get_tts().chamfer_asym_length_ctrl_hint_tooltip
 	asym_length_group.add_child(asym_length_ctrl)
 	add_child(asym_length_group)
 

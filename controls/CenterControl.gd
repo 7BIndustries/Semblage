@@ -6,7 +6,7 @@ var prev_template = null
 
 var template = ".center({x_coord},{y_coord})"
 
-var dims_edit_rgx = "(?<=.center\\()(.*?)(?=\\))"
+const dims_edit_rgx = "(?<=.center\\()(.*?)(?=\\))"
 
 var x_coord_ctrl = null
 var y_coord_ctrl = null
@@ -22,7 +22,7 @@ func _ready():
 	dims_group.add_child(x_length_lbl)
 	x_coord_ctrl = NumberEdit.new()
 	x_coord_ctrl.set_text("1.0")
-	x_coord_ctrl.hint_tooltip = "Shift local X coordinate to the specified location. Used to adjust the\ncenter point after it has been created automatically on a face, but is\nnot where it needs to be."
+	x_coord_ctrl.hint_tooltip = ToolTips.get_tts().center_x_coord_ctrl_hint_tooltip
 	dims_group.add_child(x_coord_ctrl)
 	# Y coordinate
 	var y_length_lbl = Label.new()
@@ -30,7 +30,7 @@ func _ready():
 	dims_group.add_child(y_length_lbl)
 	y_coord_ctrl = NumberEdit.new()
 	y_coord_ctrl.set_text("1.0")
-	y_coord_ctrl.hint_tooltip = "Shift local Y coordinate to the specified location. Used to adjust the\ncenter point after it has been created automatically on a face, but is\nnot where it needs to be."
+	y_coord_ctrl.hint_tooltip = ToolTips.get_tts().center_y_coord_ctrl_hint_tooltip
 	dims_group.add_child(y_coord_ctrl)
 
 	add_child(dims_group)

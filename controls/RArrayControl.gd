@@ -6,8 +6,8 @@ var prev_template = null
 
 var template = ".rarray({xSpacing},{ySpacing},{xCount},{yCount},center={centered})"
 
-var dims_edit_rgx = "(?<=.rarray\\()(.*?)(?=,center)"
-var centered_edit_rgx = "(?<=center\\=)(.*?)(?=\\))"
+const dims_edit_rgx = "(?<=.rarray\\()(.*?)(?=,center)"
+const centered_edit_rgx = "(?<=center\\=)(.*?)(?=\\))"
 
 var x_spacing_ctrl = null
 var y_spacing_ctrl = null
@@ -30,6 +30,8 @@ func _ready():
 	spacing_group.add_child(x_spacing_lbl)
 	x_spacing_ctrl = NumberEdit.new()
 	x_spacing_ctrl.set_text("1.0")
+	x_spacing_ctrl.CanBeZero = false
+	x_spacing_ctrl.hint_tooltip = ToolTips.get_tts().rarray_x_spacing_ctrl_hint_tooltip
 	spacing_group.add_child(x_spacing_ctrl)
 	# Y spacing
 	var y_spacing_lbl = Label.new()
@@ -37,6 +39,8 @@ func _ready():
 	spacing_group.add_child(y_spacing_lbl)
 	y_spacing_ctrl = NumberEdit.new()
 	y_spacing_ctrl.set_text("1.0")
+	y_spacing_ctrl.CanBeZero = false
+	y_spacing_ctrl.hint_tooltip = ToolTips.get_tts().rarray_y_spacing_ctrl_hint_tooltip
 	spacing_group.add_child(y_spacing_ctrl)
 	add_child(spacing_group)
 
@@ -53,6 +57,8 @@ func _ready():
 	x_count_ctrl = NumberEdit.new()
 	x_count_ctrl.NumberFormat = "int"
 	x_count_ctrl.set_text("1")
+	x_count_ctrl.CanBeZero = false
+	x_count_ctrl.hint_tooltip = ToolTips.get_tts().rarray_x_count_ctrl_hint_tooltip
 	count_group.add_child(x_count_ctrl)
 	# Y spacing
 	var y_count_lbl = Label.new()
@@ -61,6 +67,8 @@ func _ready():
 	y_count_ctrl = NumberEdit.new()
 	x_count_ctrl.NumberFormat = "int"
 	y_count_ctrl.set_text("1")
+	y_count_ctrl.CanBeZero = false
+	y_count_ctrl.hint_tooltip = ToolTips.get_tts().rarray_y_count_ctrl_hint_tooltip
 	count_group.add_child(y_count_ctrl)
 	add_child(count_group)
 
@@ -71,6 +79,7 @@ func _ready():
 	centered_group.add_child(centered_lbl)
 	centered_ctrl = CheckBox.new()
 	centered_ctrl.pressed = true
+	centered_ctrl.hint_tooltip = "If checked, the array will be centered around the workplane center.\nIf unchecked, the lower corner will be on the reference point and\nthe array will extend in the positive x and y directions. Can also use\na 2-tuple to specify centering along each axis."
 	centered_group.add_child(centered_ctrl)
 	add_child(centered_group)
 

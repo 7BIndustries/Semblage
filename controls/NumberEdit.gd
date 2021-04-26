@@ -4,6 +4,7 @@ class_name NumberEdit
 
 export(String, "float", "int") var NumberFormat
 export(bool) var CanBeNegative
+export(bool) var CanBeZero = true
 export(int) var MinValue
 export(int) var MaxValue
 
@@ -45,6 +46,11 @@ func _gui_input(event):
 
 			is_valid = false
 		elif not CanBeNegative and (txt.left(1) == "-" or float(txt) < 0.0):
+			self.invalid_lbl.show()
+			self.hint_tooltip = "Must be >= 0"
+
+			is_valid = false
+		elif not CanBeZero and (txt.left(1) == "-" or float(txt) <= 0.0):
 			self.invalid_lbl.show()
 			self.hint_tooltip = "Must be > 0"
 

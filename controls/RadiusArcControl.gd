@@ -6,9 +6,9 @@ var prev_template = null
 
 var template = ".radiusArc(endPoint=({end_point_x},{end_point_y}),radius={radius},forConstruction={for_construction})"
 
-var end_point_edit_rgx = "(?<=endPoint\\=)(.*?)(?=,radius)"
-var radius_edit_rgx = "(?<=radius\\=)(.*?)(?=\\,forConstruction)"
-var const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
+const end_point_edit_rgx = "(?<=endPoint\\=)(.*?)(?=,radius)"
+const radius_edit_rgx = "(?<=radius\\=)(.*?)(?=\\,forConstruction)"
+const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 
 var end_point_x_ctrl = null
 var end_point_y_ctrl = null
@@ -30,6 +30,7 @@ func _ready():
 	end_point_group.add_child(x_length_lbl)
 	end_point_x_ctrl = NumberEdit.new()
 	end_point_x_ctrl.set_text("12.0")
+	end_point_x_ctrl.hint_tooltip = ToolTips.get_tts().radius_arc_end_point_x_ctrl_hint_tooltip
 	end_point_group.add_child(end_point_x_ctrl)
 	# End Point Y
 	var y_lbl = Label.new()
@@ -37,6 +38,7 @@ func _ready():
 	end_point_group.add_child(y_lbl)
 	end_point_y_ctrl = NumberEdit.new()
 	end_point_y_ctrl.set_text("0.0")
+	end_point_y_ctrl.hint_tooltip = ToolTips.get_tts().radius_arc_end_point_y_ctrl_hint_tooltip
 	end_point_group.add_child(end_point_y_ctrl)
 
 	add_child(end_point_group)
@@ -49,6 +51,7 @@ func _ready():
 	radius_ctrl = NumberEdit.new()
 	radius_ctrl.CanBeNegative = true
 	radius_ctrl.set_text("-10.0")
+	radius_ctrl.hint_tooltip = ToolTips.get_tts().radius_arc_radius_ctrl_hint_tooltip
 	radius_group.add_child(radius_ctrl)
 	add_child(radius_group)
 
@@ -59,6 +62,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
+	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
 	const_group.add_child(for_construction_ctrl)
 
 	add_child(const_group)
