@@ -6,9 +6,9 @@ var prev_template = null
 
 var template = ".slot2D(length={length},diameter={diameter},angle={angle})"
 
-var length_edit_rgx = "(?<=.slot2D\\(length\\=)(.*?)(?=,diameter)"
-var diameter_edit_rgx = "(?<=\\,diameter\\=)(.*?)(?=,angle)"
-var angle_edit_rgx = "(?<=\\,angle\\=)(.*?)(?=\\))"
+const length_edit_rgx = "(?<=.slot2D\\(length\\=)(.*?)(?=,diameter)"
+const diameter_edit_rgx = "(?<=\\,diameter\\=)(.*?)(?=,angle)"
+const angle_edit_rgx = "(?<=\\,angle\\=)(.*?)(?=\\))"
 
 var length_ctrl = null
 var diameter_ctrl = null
@@ -23,6 +23,7 @@ func _ready():
 	length_group.add_child(length_lbl)
 	length_ctrl = NumberEdit.new()
 	length_ctrl.set_text("5.0")
+	length_ctrl.hint_tooltip = ToolTips.get_tts().slot_length_ctrl_hint_tooltip
 	length_group.add_child(length_ctrl)
 	add_child(length_group)
 
@@ -33,6 +34,7 @@ func _ready():
 	diameter_group.add_child(diameter_lbl)
 	diameter_ctrl = NumberEdit.new()
 	diameter_ctrl.set_text("0.5")
+	diameter_ctrl.hint_tooltip = ToolTips.get_tts().slot_diameter_ctrl_hint_tooltip
 	diameter_group.add_child(diameter_ctrl)
 	add_child(diameter_group)
 
@@ -44,6 +46,7 @@ func _ready():
 	angle_ctrl = NumberEdit.new()
 	angle_ctrl.MaxValue = 360.0
 	angle_ctrl.set_text("0")
+	angle_ctrl.hint_tooltip = ToolTips.get_tts().slot_angle_ctrl_hint_tooltip
 	angle_group.add_child(angle_ctrl)
 	add_child(angle_group)
 

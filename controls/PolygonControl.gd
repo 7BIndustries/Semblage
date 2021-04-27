@@ -6,9 +6,9 @@ var prev_template = null
 
 var template = ".polygon(nSides={nSides},diameter={diameter},forConstruction={for_construction})"
 
-var nsides_edit_rgx = "(?<=nSides\\=)(.*?)(?=,diameter)"
-var dia_edit_rgx = "(?<=diameter\\=)(.*?)(?=\\,forConstruction)"
-var const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
+const nsides_edit_rgx = "(?<=nSides\\=)(.*?)(?=,diameter)"
+const dia_edit_rgx = "(?<=diameter\\=)(.*?)(?=\\,forConstruction)"
+const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 
 var nsides_ctrl = null
 var dia_ctrl = null
@@ -25,6 +25,9 @@ func _ready():
 	nsides_ctrl = NumberEdit.new()
 	nsides_ctrl.NumberFormat = "int"
 	nsides_ctrl.set_text("5")
+	nsides_ctrl.MinValue = 4
+	nsides_ctrl.MaxValue = 999
+	nsides_ctrl.hint_tooltip = ToolTips.get_tts().polygon_nsides_ctrl_hint_tooltip
 	nsides_group.add_child(nsides_ctrl)
 	add_child(nsides_group)
 
@@ -35,6 +38,7 @@ func _ready():
 	dia_group.add_child(dia_lbl)
 	dia_ctrl = NumberEdit.new()
 	dia_ctrl.set_text("10.0")
+	dia_ctrl.hint_tooltip = ToolTips.get_tts().polygon_dia_ctrl_hint_tooltip
 	dia_group.add_child(dia_ctrl)
 	add_child(dia_group)
 
@@ -45,6 +49,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
+	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
 	const_group.add_child(for_construction_ctrl)
 
 	add_child(const_group)

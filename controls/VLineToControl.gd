@@ -6,8 +6,8 @@ var prev_template = null
 
 var template = ".vLineTo({yCoord},forConstruction={for_construction})"
 
-var dims_edit_rgx = "(?<=.vLineTo\\()(.*?)(?=,forConstruction)"
-var const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
+const dims_edit_rgx = "(?<=.vLineTo\\()(.*?)(?=,forConstruction)"
+const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 
 var y_coord_ctrl = null
 var for_construction_ctrl = null
@@ -24,6 +24,7 @@ func _ready():
 	y_coord_group.add_child(y_coord_lbl)
 	y_coord_ctrl = NumberEdit.new()
 	y_coord_ctrl.set_text("1.0")
+	y_coord_ctrl.hint_tooltip = ToolTips.get_tts().vline_to_y_coord_ctrl_hint_tooltip
 	y_coord_group.add_child(y_coord_ctrl)
 	add_child(y_coord_group)
 
@@ -34,6 +35,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
+	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
 	const_group.add_child(for_construction_ctrl)
 
 	add_child(const_group)

@@ -251,15 +251,6 @@ static func get_triggers():
 				"control": CloseControl.new()
 			}
 		},
-		"ellipse": {
-			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".ellipse(.*)$",
-			"action": {
-				"name": "ellipse",
-				"group": "2D",
-				"control": EllipseControl.new()
-			}
-		},
 		"ellipseArc": {
 			"trigger": "\\..*(.*)$",
 			"edit_trigger": ".ellipseArc(.*)$",
@@ -267,6 +258,15 @@ static func get_triggers():
 				"name": "ellipseArc",
 				"group": "2D",
 				"control": EllipseArcControl.new()
+			}
+		},
+		"ellipse": {
+			"trigger": "\\..*(.*)$",
+			"edit_trigger": ".ellipse(.*)$",
+			"action": {
+				"name": "ellipse",
+				"group": "2D",
+				"control": EllipseControl.new()
 			}
 		},
 		"hLine": {

@@ -8,12 +8,12 @@ var template = ".spline(listOfXYTuple=[{listOfXYTuple}],tangents=[{tangents}],pe
 
 var prev_template = null
 
-var tuple_edit_rgx = "(?<=listOfXYTuple\\=)(.*?)(?=\\,tangents)"
-var tangents_edit_rgx = "(?<=tangents\\=)(.*?)(?=\\,periodic)"
-var periodic_edit_rgx = "(?<=periodic\\=)(.*?)(?=\\,forConstruction)"
-var construction_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\,includeCurrent)"
-var current_edit_rgx = "(?<=includeCurrent\\=)(.*?)(?=\\,makeWire)"
-var wire_edit_rgx = "(?<=makeWire\\=)(.*?)(?=\"\\))"
+const tuple_edit_rgx = "(?<=listOfXYTuple\\=)(.*?)(?=\\,tangents)"
+const tangents_edit_rgx = "(?<=tangents\\=)(.*?)(?=\\,periodic)"
+const periodic_edit_rgx = "(?<=periodic\\=)(.*?)(?=\\,forConstruction)"
+const construction_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\,includeCurrent)"
+const current_edit_rgx = "(?<=includeCurrent\\=)(.*?)(?=\\,makeWire)"
+const wire_edit_rgx = "(?<=makeWire\\=)(.*?)(?=\"\\))"
 
 var tuple_x_ctrl = null
 var tuple_y_ctrl = null
@@ -43,6 +43,7 @@ func _ready():
 	pos_group.add_child(x_length_lbl)
 	tuple_x_ctrl = NumberEdit.new()
 	tuple_x_ctrl.set_text("10.0")
+	tuple_x_ctrl.hint_tooltip = ToolTips.get_tts().spline_tuple_x_ctrl_hint_tooltip
 	pos_group.add_child(tuple_x_ctrl)
 	# Y pos
 	var y_length_lbl = Label.new()
@@ -50,6 +51,7 @@ func _ready():
 	pos_group.add_child(y_length_lbl)
 	tuple_y_ctrl = NumberEdit.new()
 	tuple_y_ctrl.set_text("10.0")
+	tuple_y_ctrl.hint_tooltip = ToolTips.get_tts().spline_tuple_y_ctrl_hint_tooltip
 	pos_group.add_child(tuple_y_ctrl)
 	add_child(pos_group)
 
@@ -58,12 +60,14 @@ func _ready():
 	# Button to add the current tuple to the list
 	var add_tuple_btn = Button.new()
 	add_tuple_btn.icon = load("res://assets/icons/add_tree_item_button_flat_ready.svg")
+	add_tuple_btn.hint_tooltip = ToolTips.get_tts().spline_add_tuple_btn_hint_tooltip
 	add_tuple_btn.connect("button_down", self, "_add_tuple")
 	tuple_btn_group.add_child(add_tuple_btn)
 
 	# Button to remove the current tuple from the list
 	var delete_tuple_btn = Button.new()
 	delete_tuple_btn.icon = load("res://assets/icons/delete_tree_item_button_flat_ready.svg")
+	delete_tuple_btn.hint_tooltip = ToolTips.get_tts().spline_delete_tuple_btn_hint_tooltip
 	delete_tuple_btn.connect("button_down", self, "_delete_tuple")
 	tuple_btn_group.add_child(delete_tuple_btn)
 
@@ -95,6 +99,7 @@ func _ready():
 	tan_group.add_child(x_tan_lbl)
 	tan_x_ctrl = NumberEdit.new()
 	tan_x_ctrl.set_text("1.0")
+	tan_x_ctrl.hint_tooltip = ToolTips.get_tts().spline_tan_x_ctrl_hint_tooltip
 	tan_group.add_child(tan_x_ctrl)
 	# Tan Y
 	var y_tan_lbl = Label.new()
@@ -102,6 +107,7 @@ func _ready():
 	tan_group.add_child(y_tan_lbl)
 	tan_y_ctrl = NumberEdit.new()
 	tan_y_ctrl.set_text("1.0")
+	tan_y_ctrl.hint_tooltip = ToolTips.get_tts().spline_tan_y_ctrl_hint_tooltip
 	tan_group.add_child(tan_y_ctrl)
 	add_child(tan_group)
 
@@ -109,11 +115,13 @@ func _ready():
 	# Button to add the current tuple to the list
 	var add_tan_btn = Button.new()
 	add_tan_btn.icon = load("res://assets/icons/add_tree_item_button_flat_ready.svg")
+	add_tan_btn.hint_tooltip = ToolTips.get_tts().spline_add_tan_btn_hint_tooltip
 	add_tan_btn.connect("button_down", self, "_add_tan")
 	tan_btn_group.add_child(add_tan_btn)
 	add_child(tan_btn_group)
 	var delete_tan_btn = Button.new()
 	delete_tan_btn.icon = load("res://assets/icons/delete_tree_item_button_flat_ready.svg")
+	delete_tan_btn.hint_tooltip = ToolTips.get_tts().spline_delete_tan_btn_hint_tooltip
 	delete_tan_btn.connect("button_down", self, "_delete_tan")
 	tan_btn_group.add_child(delete_tan_btn)
 	add_child(tan_btn_group)
@@ -139,6 +147,7 @@ func _ready():
 	periodic_group.add_child(periodic_lbl)
 	periodic_ctrl = CheckBox.new()
 	periodic_ctrl.pressed = false
+	periodic_ctrl.hint_tooltip = ToolTips.get_tts().spline_periodic_ctrl_hint_tooltip
 	periodic_group.add_child(periodic_ctrl)
 	add_child(periodic_group)
 
@@ -149,6 +158,7 @@ func _ready():
 	construction_group.add_child(construction_lbl)
 	construction_ctrl = CheckBox.new()
 	construction_ctrl.pressed = false
+	construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
 	construction_group.add_child(construction_ctrl)
 	add_child(construction_group)
 
@@ -159,6 +169,7 @@ func _ready():
 	current_group.add_child(current_lbl)
 	current_ctrl = CheckBox.new()
 	current_ctrl.pressed = false
+	current_ctrl.hint_tooltip = ToolTips.get_tts().include_ctrl_hint_tooltip
 	current_group.add_child(current_ctrl)
 	add_child(current_group)
 
@@ -169,6 +180,7 @@ func _ready():
 	wire_group.add_child(wire_lbl)
 	wire_ctrl = CheckBox.new()
 	wire_ctrl.pressed = false
+	wire_ctrl.hint_tooltip = ToolTips.get_tts().arc_make_wire_ctrl_hint_tooltip
 	wire_group.add_child(wire_ctrl)
 	add_child(wire_group)
 

@@ -8,13 +8,17 @@ var height_ctrl = null
 var cen_x_ctrl = null
 var cen_y_ctrl = null
 var cen_z_ctrl = null
+var combine_ctrl = null
+var clean_ctrl = null
 
 var prev_template = null
 
-var template = ".box({length},{width},{height},centered=({centered_x},{centered_y},{centered_z}))"
+var template = ".box({length},{width},{height},centered=({centered_x},{centered_y},{centered_z}),combine={combine},clean={clean})"
 
-var dims_edit_rgx = "(?<=.box\\()(.*?)(?=,centered)"
-var centered_edit_rgx = "(?<=centered\\=\\()(.*?)(?=\\))"
+const dims_edit_rgx = "(?<=.box\\()(.*?)(?=,centered)"
+const centered_edit_rgx = "(?<=centered\\=\\()(.*?)(?=\\)\\,)"
+const combine_edit_rgx = "(?<=combine\\=)(.*?)(?=\\,)"
+const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\))"
 
 func _ready():
 	# Add a label for the box size group controls
@@ -30,6 +34,7 @@ func _ready():
 	size_group.add_child(length_ctrl_lbl)
 	length_ctrl = NumberEdit.new()
 	length_ctrl.set_text("10.0")
+	length_ctrl.hint_tooltip = ToolTips.get_tts().box_length_ctrl_hint_tooltip
 	size_group.add_child(length_ctrl)
 	# Width
 	var width_ctrl_lbl = Label.new()
@@ -37,6 +42,7 @@ func _ready():
 	size_group.add_child(width_ctrl_lbl)
 	width_ctrl = NumberEdit.new()
 	width_ctrl.set_text("10.0")
+	width_ctrl.hint_tooltip = ToolTips.get_tts().box_width_ctrl_hint_tooltip
 	size_group.add_child(width_ctrl)
 	# Height
 	var height_ctrl_lbl = Label.new()
@@ -44,6 +50,7 @@ func _ready():
 	size_group.add_child(height_ctrl_lbl)
 	height_ctrl = NumberEdit.new()
 	height_ctrl.set_text("10.0")
+	height_ctrl.hint_tooltip = ToolTips.get_tts().box_height_ctrl_hint_tooltip
 	size_group.add_child(height_ctrl)
 	
 	add_child(size_group)
@@ -60,6 +67,7 @@ func _ready():
 	centered_group.add_child(cen_x_lbl)
 	cen_x_ctrl = CheckBox.new()
 	cen_x_ctrl.pressed = true
+	cen_x_ctrl.hint_tooltip = ToolTips.get_tts().cen_x_ctrl_hint_tooltip
 	centered_group.add_child(cen_x_ctrl)
 	# Y
 	var cen_y_lbl = Label.new()
@@ -67,6 +75,7 @@ func _ready():
 	centered_group.add_child(cen_y_lbl)
 	cen_y_ctrl = CheckBox.new()
 	cen_y_ctrl.pressed = true
+	cen_y_ctrl.hint_tooltip = ToolTips.get_tts().cen_y_ctrl_hint_tooltip
 	centered_group.add_child(cen_y_ctrl)
 	# Z
 	var cen_z_lbl = Label.new()
@@ -74,10 +83,34 @@ func _ready():
 	centered_group.add_child(cen_z_lbl)
 	cen_z_ctrl = CheckBox.new()
 	cen_z_ctrl.pressed = true
+	cen_z_ctrl.hint_tooltip = ToolTips.get_tts().cen_z_ctrl_hint_tooltip
 	centered_group.add_child(cen_z_ctrl)
 
 	add_child(centered_group)
 
+	# Add the combine checkbox
+	var combine_group = HBoxContainer.new()
+	var combine_lbl = Label.new()
+	combine_lbl.set_text("Combine: ")
+	combine_group.add_child(combine_lbl)
+	combine_ctrl = CheckBox.new()
+	combine_ctrl.pressed = true
+	combine_ctrl.hint_tooltip = ToolTips.get_tts().combine_ctrl_hint_tooltip
+	combine_group.add_child(combine_ctrl)
+
+	add_child(combine_group)
+
+	# Add the clean checkbox
+	var clean_group = HBoxContainer.new()
+	var clean_lbl = Label.new()
+	clean_lbl.set_text("Clean: ")
+	clean_group.add_child(clean_lbl)
+	clean_ctrl = CheckBox.new()
+	clean_ctrl.pressed = true
+	clean_ctrl.hint_tooltip = ToolTips.get_tts().clean_ctrl_hint_tooltip
+	clean_group.add_child(clean_ctrl)
+
+	add_child(clean_group)
 
 """
 Checks whether or not all the values in the controls are valid.
@@ -104,7 +137,9 @@ func get_completed_template():
 		"height": height_ctrl.get_text(),
 		"centered_x": cen_x_ctrl.pressed,
 		"centered_y": cen_y_ctrl.pressed,
-		"centered_z": cen_z_ctrl.pressed
+		"centered_z": cen_z_ctrl.pressed,
+		"combine": combine_ctrl.pressed,
+		"clean": clean_ctrl.pressed
 		})
 
 	return complete
@@ -145,3 +180,17 @@ func set_values_from_string(text_line):
 		cen_x_ctrl.pressed = true if lwh[0] == "True" else false
 		cen_y_ctrl.pressed = true if lwh[1] == "True" else false
 		cen_z_ctrl.pressed = true if lwh[2] == "True" else false
+
+	# Combine boolean
+	rgx.compile(combine_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		var comb = res.get_string()
+		combine_ctrl.pressed = true if comb == "True" else false
+
+	# Clean boolean
+	rgx.compile(clean_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		var clean = res.get_string()
+		clean_ctrl.pressed = true if clean == "True" else false

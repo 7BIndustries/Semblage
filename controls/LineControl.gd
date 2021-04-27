@@ -6,8 +6,8 @@ var prev_template = null
 
 var template = ".line({xDist},{yDist},forConstruction={for_construction})"
 
-var dims_edit_rgx = "(?<=.line\\()(.*?)(?=,forConstruction)"
-var const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
+const dims_edit_rgx = "(?<=.line\\()(.*?)(?=,forConstruction)"
+const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 
 var x_dist_ctrl = null
 var y_dist_ctrl = null
@@ -25,6 +25,7 @@ func _ready():
 	dims_group.add_child(x_dist_lbl)
 	x_dist_ctrl = NumberEdit.new()
 	x_dist_ctrl.set_text("1.0")
+	x_dist_ctrl.hint_tooltip = ToolTips.get_tts().line_x_dist_ctrl_hint_tooltip
 	dims_group.add_child(x_dist_ctrl)
 	# Y coord
 	var y_dist_lbl = Label.new()
@@ -32,6 +33,7 @@ func _ready():
 	dims_group.add_child(y_dist_lbl)
 	y_dist_ctrl = NumberEdit.new()
 	y_dist_ctrl.set_text("1.0")
+	y_dist_ctrl.hint_tooltip = ToolTips.get_tts().line_y_dist_ctrl_hint_tooltip
 	dims_group.add_child(y_dist_ctrl)
 
 	add_child(dims_group)
@@ -43,6 +45,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
+	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
 	const_group.add_child(for_construction_ctrl)
 
 	add_child(const_group)

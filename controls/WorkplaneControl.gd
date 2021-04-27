@@ -21,18 +21,18 @@ var normal_x_ctrl = null
 var normal_y_ctrl = null
 var normal_z_ctrl = null
 
-var workplane_list = ["XY", "YZ", "XZ"]
-var center_option_list = ["CenterOfBoundBox", "CenterOfMass", "ProjectedOrigin"]
+const workplane_list = ["XY", "YZ", "XZ"]
+const center_option_list = ["CenterOfBoundBox", "CenterOfMass", "ProjectedOrigin"]
 
 var advanced_group = null
 
-var wp_name_edit_rgx = "(?<=.Workplane\\(\")(.*?)(?=\"\\))"
-var wp_cen_edit_rgx = "(?<=centerOption\\=\")(.*?)(?=\"\\))"
-var invert_edit_rgx = "(?<=invert\\=)(.*?)(?=,centerOption)"
-var origin_edit_rgx = "(?<=origin\\=\\()(.*?)(?=\\))"
-var xdir_edit_rgx = "(?<=xdir\\=\\()(.*?)(?=\\))"
-var normal_edit_rgx = "(?<=normal\\=\\()(.*?)(?=\\))"
-var tag_edit_rgx = "(?<=.tag\\(\")(.*?)(?=\"\\))"
+const wp_name_edit_rgx = "(?<=.Workplane\\(\")(.*?)(?=\"\\))"
+const wp_cen_edit_rgx = "(?<=centerOption\\=\")(.*?)(?=\"\\))"
+const invert_edit_rgx = "(?<=invert\\=)(.*?)(?=,centerOption)"
+const origin_edit_rgx = "(?<=origin\\=\\()(.*?)(?=\\))"
+const xdir_edit_rgx = "(?<=xdir\\=\\()(.*?)(?=\\))"
+const normal_edit_rgx = "(?<=normal\\=\\()(.*?)(?=\\))"
+const tag_edit_rgx = "(?<=.tag\\(\")(.*?)(?=\"\\))"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -44,6 +44,7 @@ func _ready():
 	wp_name_ctrl = LineEdit.new()
 	wp_name_ctrl.expand_to_text_length = true
 	wp_name_ctrl.set_text("Change")
+	wp_name_ctrl.hint_tooltip = ToolTips.get_tts().wp_name_ctrl_hint_tooltip
 	name_group.add_child(wp_name_ctrl)
 	add_child(name_group)
 
@@ -54,6 +55,7 @@ func _ready():
 	wp_group.add_child(wp_lbl)
 	wp_ctrl = OptionButton.new()
 	Common.load_option_button(wp_ctrl, workplane_list)
+	wp_ctrl.hint_tooltip = ToolTips.get_tts().wp_ctrl_hint_tooltip
 	wp_group.add_child(wp_ctrl)
 	add_child(wp_group)
 
@@ -64,6 +66,7 @@ func _ready():
 	wp_cen_group.add_child(wp_cen_lbl)
 	wp_cen_ctrl = OptionButton.new()
 	Common.load_option_button(wp_cen_ctrl, center_option_list)
+	wp_cen_ctrl.hint_tooltip = ToolTips.get_tts().wp_cen_ctrl_hint_tooltip
 	wp_cen_group.add_child(wp_cen_ctrl)
 	add_child(wp_cen_group)
 
@@ -74,12 +77,14 @@ func _ready():
 	invert_group.add_child(invert_lbl)
 	invert_ctrl = CheckBox.new()
 	invert_ctrl.pressed = false
+	invert_ctrl.hint_tooltip = ToolTips.get_tts().invert_ctrl_hint_tooltip
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
 
 	# Allow the user to show and hide the advanced workplane controls
 	var hide_show_btn = Button.new()
 	hide_show_btn.set_text("Advanced")
+	hide_show_btn.hint_tooltip = ToolTips.get_tts().wp_hide_show_btn_hint_tooltip
 	hide_show_btn.connect("button_down", self, "_show_advanced")
 	add_child(hide_show_btn)
 
@@ -96,6 +101,7 @@ func _ready():
 	origin_group.add_child(x_lbl)
 	origin_x_ctrl = NumberEdit.new()
 	origin_x_ctrl.set_text("0")
+	origin_x_ctrl.hint_tooltip = ToolTips.get_tts().wp_origin_x_ctrl_hint_tooltip
 	origin_group.add_child(origin_x_ctrl)
 	# Origin Y
 	var y_lbl = Label.new()
@@ -103,6 +109,7 @@ func _ready():
 	origin_group.add_child(y_lbl)
 	origin_y_ctrl = NumberEdit.new()
 	origin_y_ctrl.set_text("0")
+	origin_y_ctrl.hint_tooltip = ToolTips.get_tts().wp_origin_y_ctrl_hint_tooltip
 	origin_group.add_child(origin_y_ctrl)
 	# Origin Z
 	var z_lbl = Label.new()
@@ -110,6 +117,7 @@ func _ready():
 	origin_group.add_child(z_lbl)
 	origin_z_ctrl = NumberEdit.new()
 	origin_z_ctrl.set_text("0")
+	origin_z_ctrl.hint_tooltip = ToolTips.get_tts().wp_origin_z_ctrl_hint_tooltip
 	origin_group.add_child(origin_z_ctrl)
 
 	advanced_group.add_child(origin_group)
@@ -125,6 +133,7 @@ func _ready():
 	xdir_group.add_child(xdir_x_lbl)
 	xdir_x_ctrl = NumberEdit.new()
 	xdir_x_ctrl.set_text("1")
+	xdir_x_ctrl.hint_tooltip = ToolTips.get_tts().wp_xdir_x_ctrl_hint_tooltip
 	xdir_group.add_child(xdir_x_ctrl)
 	# XDir Y
 	var xdir_y_lbl = Label.new()
@@ -132,6 +141,7 @@ func _ready():
 	xdir_group.add_child(xdir_y_lbl)
 	xdir_y_ctrl = NumberEdit.new()
 	xdir_y_ctrl.set_text("0")
+	xdir_y_ctrl.hint_tooltip = ToolTips.get_tts().wp_xdir_y_ctrl_hint_tooltip
 	xdir_group.add_child(xdir_y_ctrl)
 	# XDir Z
 	var xdir_z_lbl = Label.new()
@@ -139,6 +149,7 @@ func _ready():
 	xdir_group.add_child(xdir_z_lbl)
 	xdir_z_ctrl = NumberEdit.new()
 	xdir_z_ctrl.set_text("0")
+	xdir_z_ctrl.hint_tooltip = ToolTips.get_tts().wp_xdir_z_ctrl_hint_tooltip
 	xdir_group.add_child(xdir_z_ctrl)
 
 	advanced_group.add_child(xdir_group)
@@ -154,6 +165,7 @@ func _ready():
 	normal_group.add_child(norm_x_lbl)
 	normal_x_ctrl = NumberEdit.new()
 	normal_x_ctrl.set_text("0")
+	normal_x_ctrl.hint_tooltip = ToolTips.get_tts().wp_normal_x_ctrl_hint_tooltip
 	normal_group.add_child(normal_x_ctrl)
 	# Normal Y
 	var norm_y_lbl = Label.new()
@@ -161,6 +173,7 @@ func _ready():
 	normal_group.add_child(norm_y_lbl)
 	normal_y_ctrl = NumberEdit.new()
 	normal_y_ctrl.set_text("0")
+	normal_y_ctrl.hint_tooltip = ToolTips.get_tts().wp_normal_y_ctrl_hint_tooltip
 	normal_group.add_child(normal_y_ctrl)
 	# Normal Z
 	var norm_z_lbl = Label.new()
@@ -168,6 +181,7 @@ func _ready():
 	normal_group.add_child(norm_z_lbl)
 	normal_z_ctrl = NumberEdit.new()
 	normal_z_ctrl.set_text("1")
+	normal_z_ctrl.hint_tooltip = ToolTips.get_tts().wp_normal_z_ctrl_hint_tooltip
 	normal_group.add_child(normal_z_ctrl)
 
 	advanced_group.add_child(normal_group)

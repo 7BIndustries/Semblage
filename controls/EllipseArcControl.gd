@@ -6,14 +6,16 @@ var prev_template = null
 
 var template = ".ellipseArc({x_radius},{y_radius},angle1={angle1},angle2={angle2},rotation_angle={rotation_angle},sense={sense},forConstruction={forConstruction},startAtCurrent={startAtCurrent},makeWire={makeWire})"
 
-var radius_edit_rgx = "(?<=.ellipseArc\\()(.*?)(?=,angle1)"
-var angle1_edit_rgx = "(?<=angle1\\=)(.*?)(?=\\,angle2)"
-var angle2_edit_rgx = "(?<=angle2\\=)(.*?)(?=\\,rotation_angle)"
-var rotation_angle_edit_rgx = "(?<=rotation_angle\\=)(.*?)(?=\\,sense)"
-var sense_edit_rgx = "(?<=sense\\=)(.*?)(?=\\,forConstruction)"
-var for_construction_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\,startAtCurrent)"
-var start_at_current_edit_rgx = "(?<=startAtCurrent\\=)(.*?)(?=\\,makeWire)"
-var make_wire_edit_rgx = "(?<=makeWire\\=)(.*?)(?=\\))"
+const radius_edit_rgx = "(?<=.ellipseArc\\()(.*?)(?=,angle1)"
+const angle1_edit_rgx = "(?<=angle1\\=)(.*?)(?=\\,angle2)"
+const angle2_edit_rgx = "(?<=angle2\\=)(.*?)(?=\\,rotation_angle)"
+const rotation_angle_edit_rgx = "(?<=rotation_angle\\=)(.*?)(?=\\,sense)"
+const sense_edit_rgx = "(?<=sense\\=)(.*?)(?=\\,forConstruction)"
+const for_construction_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\,startAtCurrent)"
+const start_at_current_edit_rgx = "(?<=startAtCurrent\\=)(.*?)(?=\\,makeWire)"
+const make_wire_edit_rgx = "(?<=makeWire\\=)(.*?)(?=\\))"
+
+const sense_option_list = ["Clockwise", "Counter-Clockwise"]
 
 var x_radius_ctrl = null
 var y_radius_ctrl = null
@@ -35,6 +37,7 @@ func _ready():
 	x_radius_group.add_child(x_radius_lbl)
 	x_radius_ctrl = NumberEdit.new()
 	x_radius_ctrl.set_text("5.0")
+	x_radius_ctrl.hint_tooltip = ToolTips.get_tts().arc_x_radius_ctrl_hint_tooltip
 	x_radius_group.add_child(x_radius_ctrl)
 	add_child(x_radius_group)
 
@@ -45,6 +48,7 @@ func _ready():
 	y_radius_group.add_child(y_radius_lbl)
 	y_radius_ctrl = NumberEdit.new()
 	y_radius_ctrl.set_text("10.0")
+	y_radius_ctrl.hint_tooltip = ToolTips.get_tts().arc_y_radius_ctrl_hint_tooltip
 	y_radius_group.add_child(y_radius_ctrl)
 	add_child(y_radius_group)
 
@@ -56,6 +60,7 @@ func _ready():
 	angle_1_ctrl = NumberEdit.new()
 	angle_1_ctrl.MaxValue = 360.0
 	angle_1_ctrl.set_text("360.0")
+	angle_1_ctrl.hint_tooltip = ToolTips.get_tts().arc_angle_1_ctrl_hint_tooltip
 	angle_1_group.add_child(angle_1_ctrl)
 	add_child(angle_1_group)
 
@@ -67,6 +72,7 @@ func _ready():
 	angle_2_ctrl = NumberEdit.new()
 	angle_2_ctrl.MaxValue = 360.0
 	angle_2_ctrl.set_text("360.0")
+	angle_2_ctrl.hint_tooltip = ToolTips.get_tts().arc_angle_2_ctrl_hint_tooltip
 	angle_2_group.add_child(angle_2_ctrl)
 	add_child(angle_2_group)
 
@@ -78,6 +84,7 @@ func _ready():
 	rotation_angle_ctrl = NumberEdit.new()
 	rotation_angle_ctrl.MaxValue = 360.0
 	rotation_angle_ctrl.set_text("360.0")
+	rotation_angle_ctrl.hint_tooltip = ToolTips.get_tts().arc_rotation_angle_ctrl_hint_tooltip
 	rotation_angle_group.add_child(rotation_angle_ctrl)
 	add_child(rotation_angle_group)
 
@@ -86,8 +93,9 @@ func _ready():
 	var sense_lbl = Label.new()
 	sense_lbl.set_text("Sense: ")
 	sense_group.add_child(sense_lbl)
-	sense_ctrl = NumberEdit.new()
-	sense_ctrl.set_text("1")
+	sense_ctrl = OptionButton.new()
+	Common.load_option_button(sense_ctrl, sense_option_list)
+	sense_ctrl.hint_tooltip = ToolTips.get_tts().arc_sense_ctrl_hint_tooltip
 	sense_group.add_child(sense_ctrl)
 	add_child(sense_group)
 
@@ -98,6 +106,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
+	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
 	const_group.add_child(for_construction_ctrl)
 	add_child(const_group)
 
@@ -108,6 +117,7 @@ func _ready():
 	start_at_current_group.add_child(start_at_current_lbl)
 	start_at_current_ctrl = CheckBox.new()
 	start_at_current_ctrl.pressed = false
+	start_at_current_ctrl.hint_tooltip = ToolTips.get_tts().arc_start_at_current_ctrl_hint_tooltip
 	start_at_current_group.add_child(start_at_current_ctrl)
 	add_child(start_at_current_group)
 
@@ -118,6 +128,7 @@ func _ready():
 	make_wire_group.add_child(make_wire_lbl)
 	make_wire_ctrl = CheckBox.new()
 	make_wire_ctrl.pressed = false
+	make_wire_ctrl.hint_tooltip = ToolTips.get_tts().arc_make_wire_ctrl_hint_tooltip
 	make_wire_group.add_child(make_wire_ctrl)
 	add_child(make_wire_group)
 
@@ -137,8 +148,6 @@ func is_valid():
 		return false
 	if not rotation_angle_ctrl.is_valid:
 		return false
-	if not sense_ctrl.is_valid:
-		return false
 
 	return true
 
@@ -149,13 +158,20 @@ Fills out the template and returns it.
 func get_completed_template():
 	var complete = ""
 
+	# Get the sense drop-down's value
+	var sen = sense_ctrl.get_item_text(sense_ctrl.get_selected_id())
+	if sen == "Clockwise":
+		sen = "-1"
+	else:
+		sen = "1"
+
 	complete += template.format({
 		"x_radius": x_radius_ctrl.get_text(),
 		"y_radius": y_radius_ctrl.get_text(),
 		"angle1": angle_1_ctrl.get_text(),
 		"angle2": angle_2_ctrl.get_text(),
 		"rotation_angle": rotation_angle_ctrl.get_text(),
-		"sense": sense_ctrl.get_text(),
+		"sense": sen,
 		"forConstruction": for_construction_ctrl.pressed,
 		"startAtCurrent": start_at_current_ctrl.pressed,
 		"makeWire": make_wire_ctrl.pressed
@@ -219,7 +235,12 @@ func set_values_from_string(text_line):
 	if res:
 		# Fill in the rotation angle controls
 		var sense = res.get_string()
-		sense_ctrl.set_text(sense)
+		if sense == "-1":
+			sense = "Clockwise"
+		else:
+			sense = "Counter-Clockwise"
+
+		Common.set_option_btn_by_text(sense_ctrl, sense)
 
 	# For construction
 	rgx.compile(for_construction_edit_rgx)

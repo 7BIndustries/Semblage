@@ -6,8 +6,8 @@ var prev_template = null
 
 var template = ".circle({radius},forConstruction={for_construction})"
 
-var rad_edit_rgx = "(?<=.circle\\()(.*?)(?=,forConstruction)"
-var const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
+const rad_edit_rgx = "(?<=.circle\\()(.*?)(?=,forConstruction)"
+const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 
 var radius_ctrl = null
 var for_construction_ctrl = null
@@ -24,6 +24,7 @@ func _ready():
 	rad_group.add_child(rad_lbl)
 	radius_ctrl = NumberEdit.new()
 	radius_ctrl.set_text("1.0")
+	radius_ctrl.hint_tooltip = ToolTips.get_tts().radius_ctrl_hint_tooltip
 	rad_group.add_child(radius_ctrl)
 	add_child(rad_group)
 
@@ -34,6 +35,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
+	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
 	const_group.add_child(for_construction_ctrl)
 	add_child(const_group)
 

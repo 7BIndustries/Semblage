@@ -6,12 +6,12 @@ var prev_template = null
 
 var template = ".polarArray({radius},startAngle={startAngle},angle={angle},count={count},fill={fill},rotate={rotate})"
 
-var radius_edit_rgx = "(?<=.polarArray\\()(.*?)(?=,startAngle)"
-var start_angle_edit_rgx = "(?<=startAngle\\=)(.*?)(?=\\,angle)"
-var angle_edit_rgx = "(?<=angle\\=)(.*?)(?=\\,count)"
-var count_edit_rgx = "(?<=count\\=)(.*?)(?=\\,fill)"
-var fill_edit_rgx = "(?<=fill\\=)(.*?)(?=\\,rotate)"
-var rotate_edit_rgx = "(?<=rotate\\=)(.*?)(?=\\))"
+const radius_edit_rgx = "(?<=.polarArray\\()(.*?)(?=,startAngle)"
+const start_angle_edit_rgx = "(?<=startAngle\\=)(.*?)(?=\\,angle)"
+const angle_edit_rgx = "(?<=angle\\=)(.*?)(?=\\,count)"
+const count_edit_rgx = "(?<=count\\=)(.*?)(?=\\,fill)"
+const fill_edit_rgx = "(?<=fill\\=)(.*?)(?=\\,rotate)"
+const rotate_edit_rgx = "(?<=rotate\\=)(.*?)(?=\\))"
 
 var radius_ctrl = null
 var start_angle_ctrl = null
@@ -30,6 +30,7 @@ func _ready():
 	rad_group.add_child(rad_lbl)
 	radius_ctrl = NumberEdit.new()
 	radius_ctrl.set_text("1.0")
+	radius_ctrl.hint_tooltip = ToolTips.get_tts().polar_array_radius_ctrl_hint_tooltip
 	rad_group.add_child(radius_ctrl)
 	add_child(rad_group)
 
@@ -41,6 +42,7 @@ func _ready():
 	start_angle_ctrl = NumberEdit.new()
 	start_angle_ctrl.MaxValue = 360.0
 	start_angle_ctrl.set_text("0.0")
+	start_angle_ctrl.hint_tooltip = ToolTips.get_tts().polar_array_start_angle_ctrl_hint_tooltip
 	start_angle_group.add_child(start_angle_ctrl)
 	add_child(start_angle_group)
 
@@ -52,6 +54,7 @@ func _ready():
 	angle_ctrl = NumberEdit.new()
 	angle_ctrl.MaxValue = 360.0
 	angle_ctrl.set_text("360.0")
+	angle_ctrl.hint_tooltip = ToolTips.get_tts().polar_array_angle_ctrl_hint_tooltip
 	angle_group.add_child(angle_ctrl)
 	add_child(angle_group)
 
@@ -63,6 +66,8 @@ func _ready():
 	count_ctrl = NumberEdit.new()
 	count_ctrl.NumberFormat = "int"
 	count_ctrl.set_text("5")
+	count_ctrl.CanBeZero = false
+	count_ctrl.hint_tooltip = ToolTips.get_tts().polar_array_count_ctrl_hint_tooltip
 	count_group.add_child(count_ctrl)
 	add_child(count_group)
 
@@ -73,6 +78,7 @@ func _ready():
 	fill_group.add_child(fill_lbl)
 	fill_ctrl = CheckBox.new()
 	fill_ctrl.pressed = true
+	fill_ctrl.hint_tooltip = ToolTips.get_tts().polar_array_fill_ctrl_hint_tooltip
 	fill_group.add_child(fill_ctrl)
 	add_child(fill_group)
 
@@ -83,6 +89,7 @@ func _ready():
 	rotate_group.add_child(rotate_lbl)
 	rotate_ctrl = CheckBox.new()
 	rotate_ctrl.pressed = true
+	rotate_ctrl.hint_tooltip = ToolTips.get_tts().polar_array_rotate_ctrl_hint_tooltip
 	rotate_group.add_child(rotate_ctrl)
 	add_child(rotate_group)
 

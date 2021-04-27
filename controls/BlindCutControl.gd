@@ -7,10 +7,10 @@ var prev_template = null
 var template = ".cutBlind({distance},clean={clean},taper={taper})"
 var wp_template = ".workplane(invert={invert})"
 
-var dist_edit_rgx = "(?<=.cutBlind\\()(.*?)(?=,clean)"
-var clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\,)"
-var taper_edit_rgx = "(?<=taper\\=)(.*?)(?=\\))"
-var wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
+const dist_edit_rgx = "(?<=.cutBlind\\()(.*?)(?=,clean)"
+const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\,)"
+const taper_edit_rgx = "(?<=taper\\=)(.*?)(?=\\))"
+const wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\).cutBlind)"
 
 var distance_ctrl = null
 var clean_ctrl = null
@@ -25,7 +25,9 @@ func _ready():
 	distance_lbl.set_text("Distance to Cut: ")
 	distance_group.add_child(distance_lbl)
 	distance_ctrl = NumberEdit.new()
+	distance_ctrl.CanBeNegative = true
 	distance_ctrl.set_text("1.0")
+	distance_ctrl.hint_tooltip = ToolTips.get_tts().blind_cut_distance_ctrl_hint_tooltip
 	distance_group.add_child(distance_ctrl)
 	add_child(distance_group)
 
@@ -36,6 +38,7 @@ func _ready():
 	clean_group.add_child(clean_lbl)
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
+	clean_ctrl.hint_tooltip = ToolTips.get_tts().clean_ctrl_hint_tooltip
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
 
@@ -47,6 +50,7 @@ func _ready():
 	taper_ctrl = NumberEdit.new()
 	taper_ctrl.CanBeNegative = true
 	taper_ctrl.set_text("0.0")
+	taper_ctrl.hint_tooltip = ToolTips.get_tts().taper_ctrl_hint_tooltip
 	taper_group.add_child(taper_ctrl)
 	add_child(taper_group)
 
@@ -57,6 +61,7 @@ func _ready():
 	invert_group.add_child(invert_lbl)
 	invert_ctrl = CheckBox.new()
 	invert_ctrl.pressed = false
+	invert_ctrl.hint_tooltip = ToolTips.get_tts().invert_ctrl_hint_tooltip
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
 

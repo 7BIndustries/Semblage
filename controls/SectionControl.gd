@@ -8,7 +8,7 @@ var prev_template = null
 
 var template = ".section({height})"
 
-var height_edit_rgx = "(?<=.section\\()(.*?)(?=\\))"
+const height_edit_rgx = "(?<=.section\\()(.*?)(?=\\))"
 
 
 # Called when the node enters the scene tree for the first time.
@@ -20,6 +20,7 @@ func _ready():
 	height_group.add_child(height_lbl)
 	height_ctrl = NumberEdit.new()
 	height_ctrl.set_text("2.5")
+	height_ctrl.hint_tooltip = ToolTips.get_tts().section_height_ctrl_hint_tooltip
 	height_group.add_child(height_ctrl)
 	add_child(height_group)
 

@@ -6,8 +6,8 @@ var prev_template = null
 
 var template = ".polarLine({distance},{angle},forConstruction={for_construction})"
 
-var dims_edit_rgx = "(?<=.polarLine\\()(.*?)(?=,forConstruction)"
-var const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
+const dims_edit_rgx = "(?<=.polarLine\\()(.*?)(?=,forConstruction)"
+const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 
 var distance_ctrl = null
 var angle_ctrl = null
@@ -23,6 +23,7 @@ func _ready():
 	dist_group.add_child(dist_lbl)
 	distance_ctrl = NumberEdit.new()
 	distance_ctrl.set_text("1.0")
+	distance_ctrl.hint_tooltip = ToolTips.get_tts().polar_line_to_distance_ctrl_hint_tooltip
 	dist_group.add_child(distance_ctrl)
 	add_child(dist_group)
 	
@@ -34,6 +35,7 @@ func _ready():
 	angle_ctrl = NumberEdit.new()
 	angle_ctrl.MaxValue = 360.0
 	angle_ctrl.set_text("1.0")
+	angle_ctrl.hint_tooltip = ToolTips.get_tts().polar_line_angle_ctrl_hint_tooltip
 	angle_group.add_child(angle_ctrl)
 	add_child(angle_group)
 
@@ -44,6 +46,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
+	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
 	const_group.add_child(for_construction_ctrl)
 
 	add_child(const_group)

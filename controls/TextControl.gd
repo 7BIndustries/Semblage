@@ -18,17 +18,17 @@ var prev_template = null
 
 var template = ".text({txt},fontsize={font_size},distance={distance},cut={cut},font={font},fontPath={font_path},kind={kind},halign={halign},valign={valign},combine={combine},clean={clean})"
 
-var txt_edit_rgx = "(?<=.text\\()(.*?)(?=,fontsize)"
-var font_size_edit_rgx = "(?<=fontsize\\=\\()(.*?)(?=,distance)"
-var distance_edit_rgx = "(?<=distance\\=\\()(.*?)(?=,cut)"
-var cut_edit_rgx = "(?<=cut\\=\\()(.*?)(?=,font)"
-var font_edit_rgx = "(?<=font\\=\\()(.*?)(?=,font_path)"
-var font_path_edit_rgx = "(?<=fontPath\\=\\()(.*?)(?=,kind)"
-var kind_edit_rgx = "(?<=kind\\=\\()(.*?)(?=,halign)"
-var halign_edit_rgx = "(?<=halign\\=\\()(.*?)(?=,valign)"
-var valign_edit_rgx = "(?<=valign\\=\\()(.*?)(?=,combine)"
-var combine_edit_rgx = "(?<=combine\\=\\()(.*?)(?=,clean)"
-var clean_edit_rgx = "(?<=clean\\=\\()(.*?)(?=\\))"
+const txt_edit_rgx = "(?<=.text\\()(.*?)(?=,fontsize)"
+const font_size_edit_rgx = "(?<=fontsize\\=\\()(.*?)(?=,distance)"
+const distance_edit_rgx = "(?<=distance\\=\\()(.*?)(?=,cut)"
+const cut_edit_rgx = "(?<=cut\\=\\()(.*?)(?=,font)"
+const font_edit_rgx = "(?<=font\\=\\()(.*?)(?=,font_path)"
+const font_path_edit_rgx = "(?<=fontPath\\=\\()(.*?)(?=,kind)"
+const kind_edit_rgx = "(?<=kind\\=\\()(.*?)(?=,halign)"
+const halign_edit_rgx = "(?<=halign\\=\\()(.*?)(?=,valign)"
+const valign_edit_rgx = "(?<=valign\\=\\()(.*?)(?=,combine)"
+const combine_edit_rgx = "(?<=combine\\=\\()(.*?)(?=,clean)"
+const clean_edit_rgx = "(?<=clean\\=\\()(.*?)(?=\\))"
 
 
 # Called when the node enters the scene tree for the first time.
@@ -41,6 +41,7 @@ func _ready():
 	txt_ctrl = LineEdit.new()
 	txt_ctrl.expand_to_text_length = true
 	txt_ctrl.set_text("Change This")
+	txt_ctrl.hint_tooltip = ToolTips.get_tts().text_txt_ctrl_hint_tooltip
 	txt_group.add_child(txt_ctrl)
 	add_child(txt_group)
 
@@ -52,6 +53,7 @@ func _ready():
 	distance_ctrl = NumberEdit.new()
 	distance_ctrl.expand_to_text_length = true
 	distance_ctrl.set_text("5")
+	distance_ctrl.hint_tooltip = ToolTips.get_tts().text_distance_ctrl_hint_tooltip
 	distance_group.add_child(distance_ctrl)
 	add_child(distance_group)
 
@@ -62,6 +64,7 @@ func _ready():
 	cut_group.add_child(cut_lbl)
 	cut_ctrl = CheckBox.new()
 	cut_ctrl.pressed = false
+	cut_ctrl.hint_tooltip = ToolTips.get_tts().text_cut_ctrl_hint_tooltip
 	cut_group.add_child(cut_ctrl)
 	add_child(cut_group)
 
@@ -72,6 +75,7 @@ func _ready():
 	combine_group.add_child(combine_lbl)
 	combine_ctrl = CheckBox.new()
 	combine_ctrl.pressed = true
+	combine_ctrl.hint_tooltip = ToolTips.get_tts().combine_ctrl_hint_tooltip
 	combine_group.add_child(combine_ctrl)
 	add_child(combine_group)
 
@@ -82,6 +86,7 @@ func _ready():
 	clean_group.add_child(clean_lbl)
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
+	clean_ctrl.hint_tooltip = ToolTips.get_tts().clean_ctrl_hint_tooltip
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
 
@@ -101,6 +106,7 @@ func _ready():
 	font_size_ctrl.expand_to_text_length = true
 	font_size_ctrl.NumberFormat = "int"
 	font_size_ctrl.set_text("12")
+	font_size_ctrl.hint_tooltip = ToolTips.get_tts().text_font_size_ctrl_hint_tooltip
 	font_size_group.add_child(font_size_ctrl)
 	add_child(font_size_group)
 
@@ -112,6 +118,7 @@ func _ready():
 	font_ctrl = LineEdit.new()
 	font_ctrl.expand_to_text_length = true
 	font_ctrl.set_text("Arial")
+	font_ctrl.hint_tooltip = ToolTips.get_tts().text_font_ctrl_hint_tooltip
 	font_group.add_child(font_ctrl)
 	add_child(font_group)
 
@@ -123,6 +130,7 @@ func _ready():
 	font_path_ctrl = LineEdit.new()
 	font_path_ctrl.expand_to_text_length = true
 	font_path_ctrl.set_text("")
+	font_path_ctrl.hint_tooltip = ToolTips.get_tts().text_font_path_ctrl_hint_tooltip
 	font_path_group.add_child(font_path_ctrl)
 	add_child(font_path_group)
 
@@ -133,6 +141,7 @@ func _ready():
 	kind_group.add_child(kind_ctrl_lbl)
 	kind_ctrl = OptionButton.new()
 	Common.load_option_button(kind_ctrl, ["regular", "bold", "italic"])
+	kind_ctrl.hint_tooltip = ToolTips.get_tts().text_font_kind_ctrl_hint_tooltip
 	kind_group.add_child(kind_ctrl)
 	add_child(kind_group)
 
@@ -143,16 +152,18 @@ func _ready():
 	halign_group.add_child(halign_ctrl_lbl)
 	halign_ctrl = OptionButton.new()
 	Common.load_option_button(halign_ctrl, ["center", "left", "right"])
+	halign_ctrl.hint_tooltip = ToolTips.get_tts().text_halign_ctrl_hint_tooltip
 	halign_group.add_child(halign_ctrl)
 	add_child(halign_group)
 
 	# Vertical alignment
 	var valign_group = HBoxContainer.new()
 	var valign_ctrl_lbl = Label.new()
-	valign_ctrl_lbl.set_text("Horizontal Alignment: ")
+	valign_ctrl_lbl.set_text("Vertical Alignment: ")
 	valign_group.add_child(valign_ctrl_lbl)
 	valign_ctrl = OptionButton.new()
 	Common.load_option_button(valign_ctrl, ["center", "top", "bottom"])
+	valign_ctrl.hint_tooltip = ToolTips.get_tts().text_valign_ctrl_hint_tooltip
 	valign_group.add_child(valign_ctrl)
 	add_child(valign_group)
 

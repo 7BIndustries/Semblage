@@ -8,7 +8,7 @@ var radius_ctrl = null
 
 var template = ".fillet({fillet_radius})"
 
-var len_edit_rgx = "(?<=.fillet\\()(.*?)(?=\\))"
+const len_edit_rgx = "(?<=.fillet\\()(.*?)(?=\\))"
 
 func _ready():
 	var radius_group = HBoxContainer.new()
@@ -19,6 +19,8 @@ func _ready():
 	radius_group.add_child(radius_lbl)
 	radius_ctrl = NumberEdit.new()
 	radius_ctrl.set_text("0.1")
+	radius_ctrl.CanBeZero = false
+	radius_ctrl.hint_tooltip = ToolTips.get_tts().fillet_radius_ctrl_hint_tooltip
 	radius_group.add_child(radius_ctrl)
 	add_child(radius_group)
 

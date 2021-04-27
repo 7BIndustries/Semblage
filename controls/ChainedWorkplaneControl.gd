@@ -10,10 +10,10 @@ var invert_ctrl = null
 
 var template = ".workplane(invert={invert},centerOption=\"{center_option}\")" #.tag(\"{comp_name}\")"
 
-var center_option_list = ["CenterOfBoundBox", "CenterOfMass", "ProjectedOrigin"]
+const center_option_list = ["CenterOfBoundBox", "CenterOfMass", "ProjectedOrigin"]
 
-var wp_cen_edit_rgx = "(?<=centerOption\\=\")(.*?)(?=\"\\))"
-var invert_edit_rgx = "(?<=invert\\=)(.*?)(?=,centerOption)"
+const wp_cen_edit_rgx = "(?<=centerOption\\=\")(.*?)(?=\"\\))"
+const invert_edit_rgx = "(?<=invert\\=)(.*?)(?=,centerOption)"
 #var tag_edit_rgx = "(?<=.tag\\(\")(.*?)(?=\"\\))"
 
 
@@ -37,6 +37,7 @@ func _ready():
 	wp_cen_group.add_child(wp_cen_lbl)
 	wp_cen_ctrl = OptionButton.new()
 	Common.load_option_button(wp_cen_ctrl, center_option_list)
+	wp_cen_ctrl.hint_tooltip = ToolTips.get_tts().wp_cen_ctrl_hint_tooltip
 	wp_cen_group.add_child(wp_cen_ctrl)
 	add_child(wp_cen_group)
 
@@ -47,6 +48,7 @@ func _ready():
 	invert_group.add_child(invert_lbl)
 	invert_ctrl = CheckBox.new()
 	invert_ctrl.pressed = false
+	invert_ctrl.hint_tooltip = ToolTips.get_tts().invert_ctrl_hint_tooltip
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
 
