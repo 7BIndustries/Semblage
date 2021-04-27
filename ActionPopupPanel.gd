@@ -38,6 +38,12 @@ func _ready():
 
 	action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
 
+	# Add the tooltips to the group buttons
+	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton.hint_tooltip = ToolTips.get_tts().workplane_button_hint_tooltip
+	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton.hint_tooltip = ToolTips.get_tts().three_d_button_hint_tooltip
+	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton.hint_tooltip = ToolTips.get_tts().sketch_button_hint_tooltip
+	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton.hint_tooltip = ToolTips.get_tts().selector_button_hint_tooltip
+
 	# Create the root of the object tree
 	action_tree_root = action_tree.create_item()
 	action_tree_root.set_text(0, "Actions")

@@ -174,7 +174,20 @@ const tool_tips_english = {
 	wp_offset_ctrl = "Offset distance of the workplane in the direction of the normal.",
 	wp_origin_x_ctrl_hint_tooltip = "X point of the origin of the workplane.",
 	wp_origin_y_ctrl_hint_tooltip = "Y point of the origin of the workplane.",
-	wp_origin_z_ctrl_hint_tooltip = "Z point of the origin of the workplane."
+	wp_origin_z_ctrl_hint_tooltip = "Z point of the origin of the workplane.",
+
+	open_button_hint_tooltip = "Open a CadQuery component file.",
+	save_button_hint_tooltip = "Save the current component, allows Save-as.",
+	make_button_hint_tooltip = "Export the current component for manufacturing.",
+	reload_button_hint_tooltip = "Manually reload the current CadQuery script.",
+	close_button_hint_tooltip = "Close the currently open component.",
+	home_view_button_hint_tooltip = "Move the camera back to the home position.",
+	about_button_hint_tooltip = "Show information about Semblage.",
+
+	workplane_button_hint_tooltip = "Workplane operations",
+	three_d_button_hint_tooltip = "3D operations",
+	sketch_button_hint_tooltip = "2D sketch operations",
+	selector_button_hint_tooltip = "Selector operations"
 }
 
 
