@@ -6,13 +6,13 @@ var prev_template = null
 
 var template = ".shell(thickness={thickness},kind=\"{kind}\")"
 
-var thickness_edit_rgx = "(?<=thickness\\=)(.*?)(?=\\,)"
+const thickness_edit_rgx = "(?<=thickness\\=)(.*?)(?=\\,)"
 var kind_edit_rgx = "(?<=kind\\=\")(.*?)(?=\"\\)"
 
 var thickness_ctrl = null
 var kind_ctrl = null
 
-var kind_list = ["arc", "intersection"]
+const kind_list = ["arc", "intersection"]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -22,7 +22,9 @@ func _ready():
 	thickness_lbl.set_text("Thickness: ")
 	thickness_group.add_child(thickness_lbl)
 	thickness_ctrl = NumberEdit.new()
+	thickness_ctrl.CanBeNegative = true
 	thickness_ctrl.set_text("0.1")
+	thickness_ctrl.hint_tooltip = ToolTips.get_tts().shell_thickness_ctrl_hint_tooltip
 	thickness_group.add_child(thickness_ctrl)
 	add_child(thickness_group)
 
@@ -33,6 +35,7 @@ func _ready():
 	kind_group.add_child(kind_lbl)
 	kind_ctrl = OptionButton.new()
 	Common.load_option_button(kind_ctrl, kind_list)
+	kind_ctrl.hint_tooltip = ToolTips.get_tts().corner_kind_ctrl_hint_tooltip
 	kind_group.add_child(kind_ctrl)
 	add_child(kind_group)
 

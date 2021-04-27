@@ -36,7 +36,7 @@ func _ready():
 	kind_group.add_child(kind_lbl)
 	kind_ctrl = OptionButton.new()
 	Common.load_option_button(kind_ctrl, kind_list)
-	kind_ctrl.hint_tooltip = ToolTips.get_tts().offset2d_kind_ctrl_hint_tooltip
+	kind_ctrl.hint_tooltip = ToolTips.get_tts().corner_kind_ctrl_hint_tooltip
 	kind_group.add_child(kind_ctrl)
 	add_child(kind_group)
 

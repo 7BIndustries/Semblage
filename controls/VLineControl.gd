@@ -6,8 +6,8 @@ var prev_template = null
 
 var template = ".vLine({distance},forConstruction={for_construction})"
 
-var dims_edit_rgx = "(?<=.vLine\\()(.*?)(?=,forConstruction)"
-var const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
+const dims_edit_rgx = "(?<=.vLine\\()(.*?)(?=,forConstruction)"
+const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 
 var dist_ctrl = null
 var for_construction_ctrl = null
@@ -24,6 +24,7 @@ func _ready():
 	dist_group.add_child(dist_lbl)
 	dist_ctrl = NumberEdit.new()
 	dist_ctrl.set_text("1.0")
+	dist_ctrl.hint_tooltip = ToolTips.get_tts().vline_dist_ctrl_hint_tooltip
 	dist_group.add_child(dist_ctrl)
 	add_child(dist_group)
 
@@ -34,6 +35,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
+	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
 	const_group.add_child(for_construction_ctrl)
 
 	add_child(const_group)

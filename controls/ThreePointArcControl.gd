@@ -6,9 +6,9 @@ var prev_template = null
 
 var template = ".threePointArc(point1=({point_1_x},{point_1_y}),point2=({point_2_x},{point_2_y}),forConstruction={for_construction})"
 
-var point1_edit_rgx = "(?<=point1\\=)(.*?)(?=,point2)"
-var point2_edit_rgx = "(?<=point2\\=)(.*?)(?=\\,forConstruction)"
-var const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
+const point1_edit_rgx = "(?<=point1\\=)(.*?)(?=,point2)"
+const point2_edit_rgx = "(?<=point2\\=)(.*?)(?=\\,forConstruction)"
+const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 
 var point_1_x_ctrl = null
 var point_1_y_ctrl = null
@@ -32,6 +32,7 @@ func _ready():
 	point_1_x_ctrl = NumberEdit.new()
 	point_1_x_ctrl.CanBeNegative = true
 	point_1_x_ctrl.set_text("4.0")
+	point_1_x_ctrl.hint_tooltip = ToolTips.get_tts().three_point_arc_point_1_x_ctrl_hint_tooltip
 	point_1_group.add_child(point_1_x_ctrl)
 	# Point 1 Y
 	var y_length_lbl = Label.new()
@@ -40,6 +41,7 @@ func _ready():
 	point_1_y_ctrl = NumberEdit.new()
 	point_1_y_ctrl.CanBeNegative = true
 	point_1_y_ctrl.set_text("0.0")
+	point_1_y_ctrl.hint_tooltip = ToolTips.get_tts().three_point_arc_point_1_y_ctrl_hint_tooltip
 	point_1_group.add_child(point_1_y_ctrl)
 
 	add_child(point_1_group)
@@ -57,6 +59,7 @@ func _ready():
 	point_2_x_ctrl = NumberEdit.new()
 	point_2_x_ctrl.CanBeNegative = true
 	point_2_x_ctrl.set_text("0.0")
+	point_2_x_ctrl.hint_tooltip = ToolTips.get_tts().three_point_arc_point_2_x_ctrl_hint_tooltip
 	point_2_group.add_child(point_2_x_ctrl)
 	# Point 2 Y
 	y_length_lbl = Label.new()
@@ -65,6 +68,7 @@ func _ready():
 	point_2_y_ctrl = NumberEdit.new()
 	point_2_y_ctrl.CanBeNegative = true
 	point_2_y_ctrl.set_text("-4.0")
+	point_2_y_ctrl.hint_tooltip = ToolTips.get_tts().three_point_arc_point_2_y_ctrl_hint_tooltip
 	point_2_group.add_child(point_2_y_ctrl)
 
 	add_child(point_2_group)
@@ -76,6 +80,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
+	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
 	const_group.add_child(for_construction_ctrl)
 
 	add_child(const_group)

@@ -94,7 +94,7 @@ func _ready():
 	current_group.add_child(current_lbl)
 	current_ctrl = CheckBox.new()
 	current_ctrl.pressed = false
-	current_ctrl.hint_tooltip = ToolTips.get_tts().invert_ctrl_hint_tooltip
+	current_ctrl.hint_tooltip = ToolTips.get_tts().include_ctrl_hint_tooltip
 	current_group.add_child(current_ctrl)
 	add_child(current_group)
 

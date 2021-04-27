@@ -19,14 +19,14 @@ var prev_template = null
 
 var template = ".sphere({radius},direct=({direct_x},{direct_y},{direct_z}),angle1={angle1},angle2={angle2},angle3={angle3},centered=({centered_x},{centered_y},{centered_z}),combine={combine},clean={clean})"
 
-var radius_edit_rgx = "(?<=.radius\\()(.*?)(?=,direct)"
-var direct_edit_rgx = "(?<=direct\\=\\()(.*?)(?=\\),angle1)"
-var angle1_edit_rgx = "(?<=angle1\\=\\()(.*?)(?=\\),angle2)"
-var angle2_edit_rgx = "(?<=angle1\\=\\()(.*?)(?=\\),angle3)"
-var angle3_edit_rgx = "(?<=angle1\\=\\()(.*?)(?=\\),centered)"
-var centered_edit_rgx = "(?<=centered\\=\\()(.*?)(?=\\),combine)"
-var combine_edit_rgx = "(?<=combine\\=\\()(.*?)(?=\\),clean)"
-var clean_edit_rgx = "(?<=clean\\=\\()(.*?)(?=\\))"
+const radius_edit_rgx = "(?<=.radius\\()(.*?)(?=,direct)"
+const direct_edit_rgx = "(?<=direct\\=\\()(.*?)(?=\\),angle1)"
+const angle1_edit_rgx = "(?<=angle1\\=\\()(.*?)(?=\\),angle2)"
+const angle2_edit_rgx = "(?<=angle1\\=\\()(.*?)(?=\\),angle3)"
+const angle3_edit_rgx = "(?<=angle1\\=\\()(.*?)(?=\\),centered)"
+const centered_edit_rgx = "(?<=centered\\=\\()(.*?)(?=\\),combine)"
+const combine_edit_rgx = "(?<=combine\\=\\()(.*?)(?=\\),clean)"
+const clean_edit_rgx = "(?<=clean\\=\\()(.*?)(?=\\))"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -37,6 +37,7 @@ func _ready():
 	radius_group.add_child(radius_ctrl_lbl)
 	radius_ctrl = NumberEdit.new()
 	radius_ctrl.set_text("10.0")
+	radius_ctrl.hint_tooltip = ToolTips.get_tts().sphere_radius_ctrl_hint_tooltip
 	radius_group.add_child(radius_ctrl)
 	add_child(radius_group)
 
@@ -52,6 +53,7 @@ func _ready():
 	dir_group.add_child(x_lbl)
 	direct_x_ctrl = NumberEdit.new()
 	direct_x_ctrl.set_text("0")
+	direct_x_ctrl.hint_tooltip = ToolTips.get_tts().sphere_direct_x_ctrl_hint_tooltip
 	dir_group.add_child(direct_x_ctrl)
 	# Direction Y
 	var y_lbl = Label.new()
@@ -59,6 +61,7 @@ func _ready():
 	dir_group.add_child(y_lbl)
 	direct_y_ctrl = NumberEdit.new()
 	direct_y_ctrl.set_text("0")
+	direct_y_ctrl.hint_tooltip = ToolTips.get_tts().sphere_direct_y_ctrl_hint_tooltip
 	dir_group.add_child(direct_y_ctrl)
 	# Direction Z
 	var z_lbl = Label.new()
@@ -66,6 +69,7 @@ func _ready():
 	dir_group.add_child(z_lbl)
 	direct_z_ctrl = NumberEdit.new()
 	direct_z_ctrl.set_text("1")
+	direct_z_ctrl.hint_tooltip = ToolTips.get_tts().sphere_direct_z_ctrl_hint_tooltip
 	dir_group.add_child(direct_z_ctrl)
 
 	direct_group.add_child(dir_group)
@@ -77,8 +81,10 @@ func _ready():
 	angle1_ctrl_lbl.set_text("Angle 1: ")
 	angle1_group.add_child(angle1_ctrl_lbl)
 	angle1_ctrl = NumberEdit.new()
+	angle1_ctrl.CanBeNegative = true
 	angle1_ctrl.MaxValue = 360.0
 	angle1_ctrl.set_text("-90")
+	angle1_ctrl.hint_tooltip = ToolTips.get_tts().sphere_angle1_ctrl_hint_tooltip
 	angle1_group.add_child(angle1_ctrl)
 	add_child(angle1_group)
 
@@ -90,6 +96,7 @@ func _ready():
 	angle2_ctrl = NumberEdit.new()
 	angle2_ctrl.MaxValue = 360.0
 	angle2_ctrl.set_text("90.0")
+	angle2_ctrl.hint_tooltip = ToolTips.get_tts().sphere_angle2_ctrl_hint_tooltip
 	angle2_group.add_child(angle2_ctrl)
 	add_child(angle2_group)
 
@@ -101,6 +108,7 @@ func _ready():
 	angle3_ctrl = NumberEdit.new()
 	angle3_ctrl.MaxValue = 360.0
 	angle3_ctrl.set_text("360.0")
+	angle3_ctrl.hint_tooltip = ToolTips.get_tts().sphere_angle3_ctrl_hint_tooltip
 	angle3_group.add_child(angle3_ctrl)
 	add_child(angle3_group)
 
@@ -116,6 +124,7 @@ func _ready():
 	centered_group.add_child(cen_x_lbl)
 	centered_x_ctrl = CheckBox.new()
 	centered_x_ctrl.pressed = true
+	centered_x_ctrl.hint_tooltip = ToolTips.get_tts().cen_x_ctrl_hint_tooltip
 	centered_group.add_child(centered_x_ctrl)
 	# Y
 	var cen_y_lbl = Label.new()
@@ -123,6 +132,7 @@ func _ready():
 	centered_group.add_child(cen_y_lbl)
 	centered_y_ctrl = CheckBox.new()
 	centered_y_ctrl.pressed = true
+	centered_y_ctrl.hint_tooltip = ToolTips.get_tts().cen_y_ctrl_hint_tooltip
 	centered_group.add_child(centered_y_ctrl)
 	# Z
 	var cen_z_lbl = Label.new()
@@ -130,6 +140,7 @@ func _ready():
 	centered_group.add_child(cen_z_lbl)
 	centered_z_ctrl = CheckBox.new()
 	centered_z_ctrl.pressed = true
+	centered_z_ctrl.hint_tooltip = ToolTips.get_tts().cen_z_ctrl_hint_tooltip
 	centered_group.add_child(centered_z_ctrl)
 	add_child(centered_group)
 
@@ -140,6 +151,7 @@ func _ready():
 	combine_group.add_child(combine_lbl)
 	combine_ctrl = CheckBox.new()
 	combine_ctrl.pressed = true
+	combine_ctrl.hint_tooltip = ToolTips.get_tts().combine_ctrl_hint_tooltip
 	combine_group.add_child(combine_ctrl)
 	add_child(combine_group)
 
@@ -150,6 +162,7 @@ func _ready():
 	clean_group.add_child(clean_lbl)
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
+	clean_ctrl.hint_tooltip = ToolTips.get_tts().clean_ctrl_hint_tooltip
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
 

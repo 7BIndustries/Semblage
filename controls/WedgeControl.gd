@@ -25,12 +25,12 @@ var prev_template = null
 
 var template = ".wedge({dx},{dy},{dz},{xmin},{zmin},{xmax},{zmax},pnt=({pnt_x},{pnt_y},{pnt_z}),dir=({dir_x},{dir_y},{dir_z}),centered=({centered_x},{centered_y},{centered_z}),combine={combine},clean={clean})"
 
-var dims_edit_rgx = "(?<=.wedge\\()(.*?)(?=,pnt)"
-var pnt_edit_rgx = "(?<=pnt\\=\\()(.*?)(?=\\),dir)"
-var dir_edit_rgx = "(?<=dir\\=\\()(.*?)(?=\\),centered)"
-var centered_edit_rgx = "(?<=centered\\=\\()(.*?)(?=\\),combine)"
-var combine_edit_rgx = "(?<=combine\\=\\()(.*?)(?=\\),clean)"
-var clean_edit_rgx = "(?<=clean\\=\\()(.*?)(?=\\))"
+const dims_edit_rgx = "(?<=.wedge\\()(.*?)(?=,pnt)"
+const pnt_edit_rgx = "(?<=pnt\\=\\()(.*?)(?=\\),dir)"
+const dir_edit_rgx = "(?<=dir\\=\\()(.*?)(?=\\),centered)"
+const centered_edit_rgx = "(?<=centered\\=\\()(.*?)(?=\\),combine)"
+const combine_edit_rgx = "(?<=combine\\=\\()(.*?)(?=\\),clean)"
+const clean_edit_rgx = "(?<=clean\\=\\()(.*?)(?=\\))"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -46,6 +46,7 @@ func _ready():
 	dir_group.add_child(x_lbl)
 	dx_ctrl = NumberEdit.new()
 	dx_ctrl.set_text("2.5")
+	dx_ctrl.hint_tooltip = ToolTips.get_tts().wedge_dx_ctrl_hint_tooltip
 	dir_group.add_child(dx_ctrl)
 	# Distance Y
 	var y_lbl = Label.new()
@@ -53,6 +54,7 @@ func _ready():
 	dir_group.add_child(y_lbl)
 	dy_ctrl = NumberEdit.new()
 	dy_ctrl.set_text("5.0")
+	dy_ctrl.hint_tooltip = ToolTips.get_tts().wedge_dy_ctrl_hint_tooltip
 	dir_group.add_child(dy_ctrl)
 	# Distance Z
 	var z_lbl = Label.new()
@@ -60,6 +62,7 @@ func _ready():
 	dir_group.add_child(z_lbl)
 	dz_ctrl = NumberEdit.new()
 	dz_ctrl.set_text("1.0")
+	dz_ctrl.hint_tooltip = ToolTips.get_tts().wedge_dz_ctrl_hint_tooltip
 	dir_group.add_child(dz_ctrl)
 
 	dist_group.add_child(dir_group)
@@ -77,6 +80,7 @@ func _ready():
 	min_group.add_child(x_lbl)
 	xmin_ctrl = NumberEdit.new()
 	xmin_ctrl.set_text("2.5")
+	xmin_ctrl.hint_tooltip = ToolTips.get_tts().wedge_xmin_ctrl_hint_tooltip
 	min_group.add_child(xmin_ctrl)
 	# Distance Z
 	z_lbl = Label.new()
@@ -84,6 +88,7 @@ func _ready():
 	min_group.add_child(z_lbl)
 	zmin_ctrl = NumberEdit.new()
 	zmin_ctrl.set_text("1.0")
+	zmin_ctrl.hint_tooltip = ToolTips.get_tts().wedge_zmin_ctrl_hint_tooltip
 	min_group.add_child(zmin_ctrl)
 
 	minimum_group.add_child(min_group)
@@ -101,6 +106,7 @@ func _ready():
 	max_group.add_child(x_lbl)
 	xmax_ctrl = NumberEdit.new()
 	xmax_ctrl.set_text("2.5")
+	xmax_ctrl.hint_tooltip = ToolTips.get_tts().wedge_xmax_ctrl_hint_tooltip
 	max_group.add_child(xmax_ctrl)
 	# Distance Z
 	z_lbl = Label.new()
@@ -108,6 +114,7 @@ func _ready():
 	max_group.add_child(z_lbl)
 	zmax_ctrl = NumberEdit.new()
 	zmax_ctrl.set_text("1.0")
+	zmax_ctrl.hint_tooltip = ToolTips.get_tts().wedge_zmax_ctrl_hint_tooltip
 	max_group.add_child(zmax_ctrl)
 
 	maximum_group.add_child(max_group)
@@ -125,6 +132,7 @@ func _ready():
 	pnt_group.add_child(x_lbl)
 	pnt_x_ctrl = NumberEdit.new()
 	pnt_x_ctrl.set_text("2.5")
+	pnt_x_ctrl.hint_tooltip = ToolTips.get_tts().wedge_pnt_x_ctrl_hint_tooltip
 	pnt_group.add_child(pnt_x_ctrl)
 	# Origin point Y
 	y_lbl = Label.new()
@@ -132,6 +140,7 @@ func _ready():
 	pnt_group.add_child(y_lbl)
 	pnt_y_ctrl = NumberEdit.new()
 	pnt_y_ctrl.set_text("5.0")
+	pnt_y_ctrl.hint_tooltip = ToolTips.get_tts().wedge_pnt_y_ctrl_hint_tooltip
 	pnt_group.add_child(pnt_y_ctrl)
 	# Origin point Z
 	z_lbl = Label.new()
@@ -139,6 +148,7 @@ func _ready():
 	pnt_group.add_child(z_lbl)
 	pnt_z_ctrl = NumberEdit.new()
 	pnt_z_ctrl.set_text("1.0")
+	pnt_z_ctrl.hint_tooltip = ToolTips.get_tts().wedge_pnt_z_ctrl_hint_tooltip
 	pnt_group.add_child(pnt_z_ctrl)
 
 	point_group.add_child(pnt_group)
@@ -156,6 +166,7 @@ func _ready():
 	d_group.add_child(x_lbl)
 	dir_x_ctrl = NumberEdit.new()
 	dir_x_ctrl.set_text("0")
+	dir_x_ctrl.hint_tooltip = ToolTips.get_tts().wedge_dir_x_ctrl_hint_tooltip
 	d_group.add_child(dir_x_ctrl)
 	# Direction Y
 	y_lbl = Label.new()
@@ -163,6 +174,7 @@ func _ready():
 	d_group.add_child(y_lbl)
 	dir_y_ctrl = NumberEdit.new()
 	dir_y_ctrl.set_text("0")
+	dir_y_ctrl.hint_tooltip = ToolTips.get_tts().wedge_dir_y_ctrl_hint_tooltip
 	d_group.add_child(dir_y_ctrl)
 	# Direction Z
 	z_lbl = Label.new()
@@ -170,6 +182,7 @@ func _ready():
 	d_group.add_child(z_lbl)
 	dir_z_ctrl = NumberEdit.new()
 	dir_z_ctrl.set_text("1")
+	dir_z_ctrl.hint_tooltip = ToolTips.get_tts().wedge_dir_z_ctrl_hint_tooltip
 	d_group.add_child(dir_z_ctrl)
 
 	direction_group.add_child(d_group)
@@ -186,6 +199,7 @@ func _ready():
 	centered_group.add_child(cen_x_lbl)
 	centered_x_ctrl = CheckBox.new()
 	centered_x_ctrl.pressed = true
+	centered_x_ctrl.hint_tooltip = ToolTips.get_tts().cen_x_ctrl_hint_tooltip
 	centered_group.add_child(centered_x_ctrl)
 	# Y
 	var cen_y_lbl = Label.new()
@@ -193,6 +207,7 @@ func _ready():
 	centered_group.add_child(cen_y_lbl)
 	centered_y_ctrl = CheckBox.new()
 	centered_y_ctrl.pressed = true
+	centered_y_ctrl.hint_tooltip = ToolTips.get_tts().cen_y_ctrl_hint_tooltip
 	centered_group.add_child(centered_y_ctrl)
 	# Z
 	var cen_z_lbl = Label.new()
@@ -200,6 +215,7 @@ func _ready():
 	centered_group.add_child(cen_z_lbl)
 	centered_z_ctrl = CheckBox.new()
 	centered_z_ctrl.pressed = true
+	centered_z_ctrl.hint_tooltip = ToolTips.get_tts().cen_z_ctrl_hint_tooltip
 	centered_group.add_child(centered_z_ctrl)
 
 	add_child(centered_group)
@@ -211,6 +227,7 @@ func _ready():
 	combine_group.add_child(combine_lbl)
 	combine_ctrl = CheckBox.new()
 	combine_ctrl.pressed = true
+	combine_ctrl.hint_tooltip = ToolTips.get_tts().combine_ctrl_hint_tooltip
 	combine_group.add_child(combine_ctrl)
 	add_child(combine_group)
 
@@ -221,6 +238,7 @@ func _ready():
 	clean_group.add_child(clean_lbl)
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
+	clean_ctrl.hint_tooltip = ToolTips.get_tts().clean_ctrl_hint_tooltip
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
 
