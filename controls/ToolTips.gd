@@ -187,7 +187,10 @@ const tool_tips_english = {
 	workplane_button_hint_tooltip = "Workplane operations",
 	three_d_button_hint_tooltip = "3D operations",
 	sketch_button_hint_tooltip = "2D sketch operations",
-	selector_button_hint_tooltip = "Selector operations"
+	selector_button_hint_tooltip = "Selector operations",
+
+	workplane_tooltip = "Defines a coordinate system in space in which 2-d coordinates can be used.\nOther geometry and features are placed within this workplane. Start here when\ncreating a new component.",
+	center_tooltip = "Shifts the local coordinates to the specified location.\nThe location is specified in terms of local coordinates.\nThe current point is set to the new center. This method\nis useful to adjust the center point after it has been\ncreated automatically on a face, but not where you\nwould like it to be."
 }
 
 

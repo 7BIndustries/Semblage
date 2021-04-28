@@ -3,6 +3,7 @@ extends LineEdit
 class_name NumberEdit
 
 export(String, "float", "int") var NumberFormat
+export(bool) var CanBeAVariable = true
 export(bool) var CanBeNegative
 export(bool) var CanBeZero = true
 export(int) var MinValue
@@ -35,7 +36,7 @@ func _gui_input(event):
 		var txt = self.get_text()
 
 		# Make sure an integer does not include aa decimal point
-		if not txt.is_valid_float():
+		if not CanBeAVariable and not txt.is_valid_float():
 			self.invalid_lbl.show()
 			self.hint_tooltip = "Enter a valid number"
 
