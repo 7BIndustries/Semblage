@@ -44,6 +44,13 @@ func _ready():
 	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton.hint_tooltip = ToolTips.get_tts().sketch_button_hint_tooltip
 	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton.hint_tooltip = ToolTips.get_tts().selector_button_hint_tooltip
 
+	# Add a tooltip to the modify operation buttons
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.hint_tooltip = ToolTips.get_tts().add_button_hint_tooltip
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/UpdateButton.hint_tooltip = ToolTips.get_tts().update_button_hint_tooltip
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/DeleteButton.hint_tooltip = ToolTips.get_tts().delete_button_hint_tooltip
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveUpButton.hint_tooltip = ToolTips.get_tts().move_up_button_hint_tooltip
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveDownButton.hint_tooltip = ToolTips.get_tts().move_down_button_hint_tooltip
+
 	# Create the root of the object tree
 	action_tree_root = action_tree.create_item()
 	action_tree_root.set_text(0, "Actions")

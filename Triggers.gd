@@ -34,7 +34,8 @@ static func get_triggers():
 			"action": {
 				"name": "Rotate (rotate)",
 				"group": "WP",
-				"control": RotateControl.new()
+				"control": RotateControl.new(),
+				"tooltip": ToolTips.get_tts().rotate_tooltip
 			}
 		},
 		"rotateAboutCenter": {
@@ -43,7 +44,8 @@ static func get_triggers():
 			"action": {
 				"name": "Rotate About Center (rotateAboutCenter)",
 				"group": "WP",
-				"control": RotateAboutCenterControl.new()
+				"control": RotateAboutCenterControl.new(),
+				"tooltip": ToolTips.get_tts().rotate_about_center_tooltip
 			}
 		},
 		"translate": {
@@ -52,7 +54,8 @@ static func get_triggers():
 			"action": {
 				"name": "Translate (translate)",
 				"group": "WP",
-				"control": TranslateControl.new()
+				"control": TranslateControl.new(),
+				"tooltip": ToolTips.get_tts().translate_tooltip
 			}
 		},
 		"faces": {
@@ -88,7 +91,8 @@ static func get_triggers():
 			"action": {
 				"name": "Blind Cut (cutBlind)",
 				"group": "3D",
-				"control": BlindCutControl.new()
+				"control": BlindCutControl.new(),
+				"tooltip": ToolTips.get_tts().cut_blind_tooltip
 			}
 		},
 		"box": {
@@ -97,7 +101,8 @@ static func get_triggers():
 			"action": {
 				"name": "Box (box)",
 				"group": "3D",
-				"control": BoxControl.new()
+				"control": BoxControl.new(),
+				"tooltip": ToolTips.get_tts().box_tooltip
 			}
 		},
 		"chamfer": {
@@ -106,7 +111,8 @@ static func get_triggers():
 			"action": {
 				"name": "Chamfer (chamfer)",
 				"group": "3D",
-				"control": ChamferControl.new()
+				"control": ChamferControl.new(),
+				"tooltip": ToolTips.get_tts().chamfer_tooltip
 			}
 		},
 		"cboreHole": {
@@ -115,7 +121,8 @@ static func get_triggers():
 			"action": {
 				"name": "Counter-Bore Hole (cboreHole)",
 				"group": "3D",
-				"control": CBoreHoleControl.new()
+				"control": CBoreHoleControl.new(),
+				"tooltip": ToolTips.get_tts().cbore_hole_tooltip
 			}
 		},
 		"cskHole": {
@@ -124,7 +131,8 @@ static func get_triggers():
 			"action": {
 				"name": "Counter-Sink Hole (cskHole)",
 				"group": "3D",
-				"control": CSinkHoleControl.new()
+				"control": CSinkHoleControl.new(),
+				"tooltip": ToolTips.get_tts().csk_hole_tooltip
 			}
 		},
 		"extrude": {
@@ -133,7 +141,8 @@ static func get_triggers():
 			"action": {
 				"name": "Extrude (extrude)",
 				"group": "3D",
-				"control": ExtrudeControl.new()
+				"control": ExtrudeControl.new(),
+				"tooltip": ToolTips.get_tts().extrude_tooltip
 			}
 		},
 		"fillet": {
@@ -142,7 +151,8 @@ static func get_triggers():
 			"action": {
 				"name": "Fillet (fillet)",
 				"group": "3D",
-				"control": FilletControl.new()
+				"control": FilletControl.new(),
+				"tooltip": ToolTips.get_tts().fillet_tooltip
 			}
 		},
 		"hole": {
@@ -151,7 +161,8 @@ static func get_triggers():
 			"action": {
 				"name": "Hole (hole)",
 				"group": "3D",
-				"control": HoleControl.new()
+				"control": HoleControl.new(),
+				"tooltip": ToolTips.get_tts().hole_tooltip
 			}
 		},
 		"revolve": {
@@ -160,7 +171,8 @@ static func get_triggers():
 			"action": {
 				"name": "Revolve (revolve)",
 				"group": "3D",
-				"control": RevolveControl.new()
+				"control": RevolveControl.new(),
+				"tooltip": ToolTips.get_tts().revolve_tooltip
 			}
 		},
 		"section": {
@@ -169,7 +181,8 @@ static func get_triggers():
 			"action": {
 				"name": "Section (section)",
 				"group": "3D",
-				"control": SectionControl.new()
+				"control": SectionControl.new(),
+				"tooltip": ToolTips.get_tts().section_tooltip
 			}
 		},
 		"shell": {
@@ -178,7 +191,8 @@ static func get_triggers():
 			"action": {
 				"name": "Shell (shell)",
 				"group": "3D",
-				"control": ShellControl.new()
+				"control": ShellControl.new(),
+				"tooltip": ToolTips.get_tts().shell_tooltip
 			}
 		},
 		"sphere": {
@@ -187,7 +201,8 @@ static func get_triggers():
 			"action": {
 				"name": "Sphere (sphere)",
 				"group": "3D",
-				"control": SphereControl.new()
+				"control": SphereControl.new(),
+				"tooltip": ToolTips.get_tts().sphere_tooltip
 			}
 		},
 		"split": {
@@ -196,7 +211,8 @@ static func get_triggers():
 			"action": {
 				"name": "Split (split)",
 				"group": "3D",
-				"control": SplitControl.new()
+				"control": SplitControl.new(),
+				"tooltip": ToolTips.get_tts().split_tooltip
 			}
 		},
 		"text": {
@@ -205,7 +221,8 @@ static func get_triggers():
 			"action": {
 				"name": "Text (text)",
 				"group": "3D",
-				"control": TextControl.new()
+				"control": TextControl.new(),
+				"tooltip": ToolTips.get_tts().text_tooltip
 			}
 		},
 		"cutThruAll": {
@@ -214,7 +231,8 @@ static func get_triggers():
 			"action": {
 				"name": "Thru Cut (cutThruAll)",
 				"group": "3D",
-				"control": ThruCutControl.new()
+				"control": ThruCutControl.new(),
+				"tooltip": ToolTips.get_tts().thru_cut_tooltip
 			}
 		},
 		"twistExtrude": {
@@ -223,7 +241,8 @@ static func get_triggers():
 			"action": {
 				"name": "Twist Extrude (twistExtrude)",
 				"group": "3D",
-				"control": TwistExtrudeControl.new()
+				"control": TwistExtrudeControl.new(),
+				"tooltip": ToolTips.get_tts().twist_extrude_tooltip
 			}
 		},
 		"wedge": {
@@ -232,7 +251,8 @@ static func get_triggers():
 			"action": {
 				"name": "Wedge (wedge)",
 				"group": "3D",
-				"control": WedgeControl.new()
+				"control": WedgeControl.new(),
+				"tooltip": ToolTips.get_tts().wedge_tooltip
 			}
 		},
 		"circle": {
@@ -241,7 +261,8 @@ static func get_triggers():
 			"action": {
 				"name": "Circle (circle)",
 				"group": "2D",
-				"control": CircleControl.new()
+				"control": CircleControl.new(),
+				"tooltip": ToolTips.get_tts().circle_tooltip
 			}
 		},
 		"close": {
@@ -250,7 +271,8 @@ static func get_triggers():
 			"action": {
 				"name": "Close (close)",
 				"group": "2D",
-				"control": CloseControl.new()
+				"control": CloseControl.new(),
+				"tooltip": ToolTips.get_tts().close_tooltip
 			}
 		},
 		"ellipseArc": {
@@ -259,7 +281,8 @@ static func get_triggers():
 			"action": {
 				"name": "Ellipse Arc (ellipseArc)",
 				"group": "2D",
-				"control": EllipseArcControl.new()
+				"control": EllipseArcControl.new(),
+				"tooltip": ToolTips.get_tts().ellipse_arc_tooltip
 			}
 		},
 		"ellipse": {
@@ -268,7 +291,8 @@ static func get_triggers():
 			"action": {
 				"name": "Ellipse (ellipse)",
 				"group": "2D",
-				"control": EllipseControl.new()
+				"control": EllipseControl.new(),
+				"tooltip": ToolTips.get_tts().ellipse_tooltip
 			}
 		},
 		"hLine": {
@@ -277,7 +301,8 @@ static func get_triggers():
 			"action": {
 				"name": "Horizontal Line (hLine)",
 				"group": "2D",
-				"control": HLineControl.new()
+				"control": HLineControl.new(),
+				"tooltip": ToolTips.get_tts().hline_tooltip
 			}
 		},
 		"hLineTo": {
@@ -286,7 +311,8 @@ static func get_triggers():
 			"action": {
 				"name": "Horizontal Line To (hLineTo)",
 				"group": "2D",
-				"control": HLineToControl.new()
+				"control": HLineToControl.new(),
+				"tooltip": ToolTips.get_tts().hline_to_tooltip
 			}
 		},
 		"line": {
@@ -295,7 +321,8 @@ static func get_triggers():
 			"action": {
 				"name": "Line (line)",
 				"group": "2D",
-				"control": LineControl.new()
+				"control": LineControl.new(),
+				"tooltip": ToolTips.get_tts().line_tooltip
 			}
 		},
 		"lineTo": {
@@ -304,7 +331,8 @@ static func get_triggers():
 			"action": {
 				"name": "Line To (lineTo)",
 				"group": "2D",
-				"control": LineToControl.new()
+				"control": LineToControl.new(),
+				"tooltip": ToolTips.get_tts().line_to_tooltip
 			}
 		},
 		"mirrorX": {
@@ -313,7 +341,8 @@ static func get_triggers():
 			"action": {
 				"name": "Mirror X (mirrorX)",
 				"group": "2D",
-				"control": MirrorXControl.new()
+				"control": MirrorXControl.new(),
+				"tooltip": ToolTips.get_tts().mirror_x_tooltip
 			}
 		},
 		"mirrorY": {
@@ -322,7 +351,8 @@ static func get_triggers():
 			"action": {
 				"name": "Mirror Y (mirrorY)",
 				"group": "2D",
-				"control": MirrorYControl.new()
+				"control": MirrorYControl.new(),
+				"tooltip": ToolTips.get_tts().mirror_y_tooltip
 			}
 		},
 		"move": {
@@ -331,7 +361,8 @@ static func get_triggers():
 			"action": {
 				"name": "Move (move)",
 				"group": "2D",
-				"control": MoveControl.new()
+				"control": MoveControl.new(),
+				"tooltip": ToolTips.get_tts().move_tooltip
 			}
 		},
 		"moveTo": {
@@ -340,7 +371,8 @@ static func get_triggers():
 			"action": {
 				"name": "Move To (moveTo)",
 				"group": "2D",
-				"control": MoveToControl.new()
+				"control": MoveToControl.new(),
+				"tooltip": ToolTips.get_tts().move_to_tooltip
 			}
 		},
 		"offset2D": {
@@ -349,7 +381,8 @@ static func get_triggers():
 			"action": {
 				"name": "Offset (offset2D)",
 				"group": "2D",
-				"control": Offset2DControl.new()
+				"control": Offset2DControl.new(),
+				"tooltip": ToolTips.get_tts().offset_2d_tooltip
 			}
 		},
 		"polarArray": {
@@ -358,7 +391,8 @@ static func get_triggers():
 			"action": {
 				"name": "Polar Array (polarArray)",
 				"group": "2D",
-				"control": PolarArrayControl.new()
+				"control": PolarArrayControl.new(),
+				"tooltip": ToolTips.get_tts().polar_array_tooltip
 			}
 		},
 		"polarLine": {
@@ -367,7 +401,8 @@ static func get_triggers():
 			"action": {
 				"name": "Polar Line (polarLine)",
 				"group": "2D",
-				"control": PolarLineControl.new()
+				"control": PolarLineControl.new(),
+				"tooltip": ToolTips.get_tts().polar_line_tooltip
 			}
 		},
 		"polarLineTo": {
@@ -376,7 +411,8 @@ static func get_triggers():
 			"action": {
 				"name": "Polar Line To (polarLineTo)",
 				"group": "2D",
-				"control": PolarLineToControl.new()
+				"control": PolarLineToControl.new(),
+				"tooltip": ToolTips.get_tts().polar_line_to_tooltip
 			}
 		},
 		"polygon": {
@@ -385,7 +421,8 @@ static func get_triggers():
 			"action": {
 				"name": "Polygon (polygon)",
 				"group": "2D",
-				"control": PolygonControl.new()
+				"control": PolygonControl.new(),
+				"tooltip": ToolTips.get_tts().polygon_tooltip
 			}
 		},
 		"polyline": {
@@ -394,7 +431,8 @@ static func get_triggers():
 			"action": {
 				"name": "Polyline (polyline)",
 				"group": "2D",
-				"control": PolylineControl.new()
+				"control": PolylineControl.new(),
+				"tooltip": ToolTips.get_tts().polyline_tooltip
 			}
 		},
 		"pushPoints": {
@@ -403,7 +441,8 @@ static func get_triggers():
 			"action": {
 				"name": "Push Points (pushPoints)",
 				"group": "2D",
-				"control": PushPointsControl.new()
+				"control": PushPointsControl.new(),
+				"tooltip": ToolTips.get_tts().push_points_tooltip
 			}
 		},
 		"radiusArc": {
@@ -412,7 +451,8 @@ static func get_triggers():
 			"action": {
 				"name": "Radius Arc (radiusArc)",
 				"group": "2D",
-				"control": RadiusArcControl.new()
+				"control": RadiusArcControl.new(),
+				"tooltip": ToolTips.get_tts().radius_arc_tooltip
 			}
 		},
 		"rarray": {
@@ -421,7 +461,8 @@ static func get_triggers():
 			"action": {
 				"name": "Rectangular Array (rarray)",
 				"group": "2D",
-				"control": RArrayControl.new()
+				"control": RArrayControl.new(),
+				"tooltip": ToolTips.get_tts().rarray_tooltip
 			}
 		},
 		"rect": {
@@ -430,7 +471,8 @@ static func get_triggers():
 			"action": {
 				"name": "Rectangle (rect)",
 				"group": "2D",
-				"control": RectControl.new()
+				"control": RectControl.new(),
+				"tooltip": ToolTips.get_tts().rect_tooltip
 			}
 		},
 		"sagittaArc": {
@@ -439,7 +481,8 @@ static func get_triggers():
 			"action": {
 				"name": "Sagitta Arc (sagittaArc)",
 				"group": "2D",
-				"control": SagittaArcControl.new()
+				"control": SagittaArcControl.new(),
+				"tooltip": ToolTips.get_tts().sagitta_arc_tooltip
 			}
 		},
 		"slot2D": {
@@ -448,7 +491,8 @@ static func get_triggers():
 			"action": {
 				"name": "Slot (slot2D)",
 				"group": "2D",
-				"control": SlotControl.new()
+				"control": SlotControl.new(),
+				"tooltip": ToolTips.get_tts().slot_tooltip
 			}
 		},
 		"spline": {
@@ -457,7 +501,8 @@ static func get_triggers():
 			"action": {
 				"name": "Spline (spline)",
 				"group": "2D",
-				"control": SplineControl.new()
+				"control": SplineControl.new(),
+				"tooltip": ToolTips.get_tts().spline_tooltip
 			}
 		},
 		"tangentArcPoint": {
@@ -466,7 +511,8 @@ static func get_triggers():
 			"action": {
 				"name": "Tangent Arc Point (tangentArcPoint)",
 				"group": "2D",
-				"control": TangentArcPointControl.new()
+				"control": TangentArcPointControl.new(),
+				"tooltip": ToolTips.get_tts().tangent_arc_point_tooltip
 			}
 		},
 		"threePointArc": {
@@ -475,7 +521,8 @@ static func get_triggers():
 			"action": {
 				"name": "Three Point Arc (threePointArc)",
 				"group": "2D",
-				"control": ThreePointArcControl.new()
+				"control": ThreePointArcControl.new(),
+				"tooltip": ToolTips.get_tts().three_point_arc_tooltip
 			}
 		},
 		"vLine": {
@@ -484,7 +531,8 @@ static func get_triggers():
 			"action": {
 				"name": "Vertical Line (vLine)",
 				"group": "2D",
-				"control": VLineControl.new()
+				"control": VLineControl.new(),
+				"tooltip": ToolTips.get_tts().vline_tooltip
 			}
 		},
 		"vLineTo": {
@@ -493,7 +541,8 @@ static func get_triggers():
 			"action": {
 				"name": "Vertical Line To (vLineTo)",
 				"group": "2D",
-				"control": VLineToControl.new()
+				"control": VLineToControl.new(),
+				"tooltip": ToolTips.get_tts().vline_to_tooltip
 			}
 		}
 	}
