@@ -4,7 +4,7 @@ extends AcceptDialog
 var semblage_version = "0.1.0-alpha"
 
 var contribs = ["jmwright (GitHub)"]
-var sponsors = ["Ferdinand (Patreon)", "adam-james (Patreon)", "Anonymous", "7B Industries"]
+var sponsors = ["Ferdinand (Patreon)", "adam-james (Patreon)", "IrevDev (Patreon/Twitter)", "Anonymous", "7B Industries"]
 
 var tab_head = "[center][b]Semblage v{semblage_version}[/b]\nOpen Source CAD[/center]"
 var libs = ""

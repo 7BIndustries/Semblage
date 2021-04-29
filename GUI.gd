@@ -51,6 +51,15 @@ func _ready():
 	origin_transform = origin_cam.get_transform()
 	light_transform = light.get_transform()
 
+	# Set the tooltips of the main controls
+	$GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton.hint_tooltip = ToolTips.get_tts().open_button_hint_tooltip
+	$GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton.hint_tooltip = ToolTips.get_tts().save_button_hint_tooltip
+	$GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton.hint_tooltip = ToolTips.get_tts().make_button_hint_tooltip
+	$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.hint_tooltip = ToolTips.get_tts().reload_button_hint_tooltip
+	$GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton.hint_tooltip = ToolTips.get_tts().close_button_hint_tooltip
+	$GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton.hint_tooltip = ToolTips.get_tts().home_view_button_hint_tooltip
+	$GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton.hint_tooltip = ToolTips.get_tts().about_button_hint_tooltip
+
 	# Let the user know the app is ready to use
 	status = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
 	status.text = " Ready"

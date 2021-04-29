@@ -25,7 +25,7 @@ func _ready():
 	nsides_ctrl = NumberEdit.new()
 	nsides_ctrl.NumberFormat = "int"
 	nsides_ctrl.set_text("5")
-	nsides_ctrl.MinValue = 4
+	nsides_ctrl.MinValue = 3
 	nsides_ctrl.MaxValue = 999
 	nsides_ctrl.hint_tooltip = ToolTips.get_tts().polygon_nsides_ctrl_hint_tooltip
 	nsides_group.add_child(nsides_ctrl)

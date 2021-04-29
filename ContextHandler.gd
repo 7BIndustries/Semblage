@@ -214,3 +214,13 @@ static func get_action_for_name(name):
 			return Triggers.get_triggers()[trigger]
 
 	return null
+
+
+"""
+Used to find the help tooltip that is associated with the operation.
+"""
+static func find_action_tooltip_by_name(action_name):
+	for trigger in Triggers.get_triggers().keys():
+		if Triggers.get_triggers()[trigger].action.name == action_name:
+			if Triggers.get_triggers()[trigger].action.has("tooltip"):
+				return Triggers.get_triggers()[trigger].action["tooltip"]

@@ -38,6 +38,19 @@ func _ready():
 
 	action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
 
+	# Add the tooltips to the group buttons
+	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton.hint_tooltip = ToolTips.get_tts().workplane_button_hint_tooltip
+	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton.hint_tooltip = ToolTips.get_tts().three_d_button_hint_tooltip
+	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton.hint_tooltip = ToolTips.get_tts().sketch_button_hint_tooltip
+	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton.hint_tooltip = ToolTips.get_tts().selector_button_hint_tooltip
+
+	# Add a tooltip to the modify operation buttons
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.hint_tooltip = ToolTips.get_tts().add_button_hint_tooltip
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/UpdateButton.hint_tooltip = ToolTips.get_tts().update_button_hint_tooltip
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/DeleteButton.hint_tooltip = ToolTips.get_tts().delete_button_hint_tooltip
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveUpButton.hint_tooltip = ToolTips.get_tts().move_up_button_hint_tooltip
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveDownButton.hint_tooltip = ToolTips.get_tts().move_down_button_hint_tooltip
+
 	# Create the root of the object tree
 	action_tree_root = action_tree.create_item()
 	action_tree_root.set_text(0, "Actions")
@@ -309,6 +322,9 @@ func _on_ThreeDButton_toggled(button_pressed):
 		$VBoxContainer/ActionOptionButton.clear()
 		Common.load_option_button($VBoxContainer/ActionOptionButton, three_d_actions)
 
+		# Set the help tooltips for all the items in the dropdown
+		_set_tooltips()
+
 		_set_action_control()
 
 		# Hide any previously shown sketch tools
@@ -335,6 +351,9 @@ func _on_SketchButton_toggled(button_pressed):
 		# Repopulate the action option button
 		$VBoxContainer/ActionOptionButton.clear()
 		Common.load_option_button($VBoxContainer/ActionOptionButton, two_d_actions)
+
+		# Set the help tooltips for all the items in the dropdown
+		_set_tooltips()
 
 		_set_action_control()
 
@@ -365,6 +384,9 @@ func _on_WorkplaneButton_toggled(button_pressed):
 		# Repopulate the action option button
 		$VBoxContainer/ActionOptionButton.clear()
 		Common.load_option_button($VBoxContainer/ActionOptionButton, wp_actions)
+
+		# Set the help tooltips for all the items in the dropdown
+		_set_tooltips()
 
 		_set_action_control()
 
@@ -589,3 +611,20 @@ Allows a child control to pop up the error dialog.
 """
 func _on_error(error_msg):
 	emit_signal("error", error_msg)
+
+
+"""
+Allows tooltips to be set for each of the operation items.
+"""
+func _set_tooltips():
+	var popup = $VBoxContainer/ActionOptionButton.get_popup()
+
+	# Step through all of the items in the popup, adding their tooltips
+	for i in range(0, popup.get_item_count()):
+		# Match the item that is being hovered over to a tooltip
+		var child_name = popup.get_item_text(i)
+		var tooltip = ContextHandler.find_action_tooltip_by_name(child_name)
+
+		# If tooltip text was found, set it for the item
+		if tooltip != null:
+			popup.set_item_tooltip(i, tooltip)
