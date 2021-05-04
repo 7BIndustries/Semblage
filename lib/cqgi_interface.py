@@ -107,10 +107,16 @@ class JsonMesh(object):
 		self.color = [r, g, b, a]
 
 	"""
-	Adds a CadQuery vertex representation
+	Adds a CadQuery vertex representation.
 	"""
 	def addCQVertex(self, x, y, z):
 		self.cqVertices.append([x, y, z])
+
+	"""
+	Adds a CadQuery edge representation.
+	"""
+	def addCQEdge(self, x1, y1, z1, x2, y2, z2):
+		self.cqEdges.append([x1, y1, z1, x2, y2, z2])
 
 	"""
 	Separates the current set of vertices, triangles, etc into a separate component.
@@ -195,7 +201,53 @@ def convert_components(components):
 			# Add CadQuery-reported vertices
 			for vert in shape.Vertices():
 				mesher.addCQVertex(vert.X, vert.Y, vert.Z)
-		
+
+			# Add CadQuery-reported edges
+			for edge in shape.Edges():
+				gt = edge.geomType()
+
+				# Find out if the shape is larger than the largest bounding box we have recorded so far
+				if shape.BoundingBox().DiagonalLength > largest_dimension:
+					largest_dimension = shape.BoundingBox().DiagonalLength
+
+				# If dealing with some sort of arc, discretize it into individual lines
+				if gt == "CIRCLE" or gt == "ARC" or gt == "SPLINE" or gt == "ELLIPSE":
+					from OCP import GCPnts, BRepAdaptor
+
+					# Discretize the curve
+					disc = GCPnts.GCPnts_TangentialDeflection(BRepAdaptor.BRepAdaptor_Curve(edge.wrapped), 0.5, 0.01)
+
+					# Add each of the discretized sections to the edge list
+					if disc.NbPoints() > 1:
+						for i in range(2, disc.NbPoints() + 1):
+							p_0 = disc.Value(i - 1)
+							p_1 = disc.Value(i)
+
+							# Add the start and end vertices for this edge
+							mesher.addCQEdge(p_0.X(), p_0.Y(), p_0.Z(), p_1.X(), p_1.Y(), p_1.Z())
+				else:
+					# Handle simple lines by collecting their beginning and end points
+					i = 0
+					x1 = 0
+					x2 = 0
+					y1 = 0
+					y2 = 0
+					z1 = 0
+					z2 = 0
+					for vert in edge.Vertices():
+						if i == 0:
+							x1 = vert.X
+							y1 = vert.Y
+							z1 = vert.Z
+						else:
+							x2 = vert.X
+							y2 = vert.Y
+							z2 = vert.Z
+
+						i += 1
+
+					mesher.addCQEdge(x1, y1, z1, x2, y2, z2)
+
 			# Make sure that the largest dimension is represented accurately for camera positioning
 			mesher.addLargestDim(largest_dimension)
 		

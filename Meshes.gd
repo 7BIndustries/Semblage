@@ -159,3 +159,29 @@ static func gen_component_mesh(component):
 #			newVert.mesh.material.albedo_color = Color(0.8, 0.8, 0.8)
 #			newVert.set_translation(Vector3(v[0], v[1], v[2]))
 #			vp.add_child(newVert)
+
+
+static func gen_line_mesh(thickness, edge):
+	var material = SpatialMaterial.new()
+	material.albedo_color = Color(255, 255, 255, 255)
+
+	# Extract the start and endpoint vectors from the edge
+	var v1 = Vector3(edge[0], edge[1], edge[2])
+	var v2 = Vector3(edge[3], edge[4], edge[5])
+
+	# Calculate the length of the edge
+	var dist = LinAlg.dist_between_vecs(v1, v2)
+
+	# The endpoints compensating for the fact the that center is in the middle of the bar, not the end
+	var v_mid = Vector3((edge[0] + edge[3]) / 2.0, (edge[1] + edge[4]) / 2.0, (edge[2] + edge[5]) / 2.0)
+
+	# Generate the mesh instance representing the line
+	var wp_mesh = MeshInstance.new()
+	var raw_cube_mesh = CubeMesh.new()
+	raw_cube_mesh.size = Vector3(thickness, thickness, dist)
+	wp_mesh.material_override = material
+	wp_mesh.mesh = raw_cube_mesh
+	wp_mesh.transform.origin = v_mid
+	wp_mesh.transform = wp_mesh.transform.looking_at(v2, v1.cross(v2))
+
+	return wp_mesh
