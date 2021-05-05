@@ -182,6 +182,12 @@ static func gen_line_mesh(thickness, edge):
 	wp_mesh.material_override = material
 	wp_mesh.mesh = raw_cube_mesh
 	wp_mesh.transform.origin = v_mid
-	wp_mesh.transform = wp_mesh.transform.looking_at(v2, v1.cross(v2))
+
+	# Compensate for a cross product glitch with a zero vector if edge starts from origin
+	var v1_offset = v1
+	if v1.x == 0.0 and v1.y == 0.0 and v1.z == 0.0:
+		v1_offset = Vector3(0.000000001, 0.000000001, 0.000000001)
+
+	wp_mesh.transform = wp_mesh.transform.looking_at(v2, v1_offset.cross(v2))
 
 	return wp_mesh
