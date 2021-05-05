@@ -6,7 +6,7 @@ var prev_template = null
 
 var template = ".radiusArc(endPoint=({end_point_x},{end_point_y}),radius={radius},forConstruction={for_construction})"
 
-const end_point_edit_rgx = "(?<=endPoint\\=)(.*?)(?=,radius)"
+const end_point_edit_rgx = "(?<=endPoint\\=\\()(.*?)(?=\\),radius)"
 const radius_edit_rgx = "(?<=radius\\=)(.*?)(?=\\,forConstruction)"
 const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 

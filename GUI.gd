@@ -271,6 +271,11 @@ func load_component_json(json_string):
 		var mesh_data = Meshes.gen_component_mesh(component)
 		vp.add_child(mesh_data)
 
+		# Add the edge representations
+		for edge in component["cqEdges"]:
+			var line = Meshes.gen_line_mesh(0.005 * max_dim, edge)
+			vp.add_child(line)
+
 	# Only reset the view if the same distance changed
 	if new_safe_dist != safe_distance:
 		# Find the safe distance for the camera based on the maximum distance of any vertex from the origin
