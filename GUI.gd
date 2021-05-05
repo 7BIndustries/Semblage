@@ -66,6 +66,14 @@ func _ready():
 
 
 """
+Handles shortcut keys.
+"""
+func _input(event):
+	if event.is_action_pressed("SaveComponent"):
+		_save_component()
+
+
+"""
 Handler for when the Open Component button is clicked.
 """
 func _on_OpenButton_button_down():
@@ -575,10 +583,14 @@ func _on_SaveDialog_file_selected(path):
 Handles the heavy lifting of saving the component text to file.
 """
 func _save_component_text():
+	status.text = ""
+
 	var file = File.new()
 	file.open(self.open_file_path, File.WRITE)
 	file.store_string(self.component_text + "\nshow_object(result)")
 	file.close()
+
+	status.text = "Component saved"
 
 
 """
