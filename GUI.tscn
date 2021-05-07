@@ -484,6 +484,8 @@ margin_left = 4.0
 margin_top = 4.0
 margin_right = 66.0
 margin_bottom = 112.0
+size_flags_horizontal = 5
+size_flags_vertical = 5
 
 [node name="ActionGroupsVBoxContainer" type="VBoxContainer" parent="ActionPopupPanel/VBoxContainer"]
 margin_right = 208.0

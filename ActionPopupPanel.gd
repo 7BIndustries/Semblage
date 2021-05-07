@@ -209,6 +209,8 @@ func _select_group_button(group):
 		sketch_btn.pressed = true
 		_on_SketchButton_toggled(sketch_btn)
 
+	_on_VBoxContainer_resized()
+
 
 """
 Called when the Ok button is pressed so that the GUI can collect the changed context.
@@ -284,6 +286,14 @@ Called whenever the contents of the main VBoxContainer require a size change.
 func _on_VBoxContainer_resized():
 	# Make sure the panel is the correct size to contain all controls
 	rect_size = Vector2($VBoxContainer.rect_size[0] + 7, $VBoxContainer.rect_size[1] + 7)
+
+	# Work-around to force the size changes to take effect
+	if visible == true:
+		hide()
+		show()
+	else:
+		show()
+		hide()
 
 
 """
