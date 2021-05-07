@@ -224,3 +224,20 @@ static func find_action_tooltip_by_name(action_name):
 		if Triggers.get_triggers()[trigger].action.name == action_name:
 			if Triggers.get_triggers()[trigger].action.has("tooltip"):
 				return Triggers.get_triggers()[trigger].action["tooltip"]
+
+
+"""
+Used to determine whether or not the user wants/needs an implicit main workplane.
+"""
+static func needs_implicit_worplane(context):
+	var regex = RegEx.new()
+	regex.compile("result = result.Workplane\\(")
+	var res = regex.search(context)
+
+	# If there was no match, alert the caller that a workplane will have to be added
+	if not res:
+		return true
+	else:
+		return false
+
+	return false

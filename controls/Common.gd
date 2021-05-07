@@ -141,6 +141,23 @@ static func move_tree_item_up(tree, selected):
 
 
 """
+Activates a tree item based on its text.
+"""
+static func activate_tree_item(tree, item_text):
+	var cur_item = tree.get_root().get_children()
+
+	# Step through all of the items in the tree
+	while true:
+		if cur_item == null or item_text == null:
+			break
+		else:
+			# See if the current entry contains the text to change
+			if ".tag(\"" + item_text + "\")" in cur_item.get_text(0):
+				cur_item.select(0)
+
+		cur_item = cur_item.get_next()
+
+"""
 Used to move an item down the order of items in the tree.
 """
 static func move_tree_item_down(tree, selected):
