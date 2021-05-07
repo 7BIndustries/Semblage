@@ -415,23 +415,32 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 			for mesh in meshes:
 				vp.add_child(mesh)
 
+	# Save the old component name
+	var old_object = ContextHandler.get_object_from_template(component_text)
+
 	# Save the updated component text
 	component_text = new_context
 
 	# Find any object name (if present) that needs to be displayed in the list
 	var new_object = ContextHandler.get_object_from_template(new_template)
 
+	# If the old component name does not match the new one, we want to update it
+	if old_object != new_object:
+		Common.update_tree_item(object_tree, old_object, new_object)
+
 	# If we are in edit mode, do not try to add anything to the history
 	if edit_mode:
 		# Update the edited entry within the history tree
 		var prev_template = history_tree.get_selected().get_text(0) # $ActionPopupPanel.get_prev_template()
 		Common.update_tree_item(history_tree, prev_template, new_template)
-
-		# Update the component name in the object tree if the object name was changed
-#		if new_object:
-#			var prev_object = $ActionPopupPanel.get_prev_object_addition()
-#			Common.update_tree_item(object_tree, prev_object, new_object)
 	else:
+		# Check to see if a stock workplane should be added
+		var implicit_wp = ContextHandler.needs_implicit_worplane(component_text)
+		if implicit_wp:
+			# Add a sane default workplane to the tree to keep things working
+			var wp_template = ".Workplane(\"XY\").workplane(invert=True,centerOption=\"CenterOfBoundBox\").tag(\"Change\")"
+			Common.add_item_to_tree(wp_template, history_tree, history_tree_root)
+
 		# Add the current item to the history tree
 		Common.add_item_to_tree(new_template, history_tree, history_tree_root)
 
@@ -874,6 +883,18 @@ func _on_error(error_text):
 	dlg.dialog_text = error_text
 	dlg.popup_centered()
 
+
+"""
+Called when an item in the component list is double clicked.
+"""
+func _on_ObjectTree_item_activated():
+	var ot = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree
+
+	# Select the history tree item based on the tag/object name so that we can trigger an edit
+	Common.activate_tree_item(history_tree, ot.get_selected().get_text(0))
+
+	# Trigger the edit on the selected history tree item
+	_on_HistoryTree_item_activated()
 
 func _on_CQGIInterface_build_success(component_json):
 	pass
