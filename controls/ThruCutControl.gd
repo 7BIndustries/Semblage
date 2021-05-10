@@ -25,7 +25,7 @@ func _ready():
 	clean_group.add_child(clean_lbl)
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
-	clean_ctrl.hint_tooltip = ToolTips.get_tts().clean_ctrl_hint_tooltip
+	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
 
@@ -48,7 +48,7 @@ func _ready():
 	invert_group.add_child(invert_lbl)
 	invert_ctrl = CheckBox.new()
 	invert_ctrl.pressed = false
-	invert_ctrl.hint_tooltip = ToolTips.get_tts().invert_ctrl_hint_tooltip
+	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
 

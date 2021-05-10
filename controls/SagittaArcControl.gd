@@ -30,7 +30,7 @@ func _ready():
 	end_point_group.add_child(x_length_lbl)
 	end_point_x_ctrl = NumberEdit.new()
 	end_point_x_ctrl.set_text("10.0")
-	end_point_x_ctrl.hint_tooltip = ToolTips.get_tts().sagitta_arc_end_point_x_ctrl_hint_tooltip
+	end_point_x_ctrl.hint_tooltip = tr("SAGITTA_ARC_END_POINT_X_CTRL_HINT_TOOLTIP")
 	end_point_group.add_child(end_point_x_ctrl)
 	# End Point Y
 	var y_lbl = Label.new()
@@ -38,7 +38,7 @@ func _ready():
 	end_point_group.add_child(y_lbl)
 	end_point_y_ctrl = NumberEdit.new()
 	end_point_y_ctrl.set_text("0.0")
-	end_point_y_ctrl.hint_tooltip = ToolTips.get_tts().sagitta_arc_end_point_y_ctrl_hint_tooltip
+	end_point_y_ctrl.hint_tooltip = tr("SAGITTA_ARC_END_POINT_Y_CTRL_HINT_TOOLTIP")
 	end_point_group.add_child(end_point_y_ctrl)
 
 	add_child(end_point_group)
@@ -51,7 +51,7 @@ func _ready():
 	sag_ctrl = NumberEdit.new()
 	sag_ctrl.CanBeNegative = true
 	sag_ctrl.set_text("-1.0")
-	sag_ctrl.hint_tooltip = ToolTips.get_tts().sagitta_arc_sag_ctrl
+	sag_ctrl.hint_tooltip = tr("SAGITTA_ARC_SAG_CTRL")
 	sag_group.add_child(sag_ctrl)
 	add_child(sag_group)
 
@@ -62,7 +62,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
-	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
+	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
 
 	add_child(const_group)

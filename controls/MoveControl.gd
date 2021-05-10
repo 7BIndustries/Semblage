@@ -21,7 +21,7 @@ func _ready():
 	x_dims_group.add_child(x_dist_lbl)
 	x_dist_ctrl = NumberEdit.new()
 	x_dist_ctrl.set_text("1.0")
-	x_dist_ctrl.hint_tooltip = ToolTips.get_tts().move_x_dist_ctrl_hint_tooltip
+	x_dist_ctrl.hint_tooltip = tr("MOVE_X_DIST_CTRL_HINT_TOOLTIP")
 	x_dims_group.add_child(x_dist_ctrl)
 	add_child(x_dims_group)
 
@@ -32,7 +32,7 @@ func _ready():
 	y_dims_group.add_child(y_dist_lbl)
 	y_dist_ctrl = NumberEdit.new()
 	y_dist_ctrl.set_text("1.0")
-	y_dist_ctrl.hint_tooltip = ToolTips.get_tts().move_y_dist_ctrl_hint_tooltip
+	y_dist_ctrl.hint_tooltip = tr("MOVE_Y_DIST_CTRL_HINT_TOOLTIP")
 	y_dims_group.add_child(y_dist_ctrl)
 	add_child(y_dims_group)
 

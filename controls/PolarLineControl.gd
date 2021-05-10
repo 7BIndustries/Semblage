@@ -23,7 +23,7 @@ func _ready():
 	dist_group.add_child(dist_lbl)
 	distance_ctrl = NumberEdit.new()
 	distance_ctrl.set_text("1.0")
-	distance_ctrl.hint_tooltip = ToolTips.get_tts().polar_line_distance_ctrl_hint_tooltip
+	distance_ctrl.hint_tooltip = tr("POLAR_LINE_DISTANCE_CTRL_HINT_TOOLTIP")
 	dist_group.add_child(distance_ctrl)
 	add_child(dist_group)
 	
@@ -35,7 +35,7 @@ func _ready():
 	angle_ctrl = NumberEdit.new()
 	angle_ctrl.MaxValue = 360.0
 	angle_ctrl.set_text("1.0")
-	angle_ctrl.hint_tooltip = ToolTips.get_tts().polar_line_angle_ctrl_hint_tooltip
+	angle_ctrl.hint_tooltip = tr("POLAR_LINE_ANGLE_CTRL_HINT_TOOLTIP")
 	angle_group.add_child(angle_ctrl)
 	add_child(angle_group)
 
@@ -46,7 +46,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
-	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
+	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
 
 	add_child(const_group)

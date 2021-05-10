@@ -20,7 +20,7 @@ func _ready():
 	radius_ctrl = NumberEdit.new()
 	radius_ctrl.set_text("0.1")
 	radius_ctrl.CanBeZero = false
-	radius_ctrl.hint_tooltip = ToolTips.get_tts().fillet_radius_ctrl_hint_tooltip
+	radius_ctrl.hint_tooltip = tr("FILLET_RADIUS_CTRL_HINT_TOOLTIP")
 	radius_group.add_child(radius_ctrl)
 	add_child(radius_group)
 

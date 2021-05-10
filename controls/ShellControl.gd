@@ -24,7 +24,7 @@ func _ready():
 	thickness_ctrl = NumberEdit.new()
 	thickness_ctrl.CanBeNegative = true
 	thickness_ctrl.set_text("0.1")
-	thickness_ctrl.hint_tooltip = ToolTips.get_tts().shell_thickness_ctrl_hint_tooltip
+	thickness_ctrl.hint_tooltip = tr("SHELL_THICKNESS_CTRL_HINT_TOOLTIP")
 	thickness_group.add_child(thickness_ctrl)
 	add_child(thickness_group)
 
@@ -35,7 +35,7 @@ func _ready():
 	kind_group.add_child(kind_lbl)
 	kind_ctrl = OptionButton.new()
 	Common.load_option_button(kind_ctrl, kind_list)
-	kind_ctrl.hint_tooltip = ToolTips.get_tts().corner_kind_ctrl_hint_tooltip
+	kind_ctrl.hint_tooltip = tr("CORNER_KIND_CTRL_HINT_TOOLTIP")
 	kind_group.add_child(kind_ctrl)
 	add_child(kind_group)
 

@@ -75,7 +75,7 @@ func _ready():
 	combine_group.add_child(combine_lbl)
 	combine_ctrl = CheckBox.new()
 	combine_ctrl.pressed = true
-	combine_ctrl.hint_tooltip = ToolTips.get_tts().combine_ctrl_hint_tooltip
+	combine_ctrl.hint_tooltip = tr("COMBINE_CTRL_HINT_TOOLTIP")
 	combine_group.add_child(combine_ctrl)
 	add_child(combine_group)
 
@@ -86,7 +86,7 @@ func _ready():
 	clean_group.add_child(clean_lbl)
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
-	clean_ctrl.hint_tooltip = ToolTips.get_tts().clean_ctrl_hint_tooltip
+	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
 

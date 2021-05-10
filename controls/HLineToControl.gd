@@ -25,7 +25,7 @@ func _ready():
 	x_coord_group.add_child(x_coord_lbl)
 	x_coord_ctrl = NumberEdit.new()
 	x_coord_ctrl.set_text("1.0")
-	x_coord_ctrl.hint_tooltip = ToolTips.get_tts().hlineto_x_coord_ctrl_hint_tooltip
+	x_coord_ctrl.hint_tooltip = tr("HLINETO_X_COORD_CTRL_HINT_TOOLTIP")
 	x_coord_group.add_child(x_coord_ctrl)
 	add_child(x_coord_group)
 
@@ -36,7 +36,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
-	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
+	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
 
 	add_child(const_group)

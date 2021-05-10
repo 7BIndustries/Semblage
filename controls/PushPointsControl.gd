@@ -36,7 +36,7 @@ func _ready():
 	point_lr_group.add_child(point_lr_lbl)
 	point_lr_ctrl = NumberEdit.new()
 	point_lr_ctrl.set_text("1.0")
-	point_lr_ctrl.hint_tooltip = ToolTips.get_tts().push_points_point_lr_ctrl_hint_tooltip
+	point_lr_ctrl.hint_tooltip = tr("PUSH_POINTS_POINT_LR_CTRL_HINT_TOOLTIP")
 	point_lr_group.add_child(point_lr_ctrl)
 	add_child(point_lr_group)
 
@@ -47,7 +47,7 @@ func _ready():
 	point_tb_group.add_child(point_tb_lbl)
 	point_tb_ctrl = NumberEdit.new()
 	point_tb_ctrl.set_text("1.0")
-	point_tb_ctrl.hint_tooltip = ToolTips.get_tts().push_points_point_tb_ctrl_hint_tooltip
+	point_tb_ctrl.hint_tooltip = tr("PUSH_POINTS_POINT_TB_CTRL_HINT_TOOLTIP")
 	point_tb_group.add_child(point_tb_ctrl)
 	add_child(point_tb_group)
 

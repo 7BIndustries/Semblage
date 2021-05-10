@@ -27,7 +27,7 @@ func _ready():
 	dims_group.add_child(x_length_lbl)
 	x_length_ctrl = NumberEdit.new()
 	x_length_ctrl.set_text("1.0")
-	x_length_ctrl.hint_tooltip = ToolTips.get_tts().rect_x_length_ctrl_hint_tooltip
+	x_length_ctrl.hint_tooltip = tr("RECT_X_LENGTH_CTRL_HINT_TOOLTIP")
 	dims_group.add_child(x_length_ctrl)
 	# Height (Y length)
 	var y_length_lbl = Label.new()
@@ -35,7 +35,7 @@ func _ready():
 	dims_group.add_child(y_length_lbl)
 	y_length_ctrl = NumberEdit.new()
 	y_length_ctrl.set_text("1.0")
-	y_length_ctrl.hint_tooltip = ToolTips.get_tts().rect_y_length_ctrl_hint_tooltip
+	y_length_ctrl.hint_tooltip = tr("RECT_Y_LENGTH_CTRL_HINT_TOOLTIP")
 	dims_group.add_child(y_length_ctrl)
 
 	add_child(dims_group)
@@ -47,7 +47,7 @@ func _ready():
 	centered_group.add_child(centered_lbl)
 	centered_ctrl = CheckBox.new()
 	centered_ctrl.pressed = true
-	centered_ctrl.hint_tooltip = ToolTips.get_tts().rect_centered_ctrl_hint_tooltip
+	centered_ctrl.hint_tooltip = tr("RECT_CENTERED_CTRL_HINT_TOOLTIP")
 	centered_group.add_child(centered_ctrl)
 
 	add_child(centered_group)
@@ -59,7 +59,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
-	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
+	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
 
 	add_child(const_group)

@@ -29,7 +29,7 @@ func _ready():
 	axis_end_group.add_child(x_lbl)
 	axis_end_x_ctrl = NumberEdit.new()
 	axis_end_x_ctrl.set_text("0")
-	axis_end_x_ctrl.hint_tooltip = ToolTips.get_tts().rotate_about_center_axis_end_x_ctrl_hint_tooltip
+	axis_end_x_ctrl.hint_tooltip = tr("ROTATE_ABOUT_CENTER_AXIS_END_X_CTRL_HINT_TOOLTIP")
 	axis_end_group.add_child(axis_end_x_ctrl)
 	# Axis Y
 	var y_lbl = Label.new()
@@ -37,7 +37,7 @@ func _ready():
 	axis_end_group.add_child(y_lbl)
 	axis_end_y_ctrl = NumberEdit.new()
 	axis_end_y_ctrl.set_text("0")
-	axis_end_y_ctrl.hint_tooltip = ToolTips.get_tts().rotate_about_center_axis_end_y_ctrl_hint_tooltip
+	axis_end_y_ctrl.hint_tooltip = tr("ROTATE_ABOUT_CENTER_AXIS_END_Y_CTRL_HINT_TOOLTIP")
 	axis_end_group.add_child(axis_end_y_ctrl)
 	# Axis Z
 	var z_lbl = Label.new()
@@ -45,7 +45,7 @@ func _ready():
 	axis_end_group.add_child(z_lbl)
 	axis_end_z_ctrl = NumberEdit.new()
 	axis_end_z_ctrl.set_text("1")
-	axis_end_z_ctrl.hint_tooltip = ToolTips.get_tts().rotate_about_center_axis_end_z_ctrl_hint_tooltip
+	axis_end_z_ctrl.hint_tooltip = tr("ROTATE_ABOUT_CENTER_AXIS_END_Z_CTRL_HINT_TOOLTIP")
 	axis_end_group.add_child(axis_end_z_ctrl)
 
 	end_group.add_child(axis_end_group)
@@ -59,7 +59,7 @@ func _ready():
 	angle_ctrl = NumberEdit.new()
 	angle_ctrl.MaxValue = 360.0
 	angle_ctrl.set_text("90.0")
-	angle_ctrl.hint_tooltip = ToolTips.get_tts().rotate_angle_ctrl_hint_tooltip
+	angle_ctrl.hint_tooltip = tr("ROTATE_ANGLE_CTRL_HINT_TOOLTIP")
 	angle_group.add_child(angle_ctrl)
 	add_child(angle_group)
 

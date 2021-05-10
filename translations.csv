@@ -1,0 +1,109 @@
+keys,en
+ARC_ANGLE_1_CTRL_HINT_TOOLTIP,Start angle of the arc.
+ARC_ANGLE_2_CTRL_HINT_TOOLTIP,"End angle of the arc. If angle2 and angle1 are the same,\na closed ellipse is the result, which is the default."
+ARC_MAKE_WIRE_CTRL_HINT_TOOLTIP,Convert the resulting edge to a wire.
+ARC_ROTATION_ANGLE_CTRL_HINT_TOOLTIP,Angle to rotate the created ellipse/arc by.
+ARC_SENSE_CTRL_HINT_TOOLTIP,Clockwise (-1) or counter clockwise (1).
+ARC_START_AT_CURRENT_CTRL_HINT_TOOLTIP,"If checked, the start point of arc is moved to current point.\nIf unchecked, the center of arc is on current point."
+ARC_X_RADIUS_CTRL_HINT_TOOLTIP,X radius of the ellipse (along the x-axis of plane\nthe ellipse should lie in).
+ARC_Y_RADIUS_CTRL_HINT_TOOLTIP,Y radius of the ellipse (along the y-axis of plane\nthe ellipse should lie in).
+BOX_LENGTH_CTRL_HINT_TOOLTIP,Box size in X direction.
+BOX_WIDTH_CTRL_HINT_TOOLTIP,Box size in Y direction.
+BOX_HEIGHT_CTRL_HINT_TOOLTIP,Box size in Z direction.
+BLIND_CUT_DISTANCE_CTRL_HINT_TOOLTIP,"Distance to extrude before cutting (> 0.0 means in the positive direction of the\nworkplane normal, < 0.0 means in the negative direction)."
+CBORE_CBORE_DIA_CTRL_HINT_TOOLTIP,Diameter of the counter-bore hole. This diameter\nshould be larger than that of the main hole.
+CBORE_CBORE_DEPTH_CTRL_HINT_TOOLTIP,Depth of the counter-bore hole. This depth should be\nless than that of the main hole.
+CEN_X_CTRL_HINT_TOOLTIP,"If checked, will be centered around the X axis reference point.\nIf unchecked, the corner will be on the reference point and it\nwill extend in the positive x direction."
+CEN_Y_CTRL_HINT_TOOLTIP,"If checked, will be centered around the Y axis reference point.\nIf unchecked, the corner will be on the reference point and it\nwill extend in the positive y direction."
+CEN_Z_CTRL_HINT_TOOLTIP,"If checked, will be centered around the Z axis reference point.\nIf unchecked, the corner will be on the reference point and it\nwill extend in the positive z direction."
+CENTER_X_COORD_CTRL_HINT_TOOLTIP,"Shift local X coordinate to the specified location. Used to adjust the\ncenter point after it has been created automatically on a face, but is\nnot where it needs to be."
+CENTER_Y_COORD_CTRL_HINT_TOOLTIP,"Shift local Y coordinate to the specified location. Used to adjust the\ncenter point after it has been created automatically on a face, but is\nnot where it needs to be."
+CHAMFER_LENGTH_CTRL_HINT_TOOLTIP,Length of the chamfer. Must be > 0.
+CHAMFER_ASYM_LENGTH_CTRL_HINT_TOOLTIP,Can be set to > 0 for an asymmetrical chamfer.
+COMBINE_CTRL_HINT_TOOLTIP,Whether this should be combined with other solids on the stack.
+CORNER_KIND_CTRL_HINT_TOOLTIP,"Use 'arc' for rounded corners, and 'intersection' for sharp corners."
+CLEAN_CTRL_HINT_TOOLTIP,"Whether to clean the resulting geometry. If the CAD kernel\nis yielding invalid results, try disabling this."
+CSINK_ANGLE_CTRL_HINT_TOOLTIP,Angle of the countersink in degrees (82 is common).
+CSINK_DIA_CTRL_HINT_TOOLTIP,Largest diameter of the counter-sink. This diameter\nshould be larger than that of the main hole.
+EDGE_COMPS_OPT_1_HINT_TOOLTIP,Edge filter\nNone = Do not use this filter\nAll = All edges selected\nMaximum (>) = Edge greatest distance from origin along selected axis\nMinimum (<) = Face smallest distance from origin along selected axis\nPositive Normal (+) = Edges aligned in the positive direction with the given axis\nNegative Normal (-) = Edges aligned in the negative direction with the given axis\nParallel (|) = Edges parallel to the given axis\nOrthogonal (#) = Edges orthogonal to the given axis
+EXTRA_SELECTOR_ADDER_HINT_TOOLTIP,Add another selector to be combined with the previous.
+EXTRUDE_BOTH_CTRL_HINT_TOOLTIP,Extrude in both directions symmetrically.
+EXTRUDE_DISTANCE_CTRL_HINT_TOOLTIP,Distance to extrude along the normal of the workplane.
+FACE_COMPS_OPT_1_HINT_TOOLTIP,Face filter\nNone = Do not use this filter\nAll = All faces selected\nMaximum (>) = Face greatest distance from origin along selected axis\nMinimum (<) = Face smallest distance from origin along selected axis\nPositive Normal (+) = Faces with a normal aligned in the positive direction with the given axis\nNegative Normal (-) = Faces with a normal aligned in the negative direction with the given axis\nParallel (|) = Faces with normal parallel to the normal of the workplane\nOrthogonal (#) = Faces with normal orthogonal to normal of the workplane.
+FACE_COMPS_OPT_2_HINT_TOOLTIP,Axis filter\nX = X axis of the workplane\nY = Y axis of the workplane\nZ = Z axis of the workplane.
+FILLET_RADIUS_CTRL_HINT_TOOLTIP,"Radius of the fillet, must be > zero."
+FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP,"Whether the new wires should be reference geometry only. Check if the\nwires are for reference, uncheck if they are creating part geometry."
+HIDE_SHOW_SELECTOR_STR,Toggle to hide or show the raw selector string.
+HLINE_DIST_CTRL_HINT_TOOLTIP,X distance from current point.
+HLINETO_X_COORD_CTRL_HINT_TOOLTIP,X coordinate for the end of the line.
+HOLE_DIA_CTRL_HINT_TOOLTIP,Diameter of the main hole.
+HOLE_DEPTH_CTRL_HINT_TOOLTIP,Depth of the main hole. Setting to 0 causes it to go all\nthe way through the object it is being placed in.
+INCLUDE_CTRL_HINT_TOOLTIP,Use current point as a starting point of the curve/line.
+INVERT_CTRL_HINT_TOOLTIP,Flip the normal for the operation to the opposite direction.
+LINE_X_DIST_CTRL_HINT_TOOLTIP,X distance from the current point.
+LINE_Y_DIST_CTRL_HINT_TOOLTIP,Y distance from the current point.
+LINETO_X_DIST_CTRL_HINT_TOOLTIP,The X point in workplane plane coordinates.
+LINETO_Y_DIST_CTRL_HINT_TOOLTIP,The Y point in workplane plane coordinates.
+LOGIC_OPTION_BUTTON_HINT_TOOLTIP,Logical operators\nand = Both selectors have to match\nor = Either selector can match.
+MOVE_X_DIST_CTRL_HINT_TOOLTIP,Desired X distance in local coordinates.
+MOVE_Y_DIST_CTRL_HINT_TOOLTIP,Desired Y distance in local coordinates.
+MOVETO_X_DIST_CTRL_HINT_TOOLTIP,Desired X location in local coordinates.
+MOVETO_Y_DIST_CTRL_HINT_TOOLTIP,Desired Y location in local coordinates.
+OFFSET2D_THICKNESS_CTRL_HINT_TOOLTIP,Offset thickness. Negative thickness denotes offset to inside.
+POLAR_ARRAY_ANGLE_CTRL_HINT_TOOLTIP,"The angle (degrees) to fill with elements. A positive value will\nfill in the counter-clockwise direction. If fill is false, angle is\nthe angle between elements."
+POLAR_ARRAY_COUNT_CTRL_HINT_TOOLTIP,Number of elements in the array (must be > 0).
+POLAR_ARRAY_FILL_CTRL_HINT_TOOLTIP,Interpret the angle as total if checked.
+POLAR_ARRAY_RADIUS_CTRL_HINT_TOOLTIP,Distance away from the center that\nthe array objects will be placed.
+POLAR_ARRAY_ROTATE_CTRL_HINT_TOOLTIP,Rotate every item to be oriented with respect\nto the center of the array.
+POLAR_ARRAY_START_ANGLE_CTRL_HINT_TOOLTIP,Starting angle (degrees) of array. 0 degrees is situated along local X-axis.
+POLAR_LINE_DISTANCE_CTRL_HINT_TOOLTIP,Distance of the end of the line from the current point.
+POLAR_LINE_ANGLE_CTRL_HINT_TOOLTIP,Angle of the vector to the end of the line with respect\nto the X-axis.
+POLAR_LINE_TO_DISTANCE_CTRL_HINT_TOOLTIP,Distance of the end of the line from the origin.
+POLYGON_DIA_CTRL_HINT_TOOLTIP,Size of the circle the polygon is inscribed into.
+POLYGON_NSIDES_CTRL_HINT_TOOLTIP,"Number of sides, must be > 3."
+POLYLINE_TUPLE_X_CTRL_HINT_TOOLTIP,X point coordinate in workplane coordinates.
+POLYLINE_TUPLE_Y_CTRL_HINT_TOOLTIP,Y point coordinate in workplane coordinates.
+PUSH_POINTS_POINT_LR_CTRL_HINT_TOOLTIP,X coordinate of point to push onto the stack.
+PUSH_POINTS_POINT_TB_CTRL_HINT_TOOLTIP,Y coordinate of point to push onto the stack.
+RADIUS_ARC_END_POINT_X_CTRL_HINT_TOOLTIP,X coordinate of the end point for the arc.
+RADIUS_ARC_END_POINT_Y_CTRL_HINT_TOOLTIP,Y coordinate of the end point for the arc.
+RADIUS_ARC_RADIUS_CTRL_HINT_TOOLTIP,Radius of the arc between start point and end point.
+RADIUS_CTRL_HINT_TOOLTIP,Radius of the circle.
+RARRAY_X_COUNT_CTRL_HINT_TOOLTIP,Number of X points (must be > 0).
+RARRAY_Y_COUNT_CTRL_HINT_TOOLTIP,Number of Y points (must be > 0).
+RARRAY_CENTERED_CTRL_HINT_TOOLTIP,"If checked, the array will be centered around the workplane center.\nIf unchecked, the lower corner will be on the reference point and\nthe array will extend in the positive x and y directions. Can also use\na 2-tuple to specify centering along each axis."
+RARRAY_X_SPACING_CTRL_HINT_TOOLTIP,Spacing between points in the x direction ( must be > 0).
+RARRAY_Y_SPACING_CTRL_HINT_TOOLTIP,Spacing between points in the y direction ( must be > 0).
+RECT_X_LENGTH_CTRL_HINT_TOOLTIP,Length in X direction (in workplane coordinates).
+RECT_Y_LENGTH_CTRL_HINT_TOOLTIP,Length in Y direction (in workplane coordinates).
+RECT_CENTERED_CTRL_HINT_TOOLTIP,"If checked, the rectangle will be centered around the reference point.\nIf unchecked, the corner of the rectangle will be on the reference point\nand it will extend in the positive x and y directions."
+REVOLVE_ANGLE_CTRL_HINT_TOOLTIP,Angle to revolve through. Anything less than 360 degrees will leave the shape open.
+REVOLVE_AXIS_START_X_CTRL_HINT_TOOLTIP,X start point of the axis of rotation.
+REVOLVE_AXIS_START_Y_CTRL_HINT_TOOLTIP,Y start point of the axis of rotation.
+REVOLVE_AXIS_START_Z_CTRL_HINT_TOOLTIP,Z start point of the axis of rotation.
+REVOLVE_AXIS_END_X_CTRL_HINT_TOOLTIP,X end point of the axis of rotation.
+REVOLVE_AXIS_END_Y_CTRL_HINT_TOOLTIP,Y end point of the axis of rotation.
+REVOLVE_AXIS_END_Z_CTRL_HINT_TOOLTIP,Z end point of the axis of rotation.
+ROTATE_AXIS_START_X_CTRL_HINT_TOOLTIP,X point of the first axis of rotation.
+ROTATE_AXIS_START_Y_CTRL_HINT_TOOLTIP,Y point of the first axis of rotation.
+ROTATE_AXIS_START_Z_CTRL_HINT_TOOLTIP,Z point of the first axis of rotation.
+ROTATE_ABOUT_CENTER_AXIS_END_X_CTRL_HINT_TOOLTIP,X point of the second axis of rotation.
+ROTATE_ABOUT_CENTER_AXIS_END_Y_CTRL_HINT_TOOLTIP,Y point of the second axis of rotation.
+ROTATE_ABOUT_CENTER_AXIS_END_Z_CTRL_HINT_TOOLTIP,Z point of the second axis of rotation.
+ROTATE_ANGLE_CTRL_HINT_TOOLTIP,Rotation angle in degrees.
+SAGITTA_ARC_END_POINT_X_CTRL_HINT_TOOLTIP,X end point for the arc.
+SAGITTA_ARC_END_POINT_Y_CTRL_HINT_TOOLTIP,Y end point for the arc.
+SAGITTA_ARC_SAG_CTRL,Perpendicular distance from arc center to arc baseline.
+SECTION_HEIGHT_CTRL_HINT_TOOLTIP,Height to slice an object at along the workplane normal.
+SELECTOR_HIDE_SHOW_WP_BTN_HINT_TOOLTIP,Adds a workplane to the selected geometry.
+SHELL_THICKNESS_CTRL_HINT_TOOLTIP,"Wall thickness of the desired shell. Negative values shell\ninwards, positive values shell outwards."
+SLOT_ANGLE_CTRL_HINT_TOOLTIP,"Angle of the slot in degrees, with 0 being along X-axis."
+SLOT_DIAMETER_CTRL_HINT_TOOLTIP,"Diameter, or width, of the slot."
+SLOT_LENGTH_CTRL_HINT_TOOLTIP,End to end length of slot.
+SPHERE_ANGLE1_CTRL_HINT_TOOLTIP,First angle to sweep the sphere arc through.
+SPHERE_ANGLE2_CTRL_HINT_TOOLTIP,Second angle to sweep the sphere arc through.
+SPHERE_ANGLE3_CTRL_HINT_TOOLTIP,Third angle to sweep the sphere arc through.
+SPHERE_DIRECT_X_CTRL_HINT_TOOLTIP,X component of the direction axis for the creation of the sphere.
+SPHERE_DIRECT_Y_CTRL_HINT_TOOLTIP,Y component of the direction axis for the creation of the sphere.
+SPHERE_DIRECT_Z_CTRL_HINT_TOOLTIP,Z component of the direction axis for the creation of the sphere.
+SPHERE_RADIUS_CTRL_HINT_TOOLTIP,Radius of the sphere.

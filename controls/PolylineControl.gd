@@ -34,7 +34,7 @@ func _ready():
 	pos_group.add_child(x_length_lbl)
 	tuple_x_ctrl = NumberEdit.new()
 	tuple_x_ctrl.set_text("10.0")
-	tuple_x_ctrl.hint_tooltip = ToolTips.get_tts().polyline_tuple_x_ctrl_hint_tooltip
+	tuple_x_ctrl.hint_tooltip = tr("POLYLINE_TUPLE_X_CTRL_HINT_TOOLTIP")
 	pos_group.add_child(tuple_x_ctrl)
 	# Y pos
 	var y_length_lbl = Label.new()
@@ -42,7 +42,7 @@ func _ready():
 	pos_group.add_child(y_length_lbl)
 	tuple_y_ctrl = NumberEdit.new()
 	tuple_y_ctrl.set_text("10.0")
-	tuple_y_ctrl.hint_tooltip = ToolTips.get_tts().polyline_tuple_y_ctrl_hint_tooltip
+	tuple_y_ctrl.hint_tooltip = tr("POLYLINE_TUPLE_Y_CTRL_HINT_TOOLTIP")
 	pos_group.add_child(tuple_y_ctrl)
 	add_child(pos_group)
 
@@ -83,7 +83,7 @@ func _ready():
 	construction_group.add_child(construction_lbl)
 	construction_ctrl = CheckBox.new()
 	construction_ctrl.pressed = false
-	construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
+	construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	construction_group.add_child(construction_ctrl)
 	add_child(construction_group)
 
@@ -94,7 +94,7 @@ func _ready():
 	current_group.add_child(current_lbl)
 	current_ctrl = CheckBox.new()
 	current_ctrl.pressed = false
-	current_ctrl.hint_tooltip = ToolTips.get_tts().include_ctrl_hint_tooltip
+	current_ctrl.hint_tooltip = tr("INCLUDE_CTRL_HINT_TOOLTIP")
 	current_group.add_child(current_ctrl)
 	add_child(current_group)
 

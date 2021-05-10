@@ -850,6 +850,10 @@ SaveComponent={
  ]
 }
 
+[locale]
+
+translations=PoolStringArray( "res://translations.en.translation" )
+
 [python_script]
 
 path="res://;res://lib;"

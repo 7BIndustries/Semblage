@@ -77,7 +77,7 @@ func _ready():
 	invert_group.add_child(invert_lbl)
 	invert_ctrl = CheckBox.new()
 	invert_ctrl.pressed = false
-	invert_ctrl.hint_tooltip = ToolTips.get_tts().invert_ctrl_hint_tooltip
+	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
 

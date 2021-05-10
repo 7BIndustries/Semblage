@@ -31,7 +31,7 @@ func _ready():
 	x_spacing_ctrl = NumberEdit.new()
 	x_spacing_ctrl.set_text("1.0")
 	x_spacing_ctrl.CanBeZero = false
-	x_spacing_ctrl.hint_tooltip = ToolTips.get_tts().rarray_x_spacing_ctrl_hint_tooltip
+	x_spacing_ctrl.hint_tooltip = tr("RARRAY_X_SPACING_CTRL_HINT_TOOLTIP")
 	spacing_group.add_child(x_spacing_ctrl)
 	# Y spacing
 	var y_spacing_lbl = Label.new()
@@ -40,7 +40,7 @@ func _ready():
 	y_spacing_ctrl = NumberEdit.new()
 	y_spacing_ctrl.set_text("1.0")
 	y_spacing_ctrl.CanBeZero = false
-	y_spacing_ctrl.hint_tooltip = ToolTips.get_tts().rarray_y_spacing_ctrl_hint_tooltip
+	y_spacing_ctrl.hint_tooltip = tr("RARRAY_Y_SPACING_CTRL_HINT_TOOLTIP")
 	spacing_group.add_child(y_spacing_ctrl)
 	add_child(spacing_group)
 
@@ -58,7 +58,7 @@ func _ready():
 	x_count_ctrl.NumberFormat = "int"
 	x_count_ctrl.set_text("1")
 	x_count_ctrl.CanBeZero = false
-	x_count_ctrl.hint_tooltip = ToolTips.get_tts().rarray_x_count_ctrl_hint_tooltip
+	x_count_ctrl.hint_tooltip = tr("RARRAY_X_COUNT_CTRL_HINT_TOOLTIP")
 	count_group.add_child(x_count_ctrl)
 	# Y spacing
 	var y_count_lbl = Label.new()
@@ -68,7 +68,7 @@ func _ready():
 	x_count_ctrl.NumberFormat = "int"
 	y_count_ctrl.set_text("1")
 	y_count_ctrl.CanBeZero = false
-	y_count_ctrl.hint_tooltip = ToolTips.get_tts().rarray_y_count_ctrl_hint_tooltip
+	y_count_ctrl.hint_tooltip = tr("RARRAY_Y_COUNT_CTRL_HINT_TOOLTIP")
 	count_group.add_child(y_count_ctrl)
 	add_child(count_group)
 
@@ -79,7 +79,7 @@ func _ready():
 	centered_group.add_child(centered_lbl)
 	centered_ctrl = CheckBox.new()
 	centered_ctrl.pressed = true
-	centered_ctrl.hint_tooltip = "If checked, the array will be centered around the workplane center.\nIf unchecked, the lower corner will be on the reference point and\nthe array will extend in the positive x and y directions. Can also use\na 2-tuple to specify centering along each axis."
+	centered_ctrl.hint_tooltip = tr("RARRAY_CENTERED_CTRL_HINT_TOOLTIP")
 	centered_group.add_child(centered_ctrl)
 	add_child(centered_group)
 

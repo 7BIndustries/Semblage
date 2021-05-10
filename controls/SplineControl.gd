@@ -158,7 +158,7 @@ func _ready():
 	construction_group.add_child(construction_lbl)
 	construction_ctrl = CheckBox.new()
 	construction_ctrl.pressed = false
-	construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
+	construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	construction_group.add_child(construction_ctrl)
 	add_child(construction_group)
 
@@ -169,7 +169,7 @@ func _ready():
 	current_group.add_child(current_lbl)
 	current_ctrl = CheckBox.new()
 	current_ctrl.pressed = false
-	current_ctrl.hint_tooltip = ToolTips.get_tts().include_ctrl_hint_tooltip
+	current_ctrl.hint_tooltip = tr("INCLUDE_CTRL_HINT_TOOLTIP")
 	current_group.add_child(current_ctrl)
 	add_child(current_group)
 
@@ -180,7 +180,7 @@ func _ready():
 	wire_group.add_child(wire_lbl)
 	wire_ctrl = CheckBox.new()
 	wire_ctrl.pressed = false
-	wire_ctrl.hint_tooltip = ToolTips.get_tts().arc_make_wire_ctrl_hint_tooltip
+	wire_ctrl.hint_tooltip = tr("ARC_MAKE_WIRE_CTRL_HINT_TOOLTIP")
 	wire_group.add_child(wire_ctrl)
 	add_child(wire_group)
 
