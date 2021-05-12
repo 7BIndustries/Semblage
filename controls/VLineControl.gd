@@ -24,7 +24,7 @@ func _ready():
 	dist_group.add_child(dist_lbl)
 	dist_ctrl = NumberEdit.new()
 	dist_ctrl.set_text("1.0")
-	dist_ctrl.hint_tooltip = ToolTips.get_tts().vline_dist_ctrl_hint_tooltip
+	dist_ctrl.hint_tooltip = tr("VLINE_DIST_CTRL_HINT_TOOLTIP")
 	dist_group.add_child(dist_ctrl)
 	add_child(dist_group)
 

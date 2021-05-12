@@ -41,7 +41,7 @@ func _ready():
 	txt_ctrl = LineEdit.new()
 	txt_ctrl.expand_to_text_length = true
 	txt_ctrl.set_text("Change This")
-	txt_ctrl.hint_tooltip = ToolTips.get_tts().text_txt_ctrl_hint_tooltip
+	txt_ctrl.hint_tooltip = tr("TEXT_TXT_CTRL_HINT_TOOLTIP")
 	txt_group.add_child(txt_ctrl)
 	add_child(txt_group)
 
@@ -53,7 +53,7 @@ func _ready():
 	distance_ctrl = NumberEdit.new()
 	distance_ctrl.expand_to_text_length = true
 	distance_ctrl.set_text("5")
-	distance_ctrl.hint_tooltip = ToolTips.get_tts().text_distance_ctrl_hint_tooltip
+	distance_ctrl.hint_tooltip = tr("TEXT_DISTANCE_CTRL_HINT_TOOLTIP")
 	distance_group.add_child(distance_ctrl)
 	add_child(distance_group)
 
@@ -64,7 +64,7 @@ func _ready():
 	cut_group.add_child(cut_lbl)
 	cut_ctrl = CheckBox.new()
 	cut_ctrl.pressed = false
-	cut_ctrl.hint_tooltip = ToolTips.get_tts().text_cut_ctrl_hint_tooltip
+	cut_ctrl.hint_tooltip = tr("TEXT_CUT_CTRL_HINT_TOOLTIP")
 	cut_group.add_child(cut_ctrl)
 	add_child(cut_group)
 
@@ -106,7 +106,7 @@ func _ready():
 	font_size_ctrl.expand_to_text_length = true
 	font_size_ctrl.NumberFormat = "int"
 	font_size_ctrl.set_text("12")
-	font_size_ctrl.hint_tooltip = ToolTips.get_tts().text_font_size_ctrl_hint_tooltip
+	font_size_ctrl.hint_tooltip = tr("TEXT_FONT_SIZE_CTRL_HINT_TOOLTIP")
 	font_size_group.add_child(font_size_ctrl)
 	add_child(font_size_group)
 
@@ -118,7 +118,7 @@ func _ready():
 	font_ctrl = LineEdit.new()
 	font_ctrl.expand_to_text_length = true
 	font_ctrl.set_text("Arial")
-	font_ctrl.hint_tooltip = ToolTips.get_tts().text_font_ctrl_hint_tooltip
+	font_ctrl.hint_tooltip = tr("TEXT_FONT_CTRL_HINT_TOOLTIP")
 	font_group.add_child(font_ctrl)
 	add_child(font_group)
 
@@ -130,7 +130,7 @@ func _ready():
 	font_path_ctrl = LineEdit.new()
 	font_path_ctrl.expand_to_text_length = true
 	font_path_ctrl.set_text("")
-	font_path_ctrl.hint_tooltip = ToolTips.get_tts().text_font_path_ctrl_hint_tooltip
+	font_path_ctrl.hint_tooltip = tr("TEXT_FONT_PATH_CTRL_HINT_TOOLTIP")
 	font_path_group.add_child(font_path_ctrl)
 	add_child(font_path_group)
 
@@ -141,7 +141,7 @@ func _ready():
 	kind_group.add_child(kind_ctrl_lbl)
 	kind_ctrl = OptionButton.new()
 	Common.load_option_button(kind_ctrl, ["regular", "bold", "italic"])
-	kind_ctrl.hint_tooltip = ToolTips.get_tts().text_font_kind_ctrl_hint_tooltip
+	kind_ctrl.hint_tooltip = tr("TEXT_FONT_KIND_CTRL_HINT_TOOLTIP")
 	kind_group.add_child(kind_ctrl)
 	add_child(kind_group)
 
@@ -152,7 +152,7 @@ func _ready():
 	halign_group.add_child(halign_ctrl_lbl)
 	halign_ctrl = OptionButton.new()
 	Common.load_option_button(halign_ctrl, ["center", "left", "right"])
-	halign_ctrl.hint_tooltip = ToolTips.get_tts().text_halign_ctrl_hint_tooltip
+	halign_ctrl.hint_tooltip = tr("TEXT_HALIGN_CTRL_HINT_TOOLTIP")
 	halign_group.add_child(halign_ctrl)
 	add_child(halign_group)
 
@@ -163,7 +163,7 @@ func _ready():
 	valign_group.add_child(valign_ctrl_lbl)
 	valign_ctrl = OptionButton.new()
 	Common.load_option_button(valign_ctrl, ["center", "top", "bottom"])
-	valign_ctrl.hint_tooltip = ToolTips.get_tts().text_valign_ctrl_hint_tooltip
+	valign_ctrl.hint_tooltip = tr("TEXT_VALIGN_CTRL_HINT_TOOLTIP")
 	valign_group.add_child(valign_ctrl)
 	add_child(valign_group)
 

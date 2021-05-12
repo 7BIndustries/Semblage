@@ -37,7 +37,7 @@ func _ready():
 	taper_ctrl = NumberEdit.new()
 	taper_ctrl.CanBeNegative = true
 	taper_ctrl.set_text("0.0")
-	taper_ctrl.hint_tooltip = ToolTips.get_tts().taper_ctrl_hint_tooltip
+	taper_ctrl.hint_tooltip = tr("TAPER_CTRL_HINT_TOOLTIP")
 	taper_group.add_child(taper_ctrl)
 	add_child(taper_group)
 

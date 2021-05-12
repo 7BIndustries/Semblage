@@ -30,7 +30,7 @@ func _ready():
 	end_point_group.add_child(x_length_lbl)
 	end_point_x_ctrl = NumberEdit.new()
 	end_point_x_ctrl.set_text("0.0")
-	end_point_x_ctrl.hint_tooltip = ToolTips.get_tts().tangent_arc_end_point_x_ctrl_hint_tooltip
+	end_point_x_ctrl.hint_tooltip = tr("TANGENT_ARC_END_POINT_X_CTRL_HINT_TOOLTIP")
 	end_point_group.add_child(end_point_x_ctrl)
 	# End Point Y
 	var y_lbl = Label.new()
@@ -38,7 +38,7 @@ func _ready():
 	end_point_group.add_child(y_lbl)
 	end_point_y_ctrl = NumberEdit.new()
 	end_point_y_ctrl.set_text("0.0")
-	end_point_y_ctrl.hint_tooltip = ToolTips.get_tts().tangent_arc_end_point_y_ctrl_hint_tooltip
+	end_point_y_ctrl.hint_tooltip = tr("TANGENT_ARC_END_POINT_Y_CTRL_HINT_TOOLTIP")
 	end_point_group.add_child(end_point_y_ctrl)
 
 	add_child(end_point_group)
@@ -61,7 +61,7 @@ func _ready():
 	relative_group.add_child(relative_lbl)
 	relative_ctrl = CheckBox.new()
 	relative_ctrl.pressed = true
-	relative_ctrl.hint_tooltip = ToolTips.get_tts().tangent_arc_relative_ctrl_hint_tooltip
+	relative_ctrl.hint_tooltip = tr("TANGENT_ARC_RELATIVE_CTRL_HINT_TOOLTIP")
 	relative_group.add_child(relative_ctrl)
 	add_child(relative_group)
 

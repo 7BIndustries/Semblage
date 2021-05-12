@@ -29,7 +29,7 @@ func _ready():
 	distance_group.add_child(distance_lbl)
 	distance_ctrl = NumberEdit.new()
 	distance_ctrl.set_text("5.0")
-	distance_ctrl.hint_tooltip = ToolTips.get_tts().twist_extrude_distance_ctrl_hint_tooltip
+	distance_ctrl.hint_tooltip = tr("TWIST_EXTRUDE_DISTANCE_CTRL_HINT_TOOLTIP")
 	distance_group.add_child(distance_ctrl)
 	add_child(distance_group)
 
@@ -41,7 +41,7 @@ func _ready():
 	angle_ctrl = NumberEdit.new()
 	angle_ctrl.MaxValue = 360.0
 	angle_ctrl.set_text("30")
-	angle_ctrl.hint_tooltip = ToolTips.get_tts().twist_extrude_angle_ctrl_hint_tooltip
+	angle_ctrl.hint_tooltip = tr("TWIST_EXTRUDE_ANGLE_CTRL_HINT_TOOLTIP")
 	angle_group.add_child(angle_ctrl)
 	add_child(angle_group)
 

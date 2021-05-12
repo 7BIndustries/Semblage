@@ -37,7 +37,7 @@ func _ready():
 	wp_cen_group.add_child(wp_cen_lbl)
 	wp_cen_ctrl = OptionButton.new()
 	Common.load_option_button(wp_cen_ctrl, center_option_list)
-	wp_cen_ctrl.hint_tooltip = ToolTips.get_tts().wp_cen_ctrl_hint_tooltip
+	wp_cen_ctrl.hint_tooltip = tr("WP_CEN_CTRL_HINT_TOOLTIP")
 	wp_cen_group.add_child(wp_cen_ctrl)
 	add_child(wp_cen_group)
 

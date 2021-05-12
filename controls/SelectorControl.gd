@@ -234,7 +234,7 @@ func _ready():
 	# The first vertex filter (i.e. >, <)
 	vertex_comps_opt_1 = OptionButton.new()
 	Common.load_option_button(vertex_comps_opt_1, vertex_filter_items)
-	vertex_comps_opt_1.hint_tooltip = ToolTips.get_tts().vertex_comps_opt_1_hint_tooltip
+	vertex_comps_opt_1.hint_tooltip = tr("VERTEX_COMPS_OPT_1_HINT_TOOLTIP")
 	vertex_comps_opt_1.connect("item_selected", self, "_first_vertex_filter_selected")
 	vertex_comps.add_child(vertex_comps_opt_1)
 
@@ -267,7 +267,7 @@ func _ready():
 	var short_vertex_filter_items = vertex_filter_items.slice(2, -1)
 	vertex_comps_opt_3 = OptionButton.new()
 	Common.load_option_button(vertex_comps_opt_3, short_vertex_filter_items)
-	vertex_comps_opt_3.hint_tooltip = ToolTips.get_tts().vertex_comps_opt_1_hint_tooltip
+	vertex_comps_opt_3.hint_tooltip = tr("VERTEX_COMPS_OPT_1_HINT_TOOLTIP")
 	vertex_comps_opt_3.connect("item_selected", self, "_second_vertex_filter_selected")
 	vertex_comps_opt_3.hide()
 	vertex_comps.add_child(vertex_comps_opt_3)

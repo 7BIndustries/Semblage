@@ -25,7 +25,7 @@ func _ready():
 	offset_ctrl = NumberEdit.new()
 	offset_ctrl.set_text("-0.5")
 	offset_ctrl.CanBeNegative = true
-	offset_ctrl.hint_tooltip = ToolTips.get_tts().wp_offset_ctrl
+	offset_ctrl.hint_tooltip = tr("WP_OFFSET_CTRL")
 	offset_group.add_child(offset_ctrl)
 	add_child(offset_group)
 
@@ -39,7 +39,7 @@ func _ready():
 	keep_top_group.add_child(keep_top_lbl)
 	keep_top_ctrl = CheckBox.new()
 	keep_top_ctrl.pressed = false
-	keep_top_ctrl.hint_tooltip = ToolTips.get_tts().split_keep_top_ctrl_hint_tooltip
+	keep_top_ctrl.hint_tooltip = tr("SPLIT_KEEP_TOP_CTRL_HINT_TOOLTIP")
 	keep_top_ctrl.connect("button_down", self, "_keep_top_ctrl_button_down_event")
 	keep_top_group.add_child(keep_top_ctrl)
 	add_child(keep_top_group)
@@ -51,7 +51,7 @@ func _ready():
 	keep_bottom_group.add_child(keep_bottom_lbl)
 	keep_bottom_ctrl = CheckBox.new()
 	keep_bottom_ctrl.pressed = true
-	keep_bottom_ctrl.hint_tooltip = ToolTips.get_tts().split_keep_bottom_ctrl_hint_tooltip
+	keep_bottom_ctrl.hint_tooltip = tr("SPLIT_KEEP_BOTTOM_CTRL_HINT_TOOLTIP")
 	keep_bottom_ctrl.connect("button_down", self, "_keep_bottom_ctrl_button_down_event")
 	keep_bottom_group.add_child(keep_bottom_ctrl)
 	add_child(keep_bottom_group)

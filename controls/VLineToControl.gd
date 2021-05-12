@@ -24,7 +24,7 @@ func _ready():
 	y_coord_group.add_child(y_coord_lbl)
 	y_coord_ctrl = NumberEdit.new()
 	y_coord_ctrl.set_text("1.0")
-	y_coord_ctrl.hint_tooltip = ToolTips.get_tts().vline_to_y_coord_ctrl_hint_tooltip
+	y_coord_ctrl.hint_tooltip = tr("VLINE_TO_Y_COORD_CTRL_HINT_TOOLTIP")
 	y_coord_group.add_child(y_coord_ctrl)
 	add_child(y_coord_group)
 
