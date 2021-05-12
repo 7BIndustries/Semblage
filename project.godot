@@ -299,11 +299,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/ThruCutControl.gd"
 }, {
-"base": "Node",
-"class": "ToolTips",
-"language": "GDScript",
-"path": "res://controls/ToolTips.gd"
-}, {
 "base": "VBoxContainer",
 "class": "TranslateControl",
 "language": "GDScript",
@@ -398,7 +393,6 @@ _global_script_class_icons={
 "TextControl": "",
 "ThreePointArcControl": "",
 "ThruCutControl": "",
-"ToolTips": "",
 "TranslateControl": "",
 "Triggers": "",
 "TwistExtrudeControl": "",
