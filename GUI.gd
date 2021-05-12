@@ -52,13 +52,13 @@ func _ready():
 	light_transform = light.get_transform()
 
 	# Set the tooltips of the main controls
-	$GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton.hint_tooltip = ToolTips.get_tts().open_button_hint_tooltip
-	$GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton.hint_tooltip = ToolTips.get_tts().save_button_hint_tooltip
-	$GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton.hint_tooltip = ToolTips.get_tts().make_button_hint_tooltip
-	$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.hint_tooltip = ToolTips.get_tts().reload_button_hint_tooltip
-	$GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton.hint_tooltip = ToolTips.get_tts().close_button_hint_tooltip
-	$GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton.hint_tooltip = ToolTips.get_tts().home_view_button_hint_tooltip
-	$GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton.hint_tooltip = ToolTips.get_tts().about_button_hint_tooltip
+	$GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton.hint_tooltip = tr("OPEN_BUTTON_HINT_TOOLTIP")
+	$GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton.hint_tooltip = tr("SAVE_BUTTON_HINT_TOOLTIP")
+	$GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton.hint_tooltip = tr("MAKE_BUTTON_HINT_TOOLTIP")
+	$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.hint_tooltip = tr("RELOAD_BUTTON_HINT_TOOLTIP")
+	$GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton.hint_tooltip = tr("CLOSE_BUTTON_HINT_TOOLTIP")
+	$GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton.hint_tooltip = tr("HOME_VIEW_BUTTON_HINT_TOOLTIP")
+	$GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton.hint_tooltip = tr("ABOUT_BUTTON_HINT_TOOLTIP")
 
 	# Let the user know the app is ready to use
 	status = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel

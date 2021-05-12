@@ -39,17 +39,17 @@ func _ready():
 	action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
 
 	# Add the tooltips to the group buttons
-	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton.hint_tooltip = ToolTips.get_tts().workplane_button_hint_tooltip
-	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton.hint_tooltip = ToolTips.get_tts().three_d_button_hint_tooltip
-	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton.hint_tooltip = ToolTips.get_tts().sketch_button_hint_tooltip
-	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton.hint_tooltip = ToolTips.get_tts().selector_button_hint_tooltip
+	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton.hint_tooltip = tr("WORKPLANE_BUTTON_HINT_TOOLTIP")
+	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton.hint_tooltip = tr("THREE_D_BUTTON_HINT_TOOLTIP")
+	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton.hint_tooltip = tr("SKETCH_BUTTON_HINT_TOOLTIP")
+	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton.hint_tooltip = tr("SELECTOR_BUTTON_HINT_TOOLTIP")
 
 	# Add a tooltip to the modify operation buttons
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.hint_tooltip = ToolTips.get_tts().add_button_hint_tooltip
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/UpdateButton.hint_tooltip = ToolTips.get_tts().update_button_hint_tooltip
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/DeleteButton.hint_tooltip = ToolTips.get_tts().delete_button_hint_tooltip
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveUpButton.hint_tooltip = ToolTips.get_tts().move_up_button_hint_tooltip
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveDownButton.hint_tooltip = ToolTips.get_tts().move_down_button_hint_tooltip
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.hint_tooltip = tr("ADD_BUTTON_HINT_TOOLTIP")
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/UpdateButton.hint_tooltip = tr("UPDATE_BUTTON_HINT_TOOLTIP")
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/DeleteButton.hint_tooltip = tr("DELETE_BUTTON_HINT_TOOLTIP")
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveUpButton.hint_tooltip = tr("MOVE_UP_BUTTON_HINT_TOOLTIP")
+	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveDownButton.hint_tooltip = tr("MOVE_DOWN_BUTTON_HINT_TOOLTIP")
 
 	# Create the root of the object tree
 	action_tree_root = action_tree.create_item()
@@ -633,8 +633,11 @@ func _set_tooltips():
 	for i in range(0, popup.get_item_count()):
 		# Match the item that is being hovered over to a tooltip
 		var child_name = popup.get_item_text(i)
-		var tooltip = ContextHandler.find_action_tooltip_by_name(child_name)
 
-		# If tooltip text was found, set it for the item
-		if tooltip != null:
-			popup.set_item_tooltip(i, tooltip)
+		# Figure out the prefix of the tooltip based on the text in the dropdown popup item
+		var child_name_upper = child_name.to_upper()
+		if child_name_upper.find("(") > 0:
+			child_name_upper = child_name_upper.split("(")[1].split(")")[0]
+
+		# Combine the prefix with the postfix to dynamically find the correct tooltip text
+		popup.set_item_tooltip(i, tr(child_name_upper) + "_TOOLTIP")

@@ -299,11 +299,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/ThruCutControl.gd"
 }, {
-"base": "Node",
-"class": "ToolTips",
-"language": "GDScript",
-"path": "res://controls/ToolTips.gd"
-}, {
 "base": "VBoxContainer",
 "class": "TranslateControl",
 "language": "GDScript",
@@ -398,7 +393,6 @@ _global_script_class_icons={
 "TextControl": "",
 "ThreePointArcControl": "",
 "ThruCutControl": "",
-"ToolTips": "",
 "TranslateControl": "",
 "Triggers": "",
 "TwistExtrudeControl": "",
@@ -849,6 +843,10 @@ SaveComponent={
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":true,"pressed":false,"scancode":83,"unicode":0,"echo":false,"script":null)
  ]
 }
+
+[locale]
+
+translations=PoolStringArray( "res://translations.en.translation" )
 
 [python_script]
 

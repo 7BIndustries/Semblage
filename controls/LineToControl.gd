@@ -25,7 +25,7 @@ func _ready():
 	dims_group.add_child(x_lbl)
 	x_ctrl = NumberEdit.new()
 	x_ctrl.set_text("1.0")
-	x_ctrl.hint_tooltip = ToolTips.get_tts().lineto_x_dist_ctrl_hint_tooltip
+	x_ctrl.hint_tooltip = tr("LINETO_X_DIST_CTRL_HINT_TOOLTIP")
 	dims_group.add_child(x_ctrl)
 	# Y coord
 	var y_lbl = Label.new()
@@ -33,7 +33,7 @@ func _ready():
 	dims_group.add_child(y_lbl)
 	y_ctrl = NumberEdit.new()
 	y_ctrl.set_text("1.0")
-	y_ctrl.hint_tooltip = ToolTips.get_tts().lineto_y_dist_ctrl_hint_tooltip
+	y_ctrl.hint_tooltip = tr("LINETO_Y_DIST_CTRL_HINT_TOOLTIP")
 	dims_group.add_child(y_ctrl)
 
 	add_child(dims_group)
@@ -45,7 +45,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
-	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
+	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
 
 	add_child(const_group)

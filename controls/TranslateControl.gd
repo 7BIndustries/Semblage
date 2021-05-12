@@ -29,7 +29,7 @@ func _ready():
 	vec_x_ctrl = NumberEdit.new()
 	vec_x_ctrl.CanBeNegative = true
 	vec_x_ctrl.set_text("0")
-	vec_x_ctrl.hint_tooltip = ToolTips.get_tts().translate_vec_x_ctrl_hint_tooltip
+	vec_x_ctrl.hint_tooltip = tr("TRANSLATE_VEC_X_CTRL_HINT_TOOLTIP")
 	vec_group.add_child(vec_x_ctrl)
 	# vec Y
 	var y_lbl = Label.new()
@@ -38,7 +38,7 @@ func _ready():
 	vec_y_ctrl = NumberEdit.new()
 	vec_y_ctrl.CanBeNegative = true
 	vec_y_ctrl.set_text("0")
-	vec_y_ctrl.hint_tooltip = ToolTips.get_tts().translate_vec_y_ctrl_hint_tooltip
+	vec_y_ctrl.hint_tooltip = tr("TRANSLATE_VEC_Y_CTRL_HINT_TOOLTIP")
 	vec_group.add_child(vec_y_ctrl)
 	# vec Z
 	var z_lbl = Label.new()
@@ -47,7 +47,7 @@ func _ready():
 	vec_z_ctrl = NumberEdit.new()
 	vec_z_ctrl.CanBeNegative = true
 	vec_z_ctrl.set_text("10")
-	vec_z_ctrl.hint_tooltip = ToolTips.get_tts().translate_vec_z_ctrl_hint_tooltip
+	vec_z_ctrl.hint_tooltip = tr("TRANSLATE_VEC_Z_CTRL_HINT_TOOLTIP")
 	vec_group.add_child(vec_z_ctrl)
 
 	vec_lbl_group.add_child(vec_group)

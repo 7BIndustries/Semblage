@@ -24,7 +24,7 @@ func _ready():
 	length_ctrl = NumberEdit.new()
 	length_ctrl.CanBeZero = false
 	length_ctrl.set_text("0.1")
-	length_ctrl.hint_tooltip = ToolTips.get_tts().chamfer_length_ctrl_hint_tooltip
+	length_ctrl.hint_tooltip = tr("CHAMFER_LENGTH_CTRL_HINT_TOOLTIP")
 	length_group.add_child(length_ctrl)
 	add_child(length_group)
 
@@ -34,7 +34,7 @@ func _ready():
 	asym_length_group.add_child(asym_length_lbl)
 	asym_length_ctrl = NumberEdit.new()
 	asym_length_ctrl.set_text("0")
-	asym_length_ctrl.hint_tooltip = ToolTips.get_tts().chamfer_asym_length_ctrl_hint_tooltip
+	asym_length_ctrl.hint_tooltip = tr("CHAMFER_ASYM_LENGTH_CTRL_HINT_TOOLTIP")
 	asym_length_group.add_child(asym_length_ctrl)
 	add_child(asym_length_group)
 

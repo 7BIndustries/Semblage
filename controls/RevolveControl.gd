@@ -35,7 +35,7 @@ func _ready():
 	angle_ctrl = NumberEdit.new()
 	angle_ctrl.MaxValue = 360.0
 	angle_ctrl.set_text("360.0")
-	angle_ctrl.hint_tooltip = ToolTips.get_tts().revolve_angle_ctrl_hint_tooltip
+	angle_ctrl.hint_tooltip = tr("REVOLVE_ANGLE_CTRL_HINT_TOOLTIP")
 	angle_group.add_child(angle_ctrl)
 	add_child(angle_group)
 
@@ -51,7 +51,7 @@ func _ready():
 	axis_start_group.add_child(x_lbl)
 	axis_start_x_ctrl = NumberEdit.new()
 	axis_start_x_ctrl.set_text("0")
-	axis_start_x_ctrl.hint_tooltip = ToolTips.get_tts().revolve_axis_start_x_ctrl_hint_tooltip
+	axis_start_x_ctrl.hint_tooltip = tr("REVOLVE_AXIS_START_X_CTRL_HINT_TOOLTIP")
 	axis_start_group.add_child(axis_start_x_ctrl)
 	# Axis Y
 	var y_lbl = Label.new()
@@ -59,7 +59,7 @@ func _ready():
 	axis_start_group.add_child(y_lbl)
 	axis_start_y_ctrl = NumberEdit.new()
 	axis_start_y_ctrl.set_text("0")
-	axis_start_y_ctrl.hint_tooltip = ToolTips.get_tts().revolve_axis_start_y_ctrl_hint_tooltip
+	axis_start_y_ctrl.hint_tooltip = tr("REVOLVE_AXIS_START_Y_CTRL_HINT_TOOLTIP")
 	axis_start_group.add_child(axis_start_y_ctrl)
 	# Axis Z
 	var z_lbl = Label.new()
@@ -67,7 +67,7 @@ func _ready():
 	axis_start_group.add_child(z_lbl)
 	axis_start_z_ctrl = NumberEdit.new()
 	axis_start_z_ctrl.set_text("0")
-	axis_start_z_ctrl.hint_tooltip = ToolTips.get_tts().revolve_axis_start_z_ctrl_hint_tooltip
+	axis_start_z_ctrl.hint_tooltip = tr("REVOLVE_AXIS_START_Z_CTRL_HINT_TOOLTIP")
 	axis_start_group.add_child(axis_start_z_ctrl)
 
 	start_group.add_child(axis_start_group)
@@ -85,7 +85,7 @@ func _ready():
 	axis_end_group.add_child(x_lbl)
 	axis_end_x_ctrl = NumberEdit.new()
 	axis_end_x_ctrl.set_text("0")
-	axis_end_x_ctrl.hint_tooltip = ToolTips.get_tts().revolve_axis_end_x_ctrl_hint_tooltip
+	axis_end_x_ctrl.hint_tooltip = tr("REVOLVE_AXIS_END_X_CTRL_HINT_TOOLTIP")
 	axis_end_group.add_child(axis_end_x_ctrl)
 	# Axis Y
 	y_lbl = Label.new()
@@ -93,7 +93,7 @@ func _ready():
 	axis_end_group.add_child(y_lbl)
 	axis_end_y_ctrl = NumberEdit.new()
 	axis_end_y_ctrl.set_text("0")
-	axis_end_y_ctrl.hint_tooltip = ToolTips.get_tts().revolve_axis_end_y_ctrl_hint_tooltip
+	axis_end_y_ctrl.hint_tooltip = tr("REVOLVE_AXIS_END_Y_CTRL_HINT_TOOLTIP")
 	axis_end_group.add_child(axis_end_y_ctrl)
 	# Axis Z
 	z_lbl = Label.new()
@@ -101,7 +101,7 @@ func _ready():
 	axis_end_group.add_child(z_lbl)
 	axis_end_z_ctrl = NumberEdit.new()
 	axis_end_z_ctrl.set_text("1")
-	axis_end_z_ctrl.hint_tooltip = ToolTips.get_tts().revolve_axis_end_z_ctrl_hint_tooltip
+	axis_end_z_ctrl.hint_tooltip = tr("REVOLVE_AXIS_END_Z_CTRL_HINT_TOOLTIP")
 	axis_end_group.add_child(axis_end_z_ctrl)
 
 	end_group.add_child(axis_end_group)
@@ -114,7 +114,7 @@ func _ready():
 	combine_group.add_child(combine_lbl)
 	combine_ctrl = CheckBox.new()
 	combine_ctrl.pressed = true
-	combine_ctrl.hint_tooltip = ToolTips.get_tts().combine_ctrl_hint_tooltip
+	combine_ctrl.hint_tooltip = tr("COMBINE_CTRL_HINT_TOOLTIP")
 	combine_group.add_child(combine_ctrl)
 	add_child(combine_group)
 
@@ -125,7 +125,7 @@ func _ready():
 	clean_group.add_child(clean_lbl)
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
-	clean_ctrl.hint_tooltip = ToolTips.get_tts().clean_ctrl_hint_tooltip
+	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
 
@@ -136,7 +136,7 @@ func _ready():
 	invert_group.add_child(invert_lbl)
 	invert_ctrl = CheckBox.new()
 	invert_ctrl.pressed = false
-	invert_ctrl.hint_tooltip = ToolTips.get_tts().invert_ctrl_hint_tooltip
+	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
 

@@ -25,7 +25,7 @@ func _ready():
 	x_radius_group.add_child(x_radius_lbl)
 	x_radius_ctrl = NumberEdit.new()
 	x_radius_ctrl.set_text("5.0")
-	x_radius_ctrl.hint_tooltip = ToolTips.get_tts().arc_x_radius_ctrl_hint_tooltip
+	x_radius_ctrl.hint_tooltip = tr("ARC_X_RADIUS_CTRL_HINT_TOOLTIP")
 	x_radius_group.add_child(x_radius_ctrl)
 	add_child(x_radius_group)
 
@@ -36,7 +36,7 @@ func _ready():
 	y_radius_group.add_child(y_radius_lbl)
 	y_radius_ctrl = NumberEdit.new()
 	y_radius_ctrl.set_text("10.0")
-	y_radius_ctrl.hint_tooltip = ToolTips.get_tts().arc_y_radius_ctrl_hint_tooltip
+	y_radius_ctrl.hint_tooltip = tr("ARC_Y_RADIUS_CTRL_HINT_TOOLTIP")
 	y_radius_group.add_child(y_radius_ctrl)
 	add_child(y_radius_group)
 
@@ -48,7 +48,7 @@ func _ready():
 	rotation_angle_ctrl = NumberEdit.new()
 	rotation_angle_ctrl.MaxValue = 360.0
 	rotation_angle_ctrl.set_text("0.0")
-	rotation_angle_ctrl.hint_tooltip = ToolTips.get_tts().arc_rotation_angle_ctrl_hint_tooltip
+	rotation_angle_ctrl.hint_tooltip = tr("ARC_ROTATION_ANGLE_CTRL_HINT_TOOLTIP")
 	rotation_angle_group.add_child(rotation_angle_ctrl)
 	add_child(rotation_angle_group)
 
@@ -59,7 +59,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
-	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
+	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
 	add_child(const_group)
 

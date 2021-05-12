@@ -81,14 +81,14 @@ func _ready():
 	# The first face filter (i.e. >, <, |)
 	face_comps_opt_1 = OptionButton.new()
 	Common.load_option_button(face_comps_opt_1, filter_items)
-	face_comps_opt_1.hint_tooltip = ToolTips.get_tts().face_comps_opt_1_hint_tooltip
+	face_comps_opt_1.hint_tooltip = tr("FACE_COMPS_OPT_1_HINT_TOOLTIP")
 	face_comps_opt_1.connect("item_selected", self, "_first_face_filter_selected")
 	face_comps.add_child(face_comps_opt_1)
 
 	# First axis filter (X, Y, Z)
 	face_comps_opt_2 = OptionButton.new()
 	Common.load_option_button(face_comps_opt_2, axis_items)
-	face_comps_opt_2.hint_tooltip = ToolTips.get_tts().face_comps_opt_2_hint_tooltip
+	face_comps_opt_2.hint_tooltip = tr("FACE_COMPS_OPT_2_HINT_TOOLTIP")
 	face_comps_opt_2.connect("item_selected", self, "_first_face_axis_selected")
 	face_comps_opt_2.hide()
 	face_comps.add_child(face_comps_opt_2)
@@ -96,7 +96,7 @@ func _ready():
 	# Button that allows the user to add another section of selectors
 	extra_face_selector_adder = Button.new()
 	extra_face_selector_adder.set_text("+")
-	extra_face_selector_adder.hint_tooltip = ToolTips.get_tts().extra_selector_adder_hint_tooltip
+	extra_face_selector_adder.hint_tooltip = tr("EXTRA_SELECTOR_ADDER_HINT_TOOLTIP")
 	extra_face_selector_adder.hide()
 	extra_face_selector_adder.connect("button_down", self, "_first_add_button_clicked")
 	face_comps.add_child(extra_face_selector_adder)
@@ -105,7 +105,7 @@ func _ready():
 	face_logic_option_button = OptionButton.new()
 	face_logic_option_button.add_item("and")
 	face_logic_option_button.add_item("or")
-	face_logic_option_button.hint_tooltip = ToolTips.get_tts().logic_option_button_hint_tooltip
+	face_logic_option_button.hint_tooltip = tr("LOGIC_OPTION_BUTTON_HINT_TOOLTIP")
 	face_logic_option_button.hide()
 	face_logic_option_button.connect("item_selected", self, "_face_logic_button_changed")
 	face_comps.add_child(face_logic_option_button)
@@ -114,7 +114,7 @@ func _ready():
 	face_comps_opt_3 = OptionButton.new()
 	var short_filter_items = filter_items.slice(2, -1)
 	Common.load_option_button(face_comps_opt_3, short_filter_items)
-	face_comps_opt_3.hint_tooltip = ToolTips.get_tts().face_comps_opt_1_hint_tooltip
+	face_comps_opt_3.hint_tooltip = tr("FACE_COMPS_OPT_1_HINT_TOOLTIP")
 	face_comps_opt_3.connect("item_selected", self, "_second_face_filter_selected")
 	face_comps_opt_3.hide()
 	face_comps.add_child(face_comps_opt_3)
@@ -122,7 +122,7 @@ func _ready():
 	# Second axis filter (X, Y, Z)
 	face_comps_opt_4 = OptionButton.new()
 	Common.load_option_button(face_comps_opt_4, axis_items)
-	face_comps_opt_4.hint_tooltip = ToolTips.get_tts().face_comps_opt_2_hint_tooltip
+	face_comps_opt_4.hint_tooltip = tr("FACE_COMPS_OPT_2_HINT_TOOLTIP")
 	face_comps_opt_4.connect("item_selected", self, "_second_face_axis_selected")
 	face_comps_opt_4.hide()
 	face_comps.add_child(face_comps_opt_4)
@@ -130,7 +130,7 @@ func _ready():
 	# Button to make the raw face selector string visible
 	hide_show_face_str = Button.new()
 	hide_show_face_str.set_button_icon(show_btn_texture)
-	hide_show_face_str.hint_tooltip = ToolTips.get_tts().hide_show_selector_str
+	hide_show_face_str.hint_tooltip = tr("HIDE_SHOW_SELECTOR_STR")
 	hide_show_face_str.connect("button_down", self, "_hide_show_face_sel_string")
 	face_comps.add_child(hide_show_face_str)
 
@@ -158,14 +158,14 @@ func _ready():
 	# The first face filter (i.e. >, <, |)
 	edge_comps_opt_1 = OptionButton.new()
 	Common.load_option_button(edge_comps_opt_1, filter_items)
-	edge_comps_opt_1.hint_tooltip = ToolTips.get_tts().edge_comps_opt_1_hint_tooltip
+	edge_comps_opt_1.hint_tooltip = tr("EDGE_COMPS_OPT_1_HINT_TOOLTIP")
 	edge_comps_opt_1.connect("item_selected", self, "_first_edge_filter_selected")
 	edge_comps.add_child(edge_comps_opt_1)
 
 	# First axis filter (X, Y, Z)
 	edge_comps_opt_2 = OptionButton.new()
 	Common.load_option_button(edge_comps_opt_2, axis_items)
-	edge_comps_opt_2.hint_tooltip = ToolTips.get_tts().face_comps_opt_2_hint_tooltip
+	edge_comps_opt_2.hint_tooltip = tr("FACE_COMPS_OPT_2_HINT_TOOLTIP")
 	edge_comps_opt_2.connect("item_selected", self, "_first_edge_axis_selected")
 	edge_comps_opt_2.hide()
 	edge_comps.add_child(edge_comps_opt_2)
@@ -173,7 +173,7 @@ func _ready():
 	# Button that allows the user to add another section of selectors
 	extra_edge_selector_adder = Button.new()
 	extra_edge_selector_adder.set_text("+")
-	extra_edge_selector_adder.hint_tooltip = ToolTips.get_tts().extra_selector_adder_hint_tooltip
+	extra_edge_selector_adder.hint_tooltip = tr("EXTRA_SELECTOR_ADDER_HINT_TOOLTIP")
 	extra_edge_selector_adder.hide()
 	extra_edge_selector_adder.connect("button_down", self, "_first_edge_add_button_clicked")
 	edge_comps.add_child(extra_edge_selector_adder)
@@ -182,7 +182,7 @@ func _ready():
 	edge_logic_option_button = OptionButton.new()
 	edge_logic_option_button.add_item("and")
 	edge_logic_option_button.add_item("or")
-	edge_logic_option_button.hint_tooltip = ToolTips.get_tts().logic_option_button_hint_tooltip
+	edge_logic_option_button.hint_tooltip = tr("LOGIC_OPTION_BUTTON_HINT_TOOLTIP")
 	edge_logic_option_button.hide()
 	edge_logic_option_button.connect("item_selected", self, "_edge_logic_button_changed")
 	edge_comps.add_child(edge_logic_option_button)
@@ -190,7 +190,7 @@ func _ready():
 	# The second face filter (i.e. >, <, |)
 	edge_comps_opt_3 = OptionButton.new()
 	Common.load_option_button(edge_comps_opt_3, short_filter_items)
-	edge_comps_opt_3.hint_tooltip = ToolTips.get_tts().edge_comps_opt_1_hint_tooltip
+	edge_comps_opt_3.hint_tooltip = tr("EDGE_COMPS_OPT_1_HINT_TOOLTIP")
 	edge_comps_opt_3.connect("item_selected", self, "_second_edge_filter_selected")
 	edge_comps_opt_3.hide()
 	edge_comps.add_child(edge_comps_opt_3)
@@ -198,7 +198,7 @@ func _ready():
 	# Second axis filter (X, Y, Z)
 	edge_comps_opt_4 = OptionButton.new()
 	Common.load_option_button(edge_comps_opt_4, axis_items)
-	edge_comps_opt_4.hint_tooltip = ToolTips.get_tts().face_comps_opt_2_hint_tooltip
+	edge_comps_opt_4.hint_tooltip = tr("FACE_COMPS_OPT_2_HINT_TOOLTIP")
 	edge_comps_opt_4.connect("item_selected", self, "_second_edge_axis_selected")
 	edge_comps_opt_4.hide()
 	edge_comps.add_child(edge_comps_opt_4)
@@ -206,7 +206,7 @@ func _ready():
 	# Button to make the raw edge selector string visible
 	hide_show_edge_str = Button.new()
 	hide_show_edge_str.set_button_icon(show_btn_texture)
-	hide_show_edge_str.hint_tooltip = ToolTips.get_tts().hide_show_selector_str
+	hide_show_edge_str.hint_tooltip = tr("HIDE_SHOW_SELECTOR_STR")
 	hide_show_edge_str.connect("button_down", self, "_hide_show_edge_sel_string")
 	edge_comps.add_child(hide_show_edge_str)
 
@@ -234,14 +234,14 @@ func _ready():
 	# The first vertex filter (i.e. >, <)
 	vertex_comps_opt_1 = OptionButton.new()
 	Common.load_option_button(vertex_comps_opt_1, vertex_filter_items)
-	vertex_comps_opt_1.hint_tooltip = ToolTips.get_tts().vertex_comps_opt_1_hint_tooltip
+	vertex_comps_opt_1.hint_tooltip = tr("VERTEX_COMPS_OPT_1_HINT_TOOLTIP")
 	vertex_comps_opt_1.connect("item_selected", self, "_first_vertex_filter_selected")
 	vertex_comps.add_child(vertex_comps_opt_1)
 
 	# First axis filter (X, Y, Z)
 	vertex_comps_opt_2 = OptionButton.new()
 	Common.load_option_button(vertex_comps_opt_2, axis_items)
-	vertex_comps_opt_2.hint_tooltip = ToolTips.get_tts().face_comps_opt_2_hint_tooltip
+	vertex_comps_opt_2.hint_tooltip = tr("FACE_COMPS_OPT_2_HINT_TOOLTIP")
 	vertex_comps_opt_2.connect("item_selected", self, "_first_vertex_axis_selected")
 	vertex_comps_opt_2.hide()
 	vertex_comps.add_child(vertex_comps_opt_2)
@@ -249,7 +249,7 @@ func _ready():
 	# Button that allows the user to add another section of selectors
 	extra_vertex_selector_adder = Button.new()
 	extra_vertex_selector_adder.set_text("+")
-	extra_vertex_selector_adder.hint_tooltip = ToolTips.get_tts().extra_selector_adder_hint_tooltip
+	extra_vertex_selector_adder.hint_tooltip = tr("EXTRA_SELECTOR_ADDER_HINT_TOOLTIP")
 	extra_vertex_selector_adder.hide()
 	extra_vertex_selector_adder.connect("button_down", self, "_first_vertex_add_button_clicked")
 	vertex_comps.add_child(extra_vertex_selector_adder)
@@ -258,7 +258,7 @@ func _ready():
 	vertex_logic_option_button = OptionButton.new()
 	vertex_logic_option_button.add_item("and")
 	vertex_logic_option_button.add_item("or")
-	vertex_logic_option_button.hint_tooltip = ToolTips.get_tts().logic_option_button_hint_tooltip
+	vertex_logic_option_button.hint_tooltip = tr("LOGIC_OPTION_BUTTON_HINT_TOOLTIP")
 	vertex_logic_option_button.hide()
 	vertex_logic_option_button.connect("item_selected", self, "_vertex_logic_button_changed")
 	vertex_comps.add_child(vertex_logic_option_button)
@@ -267,7 +267,7 @@ func _ready():
 	var short_vertex_filter_items = vertex_filter_items.slice(2, -1)
 	vertex_comps_opt_3 = OptionButton.new()
 	Common.load_option_button(vertex_comps_opt_3, short_vertex_filter_items)
-	vertex_comps_opt_3.hint_tooltip = ToolTips.get_tts().vertex_comps_opt_1_hint_tooltip
+	vertex_comps_opt_3.hint_tooltip = tr("VERTEX_COMPS_OPT_1_HINT_TOOLTIP")
 	vertex_comps_opt_3.connect("item_selected", self, "_second_vertex_filter_selected")
 	vertex_comps_opt_3.hide()
 	vertex_comps.add_child(vertex_comps_opt_3)
@@ -275,7 +275,7 @@ func _ready():
 	# Second axis filter (X, Y, Z)
 	vertex_comps_opt_4 = OptionButton.new()
 	Common.load_option_button(vertex_comps_opt_4, axis_items)
-	vertex_comps_opt_4.hint_tooltip = ToolTips.get_tts().face_comps_opt_2_hint_tooltip
+	vertex_comps_opt_4.hint_tooltip = tr("FACE_COMPS_OPT_2_HINT_TOOLTIP")
 	vertex_comps_opt_4.connect("item_selected", self, "_second_vertex_axis_selected")
 	vertex_comps_opt_4.hide()
 	vertex_comps.add_child(vertex_comps_opt_4)
@@ -283,7 +283,7 @@ func _ready():
 	# Button to make the raw vertex selector string visible
 	hide_show_vertex_str = Button.new()
 	hide_show_vertex_str.set_button_icon(show_btn_texture)
-	hide_show_vertex_str.hint_tooltip = ToolTips.get_tts().hide_show_selector_str
+	hide_show_vertex_str.hint_tooltip = tr("HIDE_SHOW_SELECTOR_STR")
 	hide_show_vertex_str.connect("button_down", self, "_hide_show_vertex_sel_string")
 	vertex_comps.add_child(hide_show_vertex_str)
 
@@ -298,7 +298,7 @@ func _ready():
 	# Workplane toggle
 	hide_show_btn = CheckButton.new()
 	hide_show_btn.set_text("Create Workplane: ")
-	hide_show_btn.hint_tooltip = ToolTips.get_tts().selector_hide_show_wp_btn_hint_tooltip
+	hide_show_btn.hint_tooltip = tr("SELECTOR_HIDE_SHOW_WP_BTN_HINT_TOOLTIP")
 	hide_show_btn.connect("button_down", self, "_show_workplane")
 	add_child(hide_show_btn)
 

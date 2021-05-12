@@ -23,7 +23,7 @@ func _ready():
 	length_group.add_child(length_lbl)
 	length_ctrl = NumberEdit.new()
 	length_ctrl.set_text("5.0")
-	length_ctrl.hint_tooltip = ToolTips.get_tts().slot_length_ctrl_hint_tooltip
+	length_ctrl.hint_tooltip = tr("SLOT_LENGTH_CTRL_HINT_TOOLTIP")
 	length_group.add_child(length_ctrl)
 	add_child(length_group)
 
@@ -34,7 +34,7 @@ func _ready():
 	diameter_group.add_child(diameter_lbl)
 	diameter_ctrl = NumberEdit.new()
 	diameter_ctrl.set_text("0.5")
-	diameter_ctrl.hint_tooltip = ToolTips.get_tts().slot_diameter_ctrl_hint_tooltip
+	diameter_ctrl.hint_tooltip = tr("SLOT_DIAMETER_CTRL_HINT_TOOLTIP")
 	diameter_group.add_child(diameter_ctrl)
 	add_child(diameter_group)
 
@@ -46,7 +46,7 @@ func _ready():
 	angle_ctrl = NumberEdit.new()
 	angle_ctrl.MaxValue = 360.0
 	angle_ctrl.set_text("0")
-	angle_ctrl.hint_tooltip = ToolTips.get_tts().slot_angle_ctrl_hint_tooltip
+	angle_ctrl.hint_tooltip = tr("SLOT_ANGLE_CTRL_HINT_TOOLTIP")
 	angle_group.add_child(angle_ctrl)
 	add_child(angle_group)
 

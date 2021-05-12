@@ -29,7 +29,7 @@ func _ready():
 	distance_group.add_child(distance_lbl)
 	distance_ctrl = NumberEdit.new()
 	distance_ctrl.set_text("5.0")
-	distance_ctrl.hint_tooltip = ToolTips.get_tts().twist_extrude_distance_ctrl_hint_tooltip
+	distance_ctrl.hint_tooltip = tr("TWIST_EXTRUDE_DISTANCE_CTRL_HINT_TOOLTIP")
 	distance_group.add_child(distance_ctrl)
 	add_child(distance_group)
 
@@ -41,7 +41,7 @@ func _ready():
 	angle_ctrl = NumberEdit.new()
 	angle_ctrl.MaxValue = 360.0
 	angle_ctrl.set_text("30")
-	angle_ctrl.hint_tooltip = ToolTips.get_tts().twist_extrude_angle_ctrl_hint_tooltip
+	angle_ctrl.hint_tooltip = tr("TWIST_EXTRUDE_ANGLE_CTRL_HINT_TOOLTIP")
 	angle_group.add_child(angle_ctrl)
 	add_child(angle_group)
 
@@ -52,7 +52,7 @@ func _ready():
 	combine_group.add_child(combine_lbl)
 	combine_ctrl = CheckBox.new()
 	combine_ctrl.pressed = true
-	combine_ctrl.hint_tooltip = ToolTips.get_tts().combine_ctrl_hint_tooltip
+	combine_ctrl.hint_tooltip = tr("COMBINE_CTRL_HINT_TOOLTIP")
 	combine_group.add_child(combine_ctrl)
 	add_child(combine_group)
 
@@ -63,7 +63,7 @@ func _ready():
 	clean_group.add_child(clean_lbl)
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
-	clean_ctrl.hint_tooltip = ToolTips.get_tts().clean_ctrl_hint_tooltip
+	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
 
@@ -74,7 +74,7 @@ func _ready():
 	invert_group.add_child(invert_lbl)
 	invert_ctrl = CheckBox.new()
 	invert_ctrl.pressed = false
-	invert_ctrl.hint_tooltip = ToolTips.get_tts().invert_ctrl_hint_tooltip
+	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
 

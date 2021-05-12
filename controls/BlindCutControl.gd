@@ -27,7 +27,7 @@ func _ready():
 	distance_ctrl = NumberEdit.new()
 	distance_ctrl.CanBeNegative = true
 	distance_ctrl.set_text("1.0")
-	distance_ctrl.hint_tooltip = ToolTips.get_tts().blind_cut_distance_ctrl_hint_tooltip
+	distance_ctrl.hint_tooltip = tr("BLIND_CUT_DISTANCE_CTRL_HINT_TOOLTIP")
 	distance_group.add_child(distance_ctrl)
 	add_child(distance_group)
 
@@ -38,7 +38,7 @@ func _ready():
 	clean_group.add_child(clean_lbl)
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
-	clean_ctrl.hint_tooltip = ToolTips.get_tts().clean_ctrl_hint_tooltip
+	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
 
@@ -50,7 +50,7 @@ func _ready():
 	taper_ctrl = NumberEdit.new()
 	taper_ctrl.CanBeNegative = true
 	taper_ctrl.set_text("0.0")
-	taper_ctrl.hint_tooltip = ToolTips.get_tts().taper_ctrl_hint_tooltip
+	taper_ctrl.hint_tooltip = tr("TAPER_CTRL_HINT_TOOLTIP")
 	taper_group.add_child(taper_ctrl)
 	add_child(taper_group)
 
@@ -61,7 +61,7 @@ func _ready():
 	invert_group.add_child(invert_lbl)
 	invert_ctrl = CheckBox.new()
 	invert_ctrl.pressed = false
-	invert_ctrl.hint_tooltip = ToolTips.get_tts().invert_ctrl_hint_tooltip
+	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
 

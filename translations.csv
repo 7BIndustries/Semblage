@@ -1,0 +1,239 @@
+keys,en
+ARC_ANGLE_1_CTRL_HINT_TOOLTIP,Start angle of the arc.
+ARC_ANGLE_2_CTRL_HINT_TOOLTIP,"End angle of the arc. If angle2 and angle1 are the same,\na closed ellipse is the result, which is the default."
+ARC_MAKE_WIRE_CTRL_HINT_TOOLTIP,Convert the resulting edge to a wire.
+ARC_ROTATION_ANGLE_CTRL_HINT_TOOLTIP,Angle to rotate the created ellipse/arc by.
+ARC_SENSE_CTRL_HINT_TOOLTIP,Clockwise (-1) or counter clockwise (1).
+ARC_START_AT_CURRENT_CTRL_HINT_TOOLTIP,"If checked, the start point of arc is moved to current point.\nIf unchecked, the center of arc is on current point."
+ARC_X_RADIUS_CTRL_HINT_TOOLTIP,X radius of the ellipse (along the x-axis of plane\nthe ellipse should lie in).
+ARC_Y_RADIUS_CTRL_HINT_TOOLTIP,Y radius of the ellipse (along the y-axis of plane\nthe ellipse should lie in).
+BOX_LENGTH_CTRL_HINT_TOOLTIP,Box size in X direction.
+BOX_WIDTH_CTRL_HINT_TOOLTIP,Box size in Y direction.
+BOX_HEIGHT_CTRL_HINT_TOOLTIP,Box size in Z direction.
+BLIND_CUT_DISTANCE_CTRL_HINT_TOOLTIP,"Distance to extrude before cutting (> 0.0 means in the positive direction of the\nworkplane normal, < 0.0 means in the negative direction)."
+CBORE_CBORE_DIA_CTRL_HINT_TOOLTIP,Diameter of the counter-bore hole. This diameter\nshould be larger than that of the main hole.
+CBORE_CBORE_DEPTH_CTRL_HINT_TOOLTIP,Depth of the counter-bore hole. This depth should be\nless than that of the main hole.
+CEN_X_CTRL_HINT_TOOLTIP,"If checked, will be centered around the X axis reference point.\nIf unchecked, the corner will be on the reference point and it\nwill extend in the positive x direction."
+CEN_Y_CTRL_HINT_TOOLTIP,"If checked, will be centered around the Y axis reference point.\nIf unchecked, the corner will be on the reference point and it\nwill extend in the positive y direction."
+CEN_Z_CTRL_HINT_TOOLTIP,"If checked, will be centered around the Z axis reference point.\nIf unchecked, the corner will be on the reference point and it\nwill extend in the positive z direction."
+CENTER_X_COORD_CTRL_HINT_TOOLTIP,"Shift local X coordinate to the specified location. Used to adjust the\ncenter point after it has been created automatically on a face, but is\nnot where it needs to be."
+CENTER_Y_COORD_CTRL_HINT_TOOLTIP,"Shift local Y coordinate to the specified location. Used to adjust the\ncenter point after it has been created automatically on a face, but is\nnot where it needs to be."
+CHAMFER_LENGTH_CTRL_HINT_TOOLTIP,Length of the chamfer. Must be > 0.
+CHAMFER_ASYM_LENGTH_CTRL_HINT_TOOLTIP,Can be set to > 0 for an asymmetrical chamfer.
+COMBINE_CTRL_HINT_TOOLTIP,Whether this should be combined with other solids on the stack.
+CORNER_KIND_CTRL_HINT_TOOLTIP,"Use 'arc' for rounded corners, and 'intersection' for sharp corners."
+CLEAN_CTRL_HINT_TOOLTIP,"Whether to clean the resulting geometry. If the CAD kernel\nis yielding invalid results, try disabling this."
+CSINK_ANGLE_CTRL_HINT_TOOLTIP,Angle of the countersink in degrees (82 is common).
+CSINK_DIA_CTRL_HINT_TOOLTIP,Largest diameter of the counter-sink. This diameter\nshould be larger than that of the main hole.
+EDGE_COMPS_OPT_1_HINT_TOOLTIP,Edge filter\nNone = Do not use this filter\nAll = All edges selected\nMaximum (>) = Edge greatest distance from origin along selected axis\nMinimum (<) = Face smallest distance from origin along selected axis\nPositive Normal (+) = Edges aligned in the positive direction with the given axis\nNegative Normal (-) = Edges aligned in the negative direction with the given axis\nParallel (|) = Edges parallel to the given axis\nOrthogonal (#) = Edges orthogonal to the given axis
+EXTRA_SELECTOR_ADDER_HINT_TOOLTIP,Add another selector to be combined with the previous.
+EXTRUDE_BOTH_CTRL_HINT_TOOLTIP,Extrude in both directions symmetrically.
+EXTRUDE_DISTANCE_CTRL_HINT_TOOLTIP,Distance to extrude along the normal of the workplane.
+FACE_COMPS_OPT_1_HINT_TOOLTIP,Face filter\nNone = Do not use this filter\nAll = All faces selected\nMaximum (>) = Face greatest distance from origin along selected axis\nMinimum (<) = Face smallest distance from origin along selected axis\nPositive Normal (+) = Faces with a normal aligned in the positive direction with the given axis\nNegative Normal (-) = Faces with a normal aligned in the negative direction with the given axis\nParallel (|) = Faces with normal parallel to the normal of the workplane\nOrthogonal (#) = Faces with normal orthogonal to normal of the workplane.
+FACE_COMPS_OPT_2_HINT_TOOLTIP,Axis filter\nX = X axis of the workplane\nY = Y axis of the workplane\nZ = Z axis of the workplane.
+FILLET_RADIUS_CTRL_HINT_TOOLTIP,"Radius of the fillet, must be > zero."
+FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP,"Whether the new wires should be reference geometry only. Check if the\nwires are for reference, uncheck if they are creating part geometry."
+HIDE_SHOW_SELECTOR_STR,Toggle to hide or show the raw selector string.
+HLINE_DIST_CTRL_HINT_TOOLTIP,X distance from current point.
+HLINETO_X_COORD_CTRL_HINT_TOOLTIP,X coordinate for the end of the line.
+HOLE_DIA_CTRL_HINT_TOOLTIP,Diameter of the main hole.
+HOLE_DEPTH_CTRL_HINT_TOOLTIP,Depth of the main hole. Setting to 0 causes it to go all\nthe way through the object it is being placed in.
+INCLUDE_CTRL_HINT_TOOLTIP,Use current point as a starting point of the curve/line.
+INVERT_CTRL_HINT_TOOLTIP,Flip the normal for the operation to the opposite direction.
+LINE_X_DIST_CTRL_HINT_TOOLTIP,X distance from the current point.
+LINE_Y_DIST_CTRL_HINT_TOOLTIP,Y distance from the current point.
+LINETO_X_DIST_CTRL_HINT_TOOLTIP,The X point in workplane plane coordinates.
+LINETO_Y_DIST_CTRL_HINT_TOOLTIP,The Y point in workplane plane coordinates.
+LOGIC_OPTION_BUTTON_HINT_TOOLTIP,Logical operators\nand = Both selectors have to match\nor = Either selector can match.
+MOVE_X_DIST_CTRL_HINT_TOOLTIP,Desired X distance in local coordinates.
+MOVE_Y_DIST_CTRL_HINT_TOOLTIP,Desired Y distance in local coordinates.
+MOVETO_X_DIST_CTRL_HINT_TOOLTIP,Desired X location in local coordinates.
+MOVETO_Y_DIST_CTRL_HINT_TOOLTIP,Desired Y location in local coordinates.
+OFFSET2D_THICKNESS_CTRL_HINT_TOOLTIP,Offset thickness. Negative thickness denotes offset to inside.
+POLAR_ARRAY_ANGLE_CTRL_HINT_TOOLTIP,"The angle (degrees) to fill with elements. A positive value will\nfill in the counter-clockwise direction. If fill is false, angle is\nthe angle between elements."
+POLAR_ARRAY_COUNT_CTRL_HINT_TOOLTIP,Number of elements in the array (must be > 0).
+POLAR_ARRAY_FILL_CTRL_HINT_TOOLTIP,Interpret the angle as total if checked.
+POLAR_ARRAY_RADIUS_CTRL_HINT_TOOLTIP,Distance away from the center that\nthe array objects will be placed.
+POLAR_ARRAY_ROTATE_CTRL_HINT_TOOLTIP,Rotate every item to be oriented with respect\nto the center of the array.
+POLAR_ARRAY_START_ANGLE_CTRL_HINT_TOOLTIP,Starting angle (degrees) of array. 0 degrees is situated along local X-axis.
+POLAR_LINE_DISTANCE_CTRL_HINT_TOOLTIP,Distance of the end of the line from the current point.
+POLAR_LINE_ANGLE_CTRL_HINT_TOOLTIP,Angle of the vector to the end of the line with respect\nto the X-axis.
+POLAR_LINE_TO_DISTANCE_CTRL_HINT_TOOLTIP,Distance of the end of the line from the origin.
+POLYGON_DIA_CTRL_HINT_TOOLTIP,Diameter of the circle the polygon is inscribed into.
+POLYGON_NSIDES_CTRL_HINT_TOOLTIP,"Number of sides, must be >= 3."
+POLYLINE_TUPLE_X_CTRL_HINT_TOOLTIP,X point coordinate in workplane coordinates.
+POLYLINE_TUPLE_Y_CTRL_HINT_TOOLTIP,Y point coordinate in workplane coordinates.
+PUSH_POINTS_POINT_LR_CTRL_HINT_TOOLTIP,X coordinate of point to push onto the stack.
+PUSH_POINTS_POINT_TB_CTRL_HINT_TOOLTIP,Y coordinate of point to push onto the stack.
+RADIUS_ARC_END_POINT_X_CTRL_HINT_TOOLTIP,X coordinate of the end point for the arc.
+RADIUS_ARC_END_POINT_Y_CTRL_HINT_TOOLTIP,Y coordinate of the end point for the arc.
+RADIUS_ARC_RADIUS_CTRL_HINT_TOOLTIP,Radius of the arc between start point and end point.
+RADIUS_CTRL_HINT_TOOLTIP,Radius of the circle.
+RARRAY_X_COUNT_CTRL_HINT_TOOLTIP,Number of X points (must be > 0).
+RARRAY_Y_COUNT_CTRL_HINT_TOOLTIP,Number of Y points (must be > 0).
+RARRAY_CENTERED_CTRL_HINT_TOOLTIP,"If checked, the array will be centered around the workplane center.\nIf unchecked, the lower corner will be on the reference point and\nthe array will extend in the positive x and y directions. Can also use\na 2-tuple to specify centering along each axis."
+RARRAY_X_SPACING_CTRL_HINT_TOOLTIP,Spacing between points in the x direction (must be > 0).
+RARRAY_Y_SPACING_CTRL_HINT_TOOLTIP,Spacing between points in the y direction (must be > 0).
+RECT_X_LENGTH_CTRL_HINT_TOOLTIP,Length in X direction (in workplane coordinates).
+RECT_Y_LENGTH_CTRL_HINT_TOOLTIP,Length in Y direction (in workplane coordinates).
+RECT_CENTERED_CTRL_HINT_TOOLTIP,"If checked, the rectangle will be centered around the reference point.\nIf unchecked, the corner of the rectangle will be on the reference point\nand it will extend in the positive x and y directions."
+REVOLVE_ANGLE_CTRL_HINT_TOOLTIP,Angle to revolve through. Anything less than 360 degrees will leave the shape open.
+REVOLVE_AXIS_START_X_CTRL_HINT_TOOLTIP,X start point of the axis of rotation.
+REVOLVE_AXIS_START_Y_CTRL_HINT_TOOLTIP,Y start point of the axis of rotation.
+REVOLVE_AXIS_START_Z_CTRL_HINT_TOOLTIP,Z start point of the axis of rotation.
+REVOLVE_AXIS_END_X_CTRL_HINT_TOOLTIP,X end point of the axis of rotation.
+REVOLVE_AXIS_END_Y_CTRL_HINT_TOOLTIP,Y end point of the axis of rotation.
+REVOLVE_AXIS_END_Z_CTRL_HINT_TOOLTIP,Z end point of the axis of rotation.
+ROTATE_AXIS_START_X_CTRL_HINT_TOOLTIP,X point of the first axis of rotation.
+ROTATE_AXIS_START_Y_CTRL_HINT_TOOLTIP,Y point of the first axis of rotation.
+ROTATE_AXIS_START_Z_CTRL_HINT_TOOLTIP,Z point of the first axis of rotation.
+ROTATE_ABOUT_CENTER_AXIS_END_X_CTRL_HINT_TOOLTIP,X point of the second axis of rotation.
+ROTATE_ABOUT_CENTER_AXIS_END_Y_CTRL_HINT_TOOLTIP,Y point of the second axis of rotation.
+ROTATE_ABOUT_CENTER_AXIS_END_Z_CTRL_HINT_TOOLTIP,Z point of the second axis of rotation.
+ROTATE_ANGLE_CTRL_HINT_TOOLTIP,Rotation angle in degrees.
+SAGITTA_ARC_END_POINT_X_CTRL_HINT_TOOLTIP,X end point for the arc.
+SAGITTA_ARC_END_POINT_Y_CTRL_HINT_TOOLTIP,Y end point for the arc.
+SAGITTA_ARC_SAG_CTRL,Perpendicular distance from arc center to arc baseline.
+SECTION_HEIGHT_CTRL_HINT_TOOLTIP,Height to slice an object at along the workplane normal.
+SELECTOR_HIDE_SHOW_WP_BTN_HINT_TOOLTIP,Adds a workplane to the selected geometry.
+SHELL_THICKNESS_CTRL_HINT_TOOLTIP,"Wall thickness of the desired shell. Negative values shell\ninwards, positive values shell outwards."
+SLOT_ANGLE_CTRL_HINT_TOOLTIP,"Angle of the slot in degrees, with 0 being along X-axis."
+SLOT_DIAMETER_CTRL_HINT_TOOLTIP,"Diameter, or width, of the slot."
+SLOT_LENGTH_CTRL_HINT_TOOLTIP,End to end length of slot.
+SPHERE_ANGLE1_CTRL_HINT_TOOLTIP,First angle to sweep the sphere arc through.
+SPHERE_ANGLE2_CTRL_HINT_TOOLTIP,Second angle to sweep the sphere arc through.
+SPHERE_ANGLE3_CTRL_HINT_TOOLTIP,Third angle to sweep the sphere arc through.
+SPHERE_DIRECT_X_CTRL_HINT_TOOLTIP,X component of the direction axis for the creation of the sphere.
+SPHERE_DIRECT_Y_CTRL_HINT_TOOLTIP,Y component of the direction axis for the creation of the sphere.
+SPHERE_DIRECT_Z_CTRL_HINT_TOOLTIP,Z component of the direction axis for the creation of the sphere.
+SPHERE_RADIUS_CTRL_HINT_TOOLTIP,Radius of the sphere.
+SPLINE_ADD_TAN_BTN_HINT_TOOLTIP,Adds the current pair to the tangents list.
+SPLINE_DELETE_TAN_BTN_HINT_TOOLTIP,Removes the selected pair from the tangents list.
+SPLINE_ADD_TUPLE_BTN_HINT_TOOLTIP,Adds the current pair to the points list.
+SPLINE_DELETE_TUPLE_BTN_HINT_TOOLTIP,Removes the selected pair from the points list.
+SPLINE_PERIODIC_CTRL_HINT_TOOLTIP,Enable creation of periodic curves.
+SPLINE_TAN_X_CTRL_HINT_TOOLTIP,X component of a vector specifying the direction of the tangent to the\ncurve at each of the specified interpolation points.
+SPLINE_TAN_Y_CTRL_HINT_TOOLTIP,Y component of a vector specifying the direction of the tangent to the\ncurve at each of the specified interpolation points.
+SPLINE_TUPLE_X_CTRL_HINT_TOOLTIP,X point to interpolate the spline through.
+SPLINE_TUPLE_Y_CTRL_HINT_TOOLTIP,Y point to interpolate the spline through.
+SPLIT_KEEP_BOTTOM_CTRL_HINT_TOOLTIP,"Checked to keep the bottom, unchecked to discard it."
+SPLIT_KEEP_TOP_CTRL_HINT_TOOLTIP,"Checked to keep the top, unchecked to discard it."
+TANGENT_ARC_END_POINT_X_CTRL_HINT_TOOLTIP,X point for the arc to end at.
+TANGENT_ARC_END_POINT_Y_CTRL_HINT_TOOLTIP,Y point for the arc to end at.
+TANGENT_ARC_RELATIVE_CTRL_HINT_TOOLTIP,"Checked if the endpoint is specified relative to the current point,\nunchecked if endpoint is in workplane coordinates."
+TAPER_CTRL_HINT_TOOLTIP,Angle for optional tapered extrusion.
+TEXT_CUT_CTRL_HINT_TOOLTIP,"Checked to cut the resulting solid from the parent solids, if found."
+TEXT_DISTANCE_CTRL_HINT_TOOLTIP,"Distance to extrude, normal to the workplane."
+TEXT_FONT_SIZE_CTRL_HINT_TOOLTIP,"Size of the font, in model units."
+TEXT_FONT_CTRL_HINT_TOOLTIP,Font name.
+TEXT_FONT_KIND_CTRL_HINT_TOOLTIP,Font type.
+TEXT_FONT_PATH_CTRL_HINT_TOOLTIP,Path to a custom font file.
+TEXT_HALIGN_CTRL_HINT_TOOLTIP,Horizontal alignment.
+TEXT_VALIGN_CTRL_HINT_TOOLTIP,Vertical alignment.
+TEXT_TXT_CTRL_HINT_TOOLTIP,Text to be rendered.
+THREE_POINT_ARC_POINT_1_X_CTRL_HINT_TOOLTIP,X point to draw the arc through.
+THREE_POINT_ARC_POINT_1_Y_CTRL_HINT_TOOLTIP,Y point to draw the arc through.
+THREE_POINT_ARC_POINT_2_X_CTRL_HINT_TOOLTIP,X end point for the arc.
+THREE_POINT_ARC_POINT_2_Y_CTRL_HINT_TOOLTIP,Y end point for the arc.
+TRANSLATE_VEC_X_CTRL_HINT_TOOLTIP,X distance to move in global coordinates.
+TRANSLATE_VEC_Y_CTRL_HINT_TOOLTIP,Y distance to move in global coordinates.
+TRANSLATE_VEC_Z_CTRL_HINT_TOOLTIP,Z distance to move in global coordinates.
+TWIST_EXTRUDE_ANGLE_CTRL_HINT_TOOLTIP,Angle (in degrees) to rotate through during the extrusion.
+TWIST_EXTRUDE_DISTANCE_CTRL_HINT_TOOLTIP,Distance to extrude normal to the workplane.
+VERTEX_COMPS_OPT_1_HINT_TOOLTIP,Vertex filter\nNone = Do not use this filter\nAll = All vertices selected\nMaximum (>) = Vertex greatest distance from origin along selected axis\nMinimum (<) = Vertex smallest distance from origin along selected axis.
+VLINE_DIST_CTRL_HINT_TOOLTIP,Y distance from current point.
+VLINE_TO_Y_COORD_CTRL_HINT_TOOLTIP,Y coordinate for the end of the line.
+WEDGE_DIR_X_CTRL_HINT_TOOLTIP,X component of a direction vector for the major axis of the wedge.
+WEDGE_DIR_Y_CTRL_HINT_TOOLTIP,Y component of a direction vector for the major axis of the wedge.
+WEDGE_DIR_Z_CTRL_HINT_TOOLTIP,Z component of a direction vector for the major axis of the wedge.
+WEDGE_DX_CTRL_HINT_TOOLTIP,Distance along the X axis.
+WEDGE_DY_CTRL_HINT_TOOLTIP,Distance along the Y axis.
+WEDGE_DZ_CTRL_HINT_TOOLTIP,Distance along the Z axis.
+WEDGE_PNT_X_CTRL_HINT_TOOLTIP,X component of an origin vector of the direction for the wedge.
+WEDGE_PNT_Y_CTRL_HINT_TOOLTIP,Y component of an origin vector of the direction for the wedge.
+WEDGE_PNT_Z_CTRL_HINT_TOOLTIP,Z component of an origin vector of the direction for the wedge.
+WEDGE_XMIN_CTRL_HINT_TOOLTIP,Minimum X location.
+WEDGE_ZMIN_CTRL_HINT_TOOLTIP,Minimum Z location.
+WEDGE_XMAX_CTRL_HINT_TOOLTIP,Maximum X location.
+WEDGE_ZMAX_CTRL_HINT_TOOLTIP,Maximum Z location.
+WP_CEN_CTRL_HINT_TOOLTIP,"How the local origin of the workplane is determined. CenterOfBoundBox chooses the\ncenter of the smallest box that the geometry will fit inside of. CenterOfMass is essentially\nthe center of gravity of the geometry, and varies dependeing on whether material is added\nor removed from an object, and whether that material is removed asymmetrically.\nProjectedOrigin projects the center of the old workplane onto the workplane that is being\ncreated."
+WP_CTRL_HINT_TOOLTIP,Which axes are used to define the workplane.
+WP_XDIR_X_CTRL_HINT_TOOLTIP,X component of the X direction of the workplane.
+WP_XDIR_Y_CTRL_HINT_TOOLTIP,Y component of the X direction of the workplane.
+WP_XDIR_Z_CTRL_HINT_TOOLTIP,Z component of the X direction of the workplane.
+WP_HIDE_SHOW_BTN_HINT_TOOLTIP,Shows advanced workplane controls.
+WP_NAME_CTRL_HINT_TOOLTIP,Name to apply to this component/workplane.
+WP_NORMAL_X_CTRL_HINT_TOOLTIP,X component of the normal vector for the workplane.
+WP_NORMAL_Y_CTRL_HINT_TOOLTIP,Y component of the normal vector for the workplane.
+WP_NORMAL_Z_CTRL_HINT_TOOLTIP,Z component of the normal vector for the workplane.
+WP_OFFSET_CTRL,Offset distance of the workplane in the direction of the normal.
+WP_ORIGIN_X_CTRL_HINT_TOOLTIP,X point of the origin of the workplane.
+WP_ORIGIN_Y_CTRL_HINT_TOOLTIP,Y point of the origin of the workplane.
+WP_ORIGIN_Z_CTRL_HINT_TOOLTIP,Z point of the origin of the workplane.
+OPEN_BUTTON_HINT_TOOLTIP,Open a CadQuery component file.
+SAVE_BUTTON_HINT_TOOLTIP,"Save the current component, allows Save-as."
+MAKE_BUTTON_HINT_TOOLTIP,Export the current component for manufacturing.
+RELOAD_BUTTON_HINT_TOOLTIP,Manually reload the current CadQuery script.
+CLOSE_BUTTON_HINT_TOOLTIP,Close the currently open component.
+HOME_VIEW_BUTTON_HINT_TOOLTIP,Move the camera back to the home position.
+ABOUT_BUTTON_HINT_TOOLTIP,Show information about Semblage.
+WORKPLANE_BUTTON_HINT_TOOLTIP,Workplane operations
+THREE_D_BUTTON_HINT_TOOLTIP,3D operations
+SKETCH_BUTTON_HINT_TOOLTIP,2D sketch operations
+SELECTOR_BUTTON_HINT_TOOLTIP,Selector operations
+ADD_BUTTON_HINT_TOOLTIP,Adds the selected operation to the list and renders the result.
+UPDATE_BUTTON_HINT_TOOLTIP,Updates the render with the current state of the operation list.
+DELETE_BUTTON_HINT_TOOLTIP,Removes the currently selected operation from the list.
+MOVE_UP_BUTTON_HINT_TOOLTIP,Moves the currently selected operation up in the list.
+MOVE_DOWN_BUTTON_HINT_TOOLTIP,Moves the currently selected operation down in the list.
+WORKPLANE_TOOLTIP,Defines a coordinate system in space in which 2-d coordinates can be used.\nOther geometry and features are placed within this workplane. Start here when\ncreating a new component.
+CENTER_TOOLTIP,"Shifts the local coordinates to the specified location.\nThe location is specified in terms of local coordinates.\nThe current point is set to the new center. This method\nis useful to adjust the center point after it has been\ncreated automatically on a face, but not where you\nwould like it to be."
+ROTATE_TOOLTIP,Returns a copy of all of the items on the stack rotated through\nan angle around the axis of rotation.
+ROTATEABOUTCENTER_TOOLTIP,"Rotates all items on the stack by the specified angle, about the\nspecified axis. The center of rotation is a vector starting at the\ncenter of the object on the stack, and ended at the specified point."
+TRANSLATE_TOOLTIP,Returns a copy of all of the items on the stack\nmoved by the specified translation vector.
+CUTBLIND_TOOLTIP,"Uses all un-extruded wires in the parent chain to create a prismatic cut from\nexisting solid. Similar to extrude, except that a solid in the parent chain is\nrequired to remove material from. cutBlind always removes material from\na component."
+BOX_TOOLTIP,Returns a 3D box with specified dimensions for each point on the stack.
+CHAMFER_TOOLTIP,Chamfers all selected edges on a solid.
+CBOREHOLE_TOOLTIP,Makes a counter-bored hole for each point on the stack. The surface\nof the hole is at the current workplane plane.
+CSKHOLE_TOOLTIP,Makes a counter-sunk hole for each point on the stack. The surface of\nthe hole is at the current workplane.
+EXTRUDE_TOOLTIP,Uses all un-extruded wires in the parent chain to create a prismatic\nsolid. extrude always adds material to a component.
+FILLET_TOOLTIP,Fillets all selected edges on a solid. A radius that is too large may\nresult in CAD kernel errors and invalid geometry.
+HOLE_TOOLTIP,Makes a hole for each point on the stack. The surface of the\nhole is at the current workplane.
+REVOLVE_TOOLTIP,Uses all un-revolved wires in the parent chain to create a solid by rotating\nthe wires through the specified angle.
+SECTION_TOOLTIP,Slices current solid at the given height.
+SHELL_TOOLTIP,"Removes the selected faces to create a shell of the specified thickness.\nTo shell, first create a solid, and in the same chain select the faces you\nwish to remove."
+SPHERE_TOOLTIP,Makes a 3D sphere with the specified radius for each point on the stack.
+SPLIT_TOOLTIP,"Splits a solid on the stack into two parts, optionally keeping\nthe separate parts. The most common operation splits a solid\nand keeps one half."
+TEXT_TOOLTIP,Creates the specified 3D text.
+CUTTHRUALL_TOOLTIP,Uses all un-extruded wires in the parent chain to create a prismatic\ncut from existing solid. Cuts through all material in both normal\ndirections of the workplane. Always removes material from a part.
+TWISTEXTRUDE_TOOLTIP,"Extrudes a wire in the direction normal to the plane, but also twists by the specified\nangle over the length of the extrusion. The center point of the rotation will be the\ncenter of the workplane. See extrude for more details, since this method is the same\nexcept for the addition of the angle. In fact, if angle=0, the result is the same as a\nlinear extrude."
+WEDGE_TOOLTIP,"One wedge is created for each point on the current stack. If no\npoints are on the stack, one wedge using the current workplane\ncenter is created."
+CIRCLE_TOOLTIP,Makes a circle for each point on the stack.
+CLOSE_TOOLTIP,"Ends 2D construction, and attempt to build a closed wire. When a\nset of edges is closed, CadQuery assumes it is safe to build the\ngroup of edges into a wire."
+ELLIPSEARC_TOOLTIP,Draws an elliptical arc with X and Y radiuses either with\nstart point at current point or with the current point being\nthe center of the arc.
+ELLIPSE_TOOLTIP,Makes an ellipse for each point on the stack.
+HLINE_TOOLTIP,Makes a horizontal line from the current point to the provided distance.
+HLINETO_TOOLTIP,Makes a horizontal line from the current point to the provided\nX coordinate. Useful if it is more convenient to specify the end\nlocation rather than a distance.
+LINE_TOOLTIP,"Makes a line from the current point to the provided point, using\ndimensions relative to the current point."
+LINETO_TOOLTIP,Makes a line from the current point to the provided point.
+MIRRORX_TOOLTIP,Mirrors entities around the X axis of the workplane. Typically used to\nmake creating wires with symmetry easier.
+MIRRORY_TOOLTIP,Mirrors entities around the Y axis of the workplane. Typically used to\nmake creating wires with symmetry easier.
+MOVE_TOOLTIP,"Moves the specified distance from the current point, without drawing. Not to\nbe confused with center, which moves the center of the entire workplane. This\nmethod only moves the current point and therefore does not affect objects\nalready drawn."
+MOVETO_TOOLTIP,"Moves to the specified point, without drawing. Not to be confused with\ncenter, which moves the center of the entire workplane. This method\nonly moves the current point and therefore does not affect objects\nalready drawn."
+OFFSET2D_TOOLTIP,Creates a 2D offset of an existing wire.
+POLARARRAY_TOOLTIP,Creates an polar array of points and pushes them onto the stack. The 0 degree\nreference angle is located along the local X axis.
+POLARLINE_TOOLTIP,"Makes a line of the given length, at the given angle, from the current point."
+POLARLINETO_TOOLTIP,Makes a line from the current point to the given polar co-ordinates. Useful if it is more\nconvenient to specify the end location rather than the distance and angle from the\ncurrent point.
+POLYGON_TOOLTIP,Creates a polygon inscribed in a circle of the specified diameter for each point\non the stack. The first vertex is always oriented in the x direction.
+POLYLINE_TOOLTIP,Creates a polyline from a list of points.
+PUSHPOINTS_TOOLTIP,"Pushes a list of points onto the stack as vertices. The points are in the 2D\ncoordinate space of the workplane face. A common use is to provide a list\nof points for a subsequent operation, such as creating circles or holes."
+RADIUSARC_TOOLTIP,"Draws an arc from the current point to the endpoint with an arc defined by the radius. Given that\na closed contour is drawn clockwise, a positive radius means convex arc and negative radius\nmeans concave arc."
+RARRAY_TOOLTIP,"Creates an array of points and pushes them onto the stack. If you want to position the\narray at another point, create another workplane that is shifted to the position you would\nlike to use as a reference."
+RECT_TOOLTIP,Makes a rectangle at each point on the stack.
+SAGITTAARC_TOOLTIP,"Draws an arc from the current point to the endPoint with an arc defined by the sag (sagitta). The\nsagitta is the distance from the center of the arc to the arc base. Given that a closed contour\nis drawn clockwise, a positive sagitta means convex arc and negative sagitta means concave arc."
+SLOT2D_TOOLTIP,Creates a rounded slot for each point on the stack.
+SPLINE_TOOLTIP,"Creates a spline interpolated through the provided points. The spline will begin at\nthe current point, and end with the last point in the XY tuple list."
+TANGENTARCPOINT_TOOLTIP,Draws an arc as a tangent from the end of the current edge to the endpoint.
+THREEPOINTARC_TOOLTIP,"Draws an arc from the current point, through point1, and ending at point2."
+VLINE_TOOLTIP,Makes a vertical line from the current point to the provided distance.
+VLINETO_TOOLTIP,Makes a vertical line from the current point to the provided\nY coordinate. Useful if it is more convenient to specify the end\nlocation rather than a distance.

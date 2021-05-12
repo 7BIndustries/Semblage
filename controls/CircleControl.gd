@@ -24,7 +24,7 @@ func _ready():
 	rad_group.add_child(rad_lbl)
 	radius_ctrl = NumberEdit.new()
 	radius_ctrl.set_text("1.0")
-	radius_ctrl.hint_tooltip = ToolTips.get_tts().radius_ctrl_hint_tooltip
+	radius_ctrl.hint_tooltip = tr("RADIUS_CTRL_HINT_TOOLTIP")
 	rad_group.add_child(radius_ctrl)
 	add_child(rad_group)
 
@@ -35,7 +35,7 @@ func _ready():
 	const_group.add_child(const_lbl)
 	for_construction_ctrl = CheckBox.new()
 	for_construction_ctrl.pressed = false
-	for_construction_ctrl.hint_tooltip = ToolTips.get_tts().for_construction_ctrl_hint_tooltip
+	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
 	add_child(const_group)
 

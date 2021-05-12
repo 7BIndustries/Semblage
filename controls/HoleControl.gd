@@ -23,7 +23,7 @@ func _ready():
 	hole_dia_group.add_child(hole_dia_lbl)
 	hole_dia_ctrl = NumberEdit.new()
 	hole_dia_ctrl.set_text("2.5")
-	hole_dia_ctrl.hint_tooltip = ToolTips.get_tts().hole_dia_ctrl_hint_tooltip
+	hole_dia_ctrl.hint_tooltip = tr("HOLE_DIA_CTRL_HINT_TOOLTIP")
 	hole_dia_group.add_child(hole_dia_ctrl)
 	add_child(hole_dia_group)
 
@@ -34,7 +34,7 @@ func _ready():
 	hole_depth_group.add_child(hole_depth_lbl)
 	hole_depth_ctrl = NumberEdit.new()
 	hole_depth_ctrl.set_text("0")
-	hole_depth_ctrl.hint_tooltip = ToolTips.get_tts().hole_depth_ctrl_hint_tooltip
+	hole_depth_ctrl.hint_tooltip = tr("HOLE_DEPTH_CTRL_HINT_TOOLTIP")
 	hole_depth_group.add_child(hole_depth_ctrl)
 	add_child(hole_depth_group)
 
@@ -45,7 +45,7 @@ func _ready():
 	clean_group.add_child(clean_lbl)
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
-	clean_ctrl.hint_tooltip = ToolTips.get_tts().clean_ctrl_hint_tooltip
+	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
 

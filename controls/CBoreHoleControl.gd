@@ -28,7 +28,7 @@ func _ready():
 	hole_dia_group.add_child(hole_dia_lbl)
 	hole_dia_ctrl = NumberEdit.new()
 	hole_dia_ctrl.set_text("2.5")
-	hole_dia_ctrl.hint_tooltip = ToolTips.get_tts().hole_dia_ctrl_hint_tooltip
+	hole_dia_ctrl.hint_tooltip = tr("HOLE_DIA_CTRL_HINT_TOOLTIP")
 	hole_dia_group.add_child(hole_dia_ctrl)
 	add_child(hole_dia_group)
 
@@ -39,7 +39,7 @@ func _ready():
 	hole_depth_group.add_child(hole_depth_lbl)
 	hole_depth_ctrl = NumberEdit.new()
 	hole_depth_ctrl.set_text("0")
-	hole_depth_ctrl.hint_tooltip = ToolTips.get_tts().hole_depth_ctrl_hint_tooltip
+	hole_depth_ctrl.hint_tooltip = tr("HOLE_DEPTH_CTRL_HINT_TOOLTIP")
 	hole_depth_group.add_child(hole_depth_ctrl)
 	add_child(hole_depth_group)
 
@@ -50,7 +50,7 @@ func _ready():
 	cbore_dia_group.add_child(cbore_dia_lbl)
 	cbore_dia_ctrl = NumberEdit.new()
 	cbore_dia_ctrl.set_text("5.0")
-	cbore_dia_ctrl.hint_tooltip = ToolTips.get_tts().cbore_cbore_dia_ctrl_hint_tooltip
+	cbore_dia_ctrl.hint_tooltip = tr("CBORE_CBORE_DIA_CTRL_HINT_TOOLTIP")
 	cbore_dia_group.add_child(cbore_dia_ctrl)
 	add_child(cbore_dia_group)
 
@@ -61,7 +61,7 @@ func _ready():
 	cbore_depth_group.add_child(cbore_depth_lbl)
 	cbore_depth_ctrl = NumberEdit.new()
 	cbore_depth_ctrl.set_text("3.0")
-	cbore_depth_ctrl.hint_tooltip = ToolTips.get_tts().cbore_cbore_depth_ctrl_hint_tooltip
+	cbore_depth_ctrl.hint_tooltip = tr("CBORE_CBORE_DEPTH_CTRL_HINT_TOOLTIP")
 	cbore_depth_group.add_child(cbore_depth_ctrl)
 	add_child(cbore_depth_group)
 
@@ -72,7 +72,7 @@ func _ready():
 	clean_group.add_child(clean_lbl)
 	clean_ctrl = CheckBox.new()
 	clean_ctrl.pressed = true
-	clean_ctrl.hint_tooltip = ToolTips.get_tts().clean_ctrl_hint_tooltip
+	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
 

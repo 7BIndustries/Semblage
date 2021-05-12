@@ -20,7 +20,7 @@ func _ready():
 	height_group.add_child(height_lbl)
 	height_ctrl = NumberEdit.new()
 	height_ctrl.set_text("2.5")
-	height_ctrl.hint_tooltip = ToolTips.get_tts().section_height_ctrl_hint_tooltip
+	height_ctrl.hint_tooltip = tr("SECTION_HEIGHT_CTRL_HINT_TOOLTIP")
 	height_group.add_child(height_ctrl)
 	add_child(height_group)
 

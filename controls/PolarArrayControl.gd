@@ -30,7 +30,7 @@ func _ready():
 	rad_group.add_child(rad_lbl)
 	radius_ctrl = NumberEdit.new()
 	radius_ctrl.set_text("1.0")
-	radius_ctrl.hint_tooltip = ToolTips.get_tts().polar_array_radius_ctrl_hint_tooltip
+	radius_ctrl.hint_tooltip = tr("POLAR_ARRAY_RADIUS_CTRL_HINT_TOOLTIP")
 	rad_group.add_child(radius_ctrl)
 	add_child(rad_group)
 
@@ -42,7 +42,7 @@ func _ready():
 	start_angle_ctrl = NumberEdit.new()
 	start_angle_ctrl.MaxValue = 360.0
 	start_angle_ctrl.set_text("0.0")
-	start_angle_ctrl.hint_tooltip = ToolTips.get_tts().polar_array_start_angle_ctrl_hint_tooltip
+	start_angle_ctrl.hint_tooltip = tr("POLAR_ARRAY_START_ANGLE_CTRL_HINT_TOOLTIP")
 	start_angle_group.add_child(start_angle_ctrl)
 	add_child(start_angle_group)
 
@@ -54,7 +54,7 @@ func _ready():
 	angle_ctrl = NumberEdit.new()
 	angle_ctrl.MaxValue = 360.0
 	angle_ctrl.set_text("360.0")
-	angle_ctrl.hint_tooltip = ToolTips.get_tts().polar_array_angle_ctrl_hint_tooltip
+	angle_ctrl.hint_tooltip = tr("POLAR_ARRAY_ANGLE_CTRL_HINT_TOOLTIP")
 	angle_group.add_child(angle_ctrl)
 	add_child(angle_group)
 
@@ -67,7 +67,7 @@ func _ready():
 	count_ctrl.NumberFormat = "int"
 	count_ctrl.set_text("5")
 	count_ctrl.CanBeZero = false
-	count_ctrl.hint_tooltip = ToolTips.get_tts().polar_array_count_ctrl_hint_tooltip
+	count_ctrl.hint_tooltip = tr("POLAR_ARRAY_COUNT_CTRL_HINT_TOOLTIP")
 	count_group.add_child(count_ctrl)
 	add_child(count_group)
 
@@ -78,7 +78,7 @@ func _ready():
 	fill_group.add_child(fill_lbl)
 	fill_ctrl = CheckBox.new()
 	fill_ctrl.pressed = true
-	fill_ctrl.hint_tooltip = ToolTips.get_tts().polar_array_fill_ctrl_hint_tooltip
+	fill_ctrl.hint_tooltip = tr("POLAR_ARRAY_FILL_CTRL_HINT_TOOLTIP")
 	fill_group.add_child(fill_ctrl)
 	add_child(fill_group)
 
@@ -89,7 +89,7 @@ func _ready():
 	rotate_group.add_child(rotate_lbl)
 	rotate_ctrl = CheckBox.new()
 	rotate_ctrl.pressed = true
-	rotate_ctrl.hint_tooltip = ToolTips.get_tts().polar_array_rotate_ctrl_hint_tooltip
+	rotate_ctrl.hint_tooltip = tr("POLAR_ARRAY_ROTATE_CTRL_HINT_TOOLTIP")
 	rotate_group.add_child(rotate_ctrl)
 	add_child(rotate_group)
 
