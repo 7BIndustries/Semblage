@@ -1183,7 +1183,7 @@ __meta__ = {
 [node name="AddParameterDialog" type="WindowDialog" parent="."]
 margin_right = 278.0
 margin_bottom = 180.0
-window_title = "Add Parameter"
+window_title = "Add/Edit Parameter"
 script = ExtResource( 29 )
 __meta__ = {
 "_edit_use_anchors_": false
