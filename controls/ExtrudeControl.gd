@@ -29,6 +29,7 @@ func _ready():
 	distance_lbl.set_text("Distance: ")
 	distance_group.add_child(distance_lbl)
 	distance_ctrl = NumberEdit.new()
+	distance_ctrl.set_expand_to_text_length(true)
 	distance_ctrl.set_text("1.0")
 	distance_ctrl.hint_tooltip = tr("EXTRUDE_DISTANCE_CTRL_HINT_TOOLTIP")
 	distance_group.add_child(distance_ctrl)

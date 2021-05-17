@@ -10,7 +10,7 @@ static func get_triggers():
 	var triggers  = {
 		"Workplane": {
 			"trigger": "cq$",
-			"edit_trigger": "^.Workplane(.*).*",
+			"edit_trigger": "^\\.Workplane(.*).*",
 			"action": {
 				"name": "Workplane",
 				"group": "WP",
@@ -19,7 +19,7 @@ static func get_triggers():
 		},
 		"center": {
 			"trigger": "cq$",
-			"edit_trigger": "^.center(.*).*",
+			"edit_trigger": "^\\.center(.*).*",
 			"action": {
 				"name": "Center (center)",
 				"group": "WP",
@@ -28,7 +28,7 @@ static func get_triggers():
 		},
 		"rotate": {
 			"trigger": "cq$",
-			"edit_trigger": "^.rotate(.*).*",
+			"edit_trigger": "^\\.rotate(.*).*",
 			"action": {
 				"name": "Rotate (rotate)",
 				"group": "WP",
@@ -37,7 +37,7 @@ static func get_triggers():
 		},
 		"rotateAboutCenter": {
 			"trigger": "cq$",
-			"edit_trigger": "^.rotateAboutCenter(.*).*",
+			"edit_trigger": "^\\.rotateAboutCenter(.*).*",
 			"action": {
 				"name": "Rotate About Center (rotateAboutCenter)",
 				"group": "WP",
@@ -46,7 +46,7 @@ static func get_triggers():
 		},
 		"translate": {
 			"trigger": "cq$",
-			"edit_trigger": "^.translate(.*).*",
+			"edit_trigger": "^\\.translate(.*).*",
 			"action": {
 				"name": "Translate (translate)",
 				"group": "WP",
@@ -55,7 +55,7 @@ static func get_triggers():
 		},
 		"faces": {
 			"trigger": "cq$",
-			"edit_trigger": "^.faces(.*).*",
+			"edit_trigger": "^\\.faces(.*).*",
 			"action": {
 				"name": "selectors",
 				"group": "SELECTORS",
@@ -64,7 +64,7 @@ static func get_triggers():
 		},
 		"edges": {
 			"trigger": "cq$",
-			"edit_trigger": "^.edges(.*).*",
+			"edit_trigger": "^\\.edges(.*).*",
 			"action": {
 				"name": "selectors",
 				"group": "SELECTORS",
@@ -73,7 +73,7 @@ static func get_triggers():
 		},
 		"vertices": {
 			"trigger": "cq$",
-			"edit_trigger": "^.vertices(.*).*",
+			"edit_trigger": "^\\.vertices(.*).*",
 			"action": {
 				"name": "selectors",
 				"group": "SELECTORS",
@@ -82,7 +82,7 @@ static func get_triggers():
 		},
 		"cutBlind": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": "^.cutBlind(.*)$",
+			"edit_trigger": "^\\.cutBlind(.*)$",
 			"action": {
 				"name": "Blind Cut (cutBlind)",
 				"group": "3D",
@@ -91,7 +91,7 @@ static func get_triggers():
 		},
 		"box": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".box(.*)$",
+			"edit_trigger": "^\\.box(.*)$",
 			"action": {
 				"name": "Box (box)",
 				"group": "3D",
@@ -100,7 +100,7 @@ static func get_triggers():
 		},
 		"chamfer": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".chamfer(.*)$",
+			"edit_trigger": "^\\.chamfer(.*)$",
 			"action": {
 				"name": "Chamfer (chamfer)",
 				"group": "3D",
@@ -109,7 +109,7 @@ static func get_triggers():
 		},
 		"cboreHole": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".cboreHole(.*)$",
+			"edit_trigger": "^\\.cboreHole(.*)$",
 			"action": {
 				"name": "Counter-Bore Hole (cboreHole)",
 				"group": "3D",
@@ -118,7 +118,7 @@ static func get_triggers():
 		},
 		"cskHole": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".cskHole(.*)$",
+			"edit_trigger": "^\\.cskHole(.*)$",
 			"action": {
 				"name": "Counter-Sink Hole (cskHole)",
 				"group": "3D",
@@ -127,7 +127,7 @@ static func get_triggers():
 		},
 		"extrude": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": "^.extrude(.*)$",
+			"edit_trigger": "^\\.extrude(.*)$",
 			"action": {
 				"name": "Extrude (extrude)",
 				"group": "3D",
@@ -136,7 +136,7 @@ static func get_triggers():
 		},
 		"fillet": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".fillet(.*)$",
+			"edit_trigger": "^\\.fillet(.*)$",
 			"action": {
 				"name": "Fillet (fillet)",
 				"group": "3D",
@@ -145,7 +145,7 @@ static func get_triggers():
 		},
 		"hole": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".hole(.*)$",
+			"edit_trigger": "^\\.hole(.*)$",
 			"action": {
 				"name": "Hole (hole)",
 				"group": "3D",
@@ -154,7 +154,7 @@ static func get_triggers():
 		},
 		"revolve": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".revolve(.*)$",
+			"edit_trigger": "^\\.revolve(.*)$",
 			"action": {
 				"name": "Revolve (revolve)",
 				"group": "3D",
@@ -163,7 +163,7 @@ static func get_triggers():
 		},
 		"section": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".section(.*)$",
+			"edit_trigger": "^\\.section(.*)$",
 			"action": {
 				"name": "Section (section)",
 				"group": "3D",
@@ -172,7 +172,7 @@ static func get_triggers():
 		},
 		"shell": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".shell(.*)$",
+			"edit_trigger": "^\\.shell(.*)$",
 			"action": {
 				"name": "Shell (shell)",
 				"group": "3D",
@@ -181,7 +181,7 @@ static func get_triggers():
 		},
 		"sphere": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".sphere(.*)$",
+			"edit_trigger": "^\\.sphere(.*)$",
 			"action": {
 				"name": "Sphere (sphere)",
 				"group": "3D",
@@ -190,7 +190,7 @@ static func get_triggers():
 		},
 		"split": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".split(.*)$",
+			"edit_trigger": "^\\.split(.*)$",
 			"action": {
 				"name": "Split (split)",
 				"group": "3D",
@@ -199,7 +199,7 @@ static func get_triggers():
 		},
 		"text": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".text(.*)$",
+			"edit_trigger": "^\\.text(.*)$",
 			"action": {
 				"name": "Text (text)",
 				"group": "3D",
@@ -208,7 +208,7 @@ static func get_triggers():
 		},
 		"cutThruAll": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": "^.cutThruAll(.*)$",
+			"edit_trigger": "^\\.cutThruAll(.*)$",
 			"action": {
 				"name": "Thru Cut (cutThruAll)",
 				"group": "3D",
@@ -217,7 +217,7 @@ static func get_triggers():
 		},
 		"twistExtrude": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": "^.twistExtrude(.*)$",
+			"edit_trigger": "^\\.twistExtrude(.*)$",
 			"action": {
 				"name": "Twist Extrude (twistExtrude)",
 				"group": "3D",
@@ -226,7 +226,7 @@ static func get_triggers():
 		},
 		"wedge": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".wedge(.*)$",
+			"edit_trigger": "^\\.wedge(.*)$",
 			"action": {
 				"name": "Wedge (wedge)",
 				"group": "3D",
@@ -235,7 +235,7 @@ static func get_triggers():
 		},
 		"circle": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".circle(.*)$",
+			"edit_trigger": "^\\.circle(.*)$",
 			"action": {
 				"name": "Circle (circle)",
 				"group": "2D",
@@ -244,7 +244,7 @@ static func get_triggers():
 		},
 		"close": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".close(.*)$",
+			"edit_trigger": "^\\.close(.*)$",
 			"action": {
 				"name": "Close (close)",
 				"group": "2D",
@@ -253,7 +253,7 @@ static func get_triggers():
 		},
 		"ellipseArc": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".ellipseArc(.*)$",
+			"edit_trigger": "^\\.ellipseArc(.*)$",
 			"action": {
 				"name": "Ellipse Arc (ellipseArc)",
 				"group": "2D",
@@ -262,7 +262,7 @@ static func get_triggers():
 		},
 		"ellipse": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".ellipse(.*)$",
+			"edit_trigger": "^\\.ellipse(.*)$",
 			"action": {
 				"name": "Ellipse (ellipse)",
 				"group": "2D",
@@ -271,7 +271,7 @@ static func get_triggers():
 		},
 		"hLine": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".hLine(.*)$",
+			"edit_trigger": "^\\.hLine(.*)$",
 			"action": {
 				"name": "Horizontal Line (hLine)",
 				"group": "2D",
@@ -280,7 +280,7 @@ static func get_triggers():
 		},
 		"hLineTo": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".hLineTo(.*)$",
+			"edit_trigger": "^\\.hLineTo(.*)$",
 			"action": {
 				"name": "Horizontal Line To (hLineTo)",
 				"group": "2D",
@@ -289,7 +289,7 @@ static func get_triggers():
 		},
 		"line": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".line(.*)$",
+			"edit_trigger": "^\\.line(.*)$",
 			"action": {
 				"name": "Line (line)",
 				"group": "2D",
@@ -298,7 +298,7 @@ static func get_triggers():
 		},
 		"lineTo": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".lineTo(.*)$",
+			"edit_trigger": "^\\.lineTo(.*)$",
 			"action": {
 				"name": "Line To (lineTo)",
 				"group": "2D",
@@ -307,7 +307,7 @@ static func get_triggers():
 		},
 		"mirrorX": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".mirrorX(.*)$",
+			"edit_trigger": "^\\.mirrorX(.*)$",
 			"action": {
 				"name": "Mirror X (mirrorX)",
 				"group": "2D",
@@ -316,7 +316,7 @@ static func get_triggers():
 		},
 		"mirrorY": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".mirrorY(.*)$",
+			"edit_trigger": "^\\.mirrorY(.*)$",
 			"action": {
 				"name": "Mirror Y (mirrorY)",
 				"group": "2D",
@@ -325,7 +325,7 @@ static func get_triggers():
 		},
 		"move": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".move(.*)$",
+			"edit_trigger": "^\\.move(.*)$",
 			"action": {
 				"name": "Move (move)",
 				"group": "2D",
@@ -334,7 +334,7 @@ static func get_triggers():
 		},
 		"moveTo": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".moveTo(.*)$",
+			"edit_trigger": "^\\.moveTo(.*)$",
 			"action": {
 				"name": "Move To (moveTo)",
 				"group": "2D",
@@ -343,7 +343,7 @@ static func get_triggers():
 		},
 		"offset2D": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".offset2D(.*)$",
+			"edit_trigger": "^\\.offset2D(.*)$",
 			"action": {
 				"name": "Offset (offset2D)",
 				"group": "2D",
@@ -352,7 +352,7 @@ static func get_triggers():
 		},
 		"polarArray": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".polarArray(.*)$",
+			"edit_trigger": "^\\.polarArray(.*)$",
 			"action": {
 				"name": "Polar Array (polarArray)",
 				"group": "2D",
@@ -361,7 +361,7 @@ static func get_triggers():
 		},
 		"polarLine": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".polarLine(.*)$",
+			"edit_trigger": "^\\.polarLine(.*)$",
 			"action": {
 				"name": "Polar Line (polarLine)",
 				"group": "2D",
@@ -370,7 +370,7 @@ static func get_triggers():
 		},
 		"polarLineTo": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".polarLineTo(.*)$",
+			"edit_trigger": "^\\.polarLineTo(.*)$",
 			"action": {
 				"name": "Polar Line To (polarLineTo)",
 				"group": "2D",
@@ -379,7 +379,7 @@ static func get_triggers():
 		},
 		"polygon": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".polygon(.*)$",
+			"edit_trigger": "^\\.polygon(.*)$",
 			"action": {
 				"name": "Polygon (polygon)",
 				"group": "2D",
@@ -388,7 +388,7 @@ static func get_triggers():
 		},
 		"polyline": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".polyline(.*)$",
+			"edit_trigger": "^\\.polyline(.*)$",
 			"action": {
 				"name": "Polyline (polyline)",
 				"group": "2D",
@@ -397,7 +397,7 @@ static func get_triggers():
 		},
 		"pushPoints": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".pushPoints(.*)$",
+			"edit_trigger": "^\\.pushPoints(.*)$",
 			"action": {
 				"name": "Push Points (pushPoints)",
 				"group": "2D",
@@ -406,7 +406,7 @@ static func get_triggers():
 		},
 		"radiusArc": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".radiusArc(.*)$",
+			"edit_trigger": "^\\.radiusArc(.*)$",
 			"action": {
 				"name": "Radius Arc (radiusArc)",
 				"group": "2D",
@@ -415,7 +415,7 @@ static func get_triggers():
 		},
 		"rarray": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".rarray(.*)$",
+			"edit_trigger": "^\\.rarray(.*)$",
 			"action": {
 				"name": "Rectangular Array (rarray)",
 				"group": "2D",
@@ -424,7 +424,7 @@ static func get_triggers():
 		},
 		"rect": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".rect(.*)$",
+			"edit_trigger": "^\\.rect(.*)$",
 			"action": {
 				"name": "Rectangle (rect)",
 				"group": "2D",
@@ -433,7 +433,7 @@ static func get_triggers():
 		},
 		"sagittaArc": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".sagittaArc(.*)$",
+			"edit_trigger": "^\\.sagittaArc(.*)$",
 			"action": {
 				"name": "Sagitta Arc (sagittaArc)",
 				"group": "2D",
@@ -442,7 +442,7 @@ static func get_triggers():
 		},
 		"slot2D": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".slot2D(.*)$",
+			"edit_trigger": "^\\.slot2D(.*)$",
 			"action": {
 				"name": "Slot (slot2D)",
 				"group": "2D",
@@ -451,7 +451,7 @@ static func get_triggers():
 		},
 		"spline": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".spline(.*)$",
+			"edit_trigger": "^\\.spline(.*)$",
 			"action": {
 				"name": "Spline (spline)",
 				"group": "2D",
@@ -460,7 +460,7 @@ static func get_triggers():
 		},
 		"tangentArcPoint": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".tangentArcPoint(.*)$",
+			"edit_trigger": "^\\.tangentArcPoint(.*)$",
 			"action": {
 				"name": "Tangent Arc Point (tangentArcPoint)",
 				"group": "2D",
@@ -469,7 +469,7 @@ static func get_triggers():
 		},
 		"threePointArc": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".threePointArc(.*)$",
+			"edit_trigger": "^\\.threePointArc(.*)$",
 			"action": {
 				"name": "Three Point Arc (threePointArc)",
 				"group": "2D",
@@ -478,7 +478,7 @@ static func get_triggers():
 		},
 		"vLine": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".vLine(.*)$",
+			"edit_trigger": "^\\.vLine(.*)$",
 			"action": {
 				"name": "Vertical Line (vLine)",
 				"group": "2D",
@@ -487,7 +487,7 @@ static func get_triggers():
 		},
 		"vLineTo": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": ".vLineTo(.*)$",
+			"edit_trigger": "^\\.vLineTo(.*)$",
 			"action": {
 				"name": "Vertical Line To (vLineTo)",
 				"group": "2D",
