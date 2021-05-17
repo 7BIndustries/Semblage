@@ -19,26 +19,30 @@ var for_construction_ctrl = null
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Add the rect dimension controls
-	var dims_group = HBoxContainer.new()
+	var x_length_group = HBoxContainer.new()
+	var y_length_group = HBoxContainer.new()
 
 	# Width (X length)
 	var x_length_lbl = Label.new()
 	x_length_lbl.set_text("Width: ")
-	dims_group.add_child(x_length_lbl)
+	x_length_group.add_child(x_length_lbl)
 	x_length_ctrl = NumberEdit.new()
+	x_length_ctrl.set_expand_to_text_length(true)
 	x_length_ctrl.set_text("1.0")
 	x_length_ctrl.hint_tooltip = tr("RECT_X_LENGTH_CTRL_HINT_TOOLTIP")
-	dims_group.add_child(x_length_ctrl)
+	x_length_group.add_child(x_length_ctrl)
 	# Height (Y length)
 	var y_length_lbl = Label.new()
 	y_length_lbl.set_text("Height: ")
-	dims_group.add_child(y_length_lbl)
+	y_length_group.add_child(y_length_lbl)
 	y_length_ctrl = NumberEdit.new()
+	y_length_ctrl.set_expand_to_text_length(true)
 	y_length_ctrl.set_text("1.0")
 	y_length_ctrl.hint_tooltip = tr("RECT_Y_LENGTH_CTRL_HINT_TOOLTIP")
-	dims_group.add_child(y_length_ctrl)
+	y_length_group.add_child(y_length_ctrl)
 
-	add_child(dims_group)
+	add_child(x_length_group)
+	add_child(y_length_group)
 
 	# Add the centered control
 	var centered_group = HBoxContainer.new()

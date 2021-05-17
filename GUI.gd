@@ -425,7 +425,7 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 	var new_object = ContextHandler.get_object_from_template(new_template)
 
 	# If the old component name does not match the new one, we want to update it
-	if old_object != new_object:
+	if new_object != null and old_object != new_object:
 		Common.update_tree_item(object_tree, old_object, new_object)
 
 	# If we are in edit mode, do not try to add anything to the history
