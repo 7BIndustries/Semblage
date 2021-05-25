@@ -234,10 +234,11 @@ static func needs_implicit_worplane(context):
 	regex.compile("result.*=.*result.Workplane\\(")
 	var res = regex.search(context)
 
+	# The value to return
+	var ret = false
+
 	# If there was no match, alert the caller that a workplane will have to be added
 	if not res:
-		return true
-	else:
-		return false
+		ret = true
 
-	return false
+	return ret

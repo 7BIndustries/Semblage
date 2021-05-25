@@ -32,12 +32,5 @@ func get_previous_template():
 """
 Loads values into the control's sub-controls based on a code string.
 """
-func set_values_from_string(text_line):
-	pass
-
-
-"""
-Allows the caller to configure what is visible, useful for the Sketch tool.
-"""
-func config(selector_visible=true, operation_visible=true):
+func set_values_from_string(_text_line):
 	pass

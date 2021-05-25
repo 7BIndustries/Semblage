@@ -247,8 +247,8 @@ Calculates the proper Y position to set the camera to fit a component or
 assembly in the viewport.
 """
 func get_safe_camera_distance(max_dim):
-	var x = vp.get_visible_rect().size.x
-	var y = vp.get_visible_rect().size.y
+#	var x = vp.get_visible_rect().size.x
+#	var y = vp.get_visible_rect().size.y
 
 	var dist = max_dim / sin(PI / 180.0 * cam.fov * 0.5)
 
@@ -268,6 +268,7 @@ func load_component_json(json_string):
 	for component in component_json["components"]:
 		# If we've found a larger dimension, save the safe distance, which is the maximum dimension of any component
 		var max_dim = component["largestDim"]
+		var min_dim = component["smallestDim"]
 
 		# Make sure the zoom speed works with the size of the model
 		cam.ZOOMSPEED = 0.075 * max_dim
@@ -281,7 +282,7 @@ func load_component_json(json_string):
 
 		# Add the edge representations
 		for edge in component["cqEdges"]:
-			var line = Meshes.gen_line_mesh(0.005 * max_dim, edge)
+			var line = Meshes.gen_line_mesh(0.010 * min_dim, edge)
 			vp.add_child(line)
 
 	# Only reset the view if the same distance changed
@@ -456,7 +457,7 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 """
 Fired when the Action popup needs to be displayed.
 """
-func _on_DocumentTabs_activate_action_popup(mouse_pos):
+func _on_DocumentTabs_activate_action_popup():
 	$ActionPopupPanel.activate_popup(component_text, false)
 
 
@@ -895,6 +896,3 @@ func _on_ObjectTree_item_activated():
 
 	# Trigger the edit on the selected history tree item
 	_on_HistoryTree_item_activated()
-
-func _on_CQGIInterface_build_success(component_json):
-	pass

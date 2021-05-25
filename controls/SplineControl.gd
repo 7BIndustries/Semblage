@@ -204,8 +204,11 @@ tuple X and Y to the list.
 """
 func _add_tuple():
 	if not is_valid():
-		connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
-		emit_signal("error", "There is invalid tuple data in the form.")
+		var res = connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
+		if res != 0:
+			print("Error connecting a signal: " + str(res))
+		else:
+			emit_signal("error", "There is invalid tuple data in the form.")
 
 		return
 
@@ -235,8 +238,11 @@ tangent X and Y to the list.
 """
 func _add_tan():
 	if not is_valid():
-		connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
-		emit_signal("error", "There is invalid tuple data in the form.")
+		var res = connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
+		if res != 0:
+			print("Error connecting a signal: " + str(res))
+		else:
+			emit_signal("error", "There is invalid tuple data in the form.")
 
 		return
 
@@ -367,10 +373,3 @@ func set_values_from_string(text_line):
 	if res:
 		var wire = res.get_string()
 		wire_ctrl.pressed = true if wire == "True" else false
-
-
-"""
-Allows the caller to configure what is visible, useful for the Sketch tool.
-"""
-func config(selector_visible=true, operation_visible=true):
-	pass

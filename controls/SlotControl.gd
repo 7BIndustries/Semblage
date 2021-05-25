@@ -121,10 +121,3 @@ func set_values_from_string(text_line):
 		# Fill in the angle value
 		var a = res.get_string()
 		angle_ctrl.set_text(a)
-
-
-"""
-Allows the caller to configure what is visible, useful for the Sketch tool.
-"""
-func config(selector_visible=true, operation_visible=true):
-	pass

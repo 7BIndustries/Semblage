@@ -23,13 +23,10 @@ func _input(event):
 		"InputEventMouseButton":
 			# See if the user requested the action menu
 			if Input.is_action_just_pressed("Action"):
-				# Set the menu at the mouse cursor position
-				var mouse_pos = get_viewport().get_mouse_position()
-
 				# Block other mouse input from happening
 				accept_input = false
 
-				emit_signal("activate_action_popup", mouse_pos)
+				emit_signal("activate_action_popup")
 			elif Input.is_action_just_pressed("Rotating"):
 				rotating = true
 				last_pos2d = Vector2(0,0)

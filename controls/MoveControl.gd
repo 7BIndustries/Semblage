@@ -88,10 +88,3 @@ func set_values_from_string(text_line):
 		var xy = res.get_string().split(",")
 		x_dist_ctrl.set_text(xy[0])
 		y_dist_ctrl.set_text(xy[1])
-
-
-"""
-Allows the caller to configure what is visible, useful for the Sketch tool.
-"""
-func config(selector_visible=true, operation_visible=true):
-	pass

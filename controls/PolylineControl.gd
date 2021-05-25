@@ -117,8 +117,11 @@ tuple X and Y to the list.
 """
 func _add_tuple():
 	if not is_valid():
-		connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
-		emit_signal("error", "There is invalid tuple data in the form.")
+		var res = connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
+		if res != 0:
+			print("Error connecting a signal: " + str(res))
+		else:
+			emit_signal("error", "There is invalid tuple data in the form.")
 
 		return
 
@@ -211,10 +214,3 @@ func _add_tuple_xy(x, y):
 	# Add the items to the tree
 	new_tuple_item.set_text(0, x)
 	new_tuple_item.set_text(1, y)
-
-
-"""
-Allows the caller to configure what is visible, useful for the Sketch tool.
-"""
-func config(selector_visible=true, operation_visible=true):
-	pass
