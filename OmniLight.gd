@@ -16,7 +16,7 @@ func _on_DocumentTabs_cam_pan(last_pos2d, act_pos2d):
 		# Calculate new camera transformation
 		var focalpose = global_transform
 		focalpose.origin = focalpoint
-		var VFocalP2Cam = (focalpose.inverse() * global_transform).origin
+#		var VFocalP2Cam = (focalpose.inverse() * global_transform).origin
 		
 		translate_object_local(Vector3((last_pos2d[0] - act_pos2d[0]) * PANSPEED, -(last_pos2d[1] - act_pos2d[1]) * PANSPEED, 0))
 

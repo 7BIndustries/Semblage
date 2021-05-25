@@ -415,7 +415,7 @@ cqgipy="*res://lib/cqgi_interface.py"
 
 [editor_plugins]
 
-enabled=PoolStringArray(  )
+enabled=PoolStringArray( "gut" )
 
 [gdnative]
 

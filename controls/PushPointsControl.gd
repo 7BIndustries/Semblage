@@ -140,8 +140,11 @@ Adds the current values of the left-to-right and top-to-bottom fields as points.
 """
 func _add_current_point_to_list():
 	if not is_valid():
-		connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
-		emit_signal("error", "There is invalid tuple data in the form.")
+		var res = connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
+		if res != 0:
+			print("Error connecting a signal: " + str(res))
+		else:
+			emit_signal("error", "There is invalid tuple data in the form.")
 
 		return
 
@@ -153,8 +156,11 @@ Allows the user to edit the currently selected point.
 """
 func _edit_current_point():
 	if not is_valid():
-		connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
-		emit_signal("error", "There is invalid tuple data in the form.")
+		var res = connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
+		if res != 0:
+			print("Error connecting a signal: " + str(res))
+		else:
+			emit_signal("error", "There is invalid tuple data in the form.")
 
 		return
 
@@ -186,10 +192,3 @@ func _populate_point_controls_from_list(id):
 	# Set the point input controls
 	point_lr_ctrl.set_text(points[0])
 	point_tb_ctrl.set_text(points[1])
-
-
-"""
-Allows the caller to configure what is visible, useful for the Sketch tool.
-"""
-func config(selector_visible=true, operation_visible=true):
-	pass

@@ -110,10 +110,3 @@ func set_values_from_string(text_line):
 	if res:
 		var constr = res.get_string()
 		for_construction_ctrl.pressed = true if constr == "True" else false
-
-
-"""
-Allows the caller to configure what is visible, useful for the Sketch tool.
-"""
-func config(selector_visible=true, operation_visible=true):
-	pass

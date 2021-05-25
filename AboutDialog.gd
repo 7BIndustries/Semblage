@@ -75,4 +75,7 @@ func _on_DocsLabel_meta_clicked(meta):
 	"""
 	Called when a user clicks on a documentation link.
 	"""
-	OS.shell_open(meta)
+	var res = OS.shell_open(meta)
+
+	if res != 0:
+		print("An error occurred opening the link: " + str(res))

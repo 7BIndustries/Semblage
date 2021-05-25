@@ -25,6 +25,7 @@ component_template = (
 "uvCount": 0,
 "materials": 1,
 "largestDim": %(largestDim)d,
+"smallestDim": %(smallestDim)d,
 "vertices": %(vertices)s,
 "triangles": %(triangles)s,
 "normals": [],
@@ -80,6 +81,7 @@ class JsonMesh(object):
 		self.cqEdges = []
 		self.cqFaces = []
 		self.largestDim = -1
+		self.smallestDim = 99999999
 		self.color = [] # rgba
 	
 
@@ -99,6 +101,12 @@ class JsonMesh(object):
 	"""
 	def addLargestDim(self, dimension):
 		self.largestDim = dimension
+
+	"""
+	Adds the smallest dimension for the current component
+	"""
+	def addSmallestDim(self, dimension):
+		self.smallestDim = dimension
 
 	"""
 	Adds the red, green blue alpha colors to the JSON mesh.
@@ -131,6 +139,7 @@ class JsonMesh(object):
 			"cqEdges": str(self.cqEdges),
 			"cqFaces": str(self.cqFaces),
 			"largestDim": self.largestDim,
+			"smallestDim": self.smallestDim,
 			"color": self.color
 		}
 
@@ -145,6 +154,7 @@ class JsonMesh(object):
 		self.cqEdges = []
 		self.cqFaces = []
 		self.largestDim = -1
+		self.smallestDim = 99999999
 
 
 	"""
@@ -175,6 +185,7 @@ def convert_components(components):
 		largest_dimension = component[1]
 		color = component[2]
 		loc = component[3]
+		smallest_dimension = component[4]
 
 		# Protect against this being called with just a blank workplane object in the stack
 		if hasattr(shape, "ShapeType"):
@@ -209,6 +220,14 @@ def convert_components(components):
 				# Find out if the shape is larger than the largest bounding box we have recorded so far
 				if shape.BoundingBox().DiagonalLength > largest_dimension:
 					largest_dimension = shape.BoundingBox().DiagonalLength
+
+				# Find the smallest dimension so that we can use that for the line width
+				if shape.BoundingBox().xlen < smallest_dimension:
+					smallest_dimension = shape.BoundingBox().xlen
+				if shape.BoundingBox().ylen < smallest_dimension:
+					smallest_dimension = shape.BoundingBox().ylen
+				if shape.BoundingBox().zlen < smallest_dimension:
+					smallest_dimension = shape.BoundingBox().zlen
 
 				# If dealing with some sort of arc, discretize it into individual lines
 				if gt == "CIRCLE" or gt == "ARC" or gt == "SPLINE" or gt == "ELLIPSE":
@@ -250,6 +269,7 @@ def convert_components(components):
 
 			# Make sure that the largest dimension is represented accurately for camera positioning
 			mesher.addLargestDim(largest_dimension)
+			mesher.addSmallestDim(smallest_dimension)
 		
 			# Make sure that the color is set correctly for the current component
 			if color is None: color = Color(1.0, 0.36, 0.05, 1.0)
@@ -415,6 +435,7 @@ class cqgi_interface(Node):
 					component.append(result.shape.largestDimension())
 					component.append(None)
 					component.append(None)
+					component.append(999999999)
 
 					components.append(component)
 

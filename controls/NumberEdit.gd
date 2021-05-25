@@ -30,7 +30,7 @@ func _gui_input(event):
 	# Check to see a key was pressed
 	if event is InputEventKey:
 		# Get the key that was pressed
-		var s = OS.get_scancode_string(event.scancode)
+		#var s = OS.get_scancode_string(event.scancode)
 
 		# Full text, including the new entry
 		var txt = self.get_text()

@@ -262,10 +262,3 @@ func set_values_from_string(text_line):
 	if res:
 		var make_wire = res.get_string()
 		make_wire_ctrl.pressed = true if make_wire == "True" else false
-
-
-"""
-Allows the caller to configure what is visible, useful for the Sketch tool.
-"""
-func config(selector_visible=true, operation_visible=true):
-	pass

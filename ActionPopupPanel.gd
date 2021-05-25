@@ -159,12 +159,12 @@ func activate_edit_mode(component_text, item_text):
 """
 Attempt to contain popup actions in one place.
 """
-func activate_popup(component_text, edit_mode):
+func activate_popup(component_text, edit_mode_new):
 	# Save the incoming context to revert back to it later
 	original_context = component_text
 
 	# Save edit mode for when the user hits the OK button
-	self.edit_mode = edit_mode
+	self.edit_mode = edit_mode_new
 
 	# Setup and show the dialog
 	show_modal(true)
@@ -177,7 +177,7 @@ func activate_popup(component_text, edit_mode):
 	var next_action = null
 
 	# Get the next action based on whether edit mode is engaged
-	if edit_mode:
+	if self.edit_mode:
 		next_action = ContextHandler.find_matching_edit_trigger(prev_template)
 	else:
 		next_action = ContextHandler.get_next_action(component_text)
@@ -270,9 +270,7 @@ func _on_CancelButton_button_down():
 """
 Called when the user selects a different trigger from the top option button.
 """
-func _on_ActionOptionButton_item_selected(index):
-	var trig = $VBoxContainer/ActionOptionButton.get_item_text($VBoxContainer/ActionOptionButton.get_selected_id())
-
+func _on_ActionOptionButton_item_selected(_index):
 	# Clear the dynamic action items from the popup
 	_clear_popup()
 
@@ -316,7 +314,7 @@ func _load_image(path, globalize):
 """
 Called when the user clicks the 3D button and toggles it.
 """
-func _on_ThreeDButton_toggled(button_pressed):
+func _on_ThreeDButton_toggled(_button_pressed):
 	# Make sure that the other buttons are not toggled
 	if three_d_btn.pressed:
 		# Untoggle all other group buttons
@@ -347,7 +345,7 @@ func _on_ThreeDButton_toggled(button_pressed):
 """
 Called when the user clicks the Sketch button and toggles it.
 """
-func _on_SketchButton_toggled(button_pressed):
+func _on_SketchButton_toggled(_button_pressed):
 	if sketch_btn.pressed:
 		# Untoggle all other group buttons
 		_untoggle_all_group_buttons(sketch_btn)
@@ -380,7 +378,7 @@ func _on_SketchButton_toggled(button_pressed):
 """
 Called when the user clicks on the Workplane button and toggles it.
 """
-func _on_WorkplaneButton_toggled(button_pressed):
+func _on_WorkplaneButton_toggled(_button_pressed):
 	if wp_btn.pressed:
 		# Untoggle all other group buttons
 		_untoggle_all_group_buttons(wp_btn)
@@ -411,7 +409,7 @@ func _on_WorkplaneButton_toggled(button_pressed):
 Called when the user clicks on the selector button to display
 the selector controls.
 """
-func _on_SelectorButton_toggled(button_pressed):
+func _on_SelectorButton_toggled(_button_pressed):
 	if selector_btn.pressed:
 		# Untoggle all other group buttons
 		_untoggle_all_group_buttons(selector_btn)

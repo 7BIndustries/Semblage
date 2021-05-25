@@ -16,7 +16,7 @@ func _ready():
 """
 Called when the Section button is clicked.
 """
-func _on_CheckButton_toggled(button_pressed):
+func _on_CheckButton_toggled(_button_pressed):
 	# Show the selector and section controls if the check button is on, hide otherwise
 	if $MainVBoxContainer/CheckContainer/CheckButton.pressed:
 		$MainVBoxContainer/SectionContainer.show()

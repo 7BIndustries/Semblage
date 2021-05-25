@@ -392,7 +392,7 @@ func _first_face_filter_selected(index):
 """
 Called when the first face axis is selected.
 """
-func _first_face_axis_selected(index):
+func _first_face_axis_selected(_index):
 	_update_face_selector_string()
 
 
@@ -422,14 +422,14 @@ func _first_add_button_clicked():
 """
 Called when the second face filter is selected.
 """
-func _second_face_filter_selected(index):
+func _second_face_filter_selected(_index):
 	_update_face_selector_string()
 
 
 """
 Called when the first face axis is selected.
 """
-func _second_face_axis_selected(index):
+func _second_face_axis_selected(_index):
 	_update_face_selector_string()
 
 
@@ -472,14 +472,14 @@ func _first_vertex_filter_selected(index):
 """
 Called when the first edge axis is selected.
 """
-func _first_edge_axis_selected(index):
+func _first_edge_axis_selected(_index):
 	_update_edge_selector_string()
 
 
 """
 Called when the first vertex axis is selected.
 """
-func _first_vertex_axis_selected(index):
+func _first_vertex_axis_selected(_index):
 	_update_vertex_selector_string()
 
 
@@ -555,49 +555,49 @@ func _first_vertex_add_button_clicked():
 """
 Update the face selector string with the logic combiner, if needed.
 """
-func _face_logic_button_changed(index):
+func _face_logic_button_changed(_index):
 	_update_face_selector_string()
 
 
 """
 Update the edge selector string with the logic combiner, if needed.
 """
-func _edge_logic_button_changed(index):
+func _edge_logic_button_changed(_index):
 	_update_edge_selector_string()
 
 
 """
 Update the vertex selector string with the logic combiner, if needed.
 """
-func _vertex_logic_button_changed(index):
+func _vertex_logic_button_changed(_index):
 	_update_vertex_selector_string()
 
 
 """
 Update the edge selector for the second edge filter.
 """
-func _second_edge_filter_selected(index):
+func _second_edge_filter_selected(_index):
 	_update_edge_selector_string()
 
 
 """
 Update the vertex selector for the second vertex filter.
 """
-func _second_vertex_filter_selected(index):
+func _second_vertex_filter_selected(_index):
 	_update_vertex_selector_string()
 
 
 """
 Update the edge selector for the second edge axis.
 """
-func _second_edge_axis_selected(index):
+func _second_edge_axis_selected(_index):
 	_update_edge_selector_string()
 
 
 """
 Update the vertex selector for the second vertex axis.
 """
-func _second_vertex_axis_selected(index):
+func _second_vertex_axis_selected(_index):
 	_update_vertex_selector_string()
 
 
@@ -789,7 +789,6 @@ func set_values_from_string(text_line):
 		wp_ctrl.show()
 
 		# Set the vertex selector controls
-		var sel = res.get_string()
 		wp_ctrl.set_values_from_string(text_line)
 
 """

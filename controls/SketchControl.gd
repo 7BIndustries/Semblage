@@ -62,7 +62,6 @@ func _ready():
 
 	# Add the default control to the dynamic container
 	var cont1 = two_d_actions[two_d_actions.keys()[0]].control
-	cont1.config(false, false)
 	dynamic_cont.add_child(cont1)
 
 	# Add button to add the 2D operation to a list
@@ -198,7 +197,6 @@ func _switch_action_control(index):
 	# Add the action control if it exists
 	if actions[selected].control != null:
 		var cont1 = actions[selected].control
-		cont1.config(false, false)
 		dynamic_cont.add_child(cont1)
 
 
@@ -244,9 +242,6 @@ func _save_temp_component_file(path, component_text):
 """
 Loads values into the control's sub-controls based on a code string.
 """
-func set_values_from_string(text_line):
-	print(text_line)
-	print(self.op_list)
-	print(self.hide_show_btn)
+func set_values_from_string(_text_line):
 	# Clear any previous items
 	_clear_controls()

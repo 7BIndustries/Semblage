@@ -14,9 +14,6 @@ var y_dist_ctrl = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	# Add the rect dimension controls
-	var dims_group = HBoxContainer.new()
-
 	# X coord
 	var x_dims_group = HBoxContainer.new()
 	var x_dist_lbl = Label.new()
@@ -91,10 +88,3 @@ func set_values_from_string(text_line):
 		var xy = res.get_string().split(",")
 		x_dist_ctrl.set_text(xy[0])
 		y_dist_ctrl.set_text(xy[1])
-
-
-"""
-Allows the caller to configure what is visible, useful for the Sketch tool.
-"""
-func config(selector_visible=true, operation_visible=true):
-	pass
