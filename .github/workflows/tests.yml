@@ -32,7 +32,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Install Godot and run GUT tests
         run: |
-          curl https://downloads.tuxfamily.org/godotengine/3.3.2/Godot_v3.3.2-stable_x11.64.zip --output Godot_v3.3.2-stable_x11.64.zip
-          unzip Godot_v3.3.2-stable_x11.64.zip
+          curl https://downloads.tuxfamily.org/godotengine/3.3.2/Godot_v3.3.2-stable_linux_headless.64.zip --output Godot_v3.3.2-stable_linux_headless.64.zip
+          unzip Godot_v3.3.2-stable_linux_headless.64.zip
           chmod +x Godot_v3.3.2-stable_linux_headless.64
           ./Godot_v3.3.2-stable_linux_headless.64 -d -s --path ./project addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit
