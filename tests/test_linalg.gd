@@ -25,6 +25,6 @@ Tests the capability of finding a basis based on a normal.
 func test_find_basis():
     var basis = linalg.find_basis(Vector3(0, 0, 1))
 
-    assert_eq(basis.x, Vector3(1, 1, 0))
+    assert_eq(basis.x, Vector3(0, 1, 0))
     assert_eq(basis.y, Vector3(1, 0, 0))
     assert_eq(basis.z, Vector3(0, 0, 1))
