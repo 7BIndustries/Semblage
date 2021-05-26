@@ -38,6 +38,55 @@ func test_open_button():
 
 	gui.free()
 
+"""
+Simulates the user clicking the Save button.
+"""
+func test_save_button():
+	# Get a reference to the whole interface and make sure we got it
+	var gui = gui_scene.instance()
+	assert_not_null(gui)
+
+	# Get a reference to the Save button and make sure we got something
+	var save_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton")
+	assert_not_null(save_btn, "Can access the Save button.")
+
+	# Get a reference to the toolbar popup container
+	var popup = gui.get_node("ToolbarPopupPanel")
+	assert_not_null(popup, "Can access the toolbar popup.")
+
+	# Start watching signals so we know if something happened that should have
+	watch_signals(save_btn)
+	watch_signals(popup)
+
+	# Simulate a mouse click
+	save_btn.emit_signal("button_down")
+
+	# Make sure that the proper signals were fired
+	assert_signal_emitted(save_btn, 'button_down', "Make sure the event fires from the Save button.")
+
+	# Make sure the popup dialog has the proper buttons in them
+	var save_sub_btn = popup.get_child(0).get_child(0)
+	assert_eq(save_sub_btn.get_text(), "Save", "Make sure the save button is present.")
+
+	# Get a reference to the SaveDialog so we can check it
+	var save_dlg = gui.get_node("SaveDialog")
+	watch_signals(save_dlg)
+
+	# Simulate a mouse click of the save sub button
+	save_sub_btn.emit_signal("button_down")
+
+	assert_signal_emitted(save_dlg, "about_to_show")
+	assert_eq(save_dlg.filters[0], "*.py", "Dialog filter set for Python files.")
+
+	# Try to save a file and make sure the correct event is fired
+#	save_dlg.current_dir = "user://"
+#	save_dlg.current_file = "test.py"
+#	print(save_dlg.get_children()[2].get_children()[2].get_text())
+#	save_dlg.get_children()[2].get_children()[2].emit_signal("button_down")
+#	assert_true(File.new().file_exists("user://test.py"), "Make sure that the file was saved.")
+
+	gui.free()
+
 # func before_all():
 # 	gut.p("Runs once before all tests")
 

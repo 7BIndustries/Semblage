@@ -270,6 +270,10 @@ func load_component_json(json_string):
 		var max_dim = component["largestDim"]
 		var min_dim = component["smallestDim"]
 
+		# Make sure the line width will be appropriate, even if this is a 2D object
+		if min_dim == 0:
+			min_dim = max_dim
+	
 		# Make sure the zoom speed works with the size of the model
 		cam.ZOOMSPEED = 0.075 * max_dim
 
