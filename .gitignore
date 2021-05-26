@@ -18,3 +18,10 @@ __pycache__
 # pythonscript.gdnlib
 LICENSE.txt
 README.txt
+lib/*.so*
+lib/base_library.zip
+addons/pythonscript/venv
+addons/pythonscript/x11-64
+addons/pythonscript/osx-64
+addons/pythonscript/windows-32
+addons/pythonscript/windows-64
