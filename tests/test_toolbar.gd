@@ -7,10 +7,10 @@ var gui_scene = load("res://GUI.tscn")
 Tests as if the user clicked the Open button.
 """
 func test_open_button():
+	# Grab an instance of the main GUI and make sure we got it
 	var gui = gui_scene.instance()
-
-	# Make sure we got the scene instance
 	assert_not_null(gui)
+	add_child_autoqfree(gui)
 
 	# Get a reference to the open button and make sure we got something
 	var open_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton")
@@ -36,6 +36,7 @@ func test_open_button():
 	assert_signal_emitted(open_btn, 'button_down', "Make sure the event fires from the Open button.")
 	assert_signal_emitted(open_dlg, "about_to_show")
 
+	remove_child(gui)
 	gui.free()
 
 """
@@ -45,6 +46,7 @@ func test_save_button():
 	# Get a reference to the whole interface and make sure we got it
 	var gui = gui_scene.instance()
 	assert_not_null(gui)
+	add_child_autoqfree(gui)
 
 	# Get a reference to the Save button and make sure we got something
 	var save_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton")
@@ -61,6 +63,8 @@ func test_save_button():
 	# Simulate a mouse click
 	save_btn.emit_signal("button_down")
 
+	yield(yield_to(save_btn, "button_down", 2), YIELD)
+
 	# Make sure that the proper signals were fired
 	assert_signal_emitted(save_btn, 'button_down', "Make sure the event fires from the Save button.")
 
@@ -75,16 +79,24 @@ func test_save_button():
 	# Simulate a mouse click of the save sub button
 	save_sub_btn.emit_signal("button_down")
 
+	yield(yield_to(save_sub_btn, "button_down", 2), YIELD)
+
 	assert_signal_emitted(save_dlg, "about_to_show")
 	assert_eq(save_dlg.filters[0], "*.py", "Dialog filter set for Python files.")
 
 	# Try to save a file and make sure the correct event is fired
-#	save_dlg.current_dir = "user://"
+#	save_dlg.current_dir = "/tmp"
 #	save_dlg.current_file = "test.py"
+#	save_dlg.current_path = "/tmp"
+#	save_dlg.get_line_edit().set_text("/tmp/test.py")
 #	print(save_dlg.get_children()[2].get_children()[2].get_text())
-#	save_dlg.get_children()[2].get_children()[2].emit_signal("button_down")
+#	save_dlg.get_children()[2].get_children()[3].emit_signal("button_down")
+
+#	yield(yield_to(save_dlg.get_children()[2].get_children()[3], "button_down", 5), YIELD)
+
 #	assert_true(File.new().file_exists("user://test.py"), "Make sure that the file was saved.")
 
+	remove_child(gui)
 	gui.free()
 
 # func before_all():
