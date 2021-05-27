@@ -54,12 +54,12 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/CloseControl.gd"
 }, {
-"base": "Node",
+"base": "Reference",
 "class": "Common",
 "language": "GDScript",
 "path": "res://controls/Common.gd"
 }, {
-"base": "Node",
+"base": "Reference",
 "class": "ContextHandler",
 "language": "GDScript",
 "path": "res://ContextHandler.gd"
@@ -79,7 +79,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/ExtrudeControl.gd"
 }, {
-"base": "Node",
+"base": "Reference",
 "class": "FileSystem",
 "language": "GDScript",
 "path": "res://FileSystem.gd"
@@ -104,7 +104,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/HoleControl.gd"
 }, {
-"base": "Node",
+"base": "Reference",
 "class": "LinAlg",
 "language": "GDScript",
 "path": "res://LinAlg.gd"
@@ -119,7 +119,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/LineToControl.gd"
 }, {
-"base": "Node",
+"base": "Reference",
 "class": "Meshes",
 "language": "GDScript",
 "path": "res://Meshes.gd"
@@ -234,7 +234,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/SectionControl.gd"
 }, {
-"base": "Node",
+"base": "Reference",
 "class": "Security",
 "language": "GDScript",
 "path": "res://Security.gd"
@@ -244,7 +244,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/SelectorControl.gd"
 }, {
-"base": "Node",
+"base": "Reference",
 "class": "Settings",
 "language": "GDScript",
 "path": "res://Settings.gd"
@@ -304,7 +304,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/TranslateControl.gd"
 }, {
-"base": "Node",
+"base": "Reference",
 "class": "Triggers",
 "language": "GDScript",
 "path": "res://Triggers.gd"
