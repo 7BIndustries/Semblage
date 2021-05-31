@@ -237,3 +237,4 @@ TANGENTARCPOINT_TOOLTIP,Draws an arc as a tangent from the end of the current ed
 THREEPOINTARC_TOOLTIP,"Draws an arc from the current point, through point1, and ending at point2."
 VLINE_TOOLTIP,Makes a vertical line from the current point to the provided distance.
 VLINETO_TOOLTIP,Makes a vertical line from the current point to the provided\nY coordinate. Useful if it is more convenient to specify the end\nlocation rather than a distance.
+SELECTOR_INDEX_HINT_TOOLTIP,"Indexing allows faces, edges and vertices that are offset from the primary selection to be selected.\nFor instance, the face just below the maximum in the Z direction, or the edge one higher than the\nminimum Y direction. Leave at 0 to ignore."
