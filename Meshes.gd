@@ -183,11 +183,12 @@ static func gen_line_mesh(thickness, edge):
 	wp_mesh.mesh = raw_cube_mesh
 	wp_mesh.transform.origin = v_mid
 
-	# Compensate for a cross product glitch with a zero vector if edge starts from origin
-	var v1_offset = v1
-	if v1.x == 0.0 and v1.y == 0.0 and v1.z == 0.0:
-		v1_offset = Vector3(0.000000001, 0.000000001, 0.000000001)
+	# For edges centered at the origin in two axes, the cross product will be
+	# (0, 0, 0), so we need to correct for that or an edge will be oriented wrong.
+	var v_cross = v1.cross(v2)
+	if v_cross == Vector3(0, 0, 0):
+		v_cross = Vector3(0, 0, 1)
 
-	wp_mesh.transform = wp_mesh.transform.looking_at(v2, v1_offset.cross(v2))
+	wp_mesh.transform = wp_mesh.transform.looking_at(v2, v_cross)
 
 	return wp_mesh
