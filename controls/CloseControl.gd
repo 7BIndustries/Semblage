@@ -34,3 +34,10 @@ Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(_text_line):
 	pass
+
+
+"""
+Checks whether or not all the values in the controls are valid.
+"""
+func is_valid():
+	return true

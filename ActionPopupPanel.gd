@@ -55,6 +55,9 @@ func _ready():
 	action_tree_root = action_tree.create_item()
 	action_tree_root.set_text(0, "Actions")
 
+	# The sketch control does not need to be taking up space by default
+	$VBoxContainer/HBoxContainer/CanvasMarginContainer.hide()
+
 
 """
 Sets the Action control based on what is selected in the option button.
@@ -295,23 +298,6 @@ func _on_VBoxContainer_resized():
 
 
 """
-Allows an image to be loaded into the 2D preview.
-"""
-func _load_image(path, globalize):
-	var texture = ImageTexture.new()
-	var image = Image.new()
-
-	# Static images will not be exported correctly unless the path is globalized
-	if globalize:
-		image.load(ProjectSettings.globalize_path(path))
-	else:
-		image.load(path)
-
-	texture.create_from_image(image)
-	$VBoxContainer/HBoxContainer/Preview.set_texture(texture)
-
-
-"""
 Called when the user clicks the 3D button and toggles it.
 """
 func _on_ThreeDButton_toggled(_button_pressed):
@@ -368,8 +354,7 @@ func _on_SketchButton_toggled(_button_pressed):
 		# Show preview controls
 		$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.show()
 		$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.show()
-		$VBoxContainer/HBoxContainer/Preview.show()
-		_load_image("res://assets/samples/sample_2D_render.svg", true)
+		$VBoxContainer/HBoxContainer/CanvasMarginContainer.show()
 
 		# Make sure the dialog is sized correctly
 		_on_VBoxContainer_resized()
@@ -440,7 +425,7 @@ any previously displayed sketch controls.
 func _hide_sketch_controls():
 	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.hide()
 	$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.hide()
-	$VBoxContainer/HBoxContainer/Preview.hide()
+	$VBoxContainer/HBoxContainer/CanvasMarginContainer.hide()
 	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer.hide()
 
 
@@ -476,7 +461,7 @@ func _on_AddButton_button_down():
 
 """
 Collects all of the completed templates in the Action tree and
-renders them as an SVG image.
+renders them on the 2D canvas.
 """
 func _render_action_tree():
 	# Start to build the preview string based on what is in the actions list
@@ -494,22 +479,28 @@ func _render_action_tree():
 
 	script_text += ".consolidateWires()\nshow_object(result)"
 
-	# Protect against edge cases that will result in misleading errors
-	var rgx = RegEx.new()
-	rgx.compile("\\.pushPoints\\(\\[.*\\]\\)\\.consolidateWires")
-	var res = rgx.search(script_text)
-	if res:
-		return
-
 	# Export the file to the user data directory temporarily
-	var ret = cqgipy.export(script_text, "svg", OS.get_user_data_dir(), "width:400;height:400;marginLeft:50;marginTop:50;showAxes:False;projectionDir:(0,0,1);strokeWidth:0.5;strokeColor:(255,255,255);hiddenColor:(0,0,255);showHidden:False;")
+	var json_string = cqgipy.build(script_text)
 
-	if ret.begins_with("error~"):
+	if json_string.begins_with("error~"):
 		# Let the user know there was an error
-		var err = ret.split("~")[1]
+		var err = json_string.split("~")[1]
 		emit_signal("error", err)
 	else:
-		_load_image(ret, false)
+		var component_json = JSON.parse(json_string).result
+
+		for component in component_json["components"]:
+			# If we've found a larger dimension, save the safe scaling, which is the maximum dimension of any component
+			var max_dim = component["largestDim"]
+			$VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D.set_max_dim(max_dim)
+
+			# Add the edge representations
+			for edge in component["cqEdges"]:
+				# Add the current line
+				$VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D.lines.append([Vector2(edge[0], edge[1]), Vector2(edge[3], edge[4])])
+
+		# Have the 2D canvas re-render the lines that are set for it
+		$VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D.update()
 
 
 """
@@ -521,9 +512,9 @@ func _on_ActionTree_item_activated():
 	var action_key = item_text.split(".")[1].split("(")[0]
 
 	# Make sure the correct item is selected
-	Common.set_option_btn_by_text($VBoxContainer/ActionOptionButton, action_key)
+#	Common.set_option_btn_by_text($VBoxContainer/ActionOptionButton, action_key)
 
-	_set_action_control()
+#	_set_action_control()
 
 
 """
@@ -540,13 +531,33 @@ func _on_UpdateButton_button_down():
 	Common.update_tree_item(action_tree, orig_text, new_text)
 
 	# Re-render everything in the action tree
-	_render_action_tree()
+	_update_preview()
 
 
 """
 Called when an item is selected in the Action tree.
 """
 func _on_ActionTree_item_selected():
+	var selected = action_tree.get_selected()
+
+	# Make sure there is an item to work with
+	if selected == null:
+		return
+
+	# Figure out which control needs to be loaded from the operations list
+	var selected_text = selected.get_text(0)
+	var ctrl_text = "(" + selected_text.split(".")[1].split("(")[0] + ")"
+
+	# Set the control in the operations drop down based on our partial text
+	Common.set_option_btn_by_partial_text($VBoxContainer/ActionOptionButton, ctrl_text)
+
+	# Make sure the matching control is loaded
+	_on_ActionOptionButton_item_selected(0)
+
+	# Repopulate the control with the previous settings
+	var cur_control = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
+	cur_control.set_values_from_string(selected_text)
+
 	# Unhide the item editing controls so the user can change the selected tree item
 	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer.show()
 
@@ -570,14 +581,14 @@ func _on_DeleteButton_button_down():
 		return
 
 	# Remove the item from the history tree
+	action_tree_root.remove_child(selected)
 	selected.free()
 
-	# Make sure there is something left to render
-	if action_tree_root.get_children() == null:
-		_load_image("res://assets/samples/sample_2D_render.svg", true)
-	else:
-		self._render_action_tree()
+	# Force an update of the tree
+	action_tree.update()
 
+	# Updated the 2D preview
+	_update_preview()
 
 """
 Called when the move action item up button is pressed.
@@ -606,6 +617,15 @@ func _on_MoveDownButton_button_down():
 	# Move the item up in the action tree one position
 	Common.move_tree_item_down(action_tree, selected)
 
+
+"""
+Called whenever the 2D preview needs to be updated.
+"""
+func _update_preview():
+	# Reset and update the 2D preview
+	$VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D.reset()
+	$VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D.update()
+	self._render_action_tree()
 
 """
 Called when the control loaded in the dynamic contrainer

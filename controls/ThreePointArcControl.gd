@@ -6,8 +6,8 @@ var prev_template = null
 
 var template = ".threePointArc(point1=({point_1_x},{point_1_y}),point2=({point_2_x},{point_2_y}),forConstruction={for_construction})"
 
-const point1_edit_rgx = "(?<=point1\\=)(.*?)(?=,point2)"
-const point2_edit_rgx = "(?<=point2\\=)(.*?)(?=\\,forConstruction)"
+const point1_edit_rgx = "(?<=point1\\=\\()(.*?)(?=\\),point2)"
+const point2_edit_rgx = "(?<=point2\\=\\()(.*?)(?=\\),forConstruction)"
 const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 
 var point_1_x_ctrl = null

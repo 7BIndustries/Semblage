@@ -23,6 +23,7 @@ func _ready():
 	dist_lbl.set_text("Distance: ")
 	dist_group.add_child(dist_lbl)
 	dist_ctrl = NumberEdit.new()
+	dist_ctrl.CanBeNegative = true
 	dist_ctrl.set_text("1.0")
 	dist_ctrl.hint_tooltip = tr("VLINE_DIST_CTRL_HINT_TOOLTIP")
 	dist_group.add_child(dist_ctrl)

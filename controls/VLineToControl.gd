@@ -23,6 +23,7 @@ func _ready():
 	y_coord_lbl.set_text("Y Coordinate: ")
 	y_coord_group.add_child(y_coord_lbl)
 	y_coord_ctrl = NumberEdit.new()
+	y_coord_ctrl.CanBeNegative = true
 	y_coord_ctrl.set_text("1.0")
 	y_coord_ctrl.hint_tooltip = tr("VLINE_TO_Y_COORD_CTRL_HINT_TOOLTIP")
 	y_coord_group.add_child(y_coord_ctrl)

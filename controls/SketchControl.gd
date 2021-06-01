@@ -99,7 +99,6 @@ func _process(delta):
 	if executing:
 		var file = File.new()
 		if file.file_exists(OS.get_user_data_dir() + "/temp.svg"):
-			print("HERE")
 			load_image(OS.get_user_data_dir() + "/temp.svg")
 
 
@@ -224,7 +223,6 @@ Clears the control to get it ready for the next use.
 func _clear_controls():
 	if op_list != null:
 		for i in range(0, op_list.get_item_count()):
-			print(op_list.get_item_text(i))
 			op_list.remove_item(i)
 
 

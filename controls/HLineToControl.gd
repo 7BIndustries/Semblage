@@ -24,6 +24,7 @@ func _ready():
 	x_coord_lbl.set_text("X Coordinate: ")
 	x_coord_group.add_child(x_coord_lbl)
 	x_coord_ctrl = NumberEdit.new()
+	x_coord_ctrl.CanBeNegative = true
 	x_coord_ctrl.set_text("1.0")
 	x_coord_ctrl.hint_tooltip = tr("HLINETO_X_COORD_CTRL_HINT_TOOLTIP")
 	x_coord_group.add_child(x_coord_ctrl)

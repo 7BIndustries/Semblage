@@ -20,6 +20,7 @@ func _ready():
 	x_dist_lbl.set_text("X Distance: ")
 	x_dims_group.add_child(x_dist_lbl)
 	x_dist_ctrl = NumberEdit.new()
+	x_dist_ctrl.CanBeNegative = true
 	x_dist_ctrl.set_text("1.0")
 	x_dist_ctrl.hint_tooltip = tr("MOVE_X_DIST_CTRL_HINT_TOOLTIP")
 	x_dims_group.add_child(x_dist_ctrl)
@@ -31,6 +32,7 @@ func _ready():
 	y_dist_lbl.set_text("Y Distance: ")
 	y_dims_group.add_child(y_dist_lbl)
 	y_dist_ctrl = NumberEdit.new()
+	y_dist_ctrl.CanBeNegative = true
 	y_dist_ctrl.set_text("1.0")
 	y_dist_ctrl.hint_tooltip = tr("MOVE_Y_DIST_CTRL_HINT_TOOLTIP")
 	y_dims_group.add_child(y_dist_ctrl)

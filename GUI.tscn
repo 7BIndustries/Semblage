@@ -1,4 +1,4 @@
-[gd_scene load_steps=65 format=2]
+[gd_scene load_steps=66 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -31,6 +31,7 @@
 [ext_resource path="res://AddParameterDialog.gd" type="Script" id=29]
 [ext_resource path="res://controls/NumberEdit.gd" type="Script" id=30]
 [ext_resource path="res://ExportDXFDialog.gd" type="Script" id=31]
+[ext_resource path="res://Canvas2D.gd" type="Script" id=32]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
@@ -488,11 +489,11 @@ size_flags_horizontal = 5
 size_flags_vertical = 5
 
 [node name="ActionGroupsVBoxContainer" type="VBoxContainer" parent="ActionPopupPanel/VBoxContainer"]
-margin_right = 208.0
+margin_right = 274.0
 margin_bottom = 43.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer"]
-margin_right = 208.0
+margin_right = 274.0
 margin_bottom = 43.0
 
 [node name="WorkplaneButton" type="Button" parent="ActionPopupPanel/VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer"]
@@ -524,23 +525,23 @@ icon = ExtResource( 23 )
 
 [node name="HSeparator3" type="HSeparator" parent="ActionPopupPanel/VBoxContainer"]
 margin_top = 47.0
-margin_right = 208.0
+margin_right = 274.0
 margin_bottom = 51.0
 
 [node name="ActionOptionButton" type="OptionButton" parent="ActionPopupPanel/VBoxContainer"]
 margin_top = 55.0
-margin_right = 208.0
+margin_right = 274.0
 margin_bottom = 75.0
 
 [node name="HSeparator" type="HSeparator" parent="ActionPopupPanel/VBoxContainer"]
 margin_top = 79.0
-margin_right = 208.0
+margin_right = 274.0
 margin_bottom = 83.0
 custom_styles/separator = SubResource( 28 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ActionPopupPanel/VBoxContainer"]
 margin_top = 87.0
-margin_right = 208.0
+margin_right = 274.0
 margin_bottom = 319.0
 
 [node name="ActionContainer" type="VBoxContainer" parent="ActionPopupPanel/VBoxContainer/HBoxContainer"]
@@ -595,29 +596,30 @@ margin_bottom = 232.0
 rect_min_size = Vector2( 100, 200 )
 hide_root = true
 
-[node name="Preview" type="TextureRect" parent="ActionPopupPanel/VBoxContainer/HBoxContainer"]
-margin_left = 170.0
-margin_right = 170.0
+[node name="CanvasMarginContainer" type="MarginContainer" parent="ActionPopupPanel/VBoxContainer/HBoxContainer"]
+margin_left = 174.0
+margin_right = 274.0
 margin_bottom = 232.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+rect_min_size = Vector2( 600, 600 )
+
+[node name="Canvas2D" type="Node2D" parent="ActionPopupPanel/VBoxContainer/HBoxContainer/CanvasMarginContainer"]
+script = ExtResource( 32 )
 
 [node name="HSeparator2" type="HSeparator" parent="ActionPopupPanel/VBoxContainer"]
 margin_top = 323.0
-margin_right = 208.0
+margin_right = 274.0
 margin_bottom = 327.0
 custom_styles/separator = SubResource( 29 )
 
 [node name="OkButton" type="Button" parent="ActionPopupPanel/VBoxContainer"]
 margin_top = 331.0
-margin_right = 208.0
+margin_right = 274.0
 margin_bottom = 351.0
 text = "OK"
 
 [node name="CancelButton" type="Button" parent="ActionPopupPanel/VBoxContainer"]
 margin_top = 355.0
-margin_right = 208.0
+margin_right = 274.0
 margin_bottom = 375.0
 text = "Cancel"
 __meta__ = {

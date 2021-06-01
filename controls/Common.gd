@@ -3,7 +3,7 @@ extends Reference
 class_name Common
 
 """
-If the option button has matching text in an item, sets that to be the
+If the option button has matching text in an item, set that to be the
 selected item.
 """
 static func set_option_btn_by_text(opt_btn, name):
@@ -14,6 +14,18 @@ static func set_option_btn_by_text(opt_btn, name):
 		if txt == name:
 			opt_btn.select(i)
 
+
+"""
+If the option button has partially matching text in an item, set that to be the
+selected item.
+"""
+static func set_option_btn_by_partial_text(opt_btn, name):
+	for i in range(0, opt_btn.get_item_count()):
+		var txt = opt_btn.get_item_text(i)
+
+		# If the item matches, set it to be the selected id
+		if txt.find(name) > 0:
+			opt_btn.select(i)
 
 """
 Loads an option button up with an array of items.

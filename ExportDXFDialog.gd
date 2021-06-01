@@ -102,7 +102,7 @@ func _on_OkButton_button_down():
 		for i in range(0, steps):
 			var file_name = pt.get_text().replace(".dxf", "_" + str(i) + ".dxf")
 			_export_to_file(file_name, cur_height)
-			print(str(cur_height) + " : " + str(layer_height))
+
 			cur_height += layer_height
 
 		# Do a final export right at the end height
