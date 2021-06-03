@@ -161,6 +161,9 @@ static func gen_component_mesh(component):
 #			vp.add_child(newVert)
 
 
+"""
+Generates a cube mesh that represents a line/edge/wire in the 3D view.
+"""
 static func gen_line_mesh(thickness, edge):
 	var material = SpatialMaterial.new()
 	material.albedo_color = Color(255, 255, 255, 255)

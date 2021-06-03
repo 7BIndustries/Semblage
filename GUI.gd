@@ -13,14 +13,8 @@ var light_transform # Allws us to move the light position back to the starting t
 var cam # The main camera for the 3D view
 var origin_cam # The camera showing the orientation of the component(s) via an origin indicator
 var light # Supplemental light that follows the camera
-var vp # The 3D viewport
-var tabs # The tab container for component documents
 var object_tree = null
-var history_tree = null
-var params_tree = null
 var object_tree_root = null
-var history_tree_root = null
-var params_tree_root = null
 
 onready var cqgiint = $GUI/CQGIInterface
 
@@ -29,10 +23,9 @@ func _ready():
 	origin_cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginOrbitCamera
 	cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
 	light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
-	vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
-	tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
 
 	# Set the default tab to let the user know where to start
+	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
 	tabs.set_tab_title(0, "Start")
 
 	# Start off with the base script text
@@ -90,6 +83,7 @@ func _on_OpenDialog_file_selected(path):
 	open_file_path = path
 
 	# Let the user know the name of the file they are trying to open
+	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
 	tabs.set_tab_title(0, open_file_path)
 
 	# Load the component text to handle later
@@ -141,13 +135,16 @@ func load_semblage_component(text):
 	rgx.compile("(?<=# start_params)((.|\n)*)(?=# end_params)")
 	var res = rgx.search(text)
 	if res:
+		# Get the name and value and add them to the tree
+		var params_tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
+		var params_tree_root = _get_params_tree_root(params_tree)
+
 		# Step through all the parameters lines and add them to the tree
 		var params = res.get_string().split("\n")
 		for param in params:
 			if param == "":
 				continue
 
-			# Get the name and value and add them to the tree
 			var param_parts = param.split("=")
 			Common.add_columns_to_tree(param_parts, params_tree, params_tree_root)
 
@@ -158,6 +155,8 @@ func load_semblage_component(text):
 			var addition = line.replace("result=result", "")
 
 			# Add the current item to the history tree
+			var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
+			var history_tree_root = _get_history_tree_root(history_tree)
 			Common.add_item_to_tree(addition, history_tree, history_tree_root)
 
 			# Find any object name (if present) that needs to be displayed in the list
@@ -177,20 +176,15 @@ func _render_history_tree():
 
 	# Prepend any parameters
 	component_text += "# start_params\n"
-	var cur_param_item = params_tree_root.get_children()
-	while true:
-		if cur_param_item == null:
-			break
-		else:
-			component_text += cur_param_item.get_text(0) + "=" + cur_param_item.get_text(1) + "\n"
-
-			cur_param_item = cur_param_item.get_next()
+	component_text += _collect_parameters()
 	component_text += "# end_params\n"
 
 	# Start the body of the script
 	component_text += "result=cq\n"
 
 	# Search the tree and update the matchine entry in the tree
+	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
+	var history_tree_root = _get_history_tree_root(history_tree)
 	var cur_item = history_tree_root.get_children()
 	while true:
 		if cur_item == null:
@@ -205,6 +199,28 @@ func _render_history_tree():
 		status.text = "Rednering component..."
 		_render_component_text()
 
+
+"""
+Collect parameters to be appended to the component text.
+"""
+func _collect_parameters():
+	var param_text = ""
+
+	# Attempt to get the parameter tree and its root item
+	var params_tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
+	var params_tree_root = _get_params_tree_root(params_tree)
+
+	# Loop through any parameters that are present and append them to the params section text
+	var cur_param_item = params_tree_root.get_children()
+	while true:
+		if cur_param_item == null:
+			break
+		else:
+			param_text += cur_param_item.get_text(0) + "=" + cur_param_item.get_text(1) + "\n"
+
+			cur_param_item = cur_param_item.get_next()
+
+	return param_text
 
 """
 Generates a component using the semb CLI, which returns JSON.
@@ -261,6 +277,9 @@ Loads a generated component into a mesh.
 func load_component_json(json_string):
 	status.text = "Redering component..."
 
+	# Get a reference to the 3D viewport
+	var vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
+
 	var new_safe_dist = 0
 
 	# Convert all of the returned results to meshes that can be displayed
@@ -308,6 +327,29 @@ func load_component_json(json_string):
 
 
 """
+Allows the tests to run and helps make sure each function can run atomically.
+"""
+func _get_history_tree_root(history_tree):
+	var history_tree_root = history_tree.get_root()
+	if history_tree_root == null:
+		_init_history_tree()
+		history_tree_root = history_tree.get_root()
+
+	return history_tree_root
+
+
+"""
+Allows the tests to run and helps make sure each function can run atomically.
+"""
+func _get_params_tree_root(params_tree):
+	var params_tree_root = params_tree.get_root()
+	if params_tree_root == null:
+		_init_params_tree()
+		params_tree_root = params_tree.get_root()
+
+	return params_tree_root
+
+"""
 Handler that is called when the user clicks the button for the home view.
 """
 func _on_HomeViewButton_button_down():
@@ -329,6 +371,7 @@ func _on_CloseButton_button_down():
 	if cam != null && home_transform != null: cam.transform = home_transform
 
 	# Set the default tab name
+	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
 	tabs.set_tab_title(0, "Start")
 	
 	open_file_path = null
@@ -337,9 +380,9 @@ func _on_CloseButton_button_down():
 	self._clear_viewport()
 	
 	# Get the tree views set up for the next object
-	self.history_tree.clear()
+	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree.clear()
 	self.object_tree.clear()
-	self.params_tree.clear()
+	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree.clear()
 	self._init_history_tree()
 	self._init_object_tree()
 	self._init_params_tree()
@@ -363,22 +406,22 @@ func _init_object_tree():
 Initializes the history tree so that it can be added to as the component changes.
 """
 func _init_history_tree():
-	history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
+	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
 
 	# Create the root of the history tree
-	self.history_tree_root = history_tree.create_item()
-	self.history_tree_root.set_text(0, "cq")
+	var history_tree_root = history_tree.create_item()
+	history_tree_root.set_text(0, "cq")
 
 
 """
 Initializes the parameters tree so that items can be added to it.
 """
 func _init_params_tree():
-	params_tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
+	var params_tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
 
 	# Create the root of the parameters tree
-	self.params_tree_root = params_tree.create_item()
-	self.params_tree_root.set_text(0, "params")
+	var params_tree_root = params_tree.create_item()
+	params_tree_root.set_text(0, "params")
 
 
 """
@@ -395,6 +438,8 @@ func _on_ReloadButton_button_down():
 Removes all MeshInstances from a viewport to prepare for something new to be loaded.
 """
 func _clear_viewport():
+	var vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
+
 	# Grab the viewport and its children
 	var children = vp.get_children()
 
@@ -408,6 +453,8 @@ func _clear_viewport():
 Retries the updated context and makes it the current one.
 """
 func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
+	var vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
+
 	self._clear_viewport()
 	var render = true
 
@@ -432,6 +479,9 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 	# If the old component name does not match the new one, we want to update it
 	if new_object != null and old_object != new_object:
 		Common.update_tree_item(object_tree, old_object, new_object)
+
+	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
+	var history_tree_root = _get_history_tree_root(history_tree)
 
 	# If we are in edit mode, do not try to add anything to the history
 	if edit_mode:
@@ -597,14 +647,14 @@ func _on_SaveDialog_file_selected(path):
 Handles the heavy lifting of saving the component text to file.
 """
 func _save_component_text():
-	status.text = ""
+	$AddParameterDialog/VBoxContainer/StatusLabel.text = ""
 
 	var file = File.new()
 	file.open(self.open_file_path, File.WRITE)
 	file.store_string(self.component_text + "\nshow_object(result)")
 	file.close()
 
-	status.text = "Component saved"
+	$AddParameterDialog/VBoxContainer/StatusLabel.text = "Component saved"
 
 
 """
@@ -692,6 +742,7 @@ Called when the user clicks on the button to delete an item from
 the history tree.
 """
 func _on_DeleteButton_button_down():
+	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
 	var selected = history_tree.get_selected()
 
 	# Make sure there is an item to delete
@@ -716,6 +767,7 @@ Called when the user clicks on the button to move an item up the
 history tree.
 """
 func _on_MoveUpButton_button_down():
+	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
 	var selected = history_tree.get_selected()
 
 	# Make sure there is an item to delete
@@ -739,6 +791,7 @@ Called when the user clicks on the button to move an item up the
 history tree.
 """
 func _on_MoveDownButton_button_down():
+	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
 	var selected = history_tree.get_selected()
 
 	# Make sure there is an item to delete
@@ -894,6 +947,8 @@ Called when an item in the component list is double clicked.
 """
 func _on_ObjectTree_item_activated():
 	var ot = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree
+
+	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
 
 	# Select the history tree item based on the tag/object name so that we can trigger an edit
 	Common.activate_tree_item(history_tree, ot.get_selected().get_text(0))
