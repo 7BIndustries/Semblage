@@ -108,6 +108,9 @@ func test_open_button():
 	open_dlg.get_line_edit().set_text("/tmp/test.py")
 	open_dlg.emit_signal("file_selected", "/tmp/test.py")
 
+	# Give the file time to be written
+	yield(yield_to(open_dlg, "file_selected", 2), YIELD)
+
 	# Make sure that the proper script text was loaded
 	assert_eq(gui.component_text, "# Semblage v0.2.0-alpha\nimport cadquery as cq\n# start_params\n# end_params\nresult=cq\n", "Make sure the proper component text was loaded")
 
