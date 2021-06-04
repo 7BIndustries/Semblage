@@ -27,9 +27,6 @@ func test_save_button():
 	# Simulate a mouse click
 	save_btn.emit_signal("button_down")
 
-	# This is left here in case there are race conditions with the tests
-#	yield(yield_to(save_btn, "button_down", 2), YIELD)
-
 	# Make sure that the proper signals were fired
 	assert_signal_emitted(save_btn, 'button_down', "Make sure the event fires from the Save button.")
 
@@ -53,6 +50,9 @@ func test_save_button():
 	save_dlg.current_path = "/tmp"
 	save_dlg.get_line_edit().set_text("/tmp/test.py")
 	save_dlg.emit_signal("file_selected", "/tmp/test.py")
+
+	# Give the file time to be writte
+	yield(yield_to(save_dlg, "file_selected", 2), YIELD)
 
 	# Make sure that the saved file exists
 	assert_true(File.new().file_exists("/tmp/test.py"), "Make sure that the file was saved.")
@@ -108,7 +108,7 @@ func test_open_button():
 	open_dlg.get_line_edit().set_text("/tmp/test.py")
 	open_dlg.emit_signal("file_selected", "/tmp/test.py")
 
-	# Give the file time to be written
+	# Give the file time to be read
 	yield(yield_to(open_dlg, "file_selected", 2), YIELD)
 
 	# Make sure that the proper script text was loaded
@@ -167,9 +167,20 @@ func test_make_button_dxf():
 	ok_btn.emit_signal("button_down")
 	assert_signal_emitted(ok_btn, "button_down")
 
+	# Give the file time to be writte
+	yield(yield_to(ok_btn, "file_selected", 2), YIELD)
+
 	# Make sure that the saved file exists
 	assert_true(File.new().file_exists("/tmp/test.dxf"), "Make sure that the file was saved.")
 
+	# Make sure that the saved file has the correct contents
+	var file = File.new()
+	file.open("/tmp/test.dxf", File.READ)
+	var content = file.get_as_text()
+	file.close()
+	assert_eq(content.split("\n")[0], "  0", "Make sure that the saved file has the correct contents.")
+	assert_eq(content.split("\n")[1], "SECTION", "Make sure that the saved file has the correct contents.")
+	assert_eq(content.split("\n")[-2], "EOF", "Make sure that the saved file has the correct contents.")
 
 #var make_sub_btn = popup.get_child(0).get_child(0)
 #	assert_eq(make_sub_btn.get_text(), "STL", "Make sure the STL button is present.")
