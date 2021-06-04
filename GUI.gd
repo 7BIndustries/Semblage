@@ -6,7 +6,6 @@ var open_file_path # The component/CQ file that the user opened
 var component_text # The text of the current component's script
 var check_component_text = null # Temporary to make sure the compnent file
 var safe_distance = 0 # The distance away the camera should be placed to be able to view the components
-var status # The status bar that keeps the user appraised of what is going on
 var home_transform # Allows us to move the camera back to the starting location/rotation/etc
 var origin_transform # Allows us to move the orgin camera view back to a starting transform
 var light_transform # Allws us to move the light position back to the starting transform
@@ -54,8 +53,7 @@ func _ready():
 	$GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton.hint_tooltip = tr("ABOUT_BUTTON_HINT_TOOLTIP")
 
 	# Let the user know the app is ready to use
-	status = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
-	status.text = " Ready"
+	$AddParameterDialog/VBoxContainer/StatusLabel.text = " Ready"
 
 
 """
@@ -196,7 +194,7 @@ func _render_history_tree():
 
 	# Render the script text collected from the history tree, but only if there is something to render
 	if not self.component_text.ends_with("result=cq\n"):
-		status.text = "Rednering component..."
+		$AddParameterDialog/VBoxContainer/StatusLabel.text = "Rednering component..."
 		_render_component_text()
 
 
@@ -238,7 +236,7 @@ Uses Python to execute the current component_text, tessellate
 the results, and display that in the 3D view.
 """
 func _render_component_text():
-	status.text = "Rednering component..."
+	$AddParameterDialog/VBoxContainer/StatusLabel.text = "Rednering component..."
 
 	var script_text = component_text + "\nshow_object(result)"
 
@@ -255,7 +253,7 @@ func _render_component_text():
 		# Load the JSON into the scene
 		load_component_json(component_json)
 
-	status.text = "Rednering component...done"
+	$AddParameterDialog/VBoxContainer/StatusLabel.text = "Rednering component...done"
 
 
 """
@@ -275,7 +273,7 @@ func get_safe_camera_distance(max_dim):
 Loads a generated component into a mesh.
 """
 func load_component_json(json_string):
-	status.text = "Redering component..."
+	$AddParameterDialog/VBoxContainer/StatusLabel.text = "Redering component..."
 
 	# Get a reference to the 3D viewport
 	var vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
@@ -323,7 +321,7 @@ func load_component_json(json_string):
 		origin_transform = origin_cam.get_transform()
 		light_transform = light.get_transform()
 
-	status.text = "Redering component...done."
+	$AddParameterDialog/VBoxContainer/StatusLabel.text = "Redering component...done."
 
 
 """
@@ -707,7 +705,7 @@ func _on_ExportDialog_file_selected(path):
 
 	# Make sure the user gave a valid extension
 	if extension != "stl" and extension != "step":
-		status.text = "Export only supports the 'stl' and 'step' file extensions. Please try again."
+		$AddParameterDialog/VBoxContainer/StatusLabel.text = "Export only supports the 'stl' and 'step' file extensions. Please try again."
 		return
 
 	var export_text = component_text
