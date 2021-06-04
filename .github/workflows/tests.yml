@@ -39,6 +39,6 @@ jobs:
           echo $PWD
           mv semblage_libs.tar.xz $PWD/lib/
           cd $PWD/lib/
-          tar -xvf $PWD/lib/semblage_libs.tar.xz
+          tar -xvf semblage_libs.tar.xz
           cd ..
           LD_LIBRARY_PATH=$PWD/lib ./Godot_v3.3.2-stable_linux_headless.64 --verbose -d -s --path ./project addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit
