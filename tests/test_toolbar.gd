@@ -110,3 +110,67 @@ func test_open_button():
 
 	# Make sure that the proper script text was loaded
 	assert_eq(gui.component_text, "# Semblage v0.2.0-alpha\nimport cadquery as cq\n# start_params\n# end_params\nresult=cq\n", "Make sure the proper component text was loaded")
+
+
+"""
+Tests as if the user were interacting with the Make button.
+"""
+func test_make_button_dxf():
+	# Get a reference to the whole interface and make sure we got it
+	var gui = partial_double("res://GUI.tscn").instance()
+	assert_not_null(gui)
+	gui._ready()
+
+	# Make sure there is default component text to work with
+	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().box(1,1,1)\n"
+
+	# Get a reference to the make button so we can simulate user interaction with it
+	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
+	assert_not_null(make_btn, "Can access the Make/Export button.")
+
+	# Get a reference to the toolbar popup container
+	var popup = gui.get_node("ToolbarPopupPanel")
+	assert_not_null(popup, "Can access the toolbar popup.")
+
+	# Start watching signals so we know if something happened that should have
+	watch_signals(make_btn)
+	watch_signals(popup)
+
+	# Simulate a mouse click
+	make_btn.emit_signal("button_down")
+
+	# Make sure the popup dialog has the proper buttons in it
+	var make_sub_btn = popup.get_child(0).get_child(3)
+	assert_eq(make_sub_btn.get_text(), "DXF", "Make sure the DXF button is present.")
+
+	# Get a reference to the ExportSVGDialog so we can check it
+	var dxf_dlg = gui.get_node("ExportDXFDialog")
+	watch_signals(dxf_dlg)
+
+	# Simulate a mouse click of the export DXF sub button
+	make_sub_btn.emit_signal("button_down")
+
+	# Make sure that the DXF export dialog shows up
+	assert_signal_emitted(dxf_dlg, "about_to_show")
+
+	# Set the export directory manually
+	var path_txt = dxf_dlg.get_node("MainVBoxContainer/HBoxContainer/PathText")
+	path_txt.set_text("/tmp/test.dxf")
+
+	# Export the DXF file
+	var ok_btn = dxf_dlg.get_node("MainVBoxContainer/OkButton")
+	assert_not_null(ok_btn)
+	watch_signals(ok_btn)
+	ok_btn.emit_signal("button_down")
+	assert_signal_emitted(ok_btn, "button_down")
+
+	# Make sure that the saved file exists
+	assert_true(File.new().file_exists("/tmp/test.dxf"), "Make sure that the file was saved.")
+
+
+#var make_sub_btn = popup.get_child(0).get_child(0)
+#	assert_eq(make_sub_btn.get_text(), "STL", "Make sure the STL button is present.")
+#	make_sub_btn = popup.get_child(0).get_child(1)
+#	assert_eq(make_sub_btn.get_text(), "STEP", "Make sure the STEP button is present.")
+#	make_sub_btn = popup.get_child(0).get_child(2)
+#	assert_eq(make_sub_btn.get_text(), "SVG", "Make sure the SVG button is present.")
