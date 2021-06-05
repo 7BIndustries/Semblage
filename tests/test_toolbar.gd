@@ -116,7 +116,7 @@ func test_open_button():
 
 
 """
-Tests as if the user were interacting with the Make button.
+Tests as if the user were interacting with the Make button to create a DXF.
 """
 func test_make_button_dxf():
 	# Get a reference to the whole interface and make sure we got it
@@ -168,7 +168,7 @@ func test_make_button_dxf():
 	assert_signal_emitted(ok_btn, "button_down")
 
 	# Give the file time to be writte
-	yield(yield_to(ok_btn, "file_selected", 2), YIELD)
+	yield(yield_to(ok_btn, "button_down", 2), YIELD)
 
 	# Make sure that the saved file exists
 	assert_true(File.new().file_exists("/tmp/test.dxf"), "Make sure that the file was saved.")
@@ -177,6 +177,95 @@ func test_make_button_dxf():
 	var file = File.new()
 	file.open("/tmp/test.dxf", File.READ)
 	var content = file.get_as_text()
+	file.close()
+	assert_eq(content.split("\n")[0], "  0", "Make sure that the saved file has the correct contents.")
+	assert_eq(content.split("\n")[1], "SECTION", "Make sure that the saved file has the correct contents.")
+	assert_eq(content.split("\n")[-2], "EOF", "Make sure that the saved file has the correct contents.")
+
+
+"""
+Tests as if the user were interacting with the Make button to create a DXF.
+"""
+func test_make_button_dxf_section():
+	# Get a reference to the whole interface and make sure we got it
+	var gui = partial_double("res://GUI.tscn").instance()
+	assert_not_null(gui)
+	gui._ready()
+
+	# Make sure there is default component text to work with
+	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().box(1,1,1)\n"
+
+	# Get a reference to the make button so we can simulate user interaction with it
+	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
+	assert_not_null(make_btn, "Can access the Make/Export button.")
+
+	# Get a reference to the toolbar popup container
+	var popup = gui.get_node("ToolbarPopupPanel")
+	assert_not_null(popup, "Can access the toolbar popup.")
+
+	# Start watching signals so we know if something happened that should have
+	watch_signals(make_btn)
+	watch_signals(popup)
+
+	# Simulate a mouse click
+	make_btn.emit_signal("button_down")
+
+	# Make sure the popup dialog has the proper buttons in it
+	var make_sub_btn = popup.get_child(0).get_child(3)
+	assert_eq(make_sub_btn.get_text(), "DXF", "Make sure the DXF button is present.")
+
+	# Get a reference to the ExportSVGDialog so we can check it
+	var dxf_dlg = gui.get_node("ExportDXFDialog")
+	watch_signals(dxf_dlg)
+
+	# Simulate a mouse click of the export DXF sub button
+	make_sub_btn.emit_signal("button_down")
+
+	# Make sure that the DXF export dialog shows up
+	assert_signal_emitted(dxf_dlg, "about_to_show")
+
+	# Set the export directory manually
+	var path_txt = dxf_dlg.get_node("MainVBoxContainer/HBoxContainer/PathText")
+	path_txt.set_text("/tmp/test.dxf")
+
+	# Enable the seciton controls
+	var section_btn = dxf_dlg.get_node("MainVBoxContainer/CheckContainer/CheckButton")
+	assert_not_null(section_btn)
+	section_btn.emit_signal("toggled", true)
+	section_btn.pressed = true
+	dxf_dlg._on_CheckButton_toggled(section_btn)
+	var section_cont = dxf_dlg.get_node("MainVBoxContainer/SectionContainer")
+	assert_true(section_cont.visible, "Make sure the section controls are visible.")
+
+	# Export the DXF file
+	var ok_btn = dxf_dlg.get_node("MainVBoxContainer/OkButton")
+	assert_not_null(ok_btn)
+	watch_signals(ok_btn)
+	ok_btn.emit_signal("button_down")
+	assert_signal_emitted(ok_btn, "button_down")
+
+	# Give the file time to be writte
+	yield(yield_to(ok_btn, "button_down", 2), YIELD)
+
+	# Make sure that the saved file exists
+	assert_true(File.new().file_exists("/tmp/test_0.dxf"), "Make sure that the first file was saved.")
+	assert_true(File.new().file_exists("/tmp/test_1.dxf"), "Make sure that the second file was saved.")
+	assert_true(File.new().file_exists("/tmp/test_2.dxf"), "Make sure that the third file was saved.")
+	assert_true(File.new().file_exists("/tmp/test_3.dxf"), "Make sure that the forth file was saved.")
+	assert_true(File.new().file_exists("/tmp/test_4.dxf"), "Make sure that the fifth file was saved.")
+
+	# Make sure that the first saved file has the correct contents
+	var file = File.new()
+	file.open("/tmp/test_0.dxf", File.READ)
+	var content = file.get_as_text()
+	file.close()
+	assert_eq(content.split("\n")[0], "  0", "Make sure that the saved file has the correct contents.")
+	assert_eq(content.split("\n")[1], "SECTION", "Make sure that the saved file has the correct contents.")
+	assert_eq(content.split("\n")[-2], "EOF", "Make sure that the saved file has the correct contents.")
+
+	# Make sure that the first saved file has the correct contents
+	file.open("/tmp/test_4.dxf", File.READ)
+	content = file.get_as_text()
 	file.close()
 	assert_eq(content.split("\n")[0], "  0", "Make sure that the saved file has the correct contents.")
 	assert_eq(content.split("\n")[1], "SECTION", "Make sure that the saved file has the correct contents.")
