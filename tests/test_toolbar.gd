@@ -52,7 +52,7 @@ func test_save_button():
 	save_dlg.emit_signal("file_selected", "/tmp/test.py")
 
 	# Give the file time to be writte
-	yield(yield_to(save_dlg, "file_selected", 2), YIELD)
+	yield(yield_to(save_dlg, "file_selected", 3), YIELD)
 
 	# Make sure that the saved file exists
 	assert_true(File.new().file_exists("/tmp/test.py"), "Make sure that the file was saved.")
@@ -109,7 +109,7 @@ func test_open_button():
 	open_dlg.emit_signal("file_selected", "/tmp/test.py")
 
 	# Give the file time to be read
-	yield(yield_to(open_dlg, "file_selected", 2), YIELD)
+	yield(yield_to(open_dlg, "file_selected", 3), YIELD)
 
 	# Make sure that the proper script text was loaded
 	assert_eq(gui.component_text, "# Semblage v0.2.0-alpha\nimport cadquery as cq\n# start_params\n# end_params\nresult=cq\n", "Make sure the proper component text was loaded")
@@ -168,7 +168,7 @@ func test_make_button_dxf():
 	assert_signal_emitted(ok_btn, "button_down")
 
 	# Give the file time to be writte
-	yield(yield_to(ok_btn, "button_down", 2), YIELD)
+	yield(yield_to(ok_btn, "button_down", 3), YIELD)
 
 	# Make sure that the saved file exists
 	assert_true(File.new().file_exists("/tmp/test.dxf"), "Make sure that the file was saved.")
@@ -245,7 +245,7 @@ func test_make_button_dxf_section():
 	assert_signal_emitted(ok_btn, "button_down")
 
 	# Give the file time to be writte
-	yield(yield_to(ok_btn, "button_down", 2), YIELD)
+	yield(yield_to(ok_btn, "button_down", 3), YIELD)
 
 	# Make sure that the saved file exists
 	assert_true(File.new().file_exists("/tmp/test_0.dxf"), "Make sure that the first file was saved.")
