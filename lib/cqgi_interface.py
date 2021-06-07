@@ -361,7 +361,11 @@ class cqgi_interface(Node):
 		export_path = os.path.join(str(user_dir_path), "temp_file")
 
 		# Build/execute the script and get the CQGI build result back
-		build_result = self.execute(script_text)
+		try:
+			build_result = self.execute(script_text)
+		except Exception as err:
+			ret = "error~" + err
+			return ret
 
 		# Whether or not the export succeeded
 		success = False
@@ -375,16 +379,28 @@ class cqgi_interface(Node):
 		else:
 			if export_type == "stl":
 				for result in build_result.results:
-					# Export the STL to the temporary location in the user data directory
-					success = result.shape.val().exportStl(export_path, 1e-3, 0.1)
+					try:
+						# Export the STL to the temporary location in the user data directory
+						success = result.shape.val().exportStl(export_path, 1e-3, 0.1)
+					except Exception as err:
+						ret = "error~There was an error exporting to STL: " + err
+						return ret
 			elif export_type == "step":
 				for result in build_result.results:
-					# Export the STEP to the temporary location in the user data directory
-					success = result.shape.val().exportStep(export_path)
+					try:
+						# Export the STEP to the temporary location in the user data directory
+						success = result.shape.val().exportStep(export_path)
+					except Exception as err:
+						ret = "error~There was an error exporting to STEP: " + err
+						return ret
 			elif export_type == "dxf":
 				for result in build_result.results:
-					# Export the DXF to the temporary location in the user data directory
-					exporters.export(result.shape, export_path, exporters.ExportTypes.DXF)
+					try:
+						# Export the DXF to the temporary location in the user data directory
+						exporters.export(result.shape, export_path, exporters.ExportTypes.DXF)
+					except Exception as err:
+						ret = "error~There was an error exporting to DXF.  If you are slicing a DXF\ninto sections, make sure your slices do not extend past the\nbounds of the component."
+						return ret
 
 					# Export the SVG to the temporary location in the user data directory
 					success = True
@@ -398,8 +414,11 @@ class cqgi_interface(Node):
 					# Step through all of the results and export them
 					# Right now this process assumes a single object was created
 					for result in build_result.results:
-						exporters.export(result.shape, export_path, exporters.ExportTypes.SVG, opt=opts)
-						# result.shape.exportSvg(export_path, opts)
+						try:
+							exporters.export(result.shape, export_path, exporters.ExportTypes.SVG, opt=opts)
+						except Exception as err:
+							ret = "error~There was an error exporting to SVG. If you are slicing an SVG\ninto sections, make sure your slices do not extend past the\nbounds of the component."
+							return ret
 			else:
 				# Fake out the next check so that we can return a custom error
 				success = True
