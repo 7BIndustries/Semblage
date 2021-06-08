@@ -501,3 +501,130 @@ func test_make_button_svg_section_error():
 
 	# Make sure the error dialog has the correct text in it
 	assert_true(error_dlg.dialog_text.begins_with("There was an error exporting to SVG."), "Make sure the error dialog has the correct text.")
+
+
+"""
+Tests as if the user clicked the Export->STEP button.
+"""
+func test_make_button_step():
+	# Get a reference to the whole interface and make sure we got it
+	var gui = partial_double("res://GUI.tscn").instance()
+	assert_not_null(gui)
+	gui._ready()
+
+	# Make sure there is default component text to work with
+	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().box(10,10,10)\n"
+
+	# Get a reference to the make button so we can simulate user interaction with it
+	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
+	assert_not_null(make_btn, "Can access the Make/Export button.")
+
+	# Get a reference to the toolbar popup container
+	var popup = gui.get_node("ToolbarPopupPanel")
+	assert_not_null(popup, "Can access the toolbar popup.")
+
+	# Start watching signals so we know if something happened that should have
+	watch_signals(make_btn)
+	watch_signals(popup)
+
+	# Simulate a mouse click
+	make_btn.emit_signal("button_down")
+
+	# Make sure the popup dialog has the proper buttons in it
+	var make_sub_btn = popup.get_child(0).get_child(1)
+	assert_eq(make_sub_btn.get_text(), "STEP", "Make sure the STEP button is present.")
+
+	# Get a reference to the ExportDialog so we can export the file manually
+	var export_dlg = gui.get_node("ExportDialog")
+	watch_signals(export_dlg)
+
+	# Simulate a mouse click of the export STEP sub button
+	make_sub_btn.emit_signal("button_down")
+
+	# Make sure that the export dialog shows up
+	assert_signal_emitted(export_dlg, "about_to_show")
+
+	# Manually set the path and file name
+	export_dlg.current_dir = "/tmp"
+	export_dlg.current_file = "test.step"
+	export_dlg.current_path = "/tmp"
+	export_dlg.get_line_edit().set_text("/tmp/test.step")
+	export_dlg.emit_signal("file_selected", "/tmp/test.step")
+
+	# Give the file time to be written
+	yield(yield_to(export_dlg, "file_selected", 3), YIELD)
+
+	# Make sure that the saved file exists
+	assert_true(File.new().file_exists("/tmp/test.step"), "Make sure that the file was saved.")
+
+	# Make sure that the saved file has the correct contents
+	var file = File.new()
+	file.open("/tmp/test.step", File.READ)
+	var content = file.get_as_text()
+	file.close()
+	assert_eq(content.split("\n")[0], 'ISO-10303-21;')
+	assert_eq(content.split("\n")[2], "FILE_DESCRIPTION(('Open CASCADE Model'),'2;1');")
+	assert_eq(content.split("\n")[-2], 'END-ISO-10303-21;')
+
+"""
+Tests as if the user clicked the Export->STEP button.
+"""
+func test_make_button_stl():
+	# Get a reference to the whole interface and make sure we got it
+	var gui = partial_double("res://GUI.tscn").instance()
+	assert_not_null(gui)
+	gui._ready()
+
+	# Make sure there is default component text to work with
+	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().box(10,10,10)\n"
+
+	# Get a reference to the make button so we can simulate user interaction with it
+	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
+	assert_not_null(make_btn, "Can access the Make/Export button.")
+
+	# Get a reference to the toolbar popup container
+	var popup = gui.get_node("ToolbarPopupPanel")
+	assert_not_null(popup, "Can access the toolbar popup.")
+
+	# Start watching signals so we know if something happened that should have
+	watch_signals(make_btn)
+	watch_signals(popup)
+
+	# Simulate a mouse click
+	make_btn.emit_signal("button_down")
+
+	# Make sure the popup dialog has the proper buttons in it
+	var make_sub_btn = popup.get_child(0).get_child(0)
+	assert_eq(make_sub_btn.get_text(), "STL", "Make sure the STL button is present.")
+
+	# Get a reference to the ExportDialog so we can export the file manually
+	var export_dlg = gui.get_node("ExportDialog")
+	watch_signals(export_dlg)
+
+	# Simulate a mouse click of the export STL sub button
+	make_sub_btn.emit_signal("button_down")
+
+	# Make sure that the export dialog shows up
+	assert_signal_emitted(export_dlg, "about_to_show")
+
+	# Manually set the path and file name
+	export_dlg.current_dir = "/tmp"
+	export_dlg.current_file = "test.stl"
+	export_dlg.current_path = "/tmp"
+	export_dlg.get_line_edit().set_text("/tmp/test.stl")
+	export_dlg.emit_signal("file_selected", "/tmp/test.stl")
+
+	# Give the file time to be written
+	yield(yield_to(export_dlg, "file_selected", 3), YIELD)
+
+	# Make sure that the saved file exists
+	assert_true(File.new().file_exists("/tmp/test.stl"), "Make sure that the file was saved.")
+
+	# Make sure that the saved file has the correct contents
+	var file = File.new()
+	file.open("/tmp/test.stl", File.READ)
+	var content = file.get_as_text()
+	file.close()
+	assert_eq(content.split("\n")[0], "solid ")
+	assert_eq(content.split("\n")[2], "   outer loop")
+	assert_eq(content.split("\n")[-2], "endsolid")
