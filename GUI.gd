@@ -9,9 +9,6 @@ var safe_distance = 0 # The distance away the camera should be placed to be able
 var home_transform # Allows us to move the camera back to the starting location/rotation/etc
 var origin_transform # Allows us to move the orgin camera view back to a starting transform
 var light_transform # Allws us to move the light position back to the starting transform
-var object_tree_root = null
-
-onready var cqgiint = $GUI/CQGIInterface
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -145,6 +142,7 @@ func load_semblage_component(text):
 	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
 	var history_tree_root = _get_history_tree_root(history_tree)
 	var object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
+	var object_tree_root = _get_object_tree_root(object_tree)
 
 	# Step through all the lines and look for statements that need to be replayed
 	for line in lines:
@@ -327,6 +325,18 @@ func load_component_json(json_string):
 
 
 """
+Helps make sure that each function runs atomically for tests.
+"""
+func _get_object_tree_root(object_tree):
+	var object_tree_root = object_tree.get_root()
+	if object_tree_root == null:
+		_init_object_tree()
+		object_tree_root = object_tree.get_root()
+
+	return object_tree_root
+
+
+"""
 Allows the tests to run and helps make sure each function can run atomically.
 """
 func _get_history_tree_root(history_tree):
@@ -405,8 +415,8 @@ func _init_object_tree():
 	var object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
 
 	# Create the root of the object tree
-	self.object_tree_root = object_tree.create_item()
-	self.object_tree_root.set_text(0, "Workspace")
+	var object_tree_root = object_tree.create_item()
+	object_tree_root.set_text(0, "Workspace")
 
 
 """
@@ -463,6 +473,7 @@ Retries the updated context and makes it the current one.
 func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 	var vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
 	var object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
+	var object_tree_root = _get_object_tree_root(object_tree)
 
 	self._clear_viewport()
 	var render = true

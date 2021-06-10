@@ -706,4 +706,3 @@ func test_close_button():
 
 	# Make sure the 3D viewport is cleared
 	assert_eq(vp.get_child_count(), 2, "Make sure that the 3D viewport was cleared.")
-
