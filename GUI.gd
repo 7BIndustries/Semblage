@@ -9,19 +9,15 @@ var safe_distance = 0 # The distance away the camera should be placed to be able
 var home_transform # Allows us to move the camera back to the starting location/rotation/etc
 var origin_transform # Allows us to move the orgin camera view back to a starting transform
 var light_transform # Allws us to move the light position back to the starting transform
-var cam # The main camera for the 3D view
-var origin_cam # The camera showing the orientation of the component(s) via an origin indicator
-var light # Supplemental light that follows the camera
-var object_tree = null
 var object_tree_root = null
 
 onready var cqgiint = $GUI/CQGIInterface
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	origin_cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginOrbitCamera
-	cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
-	light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
+	var cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
+	var origin_cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginOrbitCamera
+	var light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
 
 	# Set the default tab to let the user know where to start
 	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
@@ -146,6 +142,10 @@ func load_semblage_component(text):
 			var param_parts = param.split("=")
 			Common.add_columns_to_tree(param_parts, params_tree, params_tree_root)
 
+	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
+	var history_tree_root = _get_history_tree_root(history_tree)
+	var object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
+
 	# Step through all the lines and look for statements that need to be replayed
 	for line in lines:
 		if line.begins_with("result=result"):
@@ -153,8 +153,6 @@ func load_semblage_component(text):
 			var addition = line.replace("result=result", "")
 
 			# Add the current item to the history tree
-			var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
-			var history_tree_root = _get_history_tree_root(history_tree)
 			Common.add_item_to_tree(addition, history_tree, history_tree_root)
 
 			# Find any object name (if present) that needs to be displayed in the list
@@ -263,6 +261,7 @@ assembly in the viewport.
 func get_safe_camera_distance(max_dim):
 #	var x = vp.get_visible_rect().size.x
 #	var y = vp.get_visible_rect().size.y
+	var cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
 
 	var dist = max_dim / sin(PI / 180.0 * cam.fov * 0.5)
 
@@ -277,6 +276,9 @@ func load_component_json(json_string):
 
 	# Get a reference to the 3D viewport
 	var vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
+	var cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
+	var origin_cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginOrbitCamera
+	var light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
 
 	var new_safe_dist = 0
 
@@ -351,6 +353,10 @@ func _get_params_tree_root(params_tree):
 Handler that is called when the user clicks the button for the home view.
 """
 func _on_HomeViewButton_button_down():
+	var cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
+	var origin_cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginOrbitCamera
+	var light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
+
 	# Reset the tranform for the camera back to the one we saved when the scene loaded
 	if home_transform != null: cam.transform = home_transform
 
@@ -365,21 +371,24 @@ func _on_HomeViewButton_button_down():
 Handler that is called when the user clicks the button to close the current component/view.
 """
 func _on_CloseButton_button_down():
+	var cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
+
 	# Reset the tranform for the camera back to the one we saved when the scene loaded
-	if cam != null && home_transform != null: cam.transform = home_transform
+	if cam != null && home_transform != null:
+		cam.transform = home_transform
 
 	# Set the default tab name
 	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
 	tabs.set_tab_title(0, "Start")
 	
-	open_file_path = null
-	_reset_component_text()
+#	open_file_path = null
+	self._reset_component_text()
 
 	self._clear_viewport()
 	
 	# Get the tree views set up for the next object
 	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree.clear()
-	self.object_tree.clear()
+	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree.clear()
 	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree.clear()
 	self._init_history_tree()
 	self._init_object_tree()
@@ -393,7 +402,7 @@ func _on_CloseButton_button_down():
 Initializes the object tree so that it can be added to as the component changes.
 """
 func _init_object_tree():
-	object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
+	var object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
 
 	# Create the root of the object tree
 	self.object_tree_root = object_tree.create_item()
@@ -445,6 +454,7 @@ func _clear_viewport():
 	for child in children:
 		if child.get_name() != "MainOrbitCamera" and child.get_name() != "OmniLight":
 			vp.remove_child(child)
+			child.free()
 
 
 """
@@ -452,6 +462,7 @@ Retries the updated context and makes it the current one.
 """
 func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 	var vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
+	var object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
 
 	self._clear_viewport()
 	var render = true

@@ -628,3 +628,82 @@ func test_make_button_stl():
 	assert_eq(content.split("\n")[0], "solid ")
 	assert_eq(content.split("\n")[2], "   outer loop")
 	assert_eq(content.split("\n")[-2], "endsolid")
+
+"""
+Tests as if the user had clicked the close button.
+"""
+func test_close_button():
+	# Get a reference to the whole interface and make sure we got it
+	var gui = partial_double("res://GUI.tscn").instance()
+	assert_not_null(gui)
+	gui._ready()
+
+	# Make sure there is default component text to work with
+	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().tag(\"Change\").box(10,10,10)\n"
+
+	# Initialize the trees
+	gui._init_object_tree()
+	gui._init_history_tree()
+	gui._init_params_tree()
+
+	# Get a reference to the history tree so we can make sure it is cleared
+	var history_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
+	assert_not_null(history_tree, "Make sure history tree reference is not null.")
+	var history_tree_root = gui._get_history_tree_root(history_tree)
+	assert_not_null(history_tree_root, "Make sure history tree root reference is not null.")
+
+	# Add items to the history tree as if the user had done so through the Operations dialog
+	var addition = ".Workplane().tag(\"Change\")"
+	Common.add_item_to_tree(addition, history_tree, history_tree_root)
+	addition = ".box(10,10,10)"
+	Common.add_item_to_tree(addition, history_tree, history_tree_root)
+
+	# Make sure the children added are present
+	var child = history_tree_root.get_children()
+	assert_eq(child.get_text(0), ".Workplane().tag(\"Change\")")
+	assert_eq(child.get_next().get_text(0), ".box(10,10,10)")
+
+	# Get a reference to the parameter tree
+	var param_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree")
+	var param_tree_root = gui._get_params_tree_root(param_tree)
+	Common.add_columns_to_tree(["test_var", "1"], param_tree, param_tree_root)
+
+	# Make sure that the parameters tree has items in it
+	assert_not_null(param_tree_root.get_children(), "Make sure the parameters tree has items in it.")
+	# Render the object in the 3D viewport
+	gui._render_history_tree()
+
+	# Get the viewport so we can make sure it has contents
+	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
+	assert_eq(vp.get_child_count(), 15)
+
+	# Make sure the objects tree has items in it
+	var objects_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
+	var objects_tree_root = objects_tree.get_root()
+	Common.add_item_to_tree("Change", objects_tree, objects_tree_root)
+	assert_not_null(objects_tree_root.get_children(), "Make sure the object tree has items in it.")
+
+	# Get a reference to the close button so we can simulate it being clicked
+	var close_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton")
+
+	# Simulate a mouse click of the close button
+	close_btn.emit_signal("button_down")
+
+	# Check to make sure the object tree is cleared
+	objects_tree_root = objects_tree.get_root()
+	assert_null(objects_tree_root.get_children(), "Make sure the objects tree was cleared.")
+
+	# Check to make sure the history tree is cleared
+	history_tree_root = gui._get_history_tree_root(history_tree)
+	assert_not_null(history_tree_root)
+	child = history_tree_root.get_children()
+	assert_null(child, "Make sure the history tree is empty.")
+
+	# Check to make sure that the params tree is cleared
+	param_tree_root = gui._get_params_tree_root(param_tree)
+	child = param_tree_root.get_children()
+	assert_null(child, "Make sure the parameters tree is empty.")
+
+	# Make sure the 3D viewport is cleared
+	assert_eq(vp.get_child_count(), 2, "Make sure that the 3D viewport was cleared.")
+
