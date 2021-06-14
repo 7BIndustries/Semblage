@@ -6,9 +6,6 @@ var open_file_path # The component/CQ file that the user opened
 var component_text # The text of the current component's script
 var check_component_text = null # Temporary to make sure the compnent file
 var safe_distance = 0 # The distance away the camera should be placed to be able to view the components
-var home_transform # Allows us to move the camera back to the starting location/rotation/etc
-var origin_transform # Allows us to move the orgin camera view back to a starting transform
-var light_transform # Allws us to move the light position back to the starting transform
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -30,11 +27,6 @@ func _ready():
 
 	# Make sure the window is maximized on start
 	OS.set_window_maximized(true)
-
-	# Save this transform as the home transform
-	home_transform = cam.get_transform()
-	origin_transform = origin_cam.get_transform()
-	light_transform = light.get_transform()
 
 	# Set the tooltips of the main controls
 	$GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton.hint_tooltip = tr("OPEN_BUTTON_HINT_TOOLTIP")
@@ -105,11 +97,16 @@ func _load_component():
 		# Load the component into the history and object trees and then render it
 		load_semblage_component(component_text)
 		_render_history_tree()
+
+		# Set the default view
+		_home_view()
 	else:
 		# Allow the user to reload the script manually
 		$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.show()
 
+		# Render the component and set the camera view to the default
 		_render_non_semblage(open_file_path)
+		_home_view()
 
 
 """
@@ -316,11 +313,6 @@ func load_component_json(json_string):
 		origin_cam.look_at_from_position(Vector3(0, -3, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
 		light.look_at_from_position(Vector3(0, -safe_distance, -safe_distance), Vector3(0, 0, 0), Vector3(0, 0, 1))
 
-		# Save this transform as the home transform
-		home_transform = cam.get_transform()
-		origin_transform = origin_cam.get_transform()
-		light_transform = light.get_transform()
-
 	$AddParameterDialog/VBoxContainer/StatusLabel.text = "Redering component...done."
 
 
@@ -363,19 +355,22 @@ func _get_params_tree_root(params_tree):
 Handler that is called when the user clicks the button for the home view.
 """
 func _on_HomeViewButton_button_down():
+	# Reset the camera to the default starting position and rotation
+	_home_view()
+
+
+func _home_view():
 	var cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
 	var origin_cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginOrbitCamera
 	var light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
 
-	# Reset the tranform for the camera back to the one we saved when the scene loaded
-	if home_transform != null: cam.transform = home_transform
+	# Adjust the safe distance so that the object fits well within the viewport
+	var sd = self.safe_distance * 0.5
 
-	# Reset the origin indicator camera back to the view we saved on scene load
-	if origin_transform != null: origin_cam.transform = origin_transform
-
-	# Reset the light back to the transform we saved as its home
-	if light_transform != null: light.transform = light_transform
-
+	# Set the main camera, the axis indicator camera, and the light to the default locations
+	cam.look_at_from_position(Vector3(sd, sd, sd), Vector3(0, 0, 0), Vector3(0, 0, 1))
+	origin_cam.look_at_from_position(Vector3(3, 3, 3), Vector3(0, 0, 0), Vector3(0, 0, 1))
+	light.look_at_from_position(Vector3(self.safe_distance, self.safe_distance, self.safe_distance), Vector3(0, 0, 0), Vector3(0, 0, 1))
 
 """
 Handler that is called when the user clicks the button to close the current component/view.
@@ -383,9 +378,8 @@ Handler that is called when the user clicks the button to close the current comp
 func _on_CloseButton_button_down():
 	var cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
 
-	# Reset the tranform for the camera back to the one we saved when the scene loaded
-	if cam != null && home_transform != null:
-		cam.transform = home_transform
+	# Reset the tranform for the camera back to the default
+	_home_view()
 
 	# Set the default tab name
 	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
@@ -503,6 +497,9 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
 	var history_tree_root = _get_history_tree_root(history_tree)
 
+	# Check to see if this is the first item that is being added to the history tree
+	var is_first = history_tree_root.get_children() == null
+
 	# If we are in edit mode, do not try to add anything to the history
 	if edit_mode:
 		# Update the edited entry within the history tree
@@ -527,6 +524,9 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 	if render:
 		_render_history_tree()
 
+		# If this is the first item being added, set the default view
+		if is_first:
+			_home_view()
 
 """
 Fired when the Action popup needs to be displayed.
