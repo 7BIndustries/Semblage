@@ -23,8 +23,6 @@ func _input(event):
 		"InputEventMouseButton":
 			# See if the user requested the action menu
 			if Input.is_action_just_pressed("Action"):
-				# Block other mouse input from happening
-				accept_input = false
 
 				emit_signal("activate_action_popup")
 			elif Input.is_action_just_pressed("Rotating"):
@@ -53,16 +51,23 @@ func _input(event):
 
 
 """
-Called when the Action panel opens, signallying that the 3D mouse
-controls shoud be disabled.
+Locks the 3D mouse controls when the action popup panel is about to show.
 """
 func _on_ActionPopupPanel_about_to_show():
 	accept_input = false
 
 
 """
-Called when the Action panel closes, signalling that the 3D mouse
-controls should be enabled again.
+Unlocks the 3D mouse controls when the cancel button is clicked on the
+action popup panel.
 """
-func _on_ActionPopupPanel_popup_hide():
+func _on_ActionPopupPanel_cancel():
+	accept_input = true
+
+
+"""
+Unlocks the 3D mouse controls when the ok button is clicked on the
+action popup panel.
+"""
+func _on_ActionPopupPanel_ok_signal(_edit_mode, _new_template, _new_context):
 	accept_input = true

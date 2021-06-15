@@ -38,7 +38,7 @@ func _ready():
 	$GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton.hint_tooltip = tr("ABOUT_BUTTON_HINT_TOOLTIP")
 
 	# Let the user know the app is ready to use
-	$AddParameterDialog/VBoxContainer/StatusLabel.text = " Ready"
+	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text(" Ready")
 
 
 """
@@ -187,7 +187,7 @@ func _render_history_tree():
 
 	# Render the script text collected from the history tree, but only if there is something to render
 	if not self.component_text.ends_with("result=cq\n"):
-		$AddParameterDialog/VBoxContainer/StatusLabel.text = "Rednering component..."
+		$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering component...")
 		_render_component_text()
 
 
@@ -229,7 +229,7 @@ Uses Python to execute the current component_text, tessellate
 the results, and display that in the 3D view.
 """
 func _render_component_text():
-	$AddParameterDialog/VBoxContainer/StatusLabel.text = "Rednering component..."
+	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering component...")
 
 	var script_text = component_text + "\nshow_object(result)"
 
@@ -246,7 +246,7 @@ func _render_component_text():
 		# Load the JSON into the scene
 		load_component_json(component_json)
 
-	$AddParameterDialog/VBoxContainer/StatusLabel.text = "Rednering component...done"
+	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering component...done")
 
 
 """
@@ -267,7 +267,7 @@ func get_safe_camera_distance(max_dim):
 Loads a generated component into a mesh.
 """
 func load_component_json(json_string):
-	$AddParameterDialog/VBoxContainer/StatusLabel.text = "Redering component..."
+	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Redering component...")
 
 	# Get a reference to the 3D viewport
 	var vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
@@ -313,7 +313,7 @@ func load_component_json(json_string):
 		origin_cam.look_at_from_position(Vector3(0, -3, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
 		light.look_at_from_position(Vector3(0, -safe_distance, -safe_distance), Vector3(0, 0, 0), Vector3(0, 0, 1))
 
-	$AddParameterDialog/VBoxContainer/StatusLabel.text = "Redering component...done."
+	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Redering component...done.")
 
 
 """
@@ -503,8 +503,12 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 	# If we are in edit mode, do not try to add anything to the history
 	if edit_mode:
 		# Update the edited entry within the history tree
-		var prev_template = history_tree.get_selected().get_text(0) # $ActionPopupPanel.get_prev_template()
-		Common.update_tree_item(history_tree, prev_template, new_template)
+		var hist_item = history_tree.get_selected()
+		hist_item.set_text(0, new_template)
+
+		# Update the edited entry within the history tree
+#		var prev_template = history_tree.get_selected().get_text(0) # $ActionPopupPanel.get_prev_template()
+#		Common.update_tree_item(history_tree, prev_template, new_template)
 	else:
 		# Check to see if a stock workplane should be added
 		var implicit_wp = ContextHandler.needs_implicit_worplane(component_text)
@@ -667,14 +671,14 @@ func _on_SaveDialog_file_selected(path):
 Handles the heavy lifting of saving the component text to file.
 """
 func _save_component_text():
-	$AddParameterDialog/VBoxContainer/StatusLabel.text = ""
+	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("")
 
 	var file = File.new()
 	file.open(self.open_file_path, File.WRITE)
 	file.store_string(self.component_text + "\nshow_object(result)")
 	file.close()
 
-	$AddParameterDialog/VBoxContainer/StatusLabel.text = "Component saved"
+	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Component saved")
 
 
 """

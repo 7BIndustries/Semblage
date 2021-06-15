@@ -1,6 +1,7 @@
 extends WindowDialog
 
 signal ok_signal
+signal cancel
 signal error
 
 var original_context = null
@@ -57,6 +58,10 @@ func _ready():
 
 	# The sketch control does not need to be taking up space by default
 	$VBoxContainer/HBoxContainer/CanvasMarginContainer.hide()
+
+	# Work-around to make sure we unlock the mouse controls for the 3D view again
+	var btn = self.get_close_button()
+	btn.visible = false
 
 
 """
@@ -267,6 +272,8 @@ func _update_multiple_actions(tree_children):
 Called when the Cancel button is pressed so that this popup can just be closed.
 """
 func _on_CancelButton_button_down():
+	emit_signal("cancel")
+
 	hide()
 
 
