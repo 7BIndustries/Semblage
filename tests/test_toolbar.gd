@@ -757,11 +757,10 @@ func test_home_button():
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
 	assert_eq(vp.get_child_count(), 15)
 
-	# Simulate the user clicking the Home button
-	# Get a reference to the close button so we can simulate it being clicked
+	# Get a reference to the home button so we can simulate it being clicked
 	var home_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton")
 
-	# Simulate a mouse click of the close button
+	# Simulate a mouse click of the home button
 	home_btn.emit_signal("button_down")
 
 	# Get the camera so we can check and manipulate its transform
@@ -769,3 +768,42 @@ func test_home_button():
 	assert_not_null(cam)
 
 	assert_eq(str(cam.transform), "-0.707107, -0.408248, 0.57735, 0.707107, -0.408248, 0.57735, 0, 0.816497, 0.57735 - 14.819298, 14.819298, 14.819298", "Make sure the camera is in the right position with the correct rotation.")
+
+
+"""
+Tests as if the user clicked the About button to display information about Semblage.
+"""
+func test_about_button():
+	# Get a reference to the whole interface and make sure we got it
+	var gui = partial_double("res://GUI.tscn").instance()
+	assert_not_null(gui)
+	gui._ready()
+
+	# Get a reference to the about button so we can simulate it being clicked
+	var about_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton")
+	assert_not_null(about_btn)
+
+	var about_dlg = gui.get_node("AboutDialog")
+	assert_not_null(about_dlg)
+	watch_signals(about_dlg)
+
+	# Simulate a mouse click of the about button
+	about_btn.emit_signal("button_down")
+
+	# Make sure that the about dialog is going to be visible
+	assert_signal_emitted(about_dlg, "about_to_show", "Make sure that the About dialog will be visible.")
+
+	# Make sure that the About dialog is showing correct information
+	var info_box = about_dlg.get_node("AboutTabContainer/Info/InfoLabel")
+	assert_not_null(info_box, "Make sure there is a valid reference to the info box.")
+	assert_eq(info_box.get_text().split("\n")[0], "[center][b]Semblage v0.2.0-alpha[/b]", "Make sure the info box has the correct info at the top.")
+
+	# Make sure that the Docs dialog is showing correct information
+	var docs_box = about_dlg.get_node("AboutTabContainer/Docs/DocsLabel")
+	assert_not_null(docs_box, "Make sure there is a valid reference to the docs box.")
+	assert_eq(docs_box.get_text().split("\n")[4], "[url=https://semblage.7bindustries.com/en/latest/]Semblage[/url]", "Make sure the documentation box contains the correct information.")
+
+	# Make sure that the Acknowledgements dialog is showing correct information
+	var ack_box = about_dlg.get_node("AboutTabContainer/Acknowledgements/AckLabel")
+	assert_not_null(ack_box, "Make sure there is a valid reference to the acknowledgements box.")
+	assert_eq(ack_box.get_text().split("\n")[3], "[center][b]CONTRIBUTORS[/b]", "Make sure the acknowledgements box contains the correct information.")
