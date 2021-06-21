@@ -15,29 +15,17 @@ var two_d_actions = null
 var wp_actions = null
 var selector_actions = null
 
-# The group buttons at the top of the dialog
-var three_d_btn = null
-var sketch_btn = null
-var wp_btn = null
-var selector_btn = null
-
-var action_tree = null
-var action_tree_root = null
-
 
 """
 Called when this control is ready to display.
 """
 func _ready():
-	three_d_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton
-	sketch_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton
-	wp_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton
-	selector_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton
+	var three_d_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton
 
 	# Make sure 3D is selected by default
 	three_d_btn.pressed = true
 
-	action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
 
 	# Add the tooltips to the group buttons
 	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton.hint_tooltip = tr("WORKPLANE_BUTTON_HINT_TOOLTIP")
@@ -53,7 +41,7 @@ func _ready():
 	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveDownButton.hint_tooltip = tr("MOVE_DOWN_BUTTON_HINT_TOOLTIP")
 
 	# Create the root of the object tree
-	action_tree_root = action_tree.create_item()
+	var action_tree_root = action_tree.create_item()
 	action_tree_root.set_text(0, "Actions")
 
 	# The sketch control does not need to be taking up space by default
@@ -132,6 +120,9 @@ func activate_edit_mode(component_text, item_text):
 
 	_set_action_control()
 
+	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree_root = action_tree.get_root()
+
 	# Check to see if there are multiple actions in the item_text
 	# and fill the actions tree with them
 	var parts = item_text.split(").")
@@ -193,6 +184,9 @@ func activate_popup(component_text, edit_mode_new):
 	# Select the correct group button based on the next action
 	_select_group_button(next_action[next_action.keys()[0]].group)
 
+	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree_root = action_tree.get_root()
+
 	# Clear any left-over actions from the action tree
 	if self.action_tree != null:
 		self.action_tree.clear()
@@ -205,6 +199,11 @@ func activate_popup(component_text, edit_mode_new):
 Selects the correct group button based on an Action's group.
 """
 func _select_group_button(group):
+	var wp_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton
+	var three_d_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton
+	var sketch_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton
+	var selector_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton
+
 	if group == "WP":
 		wp_btn.pressed = true
 		_on_WorkplaneButton_toggled(wp_btn)
@@ -235,6 +234,9 @@ func _on_OkButton_button_down():
 
 	# Get the completed template from the current control
 	new_template = cont.get_completed_template()
+
+	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree_root = action_tree.get_root()
 
 	# Used if the user added multiple actions to the actions tree
 	var cur_item = action_tree_root.get_children()
@@ -308,6 +310,8 @@ func _on_VBoxContainer_resized():
 Called when the user clicks the 3D button and toggles it.
 """
 func _on_ThreeDButton_toggled(_button_pressed):
+	var three_d_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton
+
 	# Make sure that the other buttons are not toggled
 	if three_d_btn.pressed:
 		# Untoggle all other group buttons
@@ -339,6 +343,8 @@ func _on_ThreeDButton_toggled(_button_pressed):
 Called when the user clicks the Sketch button and toggles it.
 """
 func _on_SketchButton_toggled(_button_pressed):
+	var sketch_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton
+
 	if sketch_btn.pressed:
 		# Untoggle all other group buttons
 		_untoggle_all_group_buttons(sketch_btn)
@@ -371,6 +377,8 @@ func _on_SketchButton_toggled(_button_pressed):
 Called when the user clicks on the Workplane button and toggles it.
 """
 func _on_WorkplaneButton_toggled(_button_pressed):
+	var wp_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton
+
 	if wp_btn.pressed:
 		# Untoggle all other group buttons
 		_untoggle_all_group_buttons(wp_btn)
@@ -402,6 +410,8 @@ Called when the user clicks on the selector button to display
 the selector controls.
 """
 func _on_SelectorButton_toggled(_button_pressed):
+	var selector_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton
+
 	if selector_btn.pressed:
 		# Untoggle all other group buttons
 		_untoggle_all_group_buttons(selector_btn)
@@ -441,6 +451,11 @@ Called when a new group button is toggled so that all
 others can be untoggled.
 """
 func _untoggle_all_group_buttons(except):
+	var wp_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton
+	var three_d_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton
+	var sketch_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton
+	var selector_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton
+
 	# Untoggle all buttons except the one that was passed
 	if except != wp_btn:
 		wp_btn.pressed = false
@@ -460,6 +475,9 @@ func _on_AddButton_button_down():
 	var cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
 	var preview_context = cont.get_completed_template()
 
+	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree_root = action_tree.get_root()
+
 	# Add the item to the action tree
 	Common.add_item_to_tree(preview_context, $VBoxContainer/HBoxContainer/ActionContainer/ActionTree, action_tree_root)
 
@@ -473,6 +491,9 @@ renders them on the 2D canvas.
 func _render_action_tree():
 	# Start to build the preview string based on what is in the actions list
 	var script_text = "import cadquery as cq\nresult=cq.Workplane()"
+
+	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree_root = action_tree.get_root()
 
 	# Search the tree and update the matchine entry in the tree
 	var cur_item = action_tree_root.get_children()
@@ -514,6 +535,8 @@ func _render_action_tree():
 Allows action items to be edited by selecting the correct control.
 """
 func _on_ActionTree_item_activated():
+	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+
 	# Get the action name so that we can set the action option correctly
 	var item_text = action_tree.get_selected().get_text(0)
 	var action_key = item_text.split(".")[1].split("(")[0]
@@ -528,6 +551,8 @@ func _on_ActionTree_item_activated():
 Updates the selected action tree item with new settings.
 """
 func _on_UpdateButton_button_down():
+	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+
 	var orig_text = action_tree.get_selected().get_text(0)
 
 	# Get the template from the active control
@@ -545,6 +570,8 @@ func _on_UpdateButton_button_down():
 Called when an item is selected in the Action tree.
 """
 func _on_ActionTree_item_selected():
+	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+
 	var selected = action_tree.get_selected()
 
 	# Make sure there is an item to work with
@@ -581,6 +608,9 @@ func _on_ActionTree_nothing_selected():
 Called when the user clicks the delete tree item button.
 """
 func _on_DeleteButton_button_down():
+	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree_root = action_tree.get_root()
+
 	var selected = action_tree.get_selected()
 
 	# Make sure there is an item to delete
@@ -601,6 +631,8 @@ func _on_DeleteButton_button_down():
 Called when the move action item up button is pressed.
 """
 func _on_MoveUpButton_button_down():
+	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+
 	var selected = action_tree.get_selected()
 
 	# Make sure there is an item to delete
@@ -615,6 +647,8 @@ func _on_MoveUpButton_button_down():
 Called when the move action item down button is pressed.
 """
 func _on_MoveDownButton_button_down():
+	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+
 	var selected = action_tree.get_selected()
 
 	# Make sure there is an item to delete

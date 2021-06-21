@@ -9,10 +9,6 @@ var safe_distance = 0 # The distance away the camera should be placed to be able
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
-	var origin_cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginOrbitCamera
-	var light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
-
 	# Set the default tab to let the user know where to start
 	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
 	tabs.set_tab_title(0, "Start")
