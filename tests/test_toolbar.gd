@@ -11,6 +11,12 @@ func test_save_button():
 
 	# Make sure there is default component text to work with
 	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\n"
+	gui._init_object_tree()
+
+	# Make sure the objects tree has items in it
+	var objects_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
+	var objects_tree_root = objects_tree.get_root()
+	Common.add_item_to_tree("change_me", objects_tree, objects_tree_root)
 
 	# Get a reference to the Save button and make sure we got something
 	var save_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton")
@@ -62,7 +68,7 @@ func test_save_button():
 	file.open("/tmp/test.py", File.READ)
 	var content = file.get_as_text()
 	file.close()
-	assert_eq(content, gui.component_text + "\nshow_object(result)", "Make sure that the saved file has the correct contents.")
+	assert_eq(content, gui.component_text + "\nshow_object(change_me)", "Make sure that the saved file has the correct contents.")
 
 
 """
@@ -514,6 +520,12 @@ func test_make_button_step():
 
 	# Make sure there is default component text to work with
 	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().box(10,10,10)\n"
+	gui._init_object_tree()
+
+	# Make sure the objects tree has items in it
+	var objects_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
+	var objects_tree_root = objects_tree.get_root()
+	Common.add_item_to_tree("change_me", objects_tree, objects_tree_root)
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -577,6 +589,12 @@ func test_make_button_stl():
 
 	# Make sure there is default component text to work with
 	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().box(10,10,10)\n"
+	gui._init_object_tree()
+
+	# Make sure the objects tree has items in it
+	var objects_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
+	var objects_tree_root = objects_tree.get_root()
+	Common.add_item_to_tree("change_me", objects_tree, objects_tree_root)
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")

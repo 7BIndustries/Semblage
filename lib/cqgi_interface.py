@@ -1,6 +1,6 @@
 import os
 import sys
-from godot import exposed, export, signal, Node, ResourceLoader
+from godot import exposed, export, signal, Node, ResourceLoader, MeshInstance, CubeMesh, SpatialMaterial
 
 semb_json_template = (
 """
@@ -465,3 +465,9 @@ class cqgi_interface(Node):
 #		self.call("emit_signal", "build_success", result)
 
 		return component_json
+
+
+	# def build_direct(self, script_text):
+	# 	print("HERE")
+	# 	vp = self.get_tree().get_root().get_children()[1].get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
+	# 	print(vp.get_children())

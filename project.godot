@@ -324,6 +324,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/VLineToControl.gd"
 }, {
+"base": "LineEdit",
+"class": "WPNameEdit",
+"language": "GDScript",
+"path": "res://controls/WPNameEdit.gd"
+}, {
 "base": "VBoxContainer",
 "class": "WedgeControl",
 "language": "GDScript",
@@ -398,6 +403,7 @@ _global_script_class_icons={
 "TwistExtrudeControl": "",
 "VLineControl": "",
 "VLineToControl": "",
+"WPNameEdit": "",
 "WedgeControl": "",
 "WorkplaneControl": ""
 }

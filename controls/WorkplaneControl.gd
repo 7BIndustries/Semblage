@@ -41,9 +41,9 @@ func _ready():
 	var wp_name_lbl = Label.new()
 	wp_name_lbl.set_text("Name: ")
 	name_group.add_child(wp_name_lbl)
-	wp_name_ctrl = LineEdit.new()
+	wp_name_ctrl = WPNameEdit.new()
 	wp_name_ctrl.expand_to_text_length = true
-	wp_name_ctrl.set_text("Change")
+	wp_name_ctrl.set_text("change_me")
 	wp_name_ctrl.hint_tooltip = tr("WP_NAME_CTRL_HINT_TOOLTIP")
 	name_group.add_child(wp_name_ctrl)
 	add_child(name_group)
@@ -211,6 +211,8 @@ func is_valid():
 	if not normal_y_ctrl.is_valid:
 		return false
 	if not normal_z_ctrl.is_valid:
+		return false
+	if not wp_name_ctrl.is_valid:
 		return false
 
 	return true

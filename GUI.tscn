@@ -1393,6 +1393,7 @@ text = "Cancel"
 [connection signal="cam_zoom" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera" method="_on_DocumentTabs_cam_zoom"]
 [connection signal="about_to_show" from="ActionPopupPanel" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_on_ActionPopupPanel_about_to_show"]
 [connection signal="cancel" from="ActionPopupPanel" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_on_ActionPopupPanel_cancel"]
+[connection signal="error" from="ActionPopupPanel" to="." method="_on_ActionPopupPanel_error"]
 [connection signal="ok_signal" from="ActionPopupPanel" to="." method="_on_ActionPopupPanel_ok_signal"]
 [connection signal="ok_signal" from="ActionPopupPanel" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_on_ActionPopupPanel_ok_signal"]
 [connection signal="resized" from="ActionPopupPanel/VBoxContainer" to="ActionPopupPanel" method="_on_VBoxContainer_resized"]

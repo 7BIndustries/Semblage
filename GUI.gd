@@ -141,18 +141,23 @@ func load_semblage_component(text):
 	var object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
 	var object_tree_root = _get_object_tree_root(object_tree)
 
+	var cur_object = null
+
 	# Step through all the lines and look for statements that need to be replayed
 	for line in lines:
-		if line.begins_with("result=result"):
+		# Find any object name (if present) that needs to be displayed in the list
+		var new_object = ContextHandler.get_object_from_template(line)
+		if new_object != null:
+			# Save this new component name as the current for use later
+			cur_object = new_object
+			Common.add_item_to_tree(new_object, object_tree, object_tree_root)
+
+		if cur_object != null and line.begins_with(cur_object + "=" + cur_object):
 			# Update the context string in the ContextHandler
-			var addition = line.replace("result=result", "")
+			var addition = line.replace(cur_object + "=" + cur_object, "")
 
 			# Add the current item to the history tree
 			Common.add_item_to_tree(addition, history_tree, history_tree_root)
-
-			# Find any object name (if present) that needs to be displayed in the list
-			var new_object = ContextHandler.get_object_from_template(addition)
-			Common.add_item_to_tree(new_object, object_tree, object_tree_root)
 
 			component_text = ContextHandler.update_context_string(component_text, addition)
 
@@ -170,8 +175,10 @@ func _render_history_tree():
 	component_text += _collect_parameters()
 	component_text += "# end_params\n"
 
+	var comp_name = _get_component_name()
+
 	# Start the body of the script
-	component_text += "result=cq\n"
+	component_text += comp_name + "=cq\n"
 
 	# Search the tree and update the matchine entry in the tree
 	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
@@ -181,12 +188,12 @@ func _render_history_tree():
 		if cur_item == null:
 			break
 		else:
-			component_text += "result=result" + cur_item.get_text(0) + "\n"
+			component_text += comp_name + "=" + comp_name + cur_item.get_text(0) + "\n"
 
 			cur_item = cur_item.get_next()
 
 	# Render the script text collected from the history tree, but only if there is something to render
-	if not self.component_text.ends_with("result=cq\n"):
+	if not self.component_text.ends_with(comp_name + "=cq\n"):
 		$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering component...")
 		_render_component_text()
 
@@ -231,10 +238,12 @@ the results, and display that in the 3D view.
 func _render_component_text():
 	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering component...")
 
-	var script_text = component_text + "\nshow_object(result)"
+	var component_name = _get_component_name()
+	var script_text = component_text + "\nshow_object(" + component_name + ")"
 
 	# Pass the script to the Python layer to convert it to tessellated JSON
 	var component_json = cqgipy.build(script_text)
+#	cqgipy.build_direct(script_text)
 
 	# If there was an error, display it
 	if component_json.begins_with("error~"):
@@ -514,8 +523,9 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 		var implicit_wp = ContextHandler.needs_implicit_worplane(component_text)
 		if implicit_wp:
 			# Add a sane default workplane to the tree to keep things working
-			var wp_template = ".Workplane(\"XY\").workplane(invert=True,centerOption=\"CenterOfBoundBox\").tag(\"Change\")"
+			var wp_template = ".Workplane(\"XY\").workplane(invert=True,centerOption=\"CenterOfBoundBox\").tag(\"change_me\")"
 			Common.add_item_to_tree(wp_template, history_tree, history_tree_root)
+			Common.add_item_to_tree("change_me", object_tree, object_tree_root)
 
 		# Add the current item to the history tree
 		Common.add_item_to_tree(new_template, history_tree, history_tree_root)
@@ -673,9 +683,11 @@ Handles the heavy lifting of saving the component text to file.
 func _save_component_text():
 	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("")
 
+	var component_name = _get_component_name()
+
 	var file = File.new()
 	file.open(self.open_file_path, File.WRITE)
-	file.store_string(self.component_text + "\nshow_object(result)")
+	file.store_string(self.component_text + "\nshow_object(" + component_name + ")")
 	file.close()
 
 	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Component saved")
@@ -734,8 +746,10 @@ func _on_ExportDialog_file_selected(path):
 		$AddParameterDialog/VBoxContainer/StatusLabel.text = "Export only supports the 'stl' and 'step' file extensions. Please try again."
 		return
 
+	var component_name = _get_component_name()
+
 	var export_text = component_text
-	export_text += "\nshow_object(result)"
+	export_text += "\nshow_object(" + component_name + ")"
 
 	# Export the file to the user data directory temporarily
 	var ret = cqgipy.export(export_text, extension, OS.get_user_data_dir())
@@ -958,6 +972,47 @@ func _collect_param_tree_pairs(tree):
 
 
 """
+Collects all the names of the components in the objects tree.
+"""
+func _get_component_names():
+	var names = []
+	var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree
+
+	var cur_item = tree.get_root().get_children()
+
+	# Search the tree and collect the component names
+	while true:
+		if cur_item == null:
+			break
+		else:
+			names.append(cur_item.get_text(0))
+
+			cur_item = cur_item.get_next()
+
+	return names
+
+
+"""
+Converts the human-readable component name into something that can
+be used as a varaible.
+"""
+func _get_component_name():
+	var comp_name = "result"
+	var names = _get_component_names()
+
+	# Figure out which component name to pass back
+	if names.size() == 0:
+		comp_name = "result"
+	elif names.size() == 1:
+		comp_name = names[0]
+	else:
+		# This will need to select the proper name later
+		comp_name = names[0]
+
+	return comp_name
+
+
+"""
 Allows an arbitrary error to be displayed to the user.
 """
 func _on_error(error_text):
@@ -979,3 +1034,10 @@ func _on_ObjectTree_item_activated():
 
 	# Trigger the edit on the selected history tree item
 	_on_HistoryTree_item_activated()
+
+
+"""
+Allows the ActionPopupPanel to show error messages.
+"""
+func _on_ActionPopupPanel_error(error_text):
+	_on_error(error_text)
