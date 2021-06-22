@@ -188,8 +188,8 @@ func activate_popup(component_text, edit_mode_new):
 	var action_tree_root = action_tree.get_root()
 
 	# Clear any left-over actions from the action tree
-	if self.action_tree != null:
-		self.action_tree.clear()
+	if action_tree != null:
+		action_tree.clear()
 
 		# Create the root of the object tree
 		action_tree_root = action_tree.create_item()

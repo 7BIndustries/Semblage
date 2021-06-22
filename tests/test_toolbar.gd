@@ -108,17 +108,17 @@ func test_open_button():
 	assert_null(gui.component_text, "Make sure that no component text is set.")
 
 	# Set the file path and attempt an open
-	open_dlg.current_dir = "/tmp"
-	open_dlg.current_file = "test.py"
-	open_dlg.current_path = "/tmp"
-	open_dlg.get_line_edit().set_text("/tmp/test.py")
-	open_dlg.emit_signal("file_selected", "/tmp/test.py")
+	open_dlg.current_dir = "res://samples"
+	open_dlg.current_file = "basic_box.py"
+	open_dlg.current_path = "res://samples"
+	open_dlg.get_line_edit().set_text("res://samples/basic_box.py")
+	open_dlg.emit_signal("file_selected", "res://samples/basic_box.py")
 
 	# Give the file time to be read
 	yield(yield_to(open_dlg, "file_selected", 5), YIELD)
 
 	# Make sure that the proper script text was loaded
-	assert_eq(gui.component_text, "# Semblage v0.2.0-alpha\nimport cadquery as cq\n# start_params\n# end_params\nresult=cq\n", "Make sure the proper component text was loaded")
+	assert_eq(gui.component_text, "# Semblage v0.2.0-alpha\nimport cadquery as cq\n# start_params\n# end_params\nchange_me=cq\nchange_me=change_me.Workplane(\"XY\").workplane(invert=True,centerOption=\"CenterOfBoundBox\").tag(\"change_me\")\nchange_me=change_me.box(10.0,10.0,10.0,centered=(True,True,True),combine=True,clean=True)\n", "Make sure the proper component text was loaded")
 
 
 """
@@ -131,7 +131,7 @@ func test_make_button_dxf():
 	gui._ready()
 
 	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().box(1,1,1)\n"
+	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(1,1,1)\n"
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -199,7 +199,7 @@ func test_make_button_dxf_section():
 	gui._ready()
 
 	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().box(1,1,1)\n"
+	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(1,1,1)\n"
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -288,7 +288,7 @@ func test_make_button_svg():
 	gui._ready()
 
 	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().box(1,1,1)\n"
+	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(1,1,1)\n"
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -357,7 +357,7 @@ func test_make_button_svg_section():
 	gui._ready()
 
 	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().rect(10, 10).extrude(10)\n"
+	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().rect(10, 10).extrude(10)\n"
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -447,7 +447,17 @@ func test_make_button_svg_section_error():
 	gui._ready()
 
 	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().box(10,10,10)\n"
+	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(10,10,10)\n"
+
+	# Initialize the trees
+	gui._init_object_tree()
+	gui._init_history_tree()
+	gui._init_params_tree()
+
+	# Make sure the objects tree has items in it
+	var objects_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
+	var objects_tree_root = objects_tree.get_root()
+	Common.add_item_to_tree("change_me", objects_tree, objects_tree_root)
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -506,7 +516,7 @@ func test_make_button_svg_section_error():
 	yield(yield_to(ok_btn, "button_down", 5), YIELD)
 
 	# Make sure the error dialog has the correct text in it
-	assert_true(error_dlg.dialog_text.begins_with("There was an error exporting to SVG."), "Make sure the error dialog has the correct text.")
+	assert_eq(error_dlg.dialog_text.split("\n")[0], "There was an error exporting to SVG. If you are slicing an SVG", "Make sure the error dialog has the correct text.")
 
 
 """
@@ -519,7 +529,7 @@ func test_make_button_step():
 	gui._ready()
 
 	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().box(10,10,10)\n"
+	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(10,10,10)\n"
 	gui._init_object_tree()
 
 	# Make sure the objects tree has items in it
@@ -564,7 +574,7 @@ func test_make_button_step():
 	export_dlg.emit_signal("file_selected", "/tmp/test.step")
 
 	# Give the file time to be written
-	yield(yield_to(export_dlg, "file_selected", 10), YIELD)
+	yield(yield_to(export_dlg, "file_selected", 5), YIELD)
 
 	# Make sure that the saved file exists
 	assert_true(File.new().file_exists("/tmp/test.step"), "Make sure that the file was saved.")
@@ -588,7 +598,7 @@ func test_make_button_stl():
 	gui._ready()
 
 	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().box(10,10,10)\n"
+	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(10,10,10)\n"
 	gui._init_object_tree()
 
 	# Make sure the objects tree has items in it
@@ -657,7 +667,7 @@ func test_close_button():
 	gui._ready()
 
 	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().tag(\"Change\").box(10,10,10)\n"
+	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().tag(\"change_me\").box(10,10,10)\n"
 
 	# Initialize the trees
 	gui._init_object_tree()
@@ -671,14 +681,14 @@ func test_close_button():
 	assert_not_null(history_tree_root, "Make sure history tree root reference is not null.")
 
 	# Add items to the history tree as if the user had done so through the Operations dialog
-	var addition = ".Workplane().tag(\"Change\")"
+	var addition = ".Workplane().tag(\"change_me\")"
 	Common.add_item_to_tree(addition, history_tree, history_tree_root)
 	addition = ".box(10,10,10)"
 	Common.add_item_to_tree(addition, history_tree, history_tree_root)
 
 	# Make sure the children added are present
 	var child = history_tree_root.get_children()
-	assert_eq(child.get_text(0), ".Workplane().tag(\"Change\")")
+	assert_eq(child.get_text(0), ".Workplane().tag(\"change_me\")")
 	assert_eq(child.get_next().get_text(0), ".box(10,10,10)")
 
 	# Get a reference to the parameter tree
@@ -698,7 +708,7 @@ func test_close_button():
 	# Make sure the objects tree has items in it
 	var objects_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
 	var objects_tree_root = objects_tree.get_root()
-	Common.add_item_to_tree("Change", objects_tree, objects_tree_root)
+	Common.add_item_to_tree("change_me", objects_tree, objects_tree_root)
 	assert_not_null(objects_tree_root.get_children(), "Make sure the object tree has items in it.")
 
 	# Get a reference to the close button so we can simulate it being clicked
@@ -737,7 +747,7 @@ func test_home_button():
 	gui._ready()
 
 	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nresult=cq.Workplane().tag(\"Change\").box(10,10,10)\n"
+	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().tag(\"change_me\").box(10,10,10)\n"
 
 	# Initialize the trees
 	gui._init_object_tree()
@@ -751,14 +761,14 @@ func test_home_button():
 	assert_not_null(history_tree_root, "Make sure history tree root reference is not null.")
 
 	# Add items to the history tree as if the user had done so through the Operations dialog
-	var addition = ".Workplane().tag(\"Change\")"
+	var addition = ".Workplane().tag(\"change_me\")"
 	Common.add_item_to_tree(addition, history_tree, history_tree_root)
 	addition = ".box(10,10,10)"
 	Common.add_item_to_tree(addition, history_tree, history_tree_root)
 
 	# Make sure the children added are present
 	var child = history_tree_root.get_children()
-	assert_eq(child.get_text(0), ".Workplane().tag(\"Change\")")
+	assert_eq(child.get_text(0), ".Workplane().tag(\"change_me\")")
 	assert_eq(child.get_next().get_text(0), ".box(10,10,10)")
 
 	# Get a reference to the parameter tree

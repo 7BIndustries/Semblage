@@ -161,10 +161,10 @@ func _export_to_file(svg_path, output_opts, section_height):
 
 	# If the caller provided a section height, use it
 	if section_height:
-		script_text += "\nresult = result.section(" + str(section_height) + ")"
+		script_text += "\nchange_me = change_me.section(" + str(section_height) + ")"
 
 	# Make sure something gets exported
-	script_text += "\nshow_object(result)"
+	script_text += "\nshow_object(change_me)"
 
 	var ret = cqgipy.export(script_text, "svg", OS.get_user_data_dir(), output_opts)
 
