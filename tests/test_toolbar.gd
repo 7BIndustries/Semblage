@@ -564,7 +564,7 @@ func test_make_button_step():
 	export_dlg.emit_signal("file_selected", "/tmp/test.step")
 
 	# Give the file time to be written
-	yield(yield_to(export_dlg, "file_selected", 10), YIELD)
+	yield(yield_to(export_dlg, "file_selected", 5), YIELD)
 
 	# Make sure that the saved file exists
 	assert_true(File.new().file_exists("/tmp/test.step"), "Make sure that the file was saved.")
