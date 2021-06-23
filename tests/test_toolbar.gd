@@ -201,6 +201,16 @@ func test_make_button_dxf_section():
 	# Make sure there is default component text to work with
 	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(1,1,1)\n"
 
+	# Initialize the trees
+	gui._init_object_tree()
+	gui._init_history_tree()
+	gui._init_params_tree()
+
+	# Make sure the objects tree has items in it
+	var objects_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
+	var objects_tree_root = objects_tree.get_root()
+	Common.add_item_to_tree("change_me", objects_tree, objects_tree_root)
+
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
 	assert_not_null(make_btn, "Can access the Make/Export button.")
