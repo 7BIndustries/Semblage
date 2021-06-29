@@ -198,6 +198,7 @@ func _ready():
 
 	# First axis filter (X, Y, Z)
 	edge_comps_opt_2 = OptionButton.new()
+	edge_comps_opt_2.name = "edge_comps_opt_2"
 	Common.load_option_button(edge_comps_opt_2, axis_items)
 	edge_comps_opt_2.hint_tooltip = tr("FACE_COMPS_OPT_2_HINT_TOOLTIP")
 	edge_comps_opt_2.connect("item_selected", self, "_first_edge_axis_selected")
@@ -536,22 +537,23 @@ Called when the first edge filter is selected.
 """
 func _first_edge_filter_selected(index):
 	var selected = edge_comps_opt_1.get_item_text(index)
+#	var edge_comps_opt_2 = get_node("edge_comps_opt_2")
 
 	# If something other that None was selected, unhide the next control in line
 	if selected == "None":
 		_update_edge_selector_string()
 
-		self.edge_comps_opt_2.hide()
+		edge_comps_opt_2.hide()
 		self.edge_index_1.hide()
 		self.extra_edge_selector_adder.hide()
 	elif selected != "All":
 		_update_edge_selector_string()
 
-		self.edge_comps_opt_2.show()
+		edge_comps_opt_2.show()
 		self.edge_index_1.show()
 		self.extra_edge_selector_adder.show()
 	else:
-		self.edge_comps_opt_2.hide()
+		edge_comps_opt_2.hide()
 		self.edge_index_1.hide()
 		self.extra_edge_selector_adder.hide()
 		edge_selector_txt.set_text("")
@@ -842,6 +844,8 @@ func _update_edge_selector_string():
 
 	edge_selector_txt.set_text(_get_filter_symbol(first_edge_filter))
 
+#	var edge_comps_opt_2 = get_node("edge_comps_opt_2")
+
 	# Add the first axis part of the selector string
 	var first_edge_axis = edge_comps_opt_2.get_item_text(edge_comps_opt_2.get_selected_id())
 	var edge_selector_string = edge_selector_txt.get_text()
@@ -1099,6 +1103,8 @@ func set_edge_sel_dropdowns_from_string(sel_string):
 	# Set the filter control
 	var filter_text = _get_filter_text(sel_string.substr(0, 1))
 	Common.set_option_btn_by_text(edge_comps_opt_1, filter_text)
+
+#	var edge_comps_opt_2 = get_node("edge_comps_opt_2")
 
 	# Handle the axis
 	Common.set_option_btn_by_text(edge_comps_opt_2, sel_string.substr(1, 1))

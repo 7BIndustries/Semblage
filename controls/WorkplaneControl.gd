@@ -7,20 +7,6 @@ var template = ".Workplane(cq.Plane(origin=({origin_x},{origin_y},{origin_z}), x
 
 var prev_template = null
 
-var wp_ctrl = null
-var wp_cen_ctrl = null
-var invert_ctrl = null
-var wp_name_ctrl = null
-var origin_x_ctrl = null
-var origin_y_ctrl = null
-var origin_z_ctrl = null
-var xdir_x_ctrl = null
-var xdir_y_ctrl = null
-var xdir_z_ctrl = null
-var normal_x_ctrl = null
-var normal_y_ctrl = null
-var normal_z_ctrl = null
-
 const workplane_list = ["XY", "YZ", "XZ"]
 const center_option_list = ["CenterOfBoundBox", "CenterOfMass", "ProjectedOrigin"]
 
@@ -38,10 +24,12 @@ const tag_edit_rgx = "(?<=.tag\\(\")(.*?)(?=\"\\))"
 func _ready():
 	# Allow the user to give the Workplane/component a name
 	var name_group = HBoxContainer.new()
+	name_group.name = "name_group"
 	var wp_name_lbl = Label.new()
 	wp_name_lbl.set_text("Name: ")
 	name_group.add_child(wp_name_lbl)
-	wp_name_ctrl = WPNameEdit.new()
+	var wp_name_ctrl = WPNameEdit.new()
+	wp_name_ctrl.name = "wp_name_ctrl"
 	wp_name_ctrl.expand_to_text_length = true
 	wp_name_ctrl.set_text("change_me")
 	wp_name_ctrl.hint_tooltip = tr("WP_NAME_CTRL_HINT_TOOLTIP")
@@ -50,10 +38,12 @@ func _ready():
 
 	# Allow the user to select the named workplane
 	var wp_group = HBoxContainer.new()
+	wp_group.name = "wp_group"
 	var wp_lbl = Label.new()
 	wp_lbl.set_text("Orientation: ")
 	wp_group.add_child(wp_lbl)
-	wp_ctrl = OptionButton.new()
+	var wp_ctrl = OptionButton.new()
+	wp_ctrl.name = "wp_ctrl"
 	Common.load_option_button(wp_ctrl, workplane_list)
 	wp_ctrl.hint_tooltip = tr("WP_CTRL_HINT_TOOLTIP")
 	wp_group.add_child(wp_ctrl)
@@ -61,10 +51,12 @@ func _ready():
 
 	# Add a control for the center option
 	var wp_cen_group = HBoxContainer.new()
+	wp_cen_group.name = "wp_cen_group"
 	var wp_cen_lbl = Label.new()
 	wp_cen_lbl.set_text("Center Option: ")
 	wp_cen_group.add_child(wp_cen_lbl)
-	wp_cen_ctrl = OptionButton.new()
+	var wp_cen_ctrl = OptionButton.new()
+	wp_cen_ctrl.name = "wp_cen_ctrl"
 	Common.load_option_button(wp_cen_ctrl, center_option_list)
 	wp_cen_ctrl.hint_tooltip = tr("WP_CEN_CTRL_HINT_TOOLTIP")
 	wp_cen_group.add_child(wp_cen_ctrl)
@@ -72,10 +64,12 @@ func _ready():
 
 	# Allow the user to set whether the workplane normal is inverted
 	var invert_group = HBoxContainer.new()
+	invert_group.name = "invert_group"
 	var invert_lbl = Label.new()
 	invert_lbl.set_text("Invert: ")
 	invert_group.add_child(invert_lbl)
-	invert_ctrl = CheckBox.new()
+	var invert_ctrl = CheckBox.new()
+	invert_ctrl.name = "invert_ctrl"
 	invert_ctrl.pressed = false
 	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
 	invert_group.add_child(invert_ctrl)
@@ -90,16 +84,19 @@ func _ready():
 
 	# The advanced workplane controls
 	advanced_group = VBoxContainer.new()
+	advanced_group.name = "advanced_group"
 	advanced_group.hide()
 	var origin_lbl = Label.new()
 	origin_lbl.set_text("Origin")
 	advanced_group.add_child(origin_lbl)
 	var origin_group = HBoxContainer.new()
+	origin_group.name = "origin_group"
 	# Origin X
 	var x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	origin_group.add_child(x_lbl)
-	origin_x_ctrl = NumberEdit.new()
+	var origin_x_ctrl = NumberEdit.new()
+	origin_x_ctrl.name = "origin_x_ctrl"
 	origin_x_ctrl.set_text("0")
 	origin_x_ctrl.hint_tooltip = tr("WP_ORIGIN_X_CTRL_HINT_TOOLTIP")
 	origin_group.add_child(origin_x_ctrl)
@@ -107,7 +104,8 @@ func _ready():
 	var y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	origin_group.add_child(y_lbl)
-	origin_y_ctrl = NumberEdit.new()
+	var origin_y_ctrl = NumberEdit.new()
+	origin_y_ctrl.name = "origin_y_ctrl"
 	origin_y_ctrl.set_text("0")
 	origin_y_ctrl.hint_tooltip = tr("WP_ORIGIN_Y_CTRL_HINT_TOOLTIP")
 	origin_group.add_child(origin_y_ctrl)
@@ -115,7 +113,8 @@ func _ready():
 	var z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	origin_group.add_child(z_lbl)
-	origin_z_ctrl = NumberEdit.new()
+	var origin_z_ctrl = NumberEdit.new()
+	origin_z_ctrl.name = "origin_z_ctrl"
 	origin_z_ctrl.set_text("0")
 	origin_z_ctrl.hint_tooltip = tr("WP_ORIGIN_Z_CTRL_HINT_TOOLTIP")
 	origin_group.add_child(origin_z_ctrl)
@@ -127,11 +126,13 @@ func _ready():
 	xdir_lbl.set_text("X Direction")
 	advanced_group.add_child(xdir_lbl)
 	var xdir_group = HBoxContainer.new()
+	xdir_group.name = "xdir_group"
 	# XDir X
 	var xdir_x_lbl = Label.new()
 	xdir_x_lbl.set_text("X: ")
 	xdir_group.add_child(xdir_x_lbl)
-	xdir_x_ctrl = NumberEdit.new()
+	var xdir_x_ctrl = NumberEdit.new()
+	xdir_x_ctrl.name = "xdir_x_ctrl"
 	xdir_x_ctrl.set_text("1")
 	xdir_x_ctrl.hint_tooltip = tr("WP_XDIR_X_CTRL_HINT_TOOLTIP")
 	xdir_group.add_child(xdir_x_ctrl)
@@ -139,7 +140,8 @@ func _ready():
 	var xdir_y_lbl = Label.new()
 	xdir_y_lbl.set_text("Y: ")
 	xdir_group.add_child(xdir_y_lbl)
-	xdir_y_ctrl = NumberEdit.new()
+	var xdir_y_ctrl = NumberEdit.new()
+	xdir_y_ctrl.name = "xdir_y_ctrl"
 	xdir_y_ctrl.set_text("0")
 	xdir_y_ctrl.hint_tooltip = tr("WP_XDIR_Y_CTRL_HINT_TOOLTIP")
 	xdir_group.add_child(xdir_y_ctrl)
@@ -147,7 +149,8 @@ func _ready():
 	var xdir_z_lbl = Label.new()
 	xdir_z_lbl.set_text("Z: ")
 	xdir_group.add_child(xdir_z_lbl)
-	xdir_z_ctrl = NumberEdit.new()
+	var xdir_z_ctrl = NumberEdit.new()
+	xdir_z_ctrl.name = "xdir_z_ctrl"
 	xdir_z_ctrl.set_text("0")
 	xdir_z_ctrl.hint_tooltip = tr("WP_XDIR_Z_CTRL_HINT_TOOLTIP")
 	xdir_group.add_child(xdir_z_ctrl)
@@ -159,11 +162,13 @@ func _ready():
 	normal_lbl.set_text("Normal")
 	advanced_group.add_child(normal_lbl)
 	var normal_group = HBoxContainer.new()
+	normal_group.name = "normal_group"
 	# Normal X
 	var norm_x_lbl = Label.new()
 	norm_x_lbl.set_text("X: ")
 	normal_group.add_child(norm_x_lbl)
-	normal_x_ctrl = NumberEdit.new()
+	var normal_x_ctrl = NumberEdit.new()
+	normal_x_ctrl.name = "normal_x_ctrl"
 	normal_x_ctrl.set_text("0")
 	normal_x_ctrl.hint_tooltip = tr("WP_NORMAL_X_CTRL_HINT_TOOLTIP")
 	normal_group.add_child(normal_x_ctrl)
@@ -171,7 +176,8 @@ func _ready():
 	var norm_y_lbl = Label.new()
 	norm_y_lbl.set_text("Y: ")
 	normal_group.add_child(norm_y_lbl)
-	normal_y_ctrl = NumberEdit.new()
+	var normal_y_ctrl = NumberEdit.new()
+	normal_y_ctrl.name = "normal_y_ctrl"
 	normal_y_ctrl.set_text("0")
 	normal_y_ctrl.hint_tooltip = tr("WP_NORMAL_Y_CTRL_HINT_TOOLTIP")
 	normal_group.add_child(normal_y_ctrl)
@@ -179,7 +185,8 @@ func _ready():
 	var norm_z_lbl = Label.new()
 	norm_z_lbl.set_text("Z: ")
 	normal_group.add_child(norm_z_lbl)
-	normal_z_ctrl = NumberEdit.new()
+	var normal_z_ctrl = NumberEdit.new()
+	normal_z_ctrl.name = "normal_z_ctrl"
 	normal_z_ctrl.set_text("1")
 	normal_z_ctrl.hint_tooltip = tr("WP_NORMAL_Z_CTRL_HINT_TOOLTIP")
 	normal_group.add_child(normal_z_ctrl)
@@ -193,6 +200,17 @@ func _ready():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var wp_name_ctrl = get_node("name_group/wp_name_ctrl")
+	var origin_x_ctrl = get_node("advanced_group/origin_group/origin_x_ctrl")
+	var origin_y_ctrl = get_node("advanced_group/origin_group/origin_y_ctrl")
+	var origin_z_ctrl = get_node("advanced_group/origin_group/origin_z_ctrl")
+	var xdir_x_ctrl = get_node("advanced_group/xdir_group/xdir_x_ctrl")
+	var xdir_y_ctrl = get_node("advanced_group/xdir_group/xdir_y_ctrl")
+	var xdir_z_ctrl = get_node("advanced_group/xdir_group/xdir_z_ctrl")
+	var normal_x_ctrl = get_node("advanced_group/normal_group/normal_x_ctrl")
+	var normal_y_ctrl = get_node("advanced_group/normal_group/normal_y_ctrl")
+	var normal_z_ctrl = get_node("advanced_group/normal_group/normal_z_ctrl")
+
 	# Make sure all of the numeric controls have valid values
 	if not origin_x_ctrl.is_valid:
 		return false
@@ -223,6 +241,20 @@ Fills out the template and returns it.
 """
 func get_completed_template():
 	var complete = ""
+
+	var wp_ctrl = get_node("wp_group/wp_ctrl")
+	var wp_cen_ctrl = get_node("wp_cen_group/wp_cen_ctrl")
+	var invert_ctrl = get_node("invert_group/invert_ctrl")
+	var wp_name_ctrl = get_node("name_group/wp_name_ctrl")
+	var origin_x_ctrl = get_node("advanced_group/origin_group/origin_x_ctrl")
+	var origin_y_ctrl = get_node("advanced_group/origin_group/origin_y_ctrl")
+	var origin_z_ctrl = get_node("advanced_group/origin_group/origin_z_ctrl")
+	var xdir_x_ctrl = get_node("advanced_group/xdir_group/xdir_x_ctrl")
+	var xdir_y_ctrl = get_node("advanced_group/xdir_group/xdir_y_ctrl")
+	var xdir_z_ctrl = get_node("advanced_group/xdir_group/xdir_z_ctrl")
+	var normal_x_ctrl = get_node("advanced_group/normal_group/normal_x_ctrl")
+	var normal_y_ctrl = get_node("advanced_group/normal_group/normal_y_ctrl")
+	var normal_z_ctrl = get_node("advanced_group/normal_group/normal_z_ctrl")
 
 	# If the advanced group is visible, fill the advanced template out with those controls
 	if advanced_group.visible:
@@ -275,6 +307,20 @@ func set_values_from_string(text_line):
 	prev_template = text_line
 
 	var rgx = RegEx.new()
+
+	var wp_ctrl = get_node("wp_group/wp_ctrl")
+	var wp_cen_ctrl = get_node("wp_cen_group/wp_cen_ctrl")
+	var invert_ctrl = get_node("invert_group/invert_ctrl")
+	var wp_name_ctrl = get_node("name_group/wp_name_ctrl")
+	var origin_x_ctrl = get_node("advanced_group/origin_group/origin_x_ctrl")
+	var origin_y_ctrl = get_node("advanced_group/origin_group/origin_y_ctrl")
+	var origin_z_ctrl = get_node("advanced_group/origin_group/origin_z_ctrl")
+	var xdir_x_ctrl = get_node("advanced_group/xdir_group/xdir_x_ctrl")
+	var xdir_y_ctrl = get_node("advanced_group/xdir_group/xdir_y_ctrl")
+	var xdir_z_ctrl = get_node("advanced_group/xdir_group/xdir_z_ctrl")
+	var normal_x_ctrl = get_node("advanced_group/normal_group/normal_x_ctrl")
+	var normal_y_ctrl = get_node("advanced_group/normal_group/normal_y_ctrl")
+	var normal_z_ctrl = get_node("advanced_group/normal_group/normal_z_ctrl")
 
 	# The workplane name
 	rgx.compile(wp_name_edit_rgx)

@@ -231,7 +231,7 @@ Used to determine whether or not the user wants/needs an implicit main workplane
 """
 static func needs_implicit_worplane(context):
 	var regex = RegEx.new()
-	regex.compile("result.*=.*result.Workplane\\(")
+	regex.compile("\\.Workplane\\(")
 	var res = regex.search(context)
 
 	# The value to return
