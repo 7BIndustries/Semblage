@@ -14,7 +14,7 @@ static func get_triggers():
 			"action": {
 				"name": "Workplane",
 				"group": "WP",
-				"control": WorkplaneControl.new()
+				"control": "res://controls/WorkplaneControl.gd"
 			}
 		},
 		"center": {
@@ -23,7 +23,7 @@ static func get_triggers():
 			"action": {
 				"name": "Center (center)",
 				"group": "WP",
-				"control": CenterControl.new()
+				"control": "res://controls/CenterControl.gd"
 			}
 		},
 		"rotate": {
@@ -32,7 +32,7 @@ static func get_triggers():
 			"action": {
 				"name": "Rotate (rotate)",
 				"group": "WP",
-				"control": RotateControl.new()
+				"control": "res://controls/RotateControl.gd"
 			}
 		},
 		"rotateAboutCenter": {
@@ -41,7 +41,7 @@ static func get_triggers():
 			"action": {
 				"name": "Rotate About Center (rotateAboutCenter)",
 				"group": "WP",
-				"control": RotateAboutCenterControl.new()
+				"control": "res://controls/RotateAboutCenterControl.gd"
 			}
 		},
 		"translate": {
@@ -50,7 +50,7 @@ static func get_triggers():
 			"action": {
 				"name": "Translate (translate)",
 				"group": "WP",
-				"control": TranslateControl.new()
+				"control": "res://controls/TranslateControl.gd"
 			}
 		},
 		"faces": {
@@ -59,7 +59,7 @@ static func get_triggers():
 			"action": {
 				"name": "selectors",
 				"group": "SELECTORS",
-				"control": SelectorControl.new()
+				"control": "res://controls/SelectorControl.gd"
 			}
 		},
 		"edges": {
@@ -68,7 +68,7 @@ static func get_triggers():
 			"action": {
 				"name": "selectors",
 				"group": "SELECTORS",
-				"control": SelectorControl.new()
+				"control": "res://controls/SelectorControl.gd"
 			}
 		},
 		"vertices": {
@@ -77,7 +77,7 @@ static func get_triggers():
 			"action": {
 				"name": "selectors",
 				"group": "SELECTORS",
-				"control": SelectorControl.new()
+				"control": "res://controls/SelectorControl.gd"
 			}
 		},
 		"cutBlind": {
@@ -86,7 +86,7 @@ static func get_triggers():
 			"action": {
 				"name": "Blind Cut (cutBlind)",
 				"group": "3D",
-				"control": BlindCutControl.new()
+				"control": "res://controls/BlindCutControl.gd"
 			}
 		},
 		"box": {
@@ -95,7 +95,7 @@ static func get_triggers():
 			"action": {
 				"name": "Box (box)",
 				"group": "3D",
-				"control": BoxControl.new()
+				"control": "res://controls/BoxControl.gd"
 			}
 		},
 		"chamfer": {
@@ -104,7 +104,7 @@ static func get_triggers():
 			"action": {
 				"name": "Chamfer (chamfer)",
 				"group": "3D",
-				"control": ChamferControl.new()
+				"control": "res://controls/ChamferControl.gd"
 			}
 		},
 		"cboreHole": {
@@ -113,7 +113,7 @@ static func get_triggers():
 			"action": {
 				"name": "Counter-Bore Hole (cboreHole)",
 				"group": "3D",
-				"control": CBoreHoleControl.new()
+				"control": "res://controls/CBoreHoleControl.gd"
 			}
 		},
 		"cskHole": {
@@ -122,7 +122,7 @@ static func get_triggers():
 			"action": {
 				"name": "Counter-Sink Hole (cskHole)",
 				"group": "3D",
-				"control": CSinkHoleControl.new()
+				"control": "res://controls/CSinkHoleControl.gd"
 			}
 		},
 		"extrude": {
@@ -131,7 +131,7 @@ static func get_triggers():
 			"action": {
 				"name": "Extrude (extrude)",
 				"group": "3D",
-				"control": ExtrudeControl.new()
+				"control": "res://controls/ExtrudeControl.gd"
 			}
 		},
 		"fillet": {
@@ -140,7 +140,7 @@ static func get_triggers():
 			"action": {
 				"name": "Fillet (fillet)",
 				"group": "3D",
-				"control": FilletControl.new()
+				"control": "res://controls/FilletControl.gd"
 			}
 		},
 		"hole": {
@@ -149,7 +149,7 @@ static func get_triggers():
 			"action": {
 				"name": "Hole (hole)",
 				"group": "3D",
-				"control": HoleControl.new()
+				"control": "res://controls/HoleControl.gd"
 			}
 		},
 		"revolve": {
@@ -158,7 +158,7 @@ static func get_triggers():
 			"action": {
 				"name": "Revolve (revolve)",
 				"group": "3D",
-				"control": RevolveControl.new()
+				"control": "res://controls/RevolveControl.gd"
 			}
 		},
 		"section": {
@@ -167,7 +167,7 @@ static func get_triggers():
 			"action": {
 				"name": "Section (section)",
 				"group": "3D",
-				"control": SectionControl.new()
+				"control": "res://controls/SectionControl.gd"
 			}
 		},
 		"shell": {
@@ -176,7 +176,7 @@ static func get_triggers():
 			"action": {
 				"name": "Shell (shell)",
 				"group": "3D",
-				"control": ShellControl.new()
+				"control": "res://controls/ShellControl.gd"
 			}
 		},
 		"sphere": {
@@ -185,7 +185,7 @@ static func get_triggers():
 			"action": {
 				"name": "Sphere (sphere)",
 				"group": "3D",
-				"control": SphereControl.new()
+				"control": "res://controls/SphereControl.gd"
 			}
 		},
 		"split": {
@@ -194,7 +194,7 @@ static func get_triggers():
 			"action": {
 				"name": "Split (split)",
 				"group": "3D",
-				"control": SplitControl.new()
+				"control": "res://controls/SplitControl.gd"
 			}
 		},
 		"text": {
@@ -203,7 +203,7 @@ static func get_triggers():
 			"action": {
 				"name": "Text (text)",
 				"group": "3D",
-				"control": TextControl.new()
+				"control": "res://controls/TextControl.gd"
 			}
 		},
 		"cutThruAll": {
@@ -212,7 +212,7 @@ static func get_triggers():
 			"action": {
 				"name": "Thru Cut (cutThruAll)",
 				"group": "3D",
-				"control": ThruCutControl.new()
+				"control": "res://controls/ThruCutControl.gd"
 			}
 		},
 		"twistExtrude": {
@@ -221,7 +221,7 @@ static func get_triggers():
 			"action": {
 				"name": "Twist Extrude (twistExtrude)",
 				"group": "3D",
-				"control": TwistExtrudeControl.new()
+				"control": "res://controls/TwistExtrudeControl.gd"
 			}
 		},
 		"wedge": {
@@ -230,7 +230,7 @@ static func get_triggers():
 			"action": {
 				"name": "Wedge (wedge)",
 				"group": "3D",
-				"control": WedgeControl.new()
+				"control": "res://controls/WedgeControl.gd"
 			}
 		},
 		"circle": {
@@ -239,7 +239,7 @@ static func get_triggers():
 			"action": {
 				"name": "Circle (circle)",
 				"group": "2D",
-				"control": CircleControl.new()
+				"control": "res://controls/CircleControl.gd"
 			}
 		},
 		"close": {
@@ -248,7 +248,7 @@ static func get_triggers():
 			"action": {
 				"name": "Close (close)",
 				"group": "2D",
-				"control": CloseControl.new()
+				"control": "res://controls/CloseControl.gd"
 			}
 		},
 		"ellipseArc": {
@@ -257,7 +257,7 @@ static func get_triggers():
 			"action": {
 				"name": "Ellipse Arc (ellipseArc)",
 				"group": "2D",
-				"control": EllipseArcControl.new()
+				"control": "res://controls/EllipseArcControl.gd"
 			}
 		},
 		"ellipse": {
@@ -266,7 +266,7 @@ static func get_triggers():
 			"action": {
 				"name": "Ellipse (ellipse)",
 				"group": "2D",
-				"control": EllipseControl.new()
+				"control": "res://controls/EllipseControl.gd"
 			}
 		},
 		"hLine": {
@@ -275,7 +275,7 @@ static func get_triggers():
 			"action": {
 				"name": "Horizontal Line (hLine)",
 				"group": "2D",
-				"control": HLineControl.new()
+				"control": "res://controls/HLineControl.gd"
 			}
 		},
 		"hLineTo": {
@@ -284,7 +284,7 @@ static func get_triggers():
 			"action": {
 				"name": "Horizontal Line To (hLineTo)",
 				"group": "2D",
-				"control": HLineToControl.new()
+				"control": "res://controls/HLineToControl.gd"
 			}
 		},
 		"line": {
@@ -293,7 +293,7 @@ static func get_triggers():
 			"action": {
 				"name": "Line (line)",
 				"group": "2D",
-				"control": LineControl.new()
+				"control": "res://controls/LineControl.gd"
 			}
 		},
 		"lineTo": {
@@ -302,7 +302,7 @@ static func get_triggers():
 			"action": {
 				"name": "Line To (lineTo)",
 				"group": "2D",
-				"control": LineToControl.new()
+				"control": "res://controls/LineToControl.gd"
 			}
 		},
 		"mirrorX": {
@@ -311,7 +311,7 @@ static func get_triggers():
 			"action": {
 				"name": "Mirror X (mirrorX)",
 				"group": "2D",
-				"control": MirrorXControl.new()
+				"control": "res://controls/MirrorXControl.gd"
 			}
 		},
 		"mirrorY": {
@@ -320,7 +320,7 @@ static func get_triggers():
 			"action": {
 				"name": "Mirror Y (mirrorY)",
 				"group": "2D",
-				"control": MirrorYControl.new()
+				"control": "res://controls/MirrorYControl.gd"
 			}
 		},
 		"move": {
@@ -329,7 +329,7 @@ static func get_triggers():
 			"action": {
 				"name": "Move (move)",
 				"group": "2D",
-				"control": MoveControl.new()
+				"control": "res://controls/MoveControl.gd"
 			}
 		},
 		"moveTo": {
@@ -338,7 +338,7 @@ static func get_triggers():
 			"action": {
 				"name": "Move To (moveTo)",
 				"group": "2D",
-				"control": MoveToControl.new()
+				"control": "res://controls/MoveToControl.gd"
 			}
 		},
 		"offset2D": {
@@ -347,7 +347,7 @@ static func get_triggers():
 			"action": {
 				"name": "Offset (offset2D)",
 				"group": "2D",
-				"control": Offset2DControl.new()
+				"control": "res://controls/Offset2DControl.gd"
 			}
 		},
 		"polarArray": {
@@ -356,7 +356,7 @@ static func get_triggers():
 			"action": {
 				"name": "Polar Array (polarArray)",
 				"group": "2D",
-				"control": PolarArrayControl.new()
+				"control": "res://controls/PolarArrayControl.gd"
 			}
 		},
 		"polarLine": {
@@ -365,7 +365,7 @@ static func get_triggers():
 			"action": {
 				"name": "Polar Line (polarLine)",
 				"group": "2D",
-				"control": PolarLineControl.new()
+				"control": "res://controls/PolarLineControl.gd"
 			}
 		},
 		"polarLineTo": {
@@ -374,7 +374,7 @@ static func get_triggers():
 			"action": {
 				"name": "Polar Line To (polarLineTo)",
 				"group": "2D",
-				"control": PolarLineToControl.new()
+				"control": "res://controls/PolarLineToControl.gd"
 			}
 		},
 		"polygon": {
@@ -383,7 +383,7 @@ static func get_triggers():
 			"action": {
 				"name": "Polygon (polygon)",
 				"group": "2D",
-				"control": PolygonControl.new()
+				"control": "res://controls/PolygonControl.gd"
 			}
 		},
 		"polyline": {
@@ -392,7 +392,7 @@ static func get_triggers():
 			"action": {
 				"name": "Polyline (polyline)",
 				"group": "2D",
-				"control": PolylineControl.new()
+				"control": "res://controls/PolylineControl.gd"
 			}
 		},
 		"pushPoints": {
@@ -401,7 +401,7 @@ static func get_triggers():
 			"action": {
 				"name": "Push Points (pushPoints)",
 				"group": "2D",
-				"control": PushPointsControl.new()
+				"control": "res://controls/PushPointsControl.gd"
 			}
 		},
 		"radiusArc": {
@@ -410,7 +410,7 @@ static func get_triggers():
 			"action": {
 				"name": "Radius Arc (radiusArc)",
 				"group": "2D",
-				"control": RadiusArcControl.new()
+				"control": "res://controls/RadiusArcControl.gd"
 			}
 		},
 		"rarray": {
@@ -419,7 +419,7 @@ static func get_triggers():
 			"action": {
 				"name": "Rectangular Array (rarray)",
 				"group": "2D",
-				"control": RArrayControl.new()
+				"control": "res://controls/RArrayControl.gd"
 			}
 		},
 		"rect": {
@@ -428,7 +428,7 @@ static func get_triggers():
 			"action": {
 				"name": "Rectangle (rect)",
 				"group": "2D",
-				"control": RectControl.new()
+				"control": "res://controls/RectControl.gd"
 			}
 		},
 		"sagittaArc": {
@@ -437,7 +437,7 @@ static func get_triggers():
 			"action": {
 				"name": "Sagitta Arc (sagittaArc)",
 				"group": "2D",
-				"control": SagittaArcControl.new()
+				"control": "res://controls/SagittaArcControl.gd"
 			}
 		},
 		"slot2D": {
@@ -446,7 +446,7 @@ static func get_triggers():
 			"action": {
 				"name": "Slot (slot2D)",
 				"group": "2D",
-				"control": SlotControl.new()
+				"control": "res://controls/SlotControl.gd"
 			}
 		},
 		"spline": {
@@ -455,7 +455,7 @@ static func get_triggers():
 			"action": {
 				"name": "Spline (spline)",
 				"group": "2D",
-				"control": SplineControl.new()
+				"control": "res://controls/SplineControl.gd"
 			}
 		},
 		"tangentArcPoint": {
@@ -464,7 +464,7 @@ static func get_triggers():
 			"action": {
 				"name": "Tangent Arc Point (tangentArcPoint)",
 				"group": "2D",
-				"control": TangentArcPointControl.new()
+				"control": "res://controls/TangentArcPointControl.gd"
 			}
 		},
 		"threePointArc": {
@@ -473,7 +473,7 @@ static func get_triggers():
 			"action": {
 				"name": "Three Point Arc (threePointArc)",
 				"group": "2D",
-				"control": ThreePointArcControl.new()
+				"control": "res://controls/ThreePointArcControl.gd"
 			}
 		},
 		"vLine": {
@@ -482,7 +482,7 @@ static func get_triggers():
 			"action": {
 				"name": "Vertical Line (vLine)",
 				"group": "2D",
-				"control": VLineControl.new()
+				"control": "res://controls/VLineControl.gd"
 			}
 		},
 		"vLineTo": {
@@ -491,7 +491,7 @@ static func get_triggers():
 			"action": {
 				"name": "Vertical Line To (vLineTo)",
 				"group": "2D",
-				"control": VLineToControl.new()
+				"control": "res://controls/VLineToControl.gd"
 			}
 		}
 	}

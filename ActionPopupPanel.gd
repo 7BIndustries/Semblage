@@ -58,6 +58,13 @@ Sets the Action control based on what is selected in the option button.
 func _set_action_control():
 	var aob = $VBoxContainer/ActionOptionButton
 
+	# Make sure to free the previous control
+	var cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()
+	if cont.size() > 0:
+		var cont_current = cont[0]
+		if cont_current != null:
+			cont_current.free()
+
 	# Get the currently selected item
 	var selected = aob.get_item_text(aob.get_selected_id())
 
@@ -66,7 +73,7 @@ func _set_action_control():
 
 	# Set the action control
 	_clear_popup()
-	$VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.add_child(act.action.control)
+	$VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.add_child(load(act.action.control).new())
 
 
 """
