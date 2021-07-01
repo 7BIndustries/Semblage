@@ -1377,6 +1377,7 @@ text = "Cancel"
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton" to="." method="_on_HomeViewButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton" to="." method="_on_AboutButton_button_down"]
 [connection signal="item_activated" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree" to="." method="_on_ObjectTree_item_activated"]
+[connection signal="item_selected" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree" to="." method="_on_ObjectTree_item_selected"]
 [connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer/MoveUpButton" to="." method="_on_MoveUpButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer/MoveDownButton" to="." method="_on_MoveDownButton_button_down"]

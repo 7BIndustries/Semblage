@@ -11,6 +11,7 @@ func test_save_button():
 
 	# Make sure there is default component text to work with
 	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\n"
+	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
 	gui._init_object_tree()
 
 	# Make sure the objects tree has items in it
@@ -132,6 +133,7 @@ func test_make_button_dxf():
 
 	# Make sure there is default component text to work with
 	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(1,1,1)\n"
+	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -200,6 +202,7 @@ func test_make_button_dxf_section():
 
 	# Make sure there is default component text to work with
 	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(1,1,1)\n"
+	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
 
 	# Initialize the trees
 	gui._init_object_tree()
@@ -299,6 +302,7 @@ func test_make_button_svg():
 
 	# Make sure there is default component text to work with
 	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(1,1,1)\n"
+	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -368,6 +372,7 @@ func test_make_button_svg_section():
 
 	# Make sure there is default component text to work with
 	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().rect(10, 10).extrude(10)\n"
+	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -458,6 +463,7 @@ func test_make_button_svg_section_error():
 
 	# Make sure there is default component text to work with
 	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(10,10,10)\n"
+	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
 
 	# Initialize the trees
 	gui._init_object_tree()
@@ -540,6 +546,7 @@ func test_make_button_step():
 
 	# Make sure there is default component text to work with
 	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(10,10,10)\n"
+	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
 	gui._init_object_tree()
 
 	# Make sure the objects tree has items in it
@@ -609,6 +616,7 @@ func test_make_button_stl():
 
 	# Make sure there is default component text to work with
 	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(10,10,10)\n"
+	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
 	gui._init_object_tree()
 
 	# Make sure the objects tree has items in it
@@ -678,6 +686,7 @@ func test_close_button():
 
 	# Make sure there is default component text to work with
 	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().tag(\"change_me\").box(10,10,10)\n"
+	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
 
 	# Initialize the trees
 	gui._init_object_tree()
@@ -758,6 +767,7 @@ func test_home_button():
 
 	# Make sure there is default component text to work with
 	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().tag(\"change_me\").box(10,10,10)\n"
+	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
 
 	# Initialize the trees
 	gui._init_object_tree()

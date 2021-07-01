@@ -6,6 +6,7 @@ var open_file_path # The component/CQ file that the user opened
 var component_text # The text of the current component's script
 var check_component_text = null # Temporary to make sure the compnent file
 var safe_distance = 0 # The distance away the camera should be placed to be able to view the components
+var components = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -147,6 +148,7 @@ func load_semblage_component(text):
 			# Save this new component name as the current for use later
 			cur_object = new_object
 			Common.add_item_to_tree(new_object, object_tree, object_tree_root)
+			components[new_object] = []
 
 		if cur_object != null and line.begins_with(cur_object + "=" + cur_object):
 			# Update the context string in the ContextHandler
@@ -154,6 +156,7 @@ func load_semblage_component(text):
 
 			# Add the current item to the history tree
 			Common.add_item_to_tree(addition, history_tree, history_tree_root)
+			components[cur_object].append(addition)
 
 			component_text = ContextHandler.update_context_string(component_text, addition)
 
@@ -174,19 +177,25 @@ func _render_history_tree():
 	var comp_name = _get_component_name()
 
 	# Start the body of the script
-	component_text += comp_name + "=cq\n"
+	for component in components.keys():
+		component_text += component + "=cq\n"
 
 	# Search the tree and update the matchine entry in the tree
-	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
-	var history_tree_root = _get_history_tree_root(history_tree)
-	var cur_item = history_tree_root.get_children()
-	while true:
-		if cur_item == null:
-			break
-		else:
-			component_text += comp_name + "=" + comp_name + cur_item.get_text(0) + "\n"
+#	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
+#	var history_tree_root = _get_history_tree_root(history_tree)
+#	var cur_item = history_tree_root.get_children()
+#	while true:
+#		if cur_item == null:
+#			break
+#		else:
+#			component_text += comp_name + "=" + comp_name + cur_item.get_text(0) + "\n"
+#
+#			cur_item = cur_item.get_next()
 
-			cur_item = cur_item.get_next()
+	# Step through all branches of the component tree and add them to the script
+	for component in components.keys():
+		for item in components[component]:
+			component_text += component  + "=" + component + item + "\n"
 
 	# Render the script text collected from the history tree, but only if there is something to render
 	if not self.component_text.ends_with(comp_name + "=cq\n"):
@@ -234,8 +243,11 @@ the results, and display that in the 3D view.
 func _render_component_text():
 	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering component...")
 
-	var component_name = _get_component_name()
-	var script_text = component_text + "\nshow_object(" + component_name + ")"
+	var script_text = component_text
+
+	# Set all of the individual components up to be displayed
+	for component in components.keys():
+		script_text += "\nshow_object(" + component + ")"
 
 	# Pass the script to the Python layer to convert it to tessellated JSON
 	var component_json = cqgipy.build(script_text)
@@ -392,6 +404,7 @@ func _on_CloseButton_button_down():
 	
 #	open_file_path = null
 	self._reset_component_text()
+	components = {}
 
 	self._clear_viewport()
 	
@@ -495,10 +508,6 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 	# Find any object name (if present) that needs to be displayed in the list
 	var new_object = ContextHandler.get_object_from_template(new_template)
 
-	# If the old component name does not match the new one, we want to update it
-	if new_object != null and old_object != new_object:
-		Common.update_tree_item(object_tree, old_object, new_object)
-
 	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
 	var history_tree_root = _get_history_tree_root(history_tree)
 
@@ -507,9 +516,41 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 
 	# If we are in edit mode, do not try to add anything to the history
 	if edit_mode:
+		# If there is no object, fall back to the previously found object name
+#		if new_object == null:
+#			# If there is an item selected in the object tree, use that
+#			var sel = object_tree.get_selected()
+#			if sel != null:
+#				new_object = sel.get_text(0)
+#			else:
+#				# Fall back to the previous component name that was found
+#				new_object = old_object
+
+		# If the old component name does not match the new one, we want to update it
+		var sel = object_tree.get_selected()
+		if sel.get_text(0) != new_object:
+			# Update the components data structure
+			components[new_object] = components.get(sel.get_text(0))
+			components.erase(sel.get_text(0))
+
+			# Update the item in the GUI object tree
+			Common.update_tree_item(object_tree, sel.get_text(0), new_object)
+
+		var prev_template = history_tree.get_selected().get_text(0)
+
+		# Update the component tree with the updated template
+		var i = 0
+		for item in components[new_object]:
+			if item == prev_template:
+				components[new_object][i] = new_template
+
+			i += 1
+
+		Common.select_tree_item_by_text(object_tree, new_object)
+
 		# Update the edited entry within the history tree
-		var hist_item = history_tree.get_selected()
-		hist_item.set_text(0, new_template)
+#		var hist_item = history_tree.get_selected()
+#		hist_item.set_text(0, new_template)
 
 		# Update the edited entry within the history tree
 #		var prev_template = history_tree.get_selected().get_text(0) # $ActionPopupPanel.get_prev_template()
@@ -523,12 +564,28 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 			Common.add_item_to_tree(wp_template, history_tree, history_tree_root)
 			Common.add_item_to_tree("change_me", object_tree, object_tree_root)
 
-		# Add the current item to the history tree
-		Common.add_item_to_tree(new_template, history_tree, history_tree_root)
-
 		# Add the componenent name to the object tree if it had a name
 		if new_object:
+			# Keep track of the object tree components and its associated history items
+			if not components.has(new_object):
+				components[new_object] = []
+
 			Common.add_item_to_tree(new_object, object_tree, object_tree_root)
+
+		# If there is no object, fall back to the previously found object name
+		if new_object == null:
+			# If there is an item selected in the object tree, use that
+			var sel = object_tree.get_selected()
+			if sel != null:
+				new_object = sel.get_text(0)
+			else:
+				# Fall back to the previous component name that was found
+				new_object = old_object
+
+		# Save this new template as part of the components data structure
+		components[new_object].append(new_template)
+
+	Common.select_tree_item_by_text(object_tree, new_object)
 
 	# Render the component
 	if render:
@@ -1037,3 +1094,23 @@ Allows the ActionPopupPanel to show error messages.
 """
 func _on_ActionPopupPanel_error(error_text):
 	_on_error(error_text)
+
+
+"""
+Called when a user single clicks an item in the object tree.
+"""
+func _on_ObjectTree_item_selected():
+	# Get the selected item
+	var ot = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree
+	var sel = ot.get_selected().get_text(0)
+
+	# Reset the History tree so we can load in the selected component's history
+	var ht = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree
+	ht.clear()
+#	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree.clear()
+	self._init_history_tree()
+#	self._init_params_tree()
+
+	# Add every history item for the selected component to the history tree
+	for item in components[sel]:
+		Common.add_item_to_tree(item, ht, ht.get_root())

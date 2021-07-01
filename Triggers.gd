@@ -12,7 +12,7 @@ static func get_triggers():
 			"trigger": "cq$",
 			"edit_trigger": "^\\.Workplane\\(.*\\).*",
 			"action": {
-				"name": "Workplane",
+				"name": "Component (Workplane)",
 				"group": "WP",
 				"control": "res://controls/WorkplaneControl.gd"
 			}

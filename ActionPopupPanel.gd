@@ -255,10 +255,36 @@ func _on_OkButton_button_down():
 		new_context = ContextHandler.edit_context_string(original_context, prev_template, new_template)
 	# New mode
 	else:
+		if _is_component_dup(original_context, new_template):
+			# Let the user know they have entered a duplicate name
+			emit_signal("error", "The component/workplane name has already been used.\nPlease select another one.")
+			return
+
 		new_context = ContextHandler.update_context_string(original_context, new_template)
 
 	emit_signal("ok_signal", edit_mode, new_template, new_context)
 	hide()
+
+
+"""
+Checks whether or not the component name has been used before.
+"""
+func _is_component_dup(original_context, new_template):
+	# Regex to search for tags, which are used for component names
+	var rgx = RegEx.new()
+	rgx.compile("\\.tag\\(.*\\)")
+	var res = rgx.search_all(new_template)
+
+	# If there is no match at all, then we cannot have a duplicate
+	if not res:
+		return false
+	else:
+		# Search all of the results to see if there is a match from the original context
+		for r in res:
+			if original_context.find(r.get_string()) > 0:
+				return true
+
+	return false
 
 
 """
