@@ -71,7 +71,7 @@ static func find_matching_edit_trigger(code_text):
 
 
 """
-Returns any tagged objects specified via tags in the given template.
+Returns the tagged object specified in the given template.
 """
 static func get_object_from_template(template):
 	# Use a regular expression to extract the tag names

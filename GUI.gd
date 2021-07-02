@@ -160,6 +160,8 @@ func load_semblage_component(text):
 
 			component_text = ContextHandler.update_context_string(component_text, addition)
 
+	# Selecting the first component in the list is a sane default
+	object_tree_root.get_children().select(0)
 
 """
 Collects all of the history tree items and renders them into an
@@ -174,23 +176,9 @@ func _render_history_tree():
 	component_text += _collect_parameters()
 	component_text += "# end_params\n"
 
-	var comp_name = _get_component_name()
-
 	# Start the body of the script
 	for component in components.keys():
 		component_text += component + "=cq\n"
-
-	# Search the tree and update the matchine entry in the tree
-#	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
-#	var history_tree_root = _get_history_tree_root(history_tree)
-#	var cur_item = history_tree_root.get_children()
-#	while true:
-#		if cur_item == null:
-#			break
-#		else:
-#			component_text += comp_name + "=" + comp_name + cur_item.get_text(0) + "\n"
-#
-#			cur_item = cur_item.get_next()
 
 	# Step through all branches of the component tree and add them to the script
 	for component in components.keys():
@@ -198,7 +186,7 @@ func _render_history_tree():
 			component_text += component  + "=" + component + item + "\n"
 
 	# Render the script text collected from the history tree, but only if there is something to render
-	if not self.component_text.ends_with(comp_name + "=cq\n"):
+	if not self.component_text.ends_with("=cq\n"):
 		$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering component...")
 		_render_component_text()
 
@@ -325,10 +313,7 @@ func load_component_json(json_string):
 		# Find the safe distance for the camera based on the maximum distance of any vertex from the origin
 		safe_distance = new_safe_dist # get_safe_camera_distance(max_dist)
 
-		# Set the camera to the safe distance and have it look at the origin
-		cam.look_at_from_position(Vector3(0, -safe_distance, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
-		origin_cam.look_at_from_position(Vector3(0, -3, 0), Vector3(0, 0, 0), Vector3(0, 0, 1))
-		light.look_at_from_position(Vector3(0, -safe_distance, -safe_distance), Vector3(0, 0, 0), Vector3(0, 0, 1))
+		_home_view()
 
 	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Redering component...done.")
 
@@ -516,25 +501,18 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 
 	# If we are in edit mode, do not try to add anything to the history
 	if edit_mode:
-		# If there is no object, fall back to the previously found object name
-#		if new_object == null:
-#			# If there is an item selected in the object tree, use that
-#			var sel = object_tree.get_selected()
-#			if sel != null:
-#				new_object = sel.get_text(0)
-#			else:
-#				# Fall back to the previous component name that was found
-#				new_object = old_object
-
 		# If the old component name does not match the new one, we want to update it
 		var sel = object_tree.get_selected()
+
+		# If there was no object named in the template, the component being edited is the one selected
+		if new_object == null:
+			new_object = sel.get_text(0)
+
+		# See if the user is changing the name of a component
 		if sel.get_text(0) != new_object:
 			# Update the components data structure
 			components[new_object] = components.get(sel.get_text(0))
 			components.erase(sel.get_text(0))
-
-			# Update the item in the GUI object tree
-			Common.update_tree_item(object_tree, sel.get_text(0), new_object)
 
 		var prev_template = history_tree.get_selected().get_text(0)
 
@@ -547,14 +525,6 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 			i += 1
 
 		Common.select_tree_item_by_text(object_tree, new_object)
-
-		# Update the edited entry within the history tree
-#		var hist_item = history_tree.get_selected()
-#		hist_item.set_text(0, new_template)
-
-		# Update the edited entry within the history tree
-#		var prev_template = history_tree.get_selected().get_text(0) # $ActionPopupPanel.get_prev_template()
-#		Common.update_tree_item(history_tree, prev_template, new_template)
 	else:
 		# Check to see if a stock workplane should be added
 		var implicit_wp = ContextHandler.needs_implicit_worplane(component_text)
