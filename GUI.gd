@@ -706,11 +706,14 @@ Handles the heavy lifting of saving the component text to file.
 func _save_component_text():
 	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("")
 
-	var component_name = _get_component_name()
+	# Add show calls for each of the components
+	var show_code = ""
+	for component in components.keys():
+		show_code += "\nshow_object(" + component + ")"
 
 	var file = File.new()
 	file.open(self.open_file_path, File.WRITE)
-	file.store_string(self.component_text + "\nshow_object(" + component_name + ")")
+	file.store_string(self.component_text + show_code)
 	file.close()
 
 	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Component saved")
