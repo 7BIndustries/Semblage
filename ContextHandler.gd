@@ -86,6 +86,21 @@ static func get_object_from_template(template):
 
 
 """
+Allows the caller to pull all component tag names from the given context.
+"""
+static func get_objects_from_context(context):
+	# Use a regular expression to extract the tag names
+	var object_rgx = RegEx.new()
+	object_rgx.compile("(?<=tag\\(\")(.*)(?=\"\\))")
+	var res = object_rgx.search_all(context)
+
+	if res != null and res.size() > 0:
+		return res
+	else:
+		return null
+
+
+"""
 Get things that will not be tessellated during execution, like workplanes so
 that they can be displayed as previews to the user.
 """

@@ -233,6 +233,15 @@ static func get_triggers():
 				"control": "res://controls/WedgeControl.gd"
 			}
 		},
+		"union": {
+			"trigger": "\\..*(.*)$",
+			"edit_trigger": "^\\.union\\(.*\\)$",
+			"action": {
+				"name": "Boolean - Union (union)",
+				"group": "3D",
+				"control": "res://controls/UnionControl.gd"
+			}
+		},
 		"circle": {
 			"trigger": "\\..*(.*)$",
 			"edit_trigger": "^\\.circle\\(.*\\)$",
