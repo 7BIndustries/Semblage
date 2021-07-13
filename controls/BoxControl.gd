@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name BoxControl
 
+var is_binary = false
+
 var length_ctrl = null
 var width_ctrl = null
 var height_ctrl = null

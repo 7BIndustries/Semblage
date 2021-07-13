@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name CSinkHoleControl
 
+var is_binary = false
+
 var prev_template = null
 
 var hole_dia_ctrl = null

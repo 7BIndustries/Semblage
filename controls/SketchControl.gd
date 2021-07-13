@@ -2,6 +2,8 @@ extends HBoxContainer
 
 class_name SketchControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = "{sketch}"

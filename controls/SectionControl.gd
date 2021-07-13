@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name SectionControl
 
+var is_binary = false
+
 var height_ctrl = null
 
 var prev_template = null

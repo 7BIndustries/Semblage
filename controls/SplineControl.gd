@@ -4,6 +4,8 @@ class_name SplineControl
 
 signal error
 
+var is_binary = false
+
 var template = ".spline(listOfXYTuple=[{listOfXYTuple}],tangents=[{tangents}],periodic={periodic},forConstruction={forConstruction},includeCurrent={includeCurrent},makeWire={makeWire})"
 
 var prev_template = null

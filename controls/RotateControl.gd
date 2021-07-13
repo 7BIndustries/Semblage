@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name RotateControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".rotate(angleDegrees={angle_degrees},axisStartPoint={axis_start},axisEndPoint={axis_end})"

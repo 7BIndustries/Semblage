@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name TwistExtrudeControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".twistExtrude({distance},angleDegrees={angle_degrees},combine={combine},clean={clean})"

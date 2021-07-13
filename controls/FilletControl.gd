@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name FilletControl
 
+var is_binary = false
+
 var prev_template = null
 
 var radius_ctrl = null

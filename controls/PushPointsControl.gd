@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name PushPointsControl
 
+var is_binary = false
+
 signal error
 
 var prev_template = null

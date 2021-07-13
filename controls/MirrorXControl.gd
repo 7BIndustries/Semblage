@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name MirrorXControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".mirrorX()"

@@ -7,6 +7,7 @@ var component_text # The text of the current component's script
 var check_component_text = null # Temporary to make sure the compnent file
 var safe_distance = 0 # The distance away the camera should be placed to be able to view the components
 var components = {}
+var combined = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -150,10 +151,25 @@ func load_semblage_component(text):
 			Common.add_item_to_tree(new_object, object_tree, object_tree_root)
 			components[new_object] = []
 
-		if cur_object != null and line.begins_with(cur_object + "=" + cur_object):
-			# Update the context string in the ContextHandler
-			var addition = line.replace(cur_object + "=" + cur_object, "")
+		var addition = null
 
+		# See if we have a binary or normal operation
+		if cur_object != null and line.find("=") > 0 and not line.split("=")[1].begins_with(cur_object):
+			addition = line.replace(cur_object + "=", "")
+
+			# Extract the relevant components from the binary operation
+			var binary_op = _map_binary_op(line)
+
+			# Save the parts of the binary operation
+			combined[binary_op.keys()[0]] = binary_op[binary_op.keys()[0]]
+
+			_handle_binary_tree_items(object_tree)
+		elif cur_object != null and line.begins_with(cur_object + "=" + cur_object):
+			# Update the context string in the ContextHandler
+			addition = line.replace(cur_object + "=" + cur_object, "")
+
+		# Only add the addition if there is something to add
+		if addition != null:
 			# Add the current item to the history tree
 			Common.add_item_to_tree(addition, history_tree, history_tree_root)
 			components[cur_object].append(addition)
@@ -162,6 +178,38 @@ func load_semblage_component(text):
 
 	# Selecting the first component in the list is a sane default
 	object_tree_root.get_children().select(0)
+
+
+"""
+Handles the nesting of binary (i.e. boolean) tree components.
+"""
+func _handle_binary_tree_items(object_tree):
+	# Add all the components back to the tree, nesting as needed
+	for component in components.keys():
+		if component in combined.keys():
+			# Search through all of the nested items to see if any components go in there
+			for item in combined[component]:
+				# Remove the current item from the root of the tree if they are going to be nested
+				var remove_item = Common.get_tree_item_by_text(object_tree, item)
+				object_tree.get_root().remove_child(remove_item)
+
+				# Add the current item as a child of the parent binary operation
+				var tree_item = Common.get_tree_item_by_text(object_tree, component)
+				var new_obj_item = object_tree.create_item(tree_item)
+				new_obj_item.set_text(0, item)
+
+"""
+Extracts the relevant components of a binary operation.
+"""
+func _map_binary_op(line):
+	var key = line.split("=")[0]
+	var first_comp = line.split("=")[1].split(".")[0]
+	var second_comp = line.split("(")[1].split(",")[0]
+
+	var dict = { key: [first_comp, second_comp] }
+
+	return dict
+
 
 """
 Collects all of the history tree items and renders them into an
@@ -183,7 +231,11 @@ func _render_history_tree():
 	# Step through all branches of the component tree and add them to the script
 	for component in components.keys():
 		for item in components[component]:
-			component_text += component  + "=" + component + item + "\n"
+			# Handle binary (i.e. boolean operations)
+			if item.begins_with("."):
+				component_text += component  + "=" + component + item + "\n"
+			else:
+				component_text += component  + "=" + item + "\n"
 
 	# Render the script text collected from the history tree, but only if there is something to render
 	if not self.component_text.ends_with("=cq\n"):
@@ -235,7 +287,8 @@ func _render_component_text():
 
 	# Set all of the individual components up to be displayed
 	for component in components.keys():
-		script_text += "\nshow_object(" + component + ")"
+		if _should_show(component):
+			script_text += "\nshow_object(" + component + ")"
 
 	# Pass the script to the Python layer to convert it to tessellated JSON
 	var component_json = cqgipy.build(script_text)
@@ -467,7 +520,7 @@ func _clear_viewport():
 """
 Retries the updated context and makes it the current one.
 """
-func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
+func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context, combine_map):
 	var vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
 	var object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
 	var object_tree_root = _get_object_tree_root(object_tree)
@@ -554,6 +607,13 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context):
 
 		# Save this new template as part of the components data structure
 		components[new_object].append(new_template)
+
+	# If there was a binary (i.e. boolean) operation, nest objects as appropriate
+	if combine_map != null:
+		# Save this combine map
+		combined = combine_map
+
+		_handle_binary_tree_items(object_tree)
 
 	Common.select_tree_item_by_text(object_tree, new_object)
 
@@ -709,7 +769,8 @@ func _save_component_text():
 	# Add show calls for each of the components
 	var show_code = ""
 	for component in components.keys():
-		show_code += "\nshow_object(" + component + ")"
+		if _should_show(component):
+			show_code += "\nshow_object(" + component + ")"
 
 	var file = File.new()
 	file.open(self.open_file_path, File.WRITE)
@@ -717,6 +778,20 @@ func _save_component_text():
 	file.close()
 
 	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Component saved")
+
+
+"""
+Figures out whether or not a component should be displayed.
+"""
+func _should_show(component):
+	var should_show = true
+
+	# If there are combined items, search the list to see if it should be displayed
+	if combined.size() > 0:
+		if component in combined[combined.keys()[0]]:
+			should_show = false
+
+	return should_show
 
 
 """

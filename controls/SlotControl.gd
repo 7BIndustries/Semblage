@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name SlotControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".slot2D(length={length},diameter={diameter},angle={angle})"

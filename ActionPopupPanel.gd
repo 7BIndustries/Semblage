@@ -106,24 +106,14 @@ func activate_edit_mode(component_text, item_text):
 	if popup_action == null:
 		return
 
-	# Filter out leading workplanes from any potential action keys
-	var action_key = item_text
-	var rgx = RegEx.new()
-	rgx.compile("^\\.workplane\\(.*\\)\\.")
-	var res = rgx.search(item_text)
-	if res:
-		action_key = item_text.replace(res.get_string(), ".")
-
-	action_key = action_key.split(".")[1].split("(")[0]
-
 	# Show the popup
 	activate_popup(component_text, true)
 
 	# Select the correct group button based on the next action
-	_select_group_button(popup_action[action_key].group)
+	_select_group_button(popup_action.values()[0].group)
 
 	# Make sure the correct item is selected
-	Common.set_option_btn_by_text($VBoxContainer/ActionOptionButton, popup_action[action_key].name)
+	Common.set_option_btn_by_text($VBoxContainer/ActionOptionButton, popup_action.values()[0].name)
 
 	_set_action_control()
 
@@ -134,7 +124,11 @@ func activate_edit_mode(component_text, item_text):
 	# and fill the actions tree with them
 	var parts = item_text.split(").")
 
-	if parts.size() > 1 and \
+	# See if this is a binary (i.e. boolean) item
+	var is_binary = ContextHandler.is_binary(item_text)
+
+	# Fille the 2D history tree, if needed
+	if parts.size() > 1 and not is_binary and \
 			item_text.begins_with(".Workplane(") == false and \
 			item_text.begins_with(".workplane(") == false and \
 			item_text.begins_with(".faces(") == false and \
@@ -262,7 +256,12 @@ func _on_OkButton_button_down():
 
 		new_context = ContextHandler.update_context_string(original_context, new_template)
 
-	emit_signal("ok_signal", edit_mode, new_template, new_context)
+	# Handle binary controls
+	var combine_map = null
+	if cont.is_binary:
+		combine_map = cont.get_combine_map()
+
+	emit_signal("ok_signal", edit_mode, new_template, new_context, combine_map)
 	hide()
 
 

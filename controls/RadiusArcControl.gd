@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name RadiusArcControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".radiusArc(endPoint=({end_point_x},{end_point_y}),radius={radius},forConstruction={for_construction})"

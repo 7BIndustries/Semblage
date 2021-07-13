@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name SphereControl
 
+var is_binary = false
+
 var radius_ctrl = null
 var direct_x_ctrl = null
 var direct_y_ctrl = null

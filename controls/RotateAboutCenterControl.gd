@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name RotateAboutCenterControl
 
+var is_binary = false
+
 var template = ".rotateAboutCenter(axisEndPoint=({axis_end}),angleDegrees={angle_degrees})"
 
 var prev_template = null

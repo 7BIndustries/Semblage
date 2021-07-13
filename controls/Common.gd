@@ -58,6 +58,29 @@ static func add_columns_to_tree(cols, tree, tree_root):
 
 
 """
+Searches the tree for a tree item with matching text and returns it
+if it exists.
+"""
+static func get_tree_item_by_text(tree, text):
+	var cur_item = tree.get_root().get_children()
+	var res = null
+
+	# Search the tree and update the matchine entry in the tree
+	while true:
+		if cur_item == null:
+			break
+		else:
+			# If we have a text match, update the matching TreeItem's text
+			if cur_item.get_text(0) == text:
+				res = cur_item
+				break
+
+			cur_item = cur_item.get_next()
+
+	return res
+
+
+"""
 Lets the caller confirm if an item already exists in a tree.
 """
 static func _check_tree_item_exists(tree, text):

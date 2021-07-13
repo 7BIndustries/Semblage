@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name PolygonControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".polygon(nSides={nSides},diameter={diameter},forConstruction={for_construction})"

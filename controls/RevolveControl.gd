@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name RevolveControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".revolve(angleDegrees={angle_degrees},axisStart={axis_start},axisEnd={axis_end},combine={combine},clean={clean})"

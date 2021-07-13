@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name ChamferControl
 
+var is_binary = false
+
 var prev_template = null
 
 var length_ctrl = null

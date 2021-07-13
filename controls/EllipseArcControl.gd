@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name EllipseArcControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".ellipseArc({x_radius},{y_radius},angle1={angle1},angle2={angle2},rotation_angle={rotation_angle},sense={sense},forConstruction={forConstruction},startAtCurrent={startAtCurrent},makeWire={makeWire})"

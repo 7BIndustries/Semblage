@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name VLineControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".vLine({distance},forConstruction={for_construction})"

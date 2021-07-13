@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name OperationsControl
 
+var is_binary = false
+
 var prev_template = null
 
 var op_list = ["None", "Extrude", "Twist Extrude", "Blind Cut", "Thru Cut", "Revolve"]

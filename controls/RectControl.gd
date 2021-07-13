@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name RectControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".rect({xLen},{yLen},centered={centered},forConstruction={for_construction})"

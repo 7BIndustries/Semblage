@@ -4,6 +4,8 @@ class_name PolylineControl
 
 signal error
 
+var is_binary = false
+
 var template = ".polyline(listOfXYTuple=[{listOfXYTuple}],forConstruction={forConstruction},includeCurrent={includeCurrent})"
 
 var prev_template = null

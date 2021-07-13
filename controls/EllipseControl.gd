@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name EllipseControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".ellipse({x_radius},{y_radius},rotation_angle={rotation_angle},forConstruction={forConstruction})"

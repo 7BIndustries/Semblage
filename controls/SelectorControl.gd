@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name SelectorControl
 
+var is_binary = false
+
 # Face selector controls
 var face_comps = null
 var face_comps_opt_1 = null

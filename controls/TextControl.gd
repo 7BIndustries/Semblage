@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name TextControl
 
+var is_binary = false
+
 var txt_ctrl = null
 var font_size_ctrl = null
 var distance_ctrl = null

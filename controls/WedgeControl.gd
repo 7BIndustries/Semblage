@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name WedgeControl
 
+var is_binary = false
+
 var dx_ctrl = null
 var dy_ctrl = null
 var dz_ctrl = null

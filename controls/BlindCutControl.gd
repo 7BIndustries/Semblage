@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name BlindCutControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".cutBlind({distance},clean={clean},taper={taper})"

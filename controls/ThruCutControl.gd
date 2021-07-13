@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name ThruCutControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".cutThruAll(clean={clean},taper={taper})"

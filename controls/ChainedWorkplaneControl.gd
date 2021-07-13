@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name ChainedWorkplaneControl
 
+var is_binary = false
+
 var prev_template = null
 
 var wp_name_ctrl = null

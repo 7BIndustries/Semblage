@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name SagittaArcControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".sagittaArc(endPoint=({end_point_x},{end_point_y}),sag={sag},forConstruction={for_construction})"

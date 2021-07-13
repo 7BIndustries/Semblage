@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name CenterControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".center({x_coord},{y_coord})"

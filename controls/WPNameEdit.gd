@@ -2,6 +2,8 @@ extends LineEdit
 
 class_name WPNameEdit
 
+var is_binary = false
+
 var invalid_lbl = null
 var is_valid = true
 

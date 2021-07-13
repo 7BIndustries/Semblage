@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name CBoreHoleControl
 
+var is_binary = false
+
 var prev_template = null
 
 #var select_ctrl = null

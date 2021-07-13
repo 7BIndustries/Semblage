@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name TranslateControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".translate(vec={vec})"

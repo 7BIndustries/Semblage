@@ -49,12 +49,15 @@ so that an edit may be performed.
 static func find_matching_edit_trigger(code_text):
 	var matching_action = {}
 
+	# Check to see if this is a binary operation (i.e. boolean)
+	var is_binary = is_binary(code_text)
+	if is_binary:
+		code_text = "." + code_text.split(".", false, 1)[1]
+
 	# Check to see if there is a leading workplane entry
-	var rgx = RegEx.new()
-	rgx.compile("^\\.workplane\\(.*\\)\\.")
-	var res = rgx.search(code_text)
-	if res:
-		code_text = code_text.replace(res.get_string(), ".")
+	var starts_with_wp = starts_with_workplane(code_text)
+	if starts_with_wp != null:
+		code_text = code_text.replace(starts_with_wp, ".")
 
 	# Step through all the possible triggers, looking for matches
 	for trigger in Triggers.get_triggers().keys():
@@ -257,3 +260,36 @@ static func needs_implicit_worplane(context):
 		ret = true
 
 	return ret
+
+
+"""
+Detects whether or not the statement is a binary (i.e. boolean) where
+two objects/components are used together.
+"""
+static func is_binary(item_text):
+	# See if this is a binary (i.e. boolean) item
+	var is_binary = false
+
+	var rgx = RegEx.new()
+	rgx.compile("^[a-zA-Z0-9_]+")
+	var res = rgx.search(item_text)
+	if res:
+		is_binary = true
+
+	return is_binary
+
+
+"""
+Tells whether a line starts with a workplane reference.
+"""
+static func starts_with_workplane(item_text):
+	# Check to see if there is a leading workplane entry
+	var starts_with_wp = null
+
+	var rgx = RegEx.new()
+	rgx.compile("^\\.workplane\\(.*\\)\\.")
+	var res = rgx.search(item_text)
+	if res:
+		starts_with_wp = res.to_string()
+
+	return starts_with_wp

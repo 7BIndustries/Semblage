@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name ExtrudeControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".extrude({distance},combine={combine},clean={clean},both={both},taper={taper})"

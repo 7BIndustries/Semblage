@@ -2,6 +2,8 @@ extends VBoxContainer
 
 class_name ThreePointArcControl
 
+var is_binary = false
+
 var prev_template = null
 
 var template = ".threePointArc(point1=({point_1_x},{point_1_y}),point2=({point_2_x},{point_2_y}),forConstruction={for_construction})"
