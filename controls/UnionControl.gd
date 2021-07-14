@@ -33,6 +33,7 @@ func _ready():
 	# First object option control
 	var first_object_opt = OptionButton.new()
 	first_object_opt.name = "first_object_opt"
+	first_object_opt.hint_tooltip = tr("FIRST_OBJECT_OPT_HINT_TOOLTIP")
 	first_object_opt.connect("item_selected", self, "_on_first_object_opt_item_selected")
 	first_obj_group.add_child(first_object_opt)
 
@@ -46,6 +47,7 @@ func _ready():
 	# Second object option control
 	var second_object_opt = OptionButton.new()
 	second_object_opt.name = "second_object_opt"
+	second_object_opt.hint_tooltip = tr("SECOND_OBJECT_OPT_HINT_TOOLTIP")
 	second_object_opt.connect("item_selected", self, "_on_second_object_opt_item_selected")
 	second_obj_group.add_child(second_object_opt)
 
@@ -59,6 +61,7 @@ func _ready():
 	# Tag name input text
 	var tag_name_txt = LineEdit.new()
 	tag_name_txt.name = "tag_name_txt"
+	tag_name_txt.hint_tooltip = tr("WP_NAME_CTRL_HINT_TOOLTIP")
 	tag_name_group.add_child(tag_name_txt)
 
 	# The tolerance for the fuzzy boolean operation
@@ -72,6 +75,7 @@ func _ready():
 	var tol_num = NumberEdit.new()
 	tol_num.name = "tol_num"
 	tol_num.set_text("0")
+	tol_num.hint_tooltip = tr("TOL_NUM_HINT_TOOLTIP")
 	tol_group.add_child(tol_num)
 
 	# Add the clean checkbox
@@ -146,10 +150,15 @@ func get_completed_template():
 	var clean_ctrl = get_node("clean_group/clean_ctrl")
 	var glue_ctrl = get_node("glue_group/glue_ctrl")
 
+	# Handle the tolerance not being used
+	var tolerance = tol_num.get_text()
+	if tolerance == 0:
+		tolerance = "None"
+
 	complete = template.format({
 		"first_obj": first_object_opt.get_item_text(first_object_opt.selected),
 		"second_obj": second_object_opt.get_item_text(second_object_opt.selected),
-		"tolerance": tol_num.get_text(),
+		"tolerance": tolerance,
 		"clean": clean_ctrl.pressed,
 		"glue": glue_ctrl.pressed,
 		"comp_name": tag_name_txt.get_text()
@@ -240,12 +249,12 @@ func _validate_form():
 	# There must be at least two objects for a boolean operation to work
 	if first_object_opt.get_item_count() <= 1 and second_object_opt.get_item_count() <= 1:
 		error_btn_group.show()
-		error_btn.hint_tooltip = "There must be two components for a boolean operation to be used."
+		error_btn.hint_tooltip = tr("BINARY_OP_ERROR_TWO_COMPONENTS")
 		valid = false
 	# The first and second objects cannot be the same
 	elif first_object_opt.get_item_text(first_object_opt.selected) == second_object_opt.get_item_text(second_object_opt.selected):
 		error_btn_group.show()
-		error_btn.hint_tooltip = "Two different components must be selected for a union."
+		error_btn.hint_tooltip = tr("BINARY_OP_ERROR_TWO_DIFF_COMPONENTS")
 		valid = false
 	else:
 		valid = true
