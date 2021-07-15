@@ -83,6 +83,7 @@ func _clear_popup():
 	# Clear the previous control item(s) from the DynamicContainer
 	for child in $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children():
 		$VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.remove_child(child)
+		child.free()
 
 
 """

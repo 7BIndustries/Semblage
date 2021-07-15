@@ -152,7 +152,7 @@ func get_completed_template():
 
 	# Handle the tolerance not being used
 	var tolerance = tol_num.get_text()
-	if tolerance == 0:
+	if tolerance == "0":
 		tolerance = "None"
 
 	complete = template.format({
