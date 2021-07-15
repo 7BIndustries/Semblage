@@ -2,16 +2,16 @@ extends VBoxContainer
 
 signal error
 
-class_name CutControl
+class_name IntersectControl
 
 var is_binary = true
 
 var prev_template = null
 
-var template = "{first_obj}.cut({second_obj},clean={clean}).tag(\"{comp_name}\")"
+var template = "{first_obj}.intersect({second_obj},clean={clean}).tag(\"{comp_name}\")"
 
-const first_obj_edit_rgx = "(?<=^)(.*?)(?=\\.cut)"
-const second_obj_edit_rgx = "(?<=.cut\\()(.*?)(?=,clean)"
+const first_obj_edit_rgx = "(?<=^)(.*?)(?=\\.intersect)"
+const second_obj_edit_rgx = "(?<=.intersect\\()(.*?)(?=,clean)"
 const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\))"
 const tag_edit_rgx = "(?<=.tag\\(\")(.*?)(?=\"\\))"
 
@@ -21,7 +21,7 @@ var valid = false
 Called when the node enters the scene tree.
 """
 func _ready():
-	# Control to set the first object of the cut
+	# Control to set the first object of the intersect
 	var first_obj_group = VBoxContainer.new()
 	first_obj_group.name = "first_obj_group"
 	# First object label
@@ -35,7 +35,7 @@ func _ready():
 	first_object_opt.connect("item_selected", self, "_on_first_object_opt_item_selected")
 	first_obj_group.add_child(first_object_opt)
 
-	# Control to set the second object of the cut
+	# Control to set the second object of the intersect
 	var second_obj_group = VBoxContainer.new()
 	second_obj_group.name = "second_obj_group"
 	# Second object label
@@ -217,7 +217,7 @@ func _build_new_name():
 		var first_object_opt = get_node("first_obj_group/first_object_opt")
 		var second_object_opt = get_node("second_obj_group/second_object_opt")
 
-		# Set the new component name to the combination of both components that are being cut
+		# Set the new component name to the combination of both components that are being intersected
 		var first_text = first_object_opt.get_item_text(first_object_opt.selected)
 		var second_text = second_object_opt.get_item_text(second_object_opt.selected)
 
@@ -239,7 +239,7 @@ func get_combine_map():
 	var first_object_opt = get_node("first_obj_group/first_object_opt")
 	var second_object_opt = get_node("second_obj_group/second_object_opt")
 
-	# Set the new component name to the combination of both components that are being cut
+	# Set the new component name to the combination of both components that are being intersected
 	var first_text = first_object_opt.get_item_text(first_object_opt.selected)
 	var second_text = second_object_opt.get_item_text(second_object_opt.selected)
 
@@ -250,7 +250,7 @@ func get_combine_map():
 
 
 """
-Called when the user selects a first component to be cut.
+Called when the user selects a first component to be intersected.
 """
 func _on_first_object_opt_item_selected(_index):
 	_validate_form()
@@ -260,7 +260,7 @@ func _on_first_object_opt_item_selected(_index):
 
 
 """
-Called when the user selects a first component to be cut.
+Called when the user selects a first component to be intersected.
 """
 func _on_second_object_opt_item_selected(_index):
 	_validate_form()

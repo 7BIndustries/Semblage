@@ -233,15 +233,6 @@ static func get_triggers():
 				"control": "res://controls/WedgeControl.gd"
 			}
 		},
-		"union": {
-			"trigger": "\\..*(.*)$",
-			"edit_trigger": "^\\.union\\(.*\\)$",
-			"action": {
-				"name": "Boolean - Union (union)",
-				"group": "3D",
-				"control": "res://controls/UnionControl.gd"
-			}
-		},
 		"cut": {
 			"trigger": "\\..*(.*)$",
 			"edit_trigger": "^\\.cut\\(.*\\)$",
@@ -249,6 +240,24 @@ static func get_triggers():
 				"name": "Boolean - Cut (cut)",
 				"group": "3D",
 				"control": "res://controls/CutControl.gd"
+			}
+		},
+		"intersect": {
+			"trigger": "\\..*(.*)$",
+			"edit_trigger": "^\\.intersect\\(.*\\)$",
+			"action": {
+				"name": "Boolean - Intersect (intersect)",
+				"group": "3D",
+				"control": "res://controls/IntersectControl.gd"
+			}
+		},
+		"union": {
+			"trigger": "\\..*(.*)$",
+			"edit_trigger": "^\\.union\\(.*\\)$",
+			"action": {
+				"name": "Boolean - Union (union)",
+				"group": "3D",
+				"control": "res://controls/UnionControl.gd"
 			}
 		},
 		"circle": {
