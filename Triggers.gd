@@ -242,6 +242,15 @@ static func get_triggers():
 				"control": "res://controls/UnionControl.gd"
 			}
 		},
+		"cut": {
+			"trigger": "\\..*(.*)$",
+			"edit_trigger": "^\\.cut\\(.*\\)$",
+			"action": {
+				"name": "Boolean - Cut (cut)",
+				"group": "3D",
+				"control": "res://controls/CutControl.gd"
+			}
+		},
 		"circle": {
 			"trigger": "\\..*(.*)$",
 			"edit_trigger": "^\\.circle\\(.*\\)$",

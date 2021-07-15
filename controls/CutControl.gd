@@ -2,19 +2,17 @@ extends VBoxContainer
 
 signal error
 
-class_name UnionControl
+class_name CutControl
 
 var is_binary = true
 
 var prev_template = null
 
-var template = "{first_obj}.union({second_obj},clean={clean},glue={glue},tol={tolerance}).tag(\"{comp_name}\")"
+var template = "{first_obj}.cut({second_obj},clean={clean}).tag(\"{comp_name}\")"
 
 const first_obj_edit_rgx = "(?<=^)(.*?)(?=\\.union)"
 const second_obj_edit_rgx = "(?<=.union\\()(.*?)(?=,clean)"
-const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=,glue)"
-const glue_edit_rgx = "(?<=glue\\=)(.*?)(?=,tol)"
-const tolerance_edit_rgx = "(?<=tol\\=)(.*?)(?=\\))"
+const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\))"
 const tag_edit_rgx = "(?<=.tag\\(\")(.*?)(?=\"\\))"
 
 var valid = false
@@ -64,20 +62,6 @@ func _ready():
 	tag_name_txt.hint_tooltip = tr("WP_NAME_CTRL_HINT_TOOLTIP")
 	tag_name_group.add_child(tag_name_txt)
 
-	# The tolerance for the fuzzy boolean operation
-	var tol_group = VBoxContainer.new()
-	tol_group.name = "tol_group"
-	# Tolerance label
-	var tol_lbl = Label.new()
-	tol_lbl.set_text("Fuzzy Bool Tolerance (0=off)")
-	tol_group.add_child(tol_lbl)
-	# Tolerance number input
-	var tol_num = NumberEdit.new()
-	tol_num.name = "tol_num"
-	tol_num.set_text("0")
-	tol_num.hint_tooltip = tr("TOL_NUM_HINT_TOOLTIP")
-	tol_group.add_child(tol_num)
-
 	# Add the clean checkbox
 	var clean_group = HBoxContainer.new()
 	clean_group.name = "clean_group"
@@ -89,18 +73,6 @@ func _ready():
 	clean_ctrl.pressed = true
 	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
-
-	# Add the glue checkbox
-	var glue_group = HBoxContainer.new()
-	glue_group.name = "glue_group"
-	var glue_lbl = Label.new()
-	glue_lbl.set_text("Glue: ")
-	glue_group.add_child(glue_lbl)
-	var glue_ctrl = CheckBox.new()
-	glue_ctrl.name = "glue_ctrl"
-	glue_ctrl.pressed = false
-	glue_ctrl.hint_tooltip = tr("GLUE_CTRL_HINT_TOOLTIP")
-	glue_group.add_child(glue_ctrl)
 
 	# Create the button that lets the user know that there is an error on the form
 	var error_btn_group = HBoxContainer.new()
@@ -114,9 +86,7 @@ func _ready():
 	add_child(first_obj_group)
 	add_child(second_obj_group)
 	add_child(tag_name_group)
-	add_child(tol_group)
 	add_child(clean_group)
-	add_child(glue_group)
 	add_child(error_btn_group)
 
 	# Pull any component names that already exist in the context
@@ -146,21 +116,12 @@ func get_completed_template():
 	var first_object_opt = get_node("first_obj_group/first_object_opt")
 	var second_object_opt = get_node("second_obj_group/second_object_opt")
 	var tag_name_txt = get_node("tag_name_group/tag_name_txt")
-	var tol_num = get_node("tol_group/tol_num")
 	var clean_ctrl = get_node("clean_group/clean_ctrl")
-	var glue_ctrl = get_node("glue_group/glue_ctrl")
-
-	# Handle the tolerance not being used
-	var tolerance = tol_num.get_text()
-	if tolerance == "0":
-		tolerance = "None"
 
 	complete = template.format({
 		"first_obj": first_object_opt.get_item_text(first_object_opt.selected),
 		"second_obj": second_object_opt.get_item_text(second_object_opt.selected),
-		"tolerance": tolerance,
 		"clean": clean_ctrl.pressed,
-		"glue": glue_ctrl.pressed,
 		"comp_name": tag_name_txt.get_text()
 	})
 
@@ -184,9 +145,7 @@ func set_values_from_string(text_line):
 	var first_object_opt = get_node("first_obj_group/first_object_opt")
 	var second_object_opt = get_node("second_obj_group/second_object_opt")
 	var tag_name_txt = get_node("tag_name_group/tag_name_txt")
-	var tol_num = get_node("tol_group/tol_num")
 	var clean_ctrl = get_node("clean_group/clean_ctrl")
-	var glue_ctrl = get_node("glue_group/glue_ctrl")
 
 	var rgx = RegEx.new()
 
@@ -208,25 +167,12 @@ func set_values_from_string(text_line):
 	if res:
 		tag_name_txt.set_text(res.get_string())
 
-	# Tolerance
-	rgx.compile(tolerance_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		tol_num.set_text(res.get_string())
-
 	# Clean checkbox
 	rgx.compile(clean_edit_rgx)
 	res = rgx.search(text_line)
 	if res:
 		var clean = res.get_string()
 		clean_ctrl.pressed = true if clean == "True" else false
-
-	# Glue checkbox
-	rgx.compile(glue_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		var glue = res.get_string()
-		glue_ctrl.pressed = true if glue == "True" else false
 
 	# Validate the form and populate the component name
 	_validate_form()
