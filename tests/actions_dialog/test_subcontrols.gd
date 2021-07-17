@@ -226,8 +226,8 @@ func test_intersect_control():
 	assert_eq(first_object_opt.get_item_text(first_object_opt.get_selected_id()), "box1", "Make sure the first object control has the correct default value.")
 	assert_eq(second_object_opt.get_item_text(second_object_opt.get_selected_id()), "box1", "Make sure the second object control has the correct default value.")
 
-	# Give the file time to be written
-	yield(yield_to(second_object_opt, "item_selected", 5), YIELD)
+	# Force the form validation
+	intersect_control._validate_form()
 
 	# Make sure that the error button is visible and has the correct tooltip
 	var error_btn = intersect_control.get_node("error_btn_group/error_btn")
