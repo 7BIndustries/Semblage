@@ -258,3 +258,29 @@ static func move_tree_item_down(tree, selected):
 	# Add all of the nodes back to the tree in the new order
 	for node in tree_nodes:
 		add_item_to_tree(node, tree, tree.get_root())
+
+
+"""
+Validates whether or not a tag name is also a valid
+Python variable name.
+"""
+static func _validate_tag_name(tag_name):
+	# Regex to protect against component names that start with a number
+	var num_start_regex = RegEx.new()
+	num_start_regex.compile("^[0-9].*")
+	var starts_with_num = num_start_regex.search(tag_name)
+
+	# Regex to protect against invalid characters in component names
+	var valid_chars_regex = RegEx.new()
+	valid_chars_regex.compile("^[a-zA-Z0-9_]+$")
+	var valid_chars = valid_chars_regex.search(tag_name)
+
+	# Check all the possible error conditions
+	if not valid_chars:
+		return false
+	elif starts_with_num:
+		return false
+	elif tag_name.find(" ") > 0:
+		return false
+	else:
+		return true

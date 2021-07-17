@@ -22,7 +22,7 @@ func test_workplane_button():
 
 	# Check to make sure the ActionOptionButton shows the correct default selection
 	var action_btn = popup.get_node("VBoxContainer/ActionOptionButton")
-	assert_eq(action_btn.get_item_text(action_btn.get_selected_id()), "Component (Workplane)")
+	assert_eq(action_btn.get_item_text(action_btn.get_selected_id()), "New Component")
 
 	wp_btn.free()
 	popup.free()

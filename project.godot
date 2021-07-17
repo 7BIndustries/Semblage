@@ -110,6 +110,11 @@ _global_script_classes=[ {
 "path": "res://controls/HoleControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "InlineWorkplaneControl",
+"language": "GDScript",
+"path": "res://controls/InlineWorkplaneControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "IntersectControl",
 "language": "GDScript",
 "path": "res://controls/IntersectControl.gd"
@@ -128,6 +133,11 @@ _global_script_classes=[ {
 "class": "LineToControl",
 "language": "GDScript",
 "path": "res://controls/LineToControl.gd"
+}, {
+"base": "VBoxContainer",
+"class": "LoftControl",
+"language": "GDScript",
+"path": "res://controls/LoftControl.gd"
 }, {
 "base": "Reference",
 "class": "Meshes",
@@ -375,10 +385,12 @@ _global_script_class_icons={
 "HLineControl": "",
 "HLineToControl": "",
 "HoleControl": "",
+"InlineWorkplaneControl": "",
 "IntersectControl": "",
 "LinAlg": "",
 "LineControl": "",
 "LineToControl": "",
+"LoftControl": "",
 "Meshes": "",
 "MirrorXControl": "",
 "MirrorYControl": "",

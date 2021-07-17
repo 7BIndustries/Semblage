@@ -244,3 +244,6 @@ TOL_NUM_HINT_TOOLTIP,"Tolerance value for fuzzy boolean operation mode. Default 
 GLUE_CTRL_HINT_TOOLTIP,Use a faster gluing mode for non-overlapping shapes. Setting this to true with overlapping shapes may result in incorrect results.
 BINARY_OP_ERROR_TWO_COMPONENTS,There must be two components for a binary (i.e. boolean) operation to be used.
 BINARY_OP_ERROR_TWO_DIFF_COMPONENTS,Two different components must be selected for a binary (i.e. boolean) operation.
+TAG_NAME_CHARACTER_ERROR,"Component names can only contain letters, numbers and underscores, and\ncannot start with a number."
+LOFT_WIRE_WP_OPT_HINT_TOOLTIP,Component containing wires that are to be used in the loft operation.
+NO_COMPONENT_SELECTED_ERROR,A component must be selected for this operation.

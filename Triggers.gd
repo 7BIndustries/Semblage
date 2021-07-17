@@ -12,9 +12,18 @@ static func get_triggers():
 			"trigger": "cq$",
 			"edit_trigger": "^\\.Workplane\\(.*\\).*",
 			"action": {
-				"name": "Component (Workplane)",
+				"name": "New Component",
 				"group": "WP",
 				"control": "res://controls/WorkplaneControl.gd"
+			}
+		},
+		"workplane": {
+			"trigger": "cq$",
+			"edit_trigger": "^\\.workplane\\(.*\\).*",
+			"action": {
+				"name": "workplane (workplane)",
+				"group": "WP",
+				"control": "res://controls/InlineWorkplaneControl.gd"
 			}
 		},
 		"center": {
@@ -150,6 +159,15 @@ static func get_triggers():
 				"name": "Hole (hole)",
 				"group": "3D",
 				"control": "res://controls/HoleControl.gd"
+			}
+		},
+		"loft": {
+			"trigger": "\\..*(.*)$",
+			"edit_trigger": "^\\.loft\\(.*\\)$",
+			"action": {
+				"name": "Loft (loft)",
+				"group": "3D",
+				"control": "res://controls/LoftControl.gd"
 			}
 		},
 		"revolve": {

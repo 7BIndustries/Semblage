@@ -75,7 +75,6 @@ func test_union_control():
 	# Simulate a click of the OK button on the Operations dialog
 	var ok_btn = popup.get_node("VBoxContainer/OkButton")
 	ok_btn.emit_signal("button_down")
-	print(popup.original_context)
 
 	# See if the results in the 3D viewport have changed appropriately
 	gui._render_history_tree()
@@ -159,7 +158,6 @@ func test_cut_control():
 	# Simulate a click of the OK button on the Operations dialog
 	var ok_btn = popup.get_node("VBoxContainer/OkButton")
 	ok_btn.emit_signal("button_down")
-	print(popup.original_context)
 
 	# See if the results in the 3D viewport have changed appropriately
 	gui._render_history_tree()
@@ -228,6 +226,9 @@ func test_intersect_control():
 	assert_eq(first_object_opt.get_item_text(first_object_opt.get_selected_id()), "box1", "Make sure the first object control has the correct default value.")
 	assert_eq(second_object_opt.get_item_text(second_object_opt.get_selected_id()), "box1", "Make sure the second object control has the correct default value.")
 
+	# Give the file time to be written
+	yield(yield_to(second_object_opt, "item_selected", 5), YIELD)
+
 	# Make sure that the error button is visible and has the correct tooltip
 	var error_btn = intersect_control.get_node("error_btn_group/error_btn")
 	assert_eq(error_btn.hint_tooltip, "Two different components must be selected for a binary (i.e. boolean) operation.")
@@ -243,7 +244,6 @@ func test_intersect_control():
 	# Simulate a click of the OK button on the Operations dialog
 	var ok_btn = popup.get_node("VBoxContainer/OkButton")
 	ok_btn.emit_signal("button_down")
-	print(popup.original_context)
 
 	# See if the results in the 3D viewport have changed appropriately
 	gui._render_history_tree()
@@ -253,3 +253,56 @@ func test_intersect_control():
 	threed_btn.free()
 	popup.free()
 	gui.free()
+
+
+"""
+Simulates as if the user was working with the Loft control.
+"""
+func test_loft_control():
+	# Get a reference to the whole interface and make sure we got it
+	var gui = partial_double("res://GUI.tscn").instance()
+	var popup = gui.get_node("ActionPopupPanel")
+
+	# Simulate a click of the workplane button
+	var threed_btn = popup.get_node("VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton")
+	threed_btn.pressed = true
+	threed_btn.emit_signal("toggled", threed_btn)
+
+		# Set the control up like it has been used
+	popup.original_context = '# Semblage v0.2\nimport cadquery as cq\nresult=cq.Workplane().tag("result")\nresult=result.circle(1.5)\nresult=result.workplane(offset=3.0)\nresult=result.rect(0.75, 0.5)'
+	gui.components["result"] = ['.Workplane().tag("result")', '.circle(1.5)', '.workplane(offset=3.0)', '.rect(0.75, 0.5)']
+
+	# Check to make sure the ActionOptionButton shows the correct default selection
+	var action_btn = popup.get_node("VBoxContainer/ActionOptionButton")
+	Common.set_option_btn_by_text(action_btn, "Loft (loft)")
+	assert_eq(action_btn.get_item_text(action_btn.get_selected_id()), "Loft (loft)")
+	action_btn.emit_signal("item_selected", 0)
+
+	# Get the control ready for use
+	var loft_control = popup.get_node("VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer").get_children()[0]
+	loft_control._ready()
+
+	# Initialize the trees
+	gui._init_object_tree()
+	gui._init_history_tree()
+	gui._init_params_tree()
+
+	# Fake out the 2D operation action tree
+	var action_tree = popup.get_node("VBoxContainer/HBoxContainer/ActionContainer/ActionTree")
+	var action_tree_root = action_tree.create_item()
+
+	# Render the object in the 3D viewport
+	gui._render_history_tree()
+
+	# Get the viewport so we can make sure it has contents
+	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
+	assert_eq(vp.get_child_count(), 7)
+
+	# Simulate a click of the OK button on the Operations dialog
+	var ok_btn = popup.get_node("VBoxContainer/OkButton")
+	ok_btn.emit_signal("button_down")
+
+	# See if the results in the 3D viewport have changed appropriately
+	gui._render_history_tree()
+
+	assert_eq(vp.get_child_count(), 94)

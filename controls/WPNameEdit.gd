@@ -7,9 +7,6 @@ var is_binary = false
 var invalid_lbl = null
 var is_valid = true
 
-var num_start_regex = null
-var valid_chars_regex = null
-
 
 """
 Called when the node enters the scene tree for the first time.
@@ -20,14 +17,6 @@ func _ready():
 	self.invalid_lbl.add_color_override("font_color", Color(1,0,0,1))
 	self.invalid_lbl.hide()
 	add_child(self.invalid_lbl)
-
-	# Regex to protect against component names that start with a number
-	num_start_regex = RegEx.new()
-	num_start_regex.compile("^[0-9].*")
-
-	# Regex to protect against invalid characters in component names
-	valid_chars_regex = RegEx.new()
-	valid_chars_regex.compile("^[a-zA-Z0-9_]+$")
 
 
 """
@@ -42,20 +31,12 @@ func _gui_input(event):
 		# Full text, including the new entry
 		var txt = self.get_text()
 
+		var valid_tag_name = Common._validate_tag_name(txt)
+
 		# Check to make sure the input is valid
-		if txt.find(" ") > 0:
+		if not valid_tag_name:
 			self.invalid_lbl.show()
-			self.hint_tooltip = "Component name cannot contain spaces.\nUse underscores instead of spaces."
-
-			is_valid = false
-		elif num_start_regex.search(txt):
-			self.invalid_lbl.show()
-			self.hint_tooltip = "Component name cannot start with a number."
-
-			is_valid = false
-		elif not valid_chars_regex.search(txt):
-			self.invalid_lbl.show()
-			self.hint_tooltip = "Component name an only contain letters, numbers and underscores."
+			self.hint_tooltip = tr("TAG_NAME_CHARACTER_ERROR")
 
 			is_valid = false
 		else:
