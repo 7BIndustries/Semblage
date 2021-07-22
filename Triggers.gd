@@ -215,6 +215,15 @@ static func get_triggers():
 				"control": "res://controls/SplitControl.gd"
 			}
 		},
+		"sweep": {
+			"trigger": "\\..*(.*)$",
+			"edit_trigger": "^\\.sweep\\(.*\\)$",
+			"action": {
+				"name": "Sweep (sweep)",
+				"group": "3D",
+				"control": "res://controls/SweepControl.gd"
+			}
+		},
 		"text": {
 			"trigger": "\\..*(.*)$",
 			"edit_trigger": "^\\.text\\(.*\\)$",

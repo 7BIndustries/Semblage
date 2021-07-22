@@ -336,6 +336,10 @@ func set_values_from_string(text_line):
 		var pairs = res.get_string().split(",")
 		for pair in pairs:
 			var xy = pair.split(",")
+			# Safety catch for a trailing comma in the point list
+			if xy.size() < 2:
+				continue
+
 			_add_tuple_xy(xy[0], xy[1])
 
 	# Tangents
@@ -346,6 +350,10 @@ func set_values_from_string(text_line):
 		var pairs = res.get_string().split(",")
 		for pair in pairs:
 			var xy = pair.split(",")
+			# Safety catch for a trailing comma in the point list
+			if xy.size() < 2:
+				continue
+
 			_add_tan_xy(xy[0], xy[1])
 
 	# Periodic
