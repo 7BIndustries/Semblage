@@ -271,7 +271,7 @@ func test_loft_control():
 	threed_btn.pressed = true
 	threed_btn.emit_signal("toggled", threed_btn)
 
-		# Set the control up like it has been used
+	# Set the control up like it has been used
 	popup.original_context = '# Semblage v0.2\nimport cadquery as cq\nresult=cq.Workplane().tag("result")\nresult=result.circle(1.5)\nresult=result.workplane(offset=3.0)\nresult=result.rect(0.75, 0.5)'
 	gui.components["result"] = ['.Workplane().tag("result")', '.circle(1.5)', '.workplane(offset=3.0)', '.rect(0.75, 0.5)']
 
@@ -309,3 +309,80 @@ func test_loft_control():
 	gui._render_history_tree()
 
 	assert_eq(vp.get_child_count(), 94)
+
+
+"""
+Simulates as if the user was working with the sweep control.
+"""
+func test_sweep_control():
+	# Get a reference to the whole interface and make sure we got it
+	var gui = partial_double("res://GUI.tscn").instance()
+	var popup = gui.get_node("ActionPopupPanel")
+
+	# Set the control up like the object is being created by the user
+	popup.original_context = '# Semblage v0.2\nimport cadquery as cq\npath = cq.Workplane("XZ").tag("path").spline(pts)\nprofile = cq.Workplane("XY").tag("profile").circle(1.0)\nprofile_path = profile.sweep(path).tag("profile_path")'
+	gui.components["path"] = ['.Workplane("XZ").tag("path")', '.spline([(0, 1), (1, 2), (2, 4)])']
+	gui.components["profile"] = ['.Workplane("XY").tag("profile")', '.circle(1.0)']
+
+	# Initialize the trees
+	gui._init_object_tree()
+	gui._init_history_tree()
+	gui._init_params_tree()
+
+	# Render the object in the 3D viewport
+	gui._render_history_tree()
+
+	# Get the viewport so we can make sure it has contents
+	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
+	assert_eq(vp.get_child_count(), 28, "Make sure the viewport has the correct number of objects in it.")
+
+	# Simulate a click of the workplane button
+	var threed_btn = popup.get_node("VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton")
+	threed_btn.pressed = true
+	threed_btn.emit_signal("toggled", threed_btn)
+
+	# Check to make sure the ActionOptionButton shows the correct default selection
+	var action_btn = popup.get_node("VBoxContainer/ActionOptionButton")
+	Common.set_option_btn_by_text(action_btn, "Sweep (sweep)")
+	assert_eq(action_btn.get_item_text(action_btn.get_selected_id()), "Sweep (sweep)")
+	action_btn.emit_signal("item_selected", 0)
+
+	# Fake out the 2D operation action tree
+	var action_tree = popup.get_node("VBoxContainer/HBoxContainer/ActionContainer/ActionTree")
+	var action_tree_root = action_tree.create_item()
+
+	# Get a reference to the control that has been loaded
+	var sweep_control = popup.get_node("VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer").get_children()[0]
+	sweep_control._ready()
+
+	# Get references to the controls on the form
+	var profile_opt = sweep_control.get_node("profile_group/profile_opt")
+	var path_opt = sweep_control.get_node("path_group/path_opt")
+	var tag_name_txt = sweep_control.get_node("tag_name_group/tag_name_txt")
+
+	# Make sure all of the controls have the correct default values in them
+	assert_eq(profile_opt.get_item_text(profile_opt.get_selected_id()), "path", "Make sure the profile control has the correct default value.")
+	assert_eq(path_opt.get_item_text(path_opt.get_selected_id()), "path", "Make sure the path control has the correct default value.")
+
+	# Force the form validation
+	sweep_control._validate_form()
+
+	# Make sure that the error button is visible and has the correct tooltip
+	var error_btn = sweep_control.get_node("error_btn_group/error_btn")
+	assert_eq(error_btn.get_parent().visible, true)
+
+	# Set profile option button to the other object
+	Common.set_option_btn_by_text(profile_opt, "profile")
+	profile_opt.emit_signal("item_selected", 0)
+	assert_eq(error_btn.get_parent().visible, false)
+
+	# Make sure the combined name is correct
+	assert_eq(tag_name_txt.get_text(), "profile_path", "Make sure that the resulting tag name is correct.")
+
+	# Simulate a click of the OK button on the Operations dialog
+	var ok_btn = popup.get_node("VBoxContainer/OkButton")
+	ok_btn.emit_signal("button_down")
+
+	# See if the results in the 3D viewport have changed appropriately
+	gui._render_history_tree()
+	assert_eq(vp.get_child_count(), 54, "Make sure the viewport has the correct number of objects in it.")
