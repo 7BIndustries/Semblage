@@ -177,7 +177,7 @@ RELOAD_BUTTON_HINT_TOOLTIP,Manually reload the current CadQuery script.
 CLOSE_BUTTON_HINT_TOOLTIP,Close the currently open component.
 HOME_VIEW_BUTTON_HINT_TOOLTIP,Move the camera back to the home position.
 ABOUT_BUTTON_HINT_TOOLTIP,Show information about Semblage.
-WORKPLANE_BUTTON_HINT_TOOLTIP,Workplane operations
+WORKPLANE_BUTTON_HINT_TOOLTIP,Component and workplane operations
 THREE_D_BUTTON_HINT_TOOLTIP,3D operations
 SKETCH_BUTTON_HINT_TOOLTIP,2D sketch operations
 SELECTOR_BUTTON_HINT_TOOLTIP,Selector operations
