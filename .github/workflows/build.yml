@@ -1,0 +1,23 @@
+name: build
+
+# Controls when the action will run. 
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+build-win:
+    runs-on: "windows-latest"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Install Godot
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri https://downloads.tuxfamily.org/godotengine/3.3.2/Godot_v3.3.2-stable_x11.64.zip -OutFile .
+          Expand-Archive -LiteralPath Godot_v3.3.2-stable_x11.64.zip -DestinationPath .
+      - name: Run tests
+        shell: pwsh
+        run: |
+          conda info 
+          pytest -v

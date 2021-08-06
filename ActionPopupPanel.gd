@@ -183,6 +183,10 @@ func activate_popup(component_text, edit_mode_new):
 	else:
 		next_action = ContextHandler.get_next_action(component_text)
 
+	# If we did not get a matching action, the user might be doing something like defining parameters
+	if next_action.empty():
+		next_action["Workplane"] = Triggers.get_triggers()["Workplane"].action
+
 	# Select the correct group button based on the next action
 	_select_group_button(next_action[next_action.keys()[0]].group)
 
