@@ -19,6 +19,7 @@ jobs:
         uses: firebelley/godot-export@v2.8.0
         with:
           create_release: false
+          archive_export_output: true
           base_version: 0.1.0
           godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/3.3/Godot_v3.3-stable_linux_headless.64.zip
           godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/3.3/Godot_v3.3-stable_export_templates.tpz
