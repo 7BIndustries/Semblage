@@ -465,7 +465,7 @@ gdscript/warnings/unsafe_call_argument=true
 
 [editor_plugins]
 
-enabled=PoolStringArray( "gut" )
+enabled=PoolStringArray( "res://addons/cadquery_export/plugin.cfg", "res://addons/gut/plugin.cfg" )
 
 [gdnative]
 
