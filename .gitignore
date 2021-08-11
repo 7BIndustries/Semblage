@@ -19,6 +19,7 @@ __pycache__
 LICENSE.txt
 README.txt
 lib/*
+!lib/README.md
 addons/pythonscript/venv
 addons/pythonscript/x11-64
 addons/pythonscript/osx-64
