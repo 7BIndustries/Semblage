@@ -42,5 +42,9 @@ jobs:
           cd $PWD/lib/
           tar -xvf semblage_libs.tar.xz
           cd ..
+          curl https://github.com/bitwes/Gut/archive/refs/tags/v7.1.0.tar.gz --output gut.tar.gz
+          tar -xvf gut.tar.gz
+          curl https://github.com/touilleMan/godot-python/releases/download/v0.50.0/godot-python-0.50.0-x11-64.tar.bz2 --output pythonscript.tar.bz2
+          tar -xvf pythonscript.tar.bz2
           export LD_LIBRARY_PATH=$PWD/lib
           LD_LIBRARY_PATH=$PWD/lib ./Godot_v3.3.2-stable_linux_headless.64 --verbose -d -s --path ./project addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit

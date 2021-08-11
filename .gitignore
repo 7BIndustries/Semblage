@@ -14,7 +14,8 @@ data_*/
 __pycache__
 
 # We do not want to upload platform specific godot-plugin files
-# addons
+addons/gut
+addons/pythonscript
 # pythonscript.gdnlib
 LICENSE.txt
 README.txt
