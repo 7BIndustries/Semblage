@@ -469,7 +469,7 @@ enabled=PoolStringArray( "res://addons/cadquery_export/plugin.cfg" )
 
 [gdnative]
 
-singletons=[ "res://addons/pythonscript.gdnlib", "res://pythonscript.gdnlib" ]
+singletons=[ "res://pythonscript.gdnlib" ]
 _global_script_classes=[ {
 "base": "VBoxContainer",
 "class": "BlindCutControl",

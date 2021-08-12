@@ -46,7 +46,7 @@ jobs:
           relative_project_path: ./
         env:
           GITHUB_TOKEN: ${{ secrets.EXPORT_GITHUB_TOKEN }}
-      - name: Upload Executables
+      - name: Upload Packages
         uses: actions/upload-artifact@v2
         with:
           name: executables

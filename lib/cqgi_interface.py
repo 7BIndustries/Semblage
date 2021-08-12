@@ -286,6 +286,7 @@ class cqgi_interface(Node):
 	build_success = signal()
 	build_failure = signal()
 
+
 	def execute(self, script_text):
 		"""
 		Executes/builds the given script text and returns the

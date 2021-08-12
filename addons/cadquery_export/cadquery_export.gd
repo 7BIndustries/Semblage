@@ -25,6 +25,16 @@ class Exporter extends EditorExportPlugin:
 			var export_to_path = path.replace("/Semblage.x86_64", "") + "/" + d
 			_copy_recursive(export_from_path, export_to_path)
 
+		# OS-specific actions
+		if OS.get_name() == "X11":
+			# Export the launcher script to make Semblage easier to launch
+			var export_from_path = ProjectSettings.globalize_path("res://") + "scripts/Semblage_Linux.sh"
+			var export_to_path = path.replace("/Semblage.x86_64", "") + "/Semblage"
+			dir.copy(export_from_path, export_to_path)
+
+			# Make sure the launcher is set to be executable
+			OS.execute("chmod", ["+x", export_to_path])
+
 
 	"""
 	Allows us to copy directories via Godot's filesystem interface.
