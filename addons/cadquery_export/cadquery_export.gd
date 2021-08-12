@@ -26,7 +26,7 @@ class Exporter extends EditorExportPlugin:
 			_copy_recursive(export_from_path, export_to_path)
 
 		# OS-specific actions
-		if OS.get_name() == "X11":
+		if path.find(".x86_64") > 0:
 			# Export the launcher script to make Semblage easier to launch
 			var export_from_path = ProjectSettings.globalize_path("res://") + "scripts/Semblage_Linux.sh"
 			var export_to_path = path.replace("/Semblage.x86_64", "") + "/Semblage"
