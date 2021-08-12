@@ -48,9 +48,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.EXPORT_GITHUB_TOKEN }}
       - name: Clean Up Export
         run: |
-          mkdir ~/.local/share/godot/dist/Semblage_Linux
-          cd ~/.local/share/godot/dist/Semblage_Linux
+          mkdir ~/.local/share/godot/dist/Semblage_Linux/Semblage_Linux
+          cd ~/.local/share/godot/dist/Semblage_Linux/Semblage_Linux
           unzip ~/.local/share/godot/dist/LinuxX11.zip
+          chmod +x Semblage
       - name: Upload Packages
         uses: actions/upload-artifact@v2
         with:
