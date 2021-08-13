@@ -12,29 +12,64 @@ class Exporter extends EditorExportPlugin:
 	func _export_begin(features, is_debug, path, flags):
 		output_root_dir = path.get_base_dir()
 
-		self._export_dirs(path)
+		# Figure out which OS we are exporting for
+		if path.find(".x86_64") > 0:
+			print("Linux Export")
+			self._export_dirs_linux(path)
+		elif path.find(".exe") > 0:
+			print("Windows Export")
+			self._export_dirs_windows(path)
+		else:
+			print("MacOS Export")
+			self._export_dirs_macos(path)
 
 
 	"""
 	Exports copies of any CadQuery related directories to the export location.
 	"""
-	func _export_dirs(path):
+	func _export_dirs_linux(path):
+		var replace_str = "/Semblage.x86_64"
+
 		var dir = Directory.new()
 		for d in include_dirs:
+			var export_to_path = path.replace(replace_str, "") + "/" + d
 			var export_from_path = ProjectSettings.globalize_path("res://") + d
-			var export_to_path = path.replace("/Semblage.x86_64", "") + "/" + d
+
 			_copy_recursive(export_from_path, export_to_path)
 
-		# OS-specific actions
-		if path.find(".x86_64") > 0:
-			# Export the launcher script to make Semblage easier to launch
-			var export_from_path = ProjectSettings.globalize_path("res://") + "scripts/Semblage_Linux.sh"
-			var export_to_path = path.replace("/Semblage.x86_64", "") + "/Semblage"
-			dir.copy(export_from_path, export_to_path)
+		# Export the launcher script to make Semblage easier to launch
+		var export_from_path = ProjectSettings.globalize_path("res://") + "scripts/Semblage_Linux.sh"
+		var export_to_path = path.replace(replace_str, "") + "/Semblage"
+		dir.copy(export_from_path, export_to_path)
 
-			# Make sure the launcher is set to be executable
-			OS.execute("chmod", ["+x", export_to_path])
+		# Make sure the launcher is set to be executable
+		OS.execute("chmod", ["+x", export_to_path])
 
+
+	"""
+	Exports copies of any CadQuery related directories to the export location.
+	"""
+	func _export_dirs_windows(path):
+		var replace_str = "/Semblage.exe"
+
+		var export_from_path = ProjectSettings.globalize_path("res://")
+		var export_to_path = path.replace(replace_str, "")
+
+		# Make the addons and lib directories so that we can copy data into them
+		var dir = Directory.new()
+		dir.make_dir_recursive(export_to_path + "/addons/pythonscript")
+		dir.make_dir(export_to_path + "/lib")
+
+		# Copy the PythonScript files over
+		_copy_recursive(export_from_path + "/addons/pythonscript/windows-64", export_to_path + "/addons/pythonscript/windows-64")
+		_copy_recursive(export_from_path + "cq-cli-Windows/", export_to_path + "/addons/pythonscript/windows-64/DLLs")
+
+
+	func _export_dirs_macos(path):
+		var replace_str = "/Semblage.zip"
+
+		var export_from_path = ProjectSettings.globalize_path("res://")
+		var export_to_path = path.replace(replace_str, "")
 
 	"""
 	Allows us to copy directories via Godot's filesystem interface.
