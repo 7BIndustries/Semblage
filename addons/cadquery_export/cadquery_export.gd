@@ -56,14 +56,15 @@ class Exporter extends EditorExportPlugin:
 		var export_to_path = path.replace(replace_str, "")
 
 		# Make the addons and lib directories so that we can copy data into them
-		var dir = Directory.new()
-		dir.make_dir_recursive(export_to_path + "/addons/pythonscript")
-		dir.make_dir(export_to_path + "/lib")
+#		var dir = Directory.new()
+#		dir.make_dir_recursive(export_to_path + "/addons/pythonscript")
+#		dir.make_dir(export_to_path + "/lib")
 
-		# Copy the PythonScript files over
-		_copy_recursive(export_from_path + "/addons/pythonscript/windows-64", export_to_path + "/addons/pythonscript/windows-64")
+		_copy_recursive(export_from_path, export_to_path)
+
+#		# Copy the PythonScript files over
+#		_copy_recursive(export_from_path + "/addons/pythonscript/windows-64", export_to_path + "/addons/pythonscript/windows-64")
 		_copy_recursive(export_from_path + "cq-cli-Windows/", export_to_path + "/addons/pythonscript/windows-64/DLLs")
-
 
 	func _export_dirs_macos(path):
 		var replace_str = "/Semblage.zip"
