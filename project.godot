@@ -264,11 +264,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/SelectorControl.gd"
 }, {
-"base": "Reference",
-"class": "Settings",
-"language": "GDScript",
-"path": "res://Settings.gd"
-}, {
 "base": "VBoxContainer",
 "class": "ShellControl",
 "language": "GDScript",
@@ -421,7 +416,6 @@ _global_script_class_icons={
 "SectionControl": "",
 "Security": "",
 "SelectorControl": "",
-"Settings": "",
 "ShellControl": "",
 "SketchControl": "",
 "SlotControl": "",
