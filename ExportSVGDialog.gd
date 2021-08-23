@@ -157,14 +157,18 @@ func is_valid():
 Called to export a single file to the local file system.
 """
 func _export_to_file(svg_path, output_opts, section_height):
-	var script_text = get_parent().component_text
+	var script_text = get_parent()._convert_component_tree_to_script(false)
+	var ct = get_parent().get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
 
-	# If the caller provided a section height, use it
-	if section_height:
-		script_text += "\nchange_me = change_me.section(" + str(section_height) + ")"
+	var comp_names = Common.get_all_components(ct)
 
-	# Make sure something gets exported
-	script_text += "\nshow_object(change_me)"
+	for comp_name in comp_names:
+		# If the caller provided a section height, use it
+		if section_height:
+			script_text += "\n" + comp_name + "=" + comp_name + ".section(" + str(section_height) + ")"
+
+		# Make sure something gets exported
+		script_text += "\nshow_object(" + comp_name + ")"
 
 	var ret = cqgipy.export(script_text, "svg", OS.get_user_data_dir(), output_opts)
 
@@ -176,7 +180,7 @@ func _export_to_file(svg_path, output_opts, section_height):
 	else:
 		# Read the exported file contents and write them to their final location
 		# Work-around for not being able to write to the broader filesystem via Python
-		var stl_text = FileSystem.load_component(ret)
+		var stl_text = FileSystem.load_file_text(ret)
 		FileSystem.save_component(svg_path, stl_text)
 
 

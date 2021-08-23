@@ -7,17 +7,22 @@ Simulates the user clicking the Save button.
 func test_save_button():
 	# Get a reference to the whole interface and make sure we got it
 	var gui = partial_double("res://GUI.tscn").instance()
-	assert_not_null(gui)
+	gui._ready()
 
-	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\n"
-	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
-	gui._init_object_tree()
+	# Initialize the trees
+	gui._init_component_tree()
+	gui._init_params_tree()
+
+	# Set up the main component tree with the content we want
+	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	Common.add_component("box1", ct)
+	Common.add_operation("box1", '.Workplane().tag("box1")', ct)
+	Common.add_operation("box1", '.box(10,10,10)', ct)
 
 	# Make sure the objects tree has items in it
-	var objects_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
-	var objects_tree_root = objects_tree.get_root()
-	Common.add_item_to_tree("change_me", objects_tree, objects_tree_root)
+	var component_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	var component_tree_root = component_tree.get_root()
+	Common.add_item_to_tree("change_me", component_tree, component_tree_root)
 
 	# Get a reference to the Save button and make sure we got something
 	var save_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton")
@@ -69,7 +74,7 @@ func test_save_button():
 	file.open("/tmp/test.py", File.READ)
 	var content = file.get_as_text()
 	file.close()
-	assert_eq(content, gui.component_text + "\nshow_object(change_me)", "Make sure that the saved file has the correct contents.")
+	assert_eq(content, gui._convert_component_tree_to_script(true), "Make sure that the saved file has the correct contents.")
 
 
 """
@@ -78,16 +83,21 @@ Tests as if the user saved multiple components to file.
 func test_save_multi_component():
 	# Get a reference to the whole interface and make sure we got it
 	var gui = partial_double("res://GUI.tscn").instance()
-	assert_not_null(gui)
+	gui._ready()
 
-	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\n"
-	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
-	gui.components["change_me2"] = ['.Workplane().tag("change_me2")', '.circle(1.0)', '.extrude(15)']
-	gui._init_object_tree()
+	# Initialize the trees
+	gui._init_component_tree()
+	gui._init_params_tree()
 
-	# Make sure the objects tree has items in it
-	gui._render_history_tree()
+	# Set up the main component tree with the content we want
+	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	Common.add_component("box1", ct)
+	Common.add_component("box2", ct)
+	Common.add_operation("box1", '.Workplane().tag("box1")', ct)
+	Common.add_operation("box1", '.box(10,10,10)', ct)
+	Common.add_operation("box2", '.Workplane().tag("box2")', ct)
+	Common.add_operation("box2", '.center(5, 5)', ct)
+	Common.add_operation("box2", '.box(10,10,10)', ct)
 
 	# Get a reference to the Save button and make sure we got something
 	var save_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton")
@@ -139,7 +149,7 @@ func test_save_multi_component():
 	file.open("/tmp/test.py", File.READ)
 	var content = file.get_as_text()
 	file.close()
-	assert_eq(content, gui.component_text + "\nshow_object(change_me)\nshow_object(change_me2)", "Make sure that the saved file has the correct contents.")
+	assert_eq(content, gui._convert_component_tree_to_script(true), "Make sure that the saved file has the correct contents.")
 
 
 """
@@ -148,7 +158,6 @@ Tests as if the user clicked the Open button.
 func test_open_button():
 	# Get a reference to the whole interface and make sure we got it
 	var gui = partial_double("res://GUI.tscn").instance()
-	assert_not_null(gui)
 	gui._ready()
 
 	# Get a reference to the open button and make sure we got something
@@ -174,9 +183,6 @@ func test_open_button():
 	# Make sure that the proper signals were fired
 	assert_signal_emitted(open_btn, 'button_down', "Make sure the event fires from the Open button.")
 	assert_signal_emitted(open_dlg, "about_to_show")
-
-	# Make sure that the component text is blank to start with
-	assert_null(gui.component_text, "Make sure that no component text is set.")
 
 	# Set the file path and attempt an open
 	open_dlg.current_dir = "res://samples"
@@ -188,8 +194,9 @@ func test_open_button():
 	# Give the file time to be read
 	yield(yield_to(open_dlg, "file_selected", 5), YIELD)
 
-	# Make sure that the proper script text was loaded
-	assert_eq(gui.component_text, "# Semblage v0.2.0-alpha\nimport cadquery as cq\n# start_params\n# end_params\nchange_me=cq\nchange_me=change_me.Workplane(\"XY\").workplane(invert=True,centerOption=\"CenterOfBoundBox\").tag(\"change_me\")\nchange_me=change_me.box(10.0,10.0,10.0,centered=(True,True,True),combine=True,clean=True)\n", "Make sure the proper component text was loaded")
+	# Make sure that the component was loaded into the component tree properly
+	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	assert_eq(ct.get_root().get_children().get_text(0), "change_me", "Make sure the proper component text was loaded")
 
 
 """
@@ -198,7 +205,6 @@ Tests as if the user opened a file with multiple components in it.
 func test_open_multi_component():
 	# Get a reference to the whole interface and make sure we got it
 	var gui = partial_double("res://GUI.tscn").instance()
-	assert_not_null(gui)
 	gui._ready()
 
 	# Get a reference to the open button and make sure we got something
@@ -225,9 +231,6 @@ func test_open_multi_component():
 	assert_signal_emitted(open_btn, 'button_down', "Make sure the event fires from the Open button.")
 	assert_signal_emitted(open_dlg, "about_to_show")
 
-	# Make sure that the component text is blank to start with
-	assert_null(gui.component_text, "Make sure that no component text is set.")
-
 	# Set the file path and attempt an open
 	open_dlg.current_dir = "res://samples"
 	open_dlg.current_file = "basic_multi_comp.py"
@@ -238,8 +241,10 @@ func test_open_multi_component():
 	# Give the file time to be read
 	yield(yield_to(open_dlg, "file_selected", 5), YIELD)
 
-	# Make sure that the proper script text was loaded
-	assert_eq(gui.component_text, '# Semblage v0.2.0-alpha\nimport cadquery as cq\n# start_params\n# end_params\nchange_me=cq\nchange_me2=cq\nchange_me=change_me.Workplane().tag("change_me")\nchange_me=change_me.box(10,10,10)\nchange_me2=change_me2.Workplane().tag("change_me2")\nchange_me2=change_me2.circle(1.0)\nchange_me2=change_me2.extrude(15)\n', "Make sure the proper component text was loaded")
+	# Make sure that the component was loaded into the component tree properly
+	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	assert_eq(ct.get_root().get_children().get_text(0), "change_me", "Make sure the proper first component text was loaded")
+	assert_eq(ct.get_root().get_children().get_next().get_text(0), "change_me2", "Make sure the proper second component text was loaded")
 
 
 """
@@ -248,12 +253,17 @@ Tests as if the user were interacting with the Make button to create a DXF.
 func test_make_button_dxf():
 	# Get a reference to the whole interface and make sure we got it
 	var gui = partial_double("res://GUI.tscn").instance()
-	assert_not_null(gui)
 	gui._ready()
 
-	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(1,1,1)\n"
-	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
+	# Initialize the trees
+	gui._init_component_tree()
+	gui._init_params_tree()
+
+	# Set up the main component tree with the content we want
+	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	Common.add_component("box1", ct)
+	Common.add_operation("box1", '.Workplane().tag("box1")', ct)
+	Common.add_operation("box1", '.box(10,10,10)', ct)
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -317,22 +327,17 @@ Tests as if the user were interacting with the Make button to create a DXF.
 func test_make_button_dxf_section():
 	# Get a reference to the whole interface and make sure we got it
 	var gui = partial_double("res://GUI.tscn").instance()
-	assert_not_null(gui)
 	gui._ready()
 
-	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(1,1,1)\n"
-	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
-
 	# Initialize the trees
-	gui._init_object_tree()
-	gui._init_history_tree()
+	gui._init_component_tree()
 	gui._init_params_tree()
 
-	# Make sure the objects tree has items in it
-	var objects_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
-	var objects_tree_root = objects_tree.get_root()
-	Common.add_item_to_tree("change_me", objects_tree, objects_tree_root)
+	# Set up the main component tree with the content we want
+	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	Common.add_component("box1", ct)
+	Common.add_operation("box1", '.Workplane().tag("box1")', ct)
+	Common.add_operation("box1", '.box(10,10,10)', ct)
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -417,12 +422,17 @@ Tests as if the user were interacting with the Make button to create an SVG file
 func test_make_button_svg():
 	# Get a reference to the whole interface and make sure we got it
 	var gui = partial_double("res://GUI.tscn").instance()
-	assert_not_null(gui)
 	gui._ready()
 
-	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(1,1,1)\n"
-	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
+	# Initialize the trees
+	gui._init_component_tree()
+	gui._init_params_tree()
+
+	# Set up the main component tree with the content we want
+	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	Common.add_component("box1", ct)
+	Common.add_operation("box1", '.Workplane().tag("box1")', ct)
+	Common.add_operation("box1", '.box(10,10,10)', ct)
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -487,12 +497,18 @@ of SVG files.
 func test_make_button_svg_section():
 	# Get a reference to the whole interface and make sure we got it
 	var gui = partial_double("res://GUI.tscn").instance()
-	assert_not_null(gui)
 	gui._ready()
 
-	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().rect(10, 10).extrude(10)\n"
-	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
+	# Initialize the trees
+	gui._init_component_tree()
+	gui._init_params_tree()
+
+	# Set up the main component tree with the content we want
+	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	Common.add_component("box1", ct)
+	Common.add_operation("box1", '.Workplane().tag("box1")', ct)
+	Common.add_operation("box1", '.rect(10,10)', ct)
+	Common.add_operation("box1", '.extrude(10)', ct)
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -578,22 +594,17 @@ of SVG files.
 func test_make_button_svg_section_error():
 	# Get a reference to the whole interface and make sure we got it
 	var gui = partial_double("res://GUI.tscn").instance()
-	assert_not_null(gui)
 	gui._ready()
 
-	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(10,10,10)\n"
-	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
-
 	# Initialize the trees
-	gui._init_object_tree()
-	gui._init_history_tree()
+	gui._init_component_tree()
 	gui._init_params_tree()
 
-	# Make sure the objects tree has items in it
-	var objects_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
-	var objects_tree_root = objects_tree.get_root()
-	Common.add_item_to_tree("change_me", objects_tree, objects_tree_root)
+	# Set up the main component tree with the content we want
+	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	Common.add_component("box1", ct)
+	Common.add_operation("box1", '.Workplane().tag("box1")', ct)
+	Common.add_operation("box1", '.box(10,10,10)', ct)
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -661,18 +672,17 @@ Tests as if the user clicked the Export->STEP button.
 func test_make_button_step():
 	# Get a reference to the whole interface and make sure we got it
 	var gui = partial_double("res://GUI.tscn").instance()
-	assert_not_null(gui)
 	gui._ready()
 
-	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(10,10,10)\n"
-	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
-	gui._init_object_tree()
+	# Initialize the trees
+	gui._init_component_tree()
+	gui._init_params_tree()
 
-	# Make sure the objects tree has items in it
-	var objects_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
-	var objects_tree_root = objects_tree.get_root()
-	Common.add_item_to_tree("change_me", objects_tree, objects_tree_root)
+	# Set up the main component tree with the content we want
+	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	Common.add_component("box1", ct)
+	Common.add_operation("box1", '.Workplane().tag("box1")', ct)
+	Common.add_operation("box1", '.box(10,10,10)', ct)
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -731,18 +741,17 @@ Tests as if the user clicked the Export->STEP button.
 func test_make_button_stl():
 	# Get a reference to the whole interface and make sure we got it
 	var gui = partial_double("res://GUI.tscn").instance()
-	assert_not_null(gui)
 	gui._ready()
 
-	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().box(10,10,10)\n"
-	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
-	gui._init_object_tree()
+	# Initialize the trees
+	gui._init_component_tree()
+	gui._init_params_tree()
 
-	# Make sure the objects tree has items in it
-	var objects_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
-	var objects_tree_root = objects_tree.get_root()
-	Common.add_item_to_tree("change_me", objects_tree, objects_tree_root)
+	# Set up the main component tree with the content we want
+	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	Common.add_component("box1", ct)
+	Common.add_operation("box1", '.Workplane().tag("box1")', ct)
+	Common.add_operation("box1", '.box(10,10,10)', ct)
 
 	# Get a reference to the make button so we can simulate user interaction with it
 	var make_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton")
@@ -801,34 +810,17 @@ Tests as if the user had clicked the close button.
 func test_close_button():
 	# Get a reference to the whole interface and make sure we got it
 	var gui = partial_double("res://GUI.tscn").instance()
-	assert_not_null(gui)
 	gui._ready()
 
-	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().tag(\"change_me\").box(10,10,10)\n"
-	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
-
 	# Initialize the trees
-	gui._init_object_tree()
-	gui._init_history_tree()
+	gui._init_component_tree()
 	gui._init_params_tree()
 
-	# Get a reference to the history tree so we can make sure it is cleared
-	var history_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
-	assert_not_null(history_tree, "Make sure history tree reference is not null.")
-	var history_tree_root = gui._get_history_tree_root(history_tree)
-	assert_not_null(history_tree_root, "Make sure history tree root reference is not null.")
-
-	# Add items to the history tree as if the user had done so through the Operations dialog
-	var addition = ".Workplane().tag(\"change_me\")"
-	Common.add_item_to_tree(addition, history_tree, history_tree_root)
-	addition = ".box(10,10,10)"
-	Common.add_item_to_tree(addition, history_tree, history_tree_root)
-
-	# Make sure the children added are present
-	var child = history_tree_root.get_children()
-	assert_eq(child.get_text(0), ".Workplane().tag(\"change_me\")")
-	assert_eq(child.get_next().get_text(0), ".box(10,10,10)")
+	# Set up the main component tree with the content we want
+	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	Common.add_component("box1", ct)
+	Common.add_operation("box1", '.Workplane().tag("box1")', ct)
+	Common.add_operation("box1", '.box(10,10,10)', ct)
 
 	# Get a reference to the parameter tree
 	var param_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree")
@@ -837,18 +829,18 @@ func test_close_button():
 
 	# Make sure that the parameters tree has items in it
 	assert_not_null(param_tree_root.get_children(), "Make sure the parameters tree has items in it.")
+
 	# Render the object in the 3D viewport
-	gui._render_history_tree()
+	gui._execute_and_render()
 
 	# Get the viewport so we can make sure it has contents
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	assert_eq(vp.get_child_count(), 15)
+	assert_eq(vp.get_child_count(), 17)
 
-	# Make sure the objects tree has items in it
-	var objects_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
-	var objects_tree_root = objects_tree.get_root()
-	Common.add_item_to_tree("change_me", objects_tree, objects_tree_root)
-	assert_not_null(objects_tree_root.get_children(), "Make sure the object tree has items in it.")
+	# Make sure the components tree has items in it
+	var components_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	Common.add_component("change_me", components_tree)
+	assert_not_null(components_tree.get_root().get_children(), "Make sure the object tree has items in it.")
 
 	# Get a reference to the close button so we can simulate it being clicked
 	var close_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton")
@@ -857,18 +849,11 @@ func test_close_button():
 	close_btn.emit_signal("button_down")
 
 	# Check to make sure the object tree is cleared
-	objects_tree_root = objects_tree.get_root()
-	assert_null(objects_tree_root.get_children(), "Make sure the objects tree was cleared.")
-
-	# Check to make sure the history tree is cleared
-	history_tree_root = gui._get_history_tree_root(history_tree)
-	assert_not_null(history_tree_root)
-	child = history_tree_root.get_children()
-	assert_null(child, "Make sure the history tree is empty.")
+	assert_null(components_tree.get_root().get_children(), "Make sure the objects tree was cleared.")
 
 	# Check to make sure that the params tree is cleared
 	param_tree_root = gui._get_params_tree_root(param_tree)
-	child = param_tree_root.get_children()
+	var child = param_tree_root.get_children()
 	assert_null(child, "Make sure the parameters tree is empty.")
 
 	# Make sure the 3D viewport is cleared
@@ -882,48 +867,24 @@ back to a known good location and orientation.
 func test_home_button():
 	# Get a reference to the whole interface and make sure we got it
 	var gui = partial_double("res://GUI.tscn").instance()
-	assert_not_null(gui)
 	gui._ready()
 
-	# Make sure there is default component text to work with
-	gui.component_text = "# Semblage v0.2.0-alpha\nimport cadquery as cq\nchange_me=cq.Workplane().tag(\"change_me\").box(10,10,10)\n"
-	gui.components["change_me"] = ['.Workplane().tag("change_me")', '.box(10,10,10)']
-
 	# Initialize the trees
-	gui._init_object_tree()
-	gui._init_history_tree()
+	gui._init_component_tree()
 	gui._init_params_tree()
 
-		# Get a reference to the history tree so we can make sure it is cleared
-	var history_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
-	assert_not_null(history_tree, "Make sure history tree reference is not null.")
-	var history_tree_root = gui._get_history_tree_root(history_tree)
-	assert_not_null(history_tree_root, "Make sure history tree root reference is not null.")
+	# Set up the main component tree with the content we want
+	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	Common.add_component("box1", ct)
+	Common.add_operation("box1", '.Workplane().tag("box1")', ct)
+	Common.add_operation("box1", '.box(10,10,10)', ct)
 
-	# Add items to the history tree as if the user had done so through the Operations dialog
-	var addition = ".Workplane().tag(\"change_me\")"
-	Common.add_item_to_tree(addition, history_tree, history_tree_root)
-	addition = ".box(10,10,10)"
-	Common.add_item_to_tree(addition, history_tree, history_tree_root)
-
-	# Make sure the children added are present
-	var child = history_tree_root.get_children()
-	assert_eq(child.get_text(0), ".Workplane().tag(\"change_me\")")
-	assert_eq(child.get_next().get_text(0), ".box(10,10,10)")
-
-	# Get a reference to the parameter tree
-	var param_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree")
-	var param_tree_root = gui._get_params_tree_root(param_tree)
-	Common.add_columns_to_tree(["test_var", "1"], param_tree, param_tree_root)
-
-	# Make sure that the parameters tree has items in it
-	assert_not_null(param_tree_root.get_children(), "Make sure the parameters tree has items in it.")
-	# Render the object in the 3D viewport
-	gui._render_history_tree()
+	# Convert the components tree into a render
+	gui._execute_and_render()
 
 	# Get the viewport so we can make sure it has contents
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	assert_eq(vp.get_child_count(), 15)
+	assert_eq(vp.get_child_count(), 17)
 
 	# Get a reference to the home button so we can simulate it being clicked
 	var home_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton")
@@ -964,7 +925,7 @@ func test_about_button():
 	# Make sure that the About dialog is showing correct information
 	var info_box = about_dlg.get_node("AboutTabContainer/Info/InfoLabel")
 	assert_not_null(info_box, "Make sure there is a valid reference to the info box.")
-	assert_eq(info_box.get_text().split("\n")[0], "[center][b]Semblage v0.2.0-alpha[/b]", "Make sure the info box has the correct info at the top.")
+	assert_eq(info_box.get_text().split("\n")[0], "[center][b]Semblage v0.4.0-alpha[/b]", "Make sure the info box has the correct info at the top.")
 
 	# Make sure that the Docs dialog is showing correct information
 	var docs_box = about_dlg.get_node("AboutTabContainer/Docs/DocsLabel")

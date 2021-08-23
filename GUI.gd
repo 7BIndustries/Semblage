@@ -1,12 +1,10 @@
 extends Control
 
-var VERSIONNUM = "0.2.0-alpha"
+var VERSIONNUM = "0.4.0-alpha"
 
 var open_file_path # The component/CQ file that the user opened
-var component_text # The text of the current component's script
-var check_component_text = null # Temporary to make sure the compnent file
+var confirm_component_text = null
 var safe_distance = 0 # The distance away the camera should be placed to be able to view the components
-var components = {}
 var combined = {}
 
 # Called when the node enters the scene tree for the first time.
@@ -15,12 +13,8 @@ func _ready():
 	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
 	tabs.set_tab_title(0, "Start")
 
-	# Start off with the base script text
-	_reset_component_text()
-
-	# Get the object and history trees ready to use
-	_init_history_tree()
-	_init_object_tree()
+	# Get the component and param trees ready to use
+	_init_component_tree()
 	_init_params_tree()
 
 	# Make sure the window is maximized on start
@@ -68,53 +62,78 @@ func _on_OpenDialog_file_selected(path):
 	tabs.set_tab_title(0, open_file_path)
 
 	# Load the component text to handle later
-	check_component_text = FileSystem.load_component(open_file_path)
+	var check_component_text = FileSystem.load_file_text(open_file_path)
 
 	# Check to make sure that only cadquery is imported for safety reasons
 	var imports = Security.CheckImports(check_component_text)
 	if imports.size() > 0:
+		# Makes sure that the confirmation dialog can trigger a component load
+		confirm_component_text = check_component_text
+
 		var txt = "It appears that the file you are opening contains extra imports.\nSemblage components are simply Python scripts, so certain\n types of imports can be a security risk. Please review the extra\nimports below to ensure they are acceptable.\n\n"
 		txt += PoolStringArray(imports).join("\n")
 		txt += "\n\nDo you still want to open the component file?"
 		$ConfirmationDialog.dialog_text = txt
 		$ConfirmationDialog.popup_centered()
 	else:
-		component_text = check_component_text
-		_load_component()
+		_load_component(check_component_text)
+
+
+"""
+Shortcut method for collecting the script text from the component
+tree, executing it, and rendering the result.
+"""
+func _execute_and_render():
+	var component_text = self._convert_component_tree_to_script(true)
+	self._render_component_text(component_text)
 
 
 """
 Used with the open dialog to load a component.
 """
-func _load_component():
-	# If this is a Semblage component file, load it into the history and object trees
+func _load_component(component_text):
+	# If this is a Semblage component file, load it into the component tree
 	if Security.IsSemblageFile(component_text):
 		# Prevent the user from reloading the script manually
 		$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.hide()
 
-		# Load the component into the history and object trees and then render it
+		# Load the component into the component tree and then render it
 		load_semblage_component(component_text)
-		_render_history_tree()
+		self._execute_and_render()
 
 		# Set the default view
 		_home_view()
-	else:
-		# Allow the user to reload the script manually
-		$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.show()
-
-		# Render the component and set the camera view to the default
-		_render_non_semblage(open_file_path)
-		_home_view()
+#	else:
+#		# Allow the user to reload the script manually
+#		$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.show()
+#
+#		# Render the component and set the camera view to the default
+#		_render_non_semblage(open_file_path)
+#		_home_view()
 
 
 """
-Loads a Semblage component file into the history and object trees.
+Allows the trees holding the parameters and components to be cleared
+and reset.
+"""
+func _reset_trees():
+	var params_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree")
+	var component_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+
+	params_tree.clear()
+	component_tree.clear()
+	_init_params_tree()
+	_init_component_tree()
+
+
+"""
+Loads a Semblage component file into the component tree.
 """
 func load_semblage_component(text):
 	var lines = text.split("\n")
 
-	# Start the component text off with what we know the first 3 lines will be
-	_reset_component_text()
+	# Reset the trees
+	_reset_trees()
 
 	# Load any parameters that are in the script file
 	var rgx = RegEx.new()
@@ -122,7 +141,7 @@ func load_semblage_component(text):
 	var res = rgx.search(text)
 	if res:
 		# Get the name and value and add them to the tree
-		var params_tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
+		var params_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree")
 		var params_tree_root = _get_params_tree_root(params_tree)
 
 		# Step through all the parameters lines and add them to the tree
@@ -134,28 +153,25 @@ func load_semblage_component(text):
 			var param_parts = param.split("=")
 			Common.add_columns_to_tree(param_parts, params_tree, params_tree_root)
 
-	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
-	var history_tree_root = _get_history_tree_root(history_tree)
-	var object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
-	var object_tree_root = _get_object_tree_root(object_tree)
+	var component_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	var component_tree_root = _get_component_tree_root(component_tree)
 
-	var cur_object = null
+	var cur_component = null
 
 	# Step through all the lines and look for statements that need to be replayed
 	for line in lines:
-		# Find any object name (if present) that needs to be displayed in the list
-		var new_object = ContextHandler.get_object_from_template(line)
-		if new_object != null:
+		# Find any component name (if present) that needs to be displayed in the list
+		var new_component = ContextHandler.get_component_from_template(line)
+		if new_component != null:
 			# Save this new component name as the current for use later
-			cur_object = new_object
-			Common.add_item_to_tree(new_object, object_tree, object_tree_root)
-			components[new_object] = []
+			cur_component = new_component
+			Common.add_component(new_component, component_tree)
 
 		var addition = null
 
 		# See if we have a binary or normal operation
-		if cur_object != null and line.find("=") > 0 and not line.split("=")[1].begins_with(cur_object):
-			addition = line.replace(cur_object + "=", "")
+		if cur_component != null and line.find("=") > 0 and not line.split("=")[1].begins_with(cur_component):
+			addition = line.replace(cur_component + "=", "")
 
 			# Extract the relevant components from the binary operation
 			var binary_op = _map_binary_op(line)
@@ -163,40 +179,39 @@ func load_semblage_component(text):
 			# Save the parts of the binary operation
 			combined[binary_op.keys()[0]] = binary_op[binary_op.keys()[0]]
 
-			_handle_binary_tree_items(object_tree)
-		elif cur_object != null and line.begins_with(cur_object + "=" + cur_object):
+			_handle_binary_tree_items(component_tree)
+		elif cur_component != null and line.begins_with(cur_component + "=" + cur_component):
 			# Update the context string in the ContextHandler
-			addition = line.replace(cur_object + "=" + cur_object, "")
+			addition = line.replace(cur_component + "=" + cur_component, "")
 
 		# Only add the addition if there is something to add
 		if addition != null:
-			# Add the current item to the history tree
-			Common.add_item_to_tree(addition, history_tree, history_tree_root)
-			components[cur_object].append(addition)
-
-			component_text = ContextHandler.update_context_string(component_text, addition)
+			# Add the current item to the component tree
+			Common.add_operation(cur_component, addition, component_tree)
 
 	# Selecting the first component in the list is a sane default
-	object_tree_root.get_children().select(0)
+	component_tree_root.get_children().select(0)
 
 
 """
 Handles the nesting of binary (i.e. boolean) tree components.
 """
-func _handle_binary_tree_items(object_tree):
+func _handle_binary_tree_items(component_tree):
+	pass
 	# Add all the components back to the tree, nesting as needed
-	for component in components.keys():
-		if component in combined.keys():
-			# Search through all of the nested items to see if any components go in there
-			for item in combined[component]:
-				# Remove the current item from the root of the tree if they are going to be nested
-				var remove_item = Common.get_tree_item_by_text(object_tree, item)
-				object_tree.get_root().remove_child(remove_item)
+#	for component in components.keys():
+#		if component in combined.keys():
+#			# Search through all of the nested items to see if any components go in there
+#			for item in combined[component]:
+#				# Remove the current item from the root of the tree if they are going to be nested
+#				var remove_item = Common.get_tree_item_by_text(object_tree, item)
+#				object_tree.get_root().remove_child(remove_item)
+#
+#				# Add the current item as a child of the parent binary operation
+#				var tree_item = Common.get_tree_item_by_text(object_tree, component)
+#				var new_obj_item = object_tree.create_item(tree_item)
+#				new_obj_item.set_text(0, item)
 
-				# Add the current item as a child of the parent binary operation
-				var tree_item = Common.get_tree_item_by_text(object_tree, component)
-				var new_obj_item = object_tree.create_item(tree_item)
-				new_obj_item.set_text(0, item)
 
 """
 Extracts the relevant components of a binary operation.
@@ -212,35 +227,60 @@ func _map_binary_op(line):
 
 
 """
-Collects all of the history tree items and renders them into an
-object in the 3D view.
+Steps through each component and their operations to collect
+them into a script.
 """
-func _render_history_tree():
-	# Start to build the preview string based on what is in the actions list
-	_reset_component_text()
+func _convert_component_tree_to_script(include_show):
+	var component_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+
+	# Reset the component show_object text
+	var show_text = ""
+
+	# Start off the component script text
+	var component_text = "# Semblage v" + VERSIONNUM + "\nimport cadquery as cq\n"
 
 	# Prepend any parameters
 	component_text += "# start_params\n"
 	component_text += _collect_parameters()
 	component_text += "# end_params\n"
 
-	# Start the body of the script
-	for component in components.keys():
-		component_text += component + "=cq\n"
+	var cur_comp = component_tree.get_root().get_children()
 
-	# Step through all branches of the component tree and add them to the script
-	for component in components.keys():
-		for item in components[component]:
-			# Handle binary (i.e. boolean operations)
-			if item.begins_with("."):
-				component_text += component  + "=" + component + item + "\n"
-			else:
-				component_text += component  + "=" + item + "\n"
+	# Search the tree and update the matchine entry in the tree
+	while true:
+		if cur_comp == null:
+			break
+		else:
+			# Start the component off
+			component_text += cur_comp.get_text(0) + "=cq\n"
 
-	# Render the script text collected from the history tree, but only if there is something to render
-	if not self.component_text.ends_with("=cq\n"):
-		$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering component...")
-		_render_component_text()
+			# See if we are supposed to skip rendering this component
+			if cur_comp.get_metadata(0) != null and cur_comp.get_metadata(0)["visible"]:
+				show_text += "show_object(" + cur_comp.get_text(0) + ")\n"
+
+			# Walk through any operations attached to this component
+			var cur_op = cur_comp.get_children()
+			while true:
+				if cur_op == null:
+					break
+				else:
+					# Assemble the operation step for a non-binary operation
+					if cur_op.get_text(0).begins_with("."):
+						component_text += cur_comp.get_text(0)  + "=" + cur_comp.get_text(0) + cur_op.get_text(0) + "\n"
+					else:
+						component_text += cur_comp.get_text(0)  + "=" + cur_op.get_text(0) + "\n"
+
+				# Move to the next child operation, if there is one
+				cur_op = cur_op.get_next()
+
+			# Move to the next component, if there is one
+			cur_comp = cur_comp.get_next()
+
+	# See if the user has requested that the show text be included
+	if include_show:
+		component_text += show_text
+
+	return component_text
 
 
 """
@@ -268,31 +308,38 @@ func _collect_parameters():
 """
 Generates a component using the semb CLI, which returns JSON.
 """
-func _render_non_semblage(path):
-	# Load the component's text from file
-	component_text = FileSystem.load_component(path)
-
-	# Render the loaded script text
-	_render_component_text()
+#func _render_non_semblage(path):
+#	# Load the component's text from file
+#	component_text = FileSystem.load_file_text(path)
+#
+#	# Render the loaded script text
+#	_render_component_text()
 
 
 """
 Uses Python to execute the current component_text, tessellate
 the results, and display that in the 3D view.
 """
-func _render_component_text():
-	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering component...")
+func _render_component_text(component_text):
+	# Render the script text collected from the component tree, but only if there is something to render
+	if component_text.ends_with("=cq\n"):
+		return
+	else:
+		$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering component...")
 
-	var script_text = component_text
+	# Clear the 3D viewport
+	self._clear_viewport()
 
-	# Set all of the individual components up to be displayed
-	for component in components.keys():
-		if _should_show(component):
-			script_text += "\nshow_object(" + component + ")"
+	# If we have untessellated objects (i.e. workplanes), display placeholders for them
+	var untesses = ContextHandler.get_untessellateds(component_text)
+	if len(untesses) > 0:
+		for untess in untesses:
+			var meshes = Meshes.gen_workplane_meshes(untess["origin"], untess["normal"])
+			for mesh in meshes:
+				$GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport.add_child(mesh)
 
 	# Pass the script to the Python layer to convert it to tessellated JSON
-	var component_json = cqgipy.build(script_text)
-#	cqgipy.build_direct(script_text)
+	var component_json = cqgipy.build(component_text)
 
 	# If there was an error, display it
 	if component_json.begins_with("error~"):
@@ -374,25 +421,13 @@ func load_component_json(json_string):
 """
 Helps make sure that each function runs atomically for tests.
 """
-func _get_object_tree_root(object_tree):
-	var object_tree_root = object_tree.get_root()
-	if object_tree_root == null:
-		_init_object_tree()
-		object_tree_root = object_tree.get_root()
+func _get_component_tree_root(component_tree):
+	var component_tree_root = component_tree.get_root()
+	if component_tree_root == null:
+		_init_component_tree()
+		component_tree_root = component_tree.get_root()
 
-	return object_tree_root
-
-
-"""
-Allows the tests to run and helps make sure each function can run atomically.
-"""
-func _get_history_tree_root(history_tree):
-	var history_tree_root = history_tree.get_root()
-	if history_tree_root == null:
-		_init_history_tree()
-		history_tree_root = history_tree.get_root()
-
-	return history_tree_root
+	return component_tree_root
 
 
 """
@@ -414,12 +449,20 @@ func _on_HomeViewButton_button_down():
 	_home_view()
 
 
+"""
+Allows the origin camera, main 3D camera, and light to be returned to a
+known poisition and orientation.
+"""
 func _home_view():
+	# If the safe distance has not been set, there is nothing to do
+	if self.safe_distance == 0:
+		return
+
 	var cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
 	var origin_cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginOrbitCamera
 	var light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
 
-	# Adjust the safe distance so that the object fits well within the viewport
+	# Adjust the safe distance so that the component fits well within the viewport
 	var sd = self.safe_distance * 0.5
 
 	# Set the main camera, the axis indicator camera, and the light to the default locations
@@ -440,44 +483,27 @@ func _on_CloseButton_button_down():
 	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
 	tabs.set_tab_title(0, "Start")
 	
-#	open_file_path = null
-	self._reset_component_text()
-	components = {}
-
 	self._clear_viewport()
 	
-	# Get the tree views set up for the next object
-	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree.clear()
-	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree.clear()
-	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree.clear()
-	self._init_history_tree()
-	self._init_object_tree()
-	self._init_params_tree()
+	# Get the tree views set up for the next component
+	self._reset_trees()
 
 	# Prevent the user from reloading the script manually
 	$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.hide()
 
-
-"""
-Initializes the object tree so that it can be added to as the component changes.
-"""
-func _init_object_tree():
-	var object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
-
-	# Create the root of the object tree
-	var object_tree_root = object_tree.create_item()
-	object_tree_root.set_text(0, "Workspace")
+	# Let the user know the UI is ready to procede
+	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Ready")
 
 
 """
-Initializes the history tree so that it can be added to as the component changes.
+Initializes the component tree so that it can be added to as the component changes.
 """
-func _init_history_tree():
-	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
+func _init_component_tree():
+	var component_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
 
-	# Create the root of the history tree
-	var history_tree_root = history_tree.create_item()
-	history_tree_root.set_text(0, "cq")
+	# Create the root of the component tree
+	var component_tree_root = component_tree.create_item()
+	component_tree_root.set_text(0, "Workspace")
 
 
 """
@@ -496,10 +522,10 @@ Handles the event of the user pressing the Reload button to reload a component
 from file.
 """
 func _on_ReloadButton_button_down():
-	self._clear_viewport()
-	self.history_tree.clear()
+	pass
+#	self._clear_viewport()
 
-	_render_non_semblage(open_file_path)
+#	_render_non_semblage(open_file_path)
 
 """
 Removes all MeshInstances from a viewport to prepare for something new to be loaded.
@@ -522,124 +548,83 @@ Retries the updated context and makes it the current one.
 """
 func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context, combine_map):
 	var vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
-	var object_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree")
-	var object_tree_root = _get_object_tree_root(object_tree)
+	var component_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	var component_tree_root = _get_component_tree_root(component_tree)
 
-	self._clear_viewport()
-	var render = true
+	var old_component = null
 
-	# If we have untessellated objects (i.e. workplanes), display placeholders for them
-	var untesses = ContextHandler.get_untessellateds(new_template)
-	if len(untesses) > 0:
-		render = false
-		for untess in untesses:
-			var meshes = Meshes.gen_workplane_meshes(untess["origin"], untess["normal"])
-			for mesh in meshes:
-				vp.add_child(mesh)
+	# If a component is selected, save the old component name
+	if component_tree.get_selected():
+		old_component = ContextHandler.get_component_from_template(component_tree.get_selected().get_text(0))
 
-	# Save the old component name
-	var old_object = ContextHandler.get_object_from_template(component_text)
+	# Find any component name (if present) that needs to be displayed in the list
+	var new_component = ContextHandler.get_component_from_template(new_template)
 
-	# Save the updated component text
-	component_text = new_context
+	# Check to see if this is the first item that is being added to the component tree
+	var is_first = component_tree_root.get_children() == null
 
-	# Find any object name (if present) that needs to be displayed in the list
-	var new_object = ContextHandler.get_object_from_template(new_template)
-
-	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
-	var history_tree_root = _get_history_tree_root(history_tree)
-
-	# Check to see if this is the first item that is being added to the history tree
-	var is_first = history_tree_root.get_children() == null
-
-	# If we are in edit mode, do not try to add anything to the history
+	# We are in edit mode
 	if edit_mode:
 		# If the old component name does not match the new one, we want to update it
-		var sel = object_tree.get_selected()
+		var prev_template = ""
 
-		# If there was no object named in the template, the component being edited is the one selected
-		if new_object == null:
-			new_object = sel.get_text(0)
+		# Get the selected item
+		var sel = component_tree.get_selected()
+		if sel:
+			prev_template = sel.get_text(0)
 
-		# See if the user is changing the name of a component
-		if sel.get_text(0) != new_object:
-			# Update the components data structure
-			components[new_object] = components.get(sel.get_text(0))
-			components.erase(sel.get_text(0))
+		# Update the item text in the component tree
+		Common.update_component_tree_item(component_tree, prev_template, new_template)
 
-		var prev_template = history_tree.get_selected().get_text(0)
+		# Update the component parent treeitem text
+		if new_component:
+			Common.update_component_tree_item(component_tree, old_component, new_component)
 
-		# Update the component tree with the updated template
-		var i = 0
-		for item in components[new_object]:
-			if item == prev_template:
-				components[new_object][i] = new_template
-
-			i += 1
-
-		Common.select_tree_item_by_text(object_tree, new_object)
+			# Make sure that the parent that was edited is selected for future operations
+			Common.select_tree_item_by_text(component_tree, new_component)
 	else:
-		# Check to see if a stock workplane should be added
-		var implicit_wp = ContextHandler.needs_implicit_worplane(component_text)
-		if implicit_wp:
-			# Add a sane default workplane to the tree to keep things working
-			var wp_template = ".Workplane(\"XY\").workplane(invert=True,centerOption=\"CenterOfBoundBox\").tag(\"change_me\")"
-			Common.add_item_to_tree(wp_template, history_tree, history_tree_root)
-			Common.add_item_to_tree("change_me", object_tree, object_tree_root)
+		# Add the componenent name to the component tree if it had a name
+		if new_component:
+			# Add the component
+			Common.add_component(new_component, component_tree)
+			Common.add_operation(new_component, new_template, component_tree)
 
-		# Add the componenent name to the object tree if it had a name
-		if new_object:
-			# Keep track of the object tree components and its associated history items
-			if not components.has(new_object):
-				components[new_object] = []
+			# If there was a binary (i.e. boolean) operation, nest components as appropriate
+			if combine_map != null:
+				# Save this combine map
+				combined = combine_map
 
-			Common.add_item_to_tree(new_object, object_tree, object_tree_root)
+				# Set the items that were combined to be invisible
+				for cm in combine_map:
+					for cmi in combine_map[cm]:
+						Common.set_component_tree_item_visibility(component_tree, cmi, false)
 
-		# If there is no object, fall back to the previously found object name
-		if new_object == null:
-			# If there is an item selected in the object tree, use that
-			var sel = object_tree.get_selected()
+			Common.select_tree_item_by_text(component_tree, new_component)
+		else:
+			# If there is an item selected in the component tree, use that
+			var sel = component_tree.get_selected()
 			if sel != null:
-				new_object = sel.get_text(0)
-			else:
-				# Fall back to the previous component name that was found
-				new_object = old_object
+				new_component = sel.get_text(0)
 
-		# Save this new template as part of the components data structure
-		components[new_object].append(new_template)
-
-	# If there was a binary (i.e. boolean) operation, nest objects as appropriate
-	if combine_map != null:
-		# Save this combine map
-		combined = combine_map
-
-		_handle_binary_tree_items(object_tree)
-
-	Common.select_tree_item_by_text(object_tree, new_object)
+			Common.add_operation(new_component, new_template, component_tree)
 
 	# Render the component
-	if render:
-		_render_history_tree()
+	_execute_and_render()
 
-		# If this is the first item being added, set the default view
-		if is_first:
-			_home_view()
+	# If this is the first item being added, set the default view
+	if is_first:
+		_home_view()
 
 """
 Fired when the Action popup needs to be displayed.
 """
 func _on_DocumentTabs_activate_action_popup():
-	$ActionPopupPanel.activate_popup(component_text, false)
+	var component_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
 
+	var op_text = Common.get_last_op(component_tree)
+	var comps = Common.get_all_components(component_tree)
 
-"""
-Allows a user to edit a history entry by double-clicking on the entry in the History
-Tree.
-"""
-func _on_HistoryTree_item_activated():
-	var item_text = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree.get_selected().get_text(0)
-
-	$ActionPopupPanel.activate_edit_mode(component_text, item_text)
+	$ActionPopupPanel.activate_popup(op_text, false, comps)
 
 
 """
@@ -766,15 +751,9 @@ Handles the heavy lifting of saving the component text to file.
 func _save_component_text():
 	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("")
 
-	# Add show calls for each of the components
-	var show_code = ""
-	for component in components.keys():
-		if _should_show(component):
-			show_code += "\nshow_object(" + component + ")"
-
 	var file = File.new()
 	file.open(self.open_file_path, File.WRITE)
-	file.store_string(self.component_text + show_code)
+	file.store_string(self._convert_component_tree_to_script(true))
 	file.close()
 
 	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Component saved")
@@ -783,15 +762,15 @@ func _save_component_text():
 """
 Figures out whether or not a component should be displayed.
 """
-func _should_show(component):
-	var should_show = true
-
-	# If there are combined items, search the list to see if it should be displayed
-	if combined.size() > 0:
-		if component in combined[combined.keys()[0]]:
-			should_show = false
-
-	return should_show
+#func _should_show(component):
+#	var should_show = true
+#
+#	# If there are combined items, search the list to see if it should be displayed
+#	if combined.size() > 0:
+#		if component in combined[combined.keys()[0]]:
+#			should_show = false
+#
+#	return should_show
 
 
 """
@@ -849,8 +828,7 @@ func _on_ExportDialog_file_selected(path):
 
 	var component_name = _get_component_name()
 
-	var export_text = component_text
-	export_text += "\nshow_object(" + component_name + ")"
+	var export_text = _convert_component_tree_to_script(true)
 
 	# Export the file to the user data directory temporarily
 	var ret = cqgipy.export(export_text, extension, OS.get_user_data_dir())
@@ -864,90 +842,8 @@ func _on_ExportDialog_file_selected(path):
 	else:
 		# Read the exported file contents and write them to their final location
 		# Work-around for not being able to write to the broader filesystem via Python
-		var stl_text = FileSystem.load_component(ret)
+		var stl_text = FileSystem.load_file_text(ret)
 		FileSystem.save_component(path, stl_text)
-
-
-"""
-Gives a single place to reset the component text when starting up
-or closing a previous component.
-"""
-func _reset_component_text():
-	component_text = "# Semblage v" + VERSIONNUM + "\nimport cadquery as cq\n"
-
-
-"""
-Called when the user clicks on the button to delete an item from
-the history tree.
-"""
-func _on_DeleteButton_button_down():
-	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
-	var selected = history_tree.get_selected()
-
-	# Make sure there is an item to delete
-	if selected == null:
-		return
-
-	# Make sure the user is not trying to delete something they should not
-	if selected.get_text(0) == "cq":
-		return
-	if selected.get_text(0).begins_with(".Workplane"):
-		return
-
-	# Remove the item from the history tree
-	selected.free()
-
-	self._clear_viewport()
-	self._render_history_tree()
-
-
-"""
-Called when the user clicks on the button to move an item up the
-history tree.
-"""
-func _on_MoveUpButton_button_down():
-	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
-	var selected = history_tree.get_selected()
-
-	# Make sure there is an item to delete
-	if selected == null:
-		return
-
-	# Make sure the user is not trying to move something they should not
-	if selected.get_text(0) == "cq":
-		return
-	if selected.get_text(0).begins_with(".Workplane"):
-		return
-
-	# Move the item up the history tree one position
-	Common.move_tree_item_up(history_tree, selected)
-
-	self._clear_viewport()
-	self._render_history_tree()
-
-"""
-Called when the user clicks on the button to move an item up the
-history tree.
-"""
-func _on_MoveDownButton_button_down():
-	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
-	var selected = history_tree.get_selected()
-
-	# Make sure there is an item to delete
-	if selected == null:
-		return
-
-	# Make sure the user is not trying to move something they should not
-	if selected.get_text(0) == "cq":
-		return
-	if selected.get_text(0).begins_with(".Workplane"):
-		return
-
-	# Move the item down in the history tree one position
-	Common.move_tree_item_down(history_tree, selected)
-
-	self._clear_viewport()
-	self._render_history_tree()
 
 
 """
@@ -955,8 +851,7 @@ Called when the user confirms that they still want to open
 a component file.
 """
 func _on_ConfirmationDialog_confirmed():
-	component_text = check_component_text
-	_load_component()
+	_load_component(confirm_component_text)
 
 
 """
@@ -980,8 +875,7 @@ func _on_AddParameterDialog_add_parameter(new_param):
 
 	Common.add_columns_to_tree(new_param, tree, tree.get_root())
 
-	self._clear_viewport()
-	self._render_history_tree()
+	self._execute_and_render()
 
 """
 Called when the user clicks the button to remove a parameter.
@@ -1023,9 +917,8 @@ func _on_AddParameterDialog_edit_parameter(new_param):
 
 	self._update_param_tree_items(tree, new_param[0], new_param[1])
 
-	# Render the history tree unless the user is just pre-loading parameters
-	self._clear_viewport()
-	self._render_history_tree()
+	# Render the component tree unless the user is just pre-loading parameters
+	self._execute_and_render()
 
 
 """
@@ -1073,11 +966,11 @@ func _collect_param_tree_pairs(tree):
 
 
 """
-Collects all the names of the components in the objects tree.
+Collects all the names of the components in the components tree.
 """
 func _get_component_names():
 	var names = []
-	var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree
+	var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree
 
 	var cur_item = tree.get_root().get_children()
 
@@ -1125,16 +1018,15 @@ func _on_error(error_text):
 """
 Called when an item in the component list is double clicked.
 """
-func _on_ObjectTree_item_activated():
-	var ot = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree
+func _on_ComponentTree_item_activated():
+	# Get the selected item
+	var ct = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree
+	var sel = ct.get_selected()
 
-	var history_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree")
-
-	# Select the history tree item based on the tag/object name so that we can trigger an edit
-	Common.activate_tree_item(history_tree, ot.get_selected().get_text(0))
-
-	# Trigger the edit on the selected history tree item
-	_on_HistoryTree_item_activated()
+	# If the selected item starts with a period, it is an operation item
+	if sel.get_text(0).begins_with("."):
+		var component_text = sel.get_parent().get_text(0)
+		$ActionPopupPanel.activate_edit_mode(component_text, sel.get_text(0), Common.get_all_components(ct))
 
 
 """
@@ -1145,20 +1037,110 @@ func _on_ActionPopupPanel_error(error_text):
 
 
 """
-Called when a user single clicks an item in the object tree.
+Clears any previously added items from the data popup.
 """
-func _on_ObjectTree_item_selected():
+func _clear_data_popup():
+	# Clear the previous control item(s) from the DynamicContainer
+	for child in $DataPopupPanel/DataPopupVBox.get_children():
+		$DataPopupPanel/DataPopupVBox.remove_child(child)
+
+
+"""
+The user clicks the Cancel button within the data popup.
+"""
+func _cancel_data_popup():
+	$DataPopupPanel.hide()
+
+
+"""
+The user wants to remove a tree item, like an operation or component.
+"""
+func _remove_tree_item():
+	var ct = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree
+	var sel = ct.get_selected()
+	if not sel:
+		return
+
+	# If deleting an operation, select its component
+	if sel.get_text(0).begins_with("."):
+		sel.get_parent().select(0)
+
+	# Remove the selected item from the tree
+	ct.get_root().remove_child(sel)
+	sel.free()
+
+	# Workaround to force the tree to update
+	ct.visible = false
+	ct.visible = true
+
+	# We do not need the popup menu anymore
+	$DataPopupPanel.hide()
+
+	# Render any changes to the component tree
+	self._execute_and_render()
+
+
+"""
+The user clicked the Edit tree menu item.
+"""
+func _edit_tree_item():
 	# Get the selected item
-	var ot = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree
-	var sel = ot.get_selected().get_text(0)
+	var ct = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree
+	var sel = ct.get_selected()
+	if sel:
+		sel = sel.get_text(0)
+	else:
+		return
 
-	# Reset the History tree so we can load in the selected component's history
-	var ht = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree
-	ht.clear()
-#	$GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree.clear()
-	self._init_history_tree()
-#	self._init_params_tree()
+	$DataPopupPanel.hide()
 
-	# Add every history item for the selected component to the history tree
-	for item in components[sel]:
-		Common.add_item_to_tree(item, ht, ht.get_root())
+	# If the selected item starts with a period, it is an operation item
+	if sel.begins_with("."):
+		$ActionPopupPanel.activate_edit_mode(self.component_text, sel)
+	else:
+		var edit_child = ct.get_selected().get_children()
+		edit_child.select(0)
+		$ActionPopupPanel.activate_edit_mode(self.component_text, edit_child.get_text(0))
+
+
+"""
+Called when the user right clicks on the Component tree.
+"""
+func _on_ComponentTree_activate_data_popup():
+	var pos = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree.get_local_mouse_position()
+	var size = Vector2(50, 100)
+
+	# Clear any previous items
+	_clear_data_popup()
+
+	# Toggle the visiblity of the popup
+	if $DataPopupPanel.visible:
+		$DataPopupPanel.hide()
+	else:
+		$DataPopupPanel.rect_position = Vector2(pos.x, pos.y + size.y)
+		$DataPopupPanel.rect_size = Vector2(100, 75)
+		$DataPopupPanel.show()
+
+	# Add the Edit item
+	var edit_item = Button.new()
+	edit_item.set_text("Edit")
+	edit_item.connect("button_down", self, "_edit_tree_item")
+	$DataPopupPanel/DataPopupVBox.add_child(edit_item)
+
+	# Add the Remove item
+	var remove_item = Button.new()
+	remove_item.set_text("Remove")
+	remove_item.connect("button_down", self, "_remove_tree_item")
+	$DataPopupPanel/DataPopupVBox.add_child(remove_item)
+
+	# Add the Show/Hide item
+#	var show_hide_item = Button.new()
+#	show_hide_item.set_text("Show/Hide")
+#	show_hide_item.connect("button_down", self, "_show_hide_tree_item")
+#	$DataPopupPanel/DataPopupVBox.add_child(show_hide_item)
+
+	# Add the Cancel item
+	var cancel_item = Button.new()
+	cancel_item.set_text("Cancel")
+	cancel_item.connect("button_down", self, "_cancel_data_popup")
+	$DataPopupPanel/DataPopupVBox.add_child(cancel_item)

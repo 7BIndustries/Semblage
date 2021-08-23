@@ -14,7 +14,13 @@ signal cam_pan
 
 
 func _input(event):
+	# Allows dialogs to lock this out so that dragging does not rotate the view
 	if not accept_input:
+		return
+
+	# Limit the mouse inputs to only work inside the document tabs
+	var evLocal = make_input_local(event)
+	if !Rect2(Vector2(0,0),rect_size).has_point(evLocal.position):
 		return
 
 	act_pos2d = get_viewport().get_mouse_position()
@@ -70,4 +76,20 @@ Unlocks the 3D mouse controls when the ok button is clicked on the
 action popup panel.
 """
 func _on_ActionPopupPanel_ok_signal(_edit_mode, _new_template, _new_context, _combine_map):
+	accept_input = true
+
+
+"""
+Dialogs can use this to tell the document tabs not to accept input
+while they are open.
+"""
+func _dialog_about_to_show():
+	accept_input = false
+
+
+"""
+Dialogs can use this to tell the document tabs to accept input again
+when they close.
+"""
+func _dialog_popup_hide():
 	accept_input = true

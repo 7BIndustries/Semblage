@@ -1,4 +1,4 @@
-[gd_scene load_steps=66 format=2]
+[gd_scene load_steps=67 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -32,6 +32,7 @@
 [ext_resource path="res://controls/NumberEdit.gd" type="Script" id=30]
 [ext_resource path="res://ExportDXFDialog.gd" type="Script" id=31]
 [ext_resource path="res://Canvas2D.gd" type="Script" id=32]
+[ext_resource path="res://ComponentTree.gd" type="Script" id=33]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
@@ -247,68 +248,30 @@ margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
 
-[node name="ObjectsTreeLabel" type="Label" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
+[node name="ComponentTreeLabel" type="Label" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
 margin_right = 142.0
 margin_bottom = 14.0
 text = "Components"
 
-[node name="ObjectTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
+[node name="ComponentTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
 margin_top = 18.0
 margin_right = 142.0
-margin_bottom = 139.0
+margin_bottom = 225.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 hide_root = true
-
-[node name="HistoryTreeLabel" type="Label" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
-margin_top = 143.0
-margin_right = 142.0
-margin_bottom = 157.0
-text = "History"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
-margin_top = 161.0
-margin_right = 142.0
-margin_bottom = 185.0
-
-[node name="DeleteButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer"]
-margin_right = 30.0
-margin_bottom = 24.0
-icon = ExtResource( 15 )
-
-[node name="MoveUpButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer"]
-margin_left = 34.0
-margin_right = 64.0
-margin_bottom = 24.0
-icon = ExtResource( 17 )
-
-[node name="MoveDownButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer"]
-margin_left = 68.0
-margin_right = 98.0
-margin_bottom = 24.0
-icon = ExtResource( 16 )
-
-[node name="HistoryTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
-margin_top = 189.0
-margin_right = 142.0
-margin_bottom = 311.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-hide_root = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
+script = ExtResource( 33 )
 
 [node name="ParametersTreeLabel" type="Label" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
-margin_top = 315.0
+margin_top = 229.0
 margin_right = 142.0
-margin_bottom = 329.0
+margin_bottom = 243.0
 text = "Parameters"
 
 [node name="HBoxContainerParams" type="HBoxContainer" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
-margin_top = 333.0
+margin_top = 247.0
 margin_right = 142.0
-margin_bottom = 357.0
+margin_bottom = 271.0
 
 [node name="AddParamButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainerParams"]
 margin_right = 30.0
@@ -322,7 +285,7 @@ margin_bottom = 24.0
 icon = ExtResource( 15 )
 
 [node name="ParametersTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
-margin_top = 361.0
+margin_top = 275.0
 margin_right = 142.0
 margin_bottom = 483.0
 size_flags_vertical = 3
@@ -635,6 +598,16 @@ margin_left = 4.0
 margin_top = 4.0
 margin_right = 196.0
 margin_bottom = 26.0
+
+[node name="DataPopupPanel" type="PopupPanel" parent="."]
+margin_right = 8.0
+margin_bottom = 8.0
+
+[node name="DataPopupVBox" type="VBoxContainer" parent="DataPopupPanel"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 4.0
+margin_bottom = 4.0
 
 [node name="OpenDialog" type="FileDialog" parent="."]
 margin_right = 760.0
@@ -1376,12 +1349,9 @@ text = "Cancel"
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton" to="." method="_on_CloseButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton" to="." method="_on_HomeViewButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton" to="." method="_on_AboutButton_button_down"]
-[connection signal="item_activated" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree" to="." method="_on_ObjectTree_item_activated"]
-[connection signal="item_selected" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ObjectTree" to="." method="_on_ObjectTree_item_selected"]
-[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_button_down"]
-[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer/MoveUpButton" to="." method="_on_MoveUpButton_button_down"]
-[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainer/MoveDownButton" to="." method="_on_MoveDownButton_button_down"]
-[connection signal="item_activated" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HistoryTree" to="." method="_on_HistoryTree_item_activated"]
+[connection signal="activate_data_popup" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree" to="." method="_on_ComponentTree_activate_data_popup"]
+[connection signal="focus_exited" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree" to="." method="_on_ComponentTree_focus_exited"]
+[connection signal="item_activated" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree" to="." method="_on_ComponentTree_item_activated"]
 [connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainerParams/AddParamButton" to="." method="_on_AddParamButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainerParams/DeleteParamButton" to="." method="_on_DeleteParamButton_button_down"]
 [connection signal="item_activated" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree" to="." method="_on_ParametersTree_item_activated"]
@@ -1414,22 +1384,42 @@ text = "Cancel"
 [connection signal="nothing_selected" from="ActionPopupPanel/VBoxContainer/HBoxContainer/ActionContainer/ActionTree" to="ActionPopupPanel" method="_on_ActionTree_nothing_selected"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/OkButton" to="ActionPopupPanel" method="_on_OkButton_button_down"]
 [connection signal="button_down" from="ActionPopupPanel/VBoxContainer/CancelButton" to="ActionPopupPanel" method="_on_CancelButton_button_down"]
+[connection signal="about_to_show" from="OpenDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]
 [connection signal="file_selected" from="OpenDialog" to="." method="_on_OpenDialog_file_selected"]
+[connection signal="popup_hide" from="OpenDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_popup_hide"]
+[connection signal="about_to_show" from="ErrorDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]
+[connection signal="popup_hide" from="ErrorDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_popup_hide"]
+[connection signal="about_to_show" from="ExportDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]
 [connection signal="file_selected" from="ExportDialog" to="." method="_on_ExportDialog_file_selected"]
+[connection signal="popup_hide" from="ExportDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_popup_hide"]
+[connection signal="about_to_show" from="SaveDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]
 [connection signal="file_selected" from="SaveDialog" to="." method="_on_SaveDialog_file_selected"]
+[connection signal="popup_hide" from="SaveDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_popup_hide"]
+[connection signal="about_to_show" from="ExportFileDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]
+[connection signal="popup_hide" from="ExportFileDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_popup_hide"]
+[connection signal="about_to_show" from="ConfirmationDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]
 [connection signal="confirmed" from="ConfirmationDialog" to="." method="_on_ConfirmationDialog_confirmed"]
+[connection signal="popup_hide" from="ConfirmationDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_popup_hide"]
+[connection signal="about_to_show" from="ExportSVGDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]
 [connection signal="error" from="ExportSVGDialog" to="." method="_on_error"]
+[connection signal="popup_hide" from="ExportSVGDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_popup_hide"]
 [connection signal="button_down" from="ExportSVGDialog/MarginContainer/VBoxContainer/PathContainer/SelectPathButton" to="ExportSVGDialog" method="_on_SelectPathButton_button_down"]
 [connection signal="toggled" from="ExportSVGDialog/MarginContainer/VBoxContainer/SectionCheckContainer/CheckButton" to="ExportSVGDialog" method="_on_CheckButton_toggled"]
 [connection signal="button_down" from="ExportSVGDialog/MarginContainer/VBoxContainer/OkButton" to="ExportSVGDialog" method="_on_OkButton_button_down"]
 [connection signal="button_down" from="ExportSVGDialog/MarginContainer/VBoxContainer/CancelButton" to="ExportSVGDialog" method="_on_CancelButton_button_down"]
+[connection signal="about_to_show" from="AboutDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]
 [connection signal="about_to_show" from="AboutDialog" to="AboutDialog" method="_on_AboutDialog_about_to_show"]
+[connection signal="popup_hide" from="AboutDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_popup_hide"]
 [connection signal="meta_clicked" from="AboutDialog/AboutTabContainer/Docs/DocsLabel" to="AboutDialog" method="_on_DocsLabel_meta_clicked"]
+[connection signal="about_to_show" from="AddParameterDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]
 [connection signal="add_parameter" from="AddParameterDialog" to="." method="_on_AddParameterDialog_add_parameter"]
 [connection signal="edit_parameter" from="AddParameterDialog" to="." method="_on_AddParameterDialog_edit_parameter"]
+[connection signal="popup_hide" from="AddParameterDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_popup_hide"]
 [connection signal="button_down" from="AddParameterDialog/VBoxContainer/OKButton" to="AddParameterDialog" method="_on_OKButton_button_down"]
 [connection signal="button_down" from="AddParameterDialog/VBoxContainer/CancelButton" to="AddParameterDialog" method="_on_CancelButton_button_down"]
+[connection signal="about_to_show" from="ExportDXFDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]
 [connection signal="error" from="ExportDXFDialog" to="." method="_on_error"]
+[connection signal="popup_hide" from="ExportDXFDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_popup_hide"]
 [connection signal="button_down" from="ExportDXFDialog/MainVBoxContainer/HBoxContainer/SelectPathButton" to="ExportDXFDialog" method="_on_SelectPathButton_button_down"]
 [connection signal="toggled" from="ExportDXFDialog/MainVBoxContainer/CheckContainer/CheckButton" to="ExportDXFDialog" method="_on_CheckButton_toggled"]
 [connection signal="button_down" from="ExportDXFDialog/MainVBoxContainer/OkButton" to="ExportDXFDialog" method="_on_OkButton_button_down"]

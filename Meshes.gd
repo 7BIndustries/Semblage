@@ -25,12 +25,6 @@ static func gen_workplane_meshes(origin, normal):
 	wp_mesh.transform.origin = origin
 	wp_mesh.transform.basis = LinAlg.find_basis(normal)
 
-	# Save the mesh to return
-	meshes.append(wp_mesh)
-
-	# Add the mesh instance to the viewport
-#	vp.add_child(wp_mesh)
-
 	# Get the new material color
 	var norm_color = Color(1.0, 1.0, 1.0, 0.01)
 	var norm_mat = SpatialMaterial.new()

@@ -243,23 +243,15 @@ func _ready():
 	add_child(error_btn_group)
 
 	# Pull any component names that already exist in the context
-	var orig_ctx = find_parent("ActionPopupPanel").original_context
-	var objs = ContextHandler.get_objects_from_context(orig_ctx)
+	var comp_names = find_parent("ActionPopupPanel").components
 
-	# Collect all of the object options into an array of strings
-	# We want users to still be able to look through the operations, so do not error until they click ok
-	var comp_names = []
-	if objs != null:
-		for obj in objs:
-			comp_names.append(obj.get_string())
+	# Load up both component option buttons with the names of the found components
+	Common.load_option_button(profile_opt, comp_names)
+	Common.load_option_button(path_opt, comp_names)
 
-		# Load up both component option buttons with the names of the found components
-		Common.load_option_button(profile_opt, comp_names)
-		Common.load_option_button(path_opt, comp_names)
-
-		# Add None as an option for the auxiliary spine
-		comp_names.insert(0, "None")
-		Common.load_option_button(aux_spine_opt, comp_names)
+	# Add None as an option for the auxiliary spine
+	comp_names.insert(0, "None")
+	Common.load_option_button(aux_spine_opt, comp_names)
 
 	_validate_form()
 

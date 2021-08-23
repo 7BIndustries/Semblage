@@ -4,7 +4,7 @@ signal ok_signal
 signal cancel
 signal error
 
-var original_context = null
+var components = []
 var new_context = null
 var new_template = null
 var prev_template = null
@@ -97,8 +97,9 @@ func _get_selected_trigger():
 """
 Sets the ActionPopupPanel up for an edit of a history item.
 """
-func activate_edit_mode(component_text, item_text):
+func activate_edit_mode(component_text, item_text, components):
 	prev_template = item_text
+	self.components = components
 
 	# Get the control that matches the edit trigger for the history code, if any
 	var popup_action = ContextHandler.find_matching_edit_trigger(item_text)
@@ -108,7 +109,7 @@ func activate_edit_mode(component_text, item_text):
 		return
 
 	# Show the popup
-	activate_popup(component_text, true)
+	activate_popup(component_text, true, components)
 
 	# Select the correct group button based on the next action
 	_select_group_button(popup_action.values()[0].group)
@@ -160,9 +161,9 @@ func activate_edit_mode(component_text, item_text):
 """
 Attempt to contain popup actions in one place.
 """
-func activate_popup(component_text, edit_mode_new):
-	# Save the incoming context to revert back to it later
-	original_context = component_text
+func activate_popup(component_text, edit_mode_new, components):
+	# Save the incoming components for binary operations and duplicate checks
+	self.components = components
 
 	# Save edit mode for when the user hits the OK button
 	self.edit_mode = edit_mode_new
@@ -249,17 +250,13 @@ func _on_OkButton_button_down():
 	if cur_item != null:
 		new_template = _update_multiple_actions(cur_item)
 
-	# Edit mode
-	if edit_mode:
-		new_context = ContextHandler.edit_context_string(original_context, prev_template, new_template)
-	# New mode
-	else:
-		if _is_component_dup(original_context, new_template):
+	# Make sure the user has not specified a duplicate component name
+	if not edit_mode:
+		var new_comp_name = ContextHandler.get_objects_from_context(new_template)
+		if new_comp_name in components:
 			# Let the user know they have entered a duplicate name
 			emit_signal("error", "The component/workplane name has already been used.\nPlease select another one.")
 			return
-
-		new_context = ContextHandler.update_context_string(original_context, new_template)
 
 	# Handle binary controls
 	var combine_map = null

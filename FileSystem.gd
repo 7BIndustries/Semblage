@@ -23,7 +23,7 @@ static func clear_file(path):
 """
 Loads the text of a file into a string to be manipulated by the GUI.
 """
-static func load_component(path):
+static func load_file_text(path):
 	var f = File.new()
 	var err = f.open(path, File.READ)
 	if err != OK:

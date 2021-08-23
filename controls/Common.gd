@@ -43,6 +43,93 @@ static func add_item_to_tree(new_object, tree, tree_root):
 		var new_obj_item = tree.create_item(tree_root)
 		new_obj_item.set_text(0, new_object)
 
+
+"""
+Adds a component to the Components tree.
+"""
+static func add_component(new_component, tree):
+	var tree_root = tree.get_root()
+
+	# Add the component to the tree if it is not already there
+	if new_component and not _check_tree_item_exists(tree, new_component):
+		var new_comp_item = tree.create_item(tree_root)
+		new_comp_item.set_text(0, new_component)
+
+		# Make sure this new component will be rendered
+		set_component_tree_item_visibility(tree, new_component, true)
+
+
+"""
+Adds an operation to a component in the tree.
+"""
+static func add_operation(component_name, template, tree):
+	var op_item = get_tree_item_by_text(tree, component_name)
+
+	# Add the new operation to the component
+	if op_item:
+		var new_op_item = tree.create_item(op_item)
+		new_op_item.set_text(0, template)
+
+
+"""
+Allows components to be hidden so they are not rendered.
+"""
+static func set_component_tree_item_visibility(tree, item_name, is_visible):
+	var item = get_tree_item_by_text(tree, item_name)
+
+	# Set the rendering visibility of the node
+	if is_visible:
+		item.set_metadata(0, {"visible": true})
+	else:
+		item.set_collapsed(true)
+		item.set_metadata(0, {"visible": false})
+
+
+"""
+Gets the last operations of a selected component
+"""
+static func get_last_op(tree):
+	var sel = tree.get_selected()
+	var res = null
+
+	# Protext against nothing being selected
+	if not sel:
+		return null
+
+	var cur_item = sel.get_children()
+
+	# Search the tree and update the matchine entry in the tree
+	while true:
+		if cur_item == null:
+			break
+		else:
+			# Save this as the last, non-null item in the tree
+			res = cur_item.get_text(0)
+
+			cur_item = cur_item.get_next()
+
+	return res
+
+
+"""
+Collects and returns all component names from the Component tree.
+"""
+static func get_all_components(tree):
+	var cur_item = tree.get_root().get_children()
+	var res = []
+
+	# Search the tree and update the matchine entry in the tree
+	while true:
+		if cur_item == null:
+			break
+		else:
+			res.append(cur_item.get_text(0))
+
+			cur_item = cur_item.get_next()
+
+	return res
+
+
 """
 Adds an item with multiple columns to the object tree.
 """
@@ -96,6 +183,39 @@ static func _check_tree_item_exists(tree, text):
 
 
 """
+Updates a component tree item, making sure that if it is an operation
+item that its parent component matches.
+"""
+static func update_component_tree_item(tree, old_text, new_text):
+	var cur_item = tree.get_root().get_children()
+
+	# Search the tree and update the matchine entry in the tree
+	while true:
+		if cur_item == null:
+			break
+		else:
+			# If we have a text match, update the matching TreeItem's text
+			if cur_item.get_text(0) == old_text:
+				cur_item.set_text(0, new_text)
+				break
+
+			# If there are operation items, walk through them as well
+			var op_item = cur_item.get_children()
+			while true:
+				if op_item == null:
+					break
+				else:
+					# If we hae a text match, update the matching TreeItem's text
+					if op_item.get_parent().get_text(0) and op_item.get_text(0) == old_text:
+						op_item.set_text(0, new_text)
+						break
+
+				op_item = op_item.get_next()
+
+			cur_item = cur_item.get_next()
+
+
+"""
 Updates a matching item in the given tree with a new entry during an edit.
 """
 static func update_tree_item(tree, old_text, new_text):
@@ -110,6 +230,19 @@ static func update_tree_item(tree, old_text, new_text):
 			if cur_item.get_text(0) == old_text:
 				cur_item.set_text(0, new_text)
 				break
+
+			# If there are operation items, walk through them as well
+			var op_item = cur_item.get_children()
+			while true:
+				if op_item == null:
+					break
+				else:
+					# If we hae a text match, update the matching TreeItem's text
+					if op_item.get_text(0) == old_text:
+						op_item.set_text(0, new_text)
+						break
+
+				op_item = op_item.get_next()
 
 			cur_item = cur_item.get_next()
 

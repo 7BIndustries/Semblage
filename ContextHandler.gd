@@ -9,6 +9,10 @@ Looks for the next Action besed on its trigger and extract the needed controls.
 static func get_next_action(context):
 	var action = {}
 
+	# If there is nothing in the Component tree, there will not be anything to search
+	if not context:
+		return action
+
 	# Step through all the possible triggers, looking for matches
 	for trigger in Triggers.get_triggers().keys():
 		# See if the trigger matches
@@ -76,7 +80,7 @@ static func find_matching_edit_trigger(code_text):
 """
 Returns the tagged object specified in the given template.
 """
-static func get_object_from_template(template):
+static func get_component_from_template(template):
 	# Use a regular expression to extract the tag names
 	var object_rgx = RegEx.new()
 	object_rgx.compile("(?<=tag\\(\")(.*)(?=\"\\))")
@@ -112,7 +116,7 @@ static func get_untessellateds(context):
 
 	# Check to see if there is an object that will be untessellated at the end of the context
 	var regex = RegEx.new()
-	regex.compile("Workplane\\(.*\\)$")
+	regex.compile("Workplane\\(.*\\)")
 	var result = regex.search(context)
 
 	# If we found an untessellated at the end of the context, figure out the dimensions
