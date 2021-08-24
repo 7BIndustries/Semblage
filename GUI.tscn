@@ -1,4 +1,4 @@
-[gd_scene load_steps=67 format=2]
+[gd_scene load_steps=68 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -33,6 +33,7 @@
 [ext_resource path="res://ExportDXFDialog.gd" type="Script" id=31]
 [ext_resource path="res://Canvas2D.gd" type="Script" id=32]
 [ext_resource path="res://ComponentTree.gd" type="Script" id=33]
+[ext_resource path="res://ParametersTree.gd" type="Script" id=34]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
@@ -256,41 +257,26 @@ text = "Components"
 [node name="ComponentTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
 margin_top = 18.0
 margin_right = 142.0
-margin_bottom = 225.0
+margin_bottom = 239.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 hide_root = true
 script = ExtResource( 33 )
 
 [node name="ParametersTreeLabel" type="Label" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
-margin_top = 229.0
+margin_top = 243.0
 margin_right = 142.0
-margin_bottom = 243.0
+margin_bottom = 257.0
 text = "Parameters"
 
-[node name="HBoxContainerParams" type="HBoxContainer" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
-margin_top = 247.0
-margin_right = 142.0
-margin_bottom = 271.0
-
-[node name="AddParamButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainerParams"]
-margin_right = 30.0
-margin_bottom = 24.0
-icon = ExtResource( 18 )
-
-[node name="DeleteParamButton" type="Button" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainerParams"]
-margin_left = 34.0
-margin_right = 64.0
-margin_bottom = 24.0
-icon = ExtResource( 15 )
-
 [node name="ParametersTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
-margin_top = 275.0
+margin_top = 261.0
 margin_right = 142.0
 margin_bottom = 483.0
 size_flags_vertical = 3
 columns = 2
 hide_root = true
+script = ExtResource( 34 )
 
 [node name="DocumentTabs" type="TabContainer" parent="GUI/VBoxContainer/WorkArea"]
 margin_left = 162.0
@@ -1352,8 +1338,7 @@ text = "Cancel"
 [connection signal="activate_data_popup" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree" to="." method="_on_ComponentTree_activate_data_popup"]
 [connection signal="focus_exited" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree" to="." method="_on_ComponentTree_focus_exited"]
 [connection signal="item_activated" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree" to="." method="_on_ComponentTree_item_activated"]
-[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainerParams/AddParamButton" to="." method="_on_AddParamButton_button_down"]
-[connection signal="button_down" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/HBoxContainerParams/DeleteParamButton" to="." method="_on_DeleteParamButton_button_down"]
+[connection signal="activate_data_popup" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree" to="." method="_on_ParametersTree_activate_data_popup"]
 [connection signal="item_activated" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree" to="." method="_on_ParametersTree_item_activated"]
 [connection signal="activate_action_popup" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="." method="_on_DocumentTabs_activate_action_popup"]
 [connection signal="cam_pan" from="GUI/VBoxContainer/WorkArea/DocumentTabs" to="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight" method="_on_DocumentTabs_cam_pan"]

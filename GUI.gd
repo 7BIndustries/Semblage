@@ -855,19 +855,6 @@ func _on_ConfirmationDialog_confirmed():
 
 
 """
-Called when the user clicks the button to add a parameter.
-"""
-func _on_AddParamButton_button_down():
-	var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
-
-	# Collect any existing items from the parameters tree for safety checks
-	var items = _collect_param_tree_pairs(tree)
-	$AddParameterDialog.set_existing_parameters(items)
-
-	$AddParameterDialog.popup_centered()
-
-
-"""
 Called when a new parameter is being added via the Parameter dialog.
 """
 func _on_AddParameterDialog_add_parameter(new_param):
@@ -876,25 +863,6 @@ func _on_AddParameterDialog_add_parameter(new_param):
 	Common.add_columns_to_tree(new_param, tree, tree.get_root())
 
 	self._execute_and_render()
-
-"""
-Called when the user clicks the button to remove a parameter.
-"""
-func _on_DeleteParamButton_button_down():
-	var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
-
-	var selected = tree.get_selected()
-
-	# Make sure there is an item to delete
-	if selected == null:
-		return
-
-	# Make sure the user is not trying to delete something like the root node
-	if selected.get_text(0) == "params":
-		return
-
-	# Remove the item from the parameters tree
-	selected.free()
 
 
 """
@@ -907,6 +875,9 @@ func _on_ParametersTree_item_activated():
 	var value_text = tree.get_selected().get_text(1)
 
 	$AddParameterDialog.activate_edit_mode(name_text, value_text)
+
+	# We do not need the popup menu anymore
+	$DataPopupPanel.hide()
 
 
 """
@@ -1160,6 +1131,10 @@ func _on_ComponentTree_activate_data_popup():
 
 	var popup_height = 75
 
+	# If there is nothing in the tree, do not display the menu
+	if not ct.get_selected():
+		return
+
 	# Lets us know whether or not a component is selected
 	var is_component = not ct.get_selected().get_text(0).begins_with(".")
 
@@ -1197,6 +1172,100 @@ func _on_ComponentTree_activate_data_popup():
 		show_hide_item.set_text("Show/Hide")
 		show_hide_item.connect("button_down", self, "_show_hide_tree_item")
 		$DataPopupPanel/DataPopupVBox.add_child(show_hide_item)
+
+	# Add the Cancel item
+	var cancel_item = Button.new()
+	cancel_item.set_text("Cancel")
+	cancel_item.connect("button_down", self, "_cancel_data_popup")
+	$DataPopupPanel/DataPopupVBox.add_child(cancel_item)
+
+
+"""
+Start a new parameter item.
+"""
+func _new_param_tree_item():
+	var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
+
+	# Collect any existing items from the parameters tree for safety checks
+	var items = _collect_param_tree_pairs(tree)
+	$AddParameterDialog.set_existing_parameters(items)
+
+	$AddParameterDialog.popup_centered()
+
+	# We do not need the popup menu anymore
+	$DataPopupPanel.hide()
+
+
+"""
+Remove the selected parameter tree item.
+"""
+func _remove_param_tree_item():
+	var pt = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
+
+	var selected = pt.get_selected()
+
+	# Make sure there is an item to delete
+	if selected == null:
+		return
+
+	# Make sure the user is not trying to delete something like the root node
+	if selected.get_text(0) == "params":
+		return
+
+	# Remove the item from the parameters tree
+	selected.free()
+
+	# Workaround to force the tree to update
+	pt.visible = false
+	pt.visible = true
+
+	# We do not need the popup menu anymore
+	$DataPopupPanel.hide()
+
+	# Render any changes to the component tree
+	self._execute_and_render()
+
+
+"""
+Handles the right click menu for the parameters tree.
+"""
+func _on_ParametersTree_activate_data_popup():
+	var pt = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
+	var global_pos = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree.get_global_mouse_position()
+#	var pos = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree.get_local_mouse_position()
+
+	var size = Vector2(50, 100)
+
+	var popup_height = 100
+
+	# Clear any previous items
+	_clear_data_popup()
+
+	# Toggle the visiblity of the popup
+	if $DataPopupPanel.visible:
+		$DataPopupPanel.hide()
+	else:
+		$DataPopupPanel.rect_position = Vector2(global_pos.x, global_pos.y)
+		$DataPopupPanel.rect_size = Vector2(100, popup_height)
+		$DataPopupPanel.show()
+
+	# Add the New item
+	var new_item = Button.new()
+	new_item.set_text("New")
+	new_item.connect("button_down", self, "_new_param_tree_item")
+	$DataPopupPanel/DataPopupVBox.add_child(new_item)
+
+	# Add the Edit item
+	var edit_item = Button.new()
+	edit_item.set_text("Edit")
+	edit_item.connect("button_down", self, "_on_ParametersTree_item_activated")
+	$DataPopupPanel/DataPopupVBox.add_child(edit_item)
+
+	# Add the Remove item
+	var remove_item = Button.new()
+	remove_item.set_text("Remove")
+	remove_item.connect("button_down", self, "_remove_param_tree_item")
+	$DataPopupPanel/DataPopupVBox.add_child(remove_item)
 
 	# Add the Cancel item
 	var cancel_item = Button.new()
