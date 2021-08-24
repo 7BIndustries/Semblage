@@ -621,6 +621,11 @@ Fired when the Action popup needs to be displayed.
 func _on_DocumentTabs_activate_action_popup():
 	var component_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
 
+	# If an operation is selected, we need to select its parent component
+	if component_tree.get_selected() != null and component_tree.get_selected().get_text(0).begins_with("."):
+		component_tree.get_selected().get_parent().select(0)
+
+	# Get the info that the operations dialog uses to set up the next operation
 	var op_text = Common.get_last_op(component_tree)
 	var comps = Common.get_all_components(component_tree)
 
@@ -1272,3 +1277,10 @@ func _on_ParametersTree_activate_data_popup():
 	cancel_item.set_text("Cancel")
 	cancel_item.connect("button_down", self, "_cancel_data_popup")
 	$DataPopupPanel/DataPopupVBox.add_child(cancel_item)
+
+
+"""
+Event that can be fired by nodes to request a new render.
+"""
+func _on_requesting_render():
+	self._execute_and_render()

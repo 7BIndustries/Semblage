@@ -2,6 +2,58 @@ extends Reference
 
 class_name Common
 
+
+"""
+Figure out how many sibling items are after the given item.
+"""
+static func find_siblings_after(drop_item):
+	var child_count = 0
+	var after_count = 0
+	var found_dropped_on = false
+	var cur_item = drop_item.get_parent().get_children()
+
+	while true:
+		if cur_item == null:
+			break
+		else:
+			# If we have already found the item being dropped on, record the number of siblings after
+			if found_dropped_on:
+				after_count += 1
+
+			# Save this as the last, non-null item in the tree
+			if drop_item == cur_item:
+				found_dropped_on = true
+
+			cur_item = cur_item.get_next()
+
+		child_count += 1
+
+	return after_count
+
+
+"""
+Move the dragged item before the item it was dropped on.
+"""
+static func move_before(drag_item, drop_item):
+	if not drop_item:
+		return
+
+	var num_next_item = find_siblings_after(drop_item)
+
+	# If there is not an item before this one, move it to the top
+	if not drop_item.get_prev():
+		drag_item.move_to_top()
+	else:
+		drag_item.move_to_bottom()
+		drag_item = drop_item
+
+		# Keeep shifting items until we get them in the correct positions
+		for item in range(0, num_next_item):
+			var next = drag_item.get_next()
+			drag_item.move_to_bottom()
+			drag_item = next
+
+
 """
 If the option button has matching text in an item, set that to be the
 selected item.
