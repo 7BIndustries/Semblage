@@ -18,15 +18,15 @@ func _input(event):
 	if not accept_input:
 		return
 
-	# Limit the mouse inputs to only work inside the document tabs
-	var evLocal = make_input_local(event)
-	if !Rect2(Vector2(0,0),rect_size).has_point(evLocal.position):
-		return
-
 	act_pos2d = get_viewport().get_mouse_position()
 
 	match event.get_class():
 		"InputEventMouseButton":
+			# Limit the mouse inputs to only work inside the document tabs
+			var evLocal = make_input_local(event)
+			if !Rect2(Vector2(0,0),rect_size).has_point(evLocal.position):
+				return
+
 			# See if the user requested the action menu
 			if Input.is_action_just_pressed("Action"):
 
@@ -46,6 +46,11 @@ func _input(event):
 			elif Input.is_action_just_released("Panning"):
 				panning = false
 		"InputEventMouseMotion":
+			# Limit the mouse inputs to only work inside the document tabs
+			var evLocal = make_input_local(event)
+			if !Rect2(Vector2(0,0),rect_size).has_point(evLocal.position):
+				return
+
 			if rotating:
 				# Let any cameras know that we are requesting rotation
 				emit_signal("cam_rotate", last_pos2d, act_pos2d)
