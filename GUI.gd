@@ -1094,21 +1094,78 @@ func _edit_tree_item():
 
 	$DataPopupPanel.hide()
 
+	# Get the text that will tell the Operations dialog what might come next
+	var prev_text = Common.get_last_op(ct)
+	if not prev_text:
+		prev_text = _convert_component_tree_to_script(false)
+
+	# Get the component names that are in the component tree
+	var comp_names = Common.get_all_components(ct)
+
 	# If the selected item starts with a period, it is an operation item
 	if sel.begins_with("."):
-		$ActionPopupPanel.activate_edit_mode(self.component_text, sel)
+		$ActionPopupPanel.activate_edit_mode(prev_text, sel, comp_names)
 	else:
 		var edit_child = ct.get_selected().get_children()
 		edit_child.select(0)
-		$ActionPopupPanel.activate_edit_mode(self.component_text, edit_child.get_text(0))
+		$ActionPopupPanel.activate_edit_mode(prev_text, edit_child.get_text(0), comp_names)
+
+
+"""
+Hiding a component in the tree causes it to not have a show_object call
+in the final script output.
+"""
+func _show_hide_tree_item():
+	# Get the selected item
+	var ct = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree
+	var sel = ct.get_selected()
+	if not sel:
+		return
+
+	# Toggle the show/hide state
+	var meta = sel.get_metadata(0)
+	if meta["visible"]:
+		# Collapse the tree item as a visual cue that it is being rendered again
+		sel.collapsed = true
+
+		# Let the user know this component is hidden
+		sel.set_suffix(0, " (hidden)")
+
+		# Toggle the metadata
+		sel.set_metadata(0, {"visible": false})
+	else:
+		# Collapse the tree item as a visual cue that it is being rendered again
+		sel.collapsed = false
+
+		# Stop telling the user that this component is hidden
+		sel.set_suffix(0, "")
+
+		# Toggle the metadata
+		sel.set_metadata(0, {"visible": true})
+
+	# We do not need the popup menu anymore
+	$DataPopupPanel.hide()
+
+	# Render any changes to the component tree
+	self._execute_and_render()
 
 
 """
 Called when the user right clicks on the Component tree.
 """
 func _on_ComponentTree_activate_data_popup():
+	var ct = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree
 	var pos = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree.get_local_mouse_position()
 	var size = Vector2(50, 100)
+
+	var popup_height = 75
+
+	# Lets us know whether or not a component is selected
+	var is_component = not ct.get_selected().get_text(0).begins_with(".")
+
+	# If we are selecting a Component, there are some different options
+	if is_component:
+		popup_height = 100
 
 	# Clear any previous items
 	_clear_data_popup()
@@ -1118,7 +1175,7 @@ func _on_ComponentTree_activate_data_popup():
 		$DataPopupPanel.hide()
 	else:
 		$DataPopupPanel.rect_position = Vector2(pos.x, pos.y + size.y)
-		$DataPopupPanel.rect_size = Vector2(100, 75)
+		$DataPopupPanel.rect_size = Vector2(100, popup_height)
 		$DataPopupPanel.show()
 
 	# Add the Edit item
@@ -1133,11 +1190,13 @@ func _on_ComponentTree_activate_data_popup():
 	remove_item.connect("button_down", self, "_remove_tree_item")
 	$DataPopupPanel/DataPopupVBox.add_child(remove_item)
 
-	# Add the Show/Hide item
-#	var show_hide_item = Button.new()
-#	show_hide_item.set_text("Show/Hide")
-#	show_hide_item.connect("button_down", self, "_show_hide_tree_item")
-#	$DataPopupPanel/DataPopupVBox.add_child(show_hide_item)
+	# This is a component, allow the user to show and hide it
+	if is_component:
+		# Add the Show/Hide item
+		var show_hide_item = Button.new()
+		show_hide_item.set_text("Show/Hide")
+		show_hide_item.connect("button_down", self, "_show_hide_tree_item")
+		$DataPopupPanel/DataPopupVBox.add_child(show_hide_item)
 
 	# Add the Cancel item
 	var cancel_item = Button.new()
