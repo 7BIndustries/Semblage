@@ -20,9 +20,8 @@ func test_save_button():
 	Common.add_operation("box1", '.box(10,10,10)', ct)
 
 	# Make sure the objects tree has items in it
-	var component_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
-	var component_tree_root = component_tree.get_root()
-	Common.add_item_to_tree("change_me", component_tree, component_tree_root)
+	var component_tree_root = ct.get_root()
+	Common.add_item_to_tree("change_me", ct, component_tree_root)
 
 	# Get a reference to the Save button and make sure we got something
 	var save_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton")
