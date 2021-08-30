@@ -160,70 +160,31 @@ func load_semblage_component(text):
 
 	# Step through all the lines and look for statements that need to be replayed
 	for line in lines:
-		# Find any component name (if present) that needs to be displayed in the list
-		var new_component = ContextHandler.get_component_from_template(line)
-		if new_component != null:
+		var new_operation = null
+
+		# Check to see if this is a component definition
+		if line.find("=") > 0 and line.split("=")[1] == "cq":
+			# Get the component name from the beginning
+			var new_component = line.split("=")[0]
+
 			# Save this new component name as the current for use later
 			cur_component = new_component
 			Common.add_component(new_component, component_tree)
-
-		var addition = null
-
-		# See if we have a binary or normal operation
-		if cur_component != null and line.find("=") > 0 and not line.split("=")[1].begins_with(cur_component):
-			addition = line.replace(cur_component + "=", "")
-
-			# Extract the relevant components from the binary operation
-			var binary_op = _map_binary_op(line)
-
-			# Save the parts of the binary operation
-			combined[binary_op.keys()[0]] = binary_op[binary_op.keys()[0]]
-
-			_handle_binary_tree_items(component_tree)
+		# See if we have a binary operation
+		elif cur_component != null and line.find("=") > 0 and not line.split("=")[1].begins_with(cur_component):
+			new_operation = line.replace(cur_component + "=", "")
+		# See if we have a normal operation
 		elif cur_component != null and line.begins_with(cur_component + "=" + cur_component):
 			# Update the context string in the ContextHandler
-			addition = line.replace(cur_component + "=" + cur_component, "")
+			new_operation = line.replace(cur_component + "=" + cur_component, "")
 
-		# Only add the addition if there is something to add
-		if addition != null:
+		# Only add the new operation if there is something to add
+		if new_operation != null:
 			# Add the current item to the component tree
-			Common.add_operation(cur_component, addition, component_tree)
+			Common.add_operation(cur_component, new_operation, component_tree)
 
 	# Selecting the first component in the list is a sane default
 	component_tree_root.get_children().select(0)
-
-
-"""
-Handles the nesting of binary (i.e. boolean) tree components.
-"""
-func _handle_binary_tree_items(component_tree):
-	pass
-	# Add all the components back to the tree, nesting as needed
-#	for component in components.keys():
-#		if component in combined.keys():
-#			# Search through all of the nested items to see if any components go in there
-#			for item in combined[component]:
-#				# Remove the current item from the root of the tree if they are going to be nested
-#				var remove_item = Common.get_tree_item_by_text(object_tree, item)
-#				object_tree.get_root().remove_child(remove_item)
-#
-#				# Add the current item as a child of the parent binary operation
-#				var tree_item = Common.get_tree_item_by_text(object_tree, component)
-#				var new_obj_item = object_tree.create_item(tree_item)
-#				new_obj_item.set_text(0, item)
-
-
-"""
-Extracts the relevant components of a binary operation.
-"""
-func _map_binary_op(line):
-	var key = line.split("=")[0]
-	var first_comp = line.split("=")[1].split(".")[0]
-	var second_comp = line.split("(")[1].split(",")[0]
-
-	var dict = { key: [first_comp, second_comp] }
-
-	return dict
 
 
 """
@@ -995,14 +956,8 @@ func _on_error(error_text):
 Called when an item in the component list is double clicked.
 """
 func _on_ComponentTree_item_activated():
-	# Get the selected item
-	var ct = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree
-	var sel = ct.get_selected()
-
-	# If the selected item starts with a period, it is an operation item
-	if sel.get_text(0).begins_with("."):
-		var component_text = sel.get_parent().get_text(0)
-		$ActionPopupPanel.activate_edit_mode(component_text, sel.get_text(0), Common.get_all_components(ct))
+	# Call the same code as if the user right clicked on the item and selected Edit
+	_edit_tree_item()
 
 
 """
@@ -1083,6 +1038,11 @@ func _edit_tree_item():
 		$ActionPopupPanel.activate_edit_mode(prev_text, sel, comp_names)
 	else:
 		var edit_child = ct.get_selected().get_children()
+
+		# Check to see if this is a binary operation
+		if edit_child == null:
+			edit_child = ct.get_selected()
+
 		edit_child.select(0)
 		$ActionPopupPanel.activate_edit_mode(prev_text, edit_child.get_text(0), comp_names)
 
