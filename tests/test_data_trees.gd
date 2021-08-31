@@ -428,3 +428,45 @@ func test_parameter_cancel_button():
 
 	# Make sure that the Cancel button hid the data popup panel
 	assert_false(dpp.visible, "Make sure that the DataPopupPanel is hidden again.")
+
+
+"""
+Simulates the user dragging and dropping an item.
+"""
+func test_operation_drag_and_drop():
+	# Get a reference to the whole interface and make sure we got it
+	var gui = partial_double("res://GUI.tscn").instance()
+	gui._ready()
+
+	# Initialize the trees
+	gui._init_component_tree()
+	gui._init_params_tree()
+
+	# Set up the main component tree with the content we want
+	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+	Common.add_component("box1", ct)
+	Common.add_operation("box1", '.Workplane().tag("box1")', ct)
+	Common.add_operation("box1", '.box(10,10,10)', ct)
+
+	# Get the box operation tree item
+	var box_item = ct.get_root().get_children()
+	var drop_item = box_item.get_children()
+	var drag_item = drop_item.get_next()
+
+	# Make sure that the item we want to remove is selected
+	box_item.select(0)
+
+	# Get the box item so that we can test a Remove click on it
+	assert_eq(drag_item.get_text(0), '.box(10,10,10)', "Make sure that we grabbed the right item.")
+	assert_eq(drop_item.get_text(0), '.Workplane().tag("box1")', "Make sure that we grabbed the right item.")
+
+	Common.move_before(drag_item, drop_item)
+
+	# Get the box operation tree item
+	box_item = ct.get_root().get_children()
+	drop_item = box_item.get_children()
+	drag_item = drop_item.get_next()
+
+	# Make sure the items got swapped
+	assert_eq(drop_item.get_text(0), '.box(10,10,10)', "Make sure that we grabbed the right item.")
+	assert_eq(drag_item.get_text(0), '.Workplane().tag("box1")', "Make sure that we grabbed the right item.")
