@@ -163,13 +163,24 @@ func load_semblage_component(text):
 		var new_operation = null
 
 		# Check to see if this is a component definition
-		if line.find("=") > 0 and line.split("=")[1] == "cq":
+		if line.find("=") > 0 and line.split("=")[1].begins_with("cq"):
 			# Get the component name from the beginning
 			var new_component = line.split("=")[0]
 
 			# Save this new component name as the current for use later
 			cur_component = new_component
 			Common.add_component(new_component, component_tree)
+
+			# See if there is metadata attached to this component
+			if line.find("#") > 0:
+				# We want to attach the metadata to the last component added
+				var this_component = Common.get_last_component(component_tree)
+
+				# Parse and save the meta data from the component's file
+				var meta_str = line.split("# ")[1]
+				var meta = JSON.parse(meta_str).result
+
+				this_component.set_metadata(0, meta)
 		# See if we have a binary operation
 		elif cur_component != null and line.find("=") > 0 and not line.split("=")[1].begins_with(cur_component):
 			new_operation = line.replace(cur_component + "=", "")
@@ -185,6 +196,19 @@ func load_semblage_component(text):
 
 	# Selecting the first component in the list is a sane default
 	component_tree_root.get_children().select(0)
+
+	# Step through all the components and set their visibility properly
+	var cur_item = component_tree_root.get_children()
+	while true:
+		if cur_item == null:
+			break
+		else:
+			# Change the tree item name and collapse it if it is hidden
+			if cur_item.get_metadata(0) != null and not cur_item.get_metadata(0)["visible"]:
+				cur_item.set_suffix(0, " (hidden)")
+				cur_item.set_collapsed(true)
+
+			cur_item = cur_item.get_next()
 
 
 """
@@ -213,7 +237,7 @@ func _convert_component_tree_to_script(include_show):
 			break
 		else:
 			# Start the component off
-			component_text += cur_comp.get_text(0) + "=cq\n"
+			component_text += cur_comp.get_text(0) + "=cq  # " + JSON.print(cur_comp.get_metadata(0)) + "\n"
 
 			# See if we are supposed to skip rendering this component
 			if cur_comp.get_metadata(0) != null and cur_comp.get_metadata(0)["visible"]:

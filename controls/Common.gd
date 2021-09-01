@@ -150,7 +150,7 @@ static func get_last_op(tree):
 
 	var cur_item = sel.get_children()
 
-	# Search the tree and update the matchine entry in the tree
+	# Search the tree and return only the last entry
 	while true:
 		if cur_item == null:
 			break
@@ -164,13 +164,32 @@ static func get_last_op(tree):
 
 
 """
+Returns only the last component in a tree.
+"""
+static func get_last_component(tree):
+	var cur_item = tree.get_root().get_children()
+	var res = null
+
+	# Search the tree and return only the last item
+	while true:
+		if cur_item == null:
+			break
+		else:
+			res = cur_item
+
+			cur_item = cur_item.get_next()
+
+	return res
+
+
+"""
 Collects and returns all component names from the Component tree.
 """
 static func get_all_components(tree):
 	var cur_item = tree.get_root().get_children()
 	var res = []
 
-	# Search the tree and update the matchine entry in the tree
+	# Search the tree and collect a list of all components
 	while true:
 		if cur_item == null:
 			break
@@ -204,7 +223,7 @@ static func get_tree_item_by_text(tree, text):
 	var cur_item = tree.get_root().get_children()
 	var res = null
 
-	# Search the tree and update the matchine entry in the tree
+	# Search the tree and update the matching entry in the tree
 	while true:
 		if cur_item == null:
 			break
@@ -241,7 +260,7 @@ item that its parent component matches.
 static func update_component_tree_item(tree, old_text, new_text):
 	var cur_item = tree.get_root().get_children()
 
-	# Search the tree and update the matchine entry in the tree
+	# Search the tree and update the matching entry in the tree
 	while true:
 		if cur_item == null:
 			break
@@ -273,7 +292,7 @@ Updates a matching item in the given tree with a new entry during an edit.
 static func update_tree_item(tree, old_text, new_text):
 	var cur_item = tree.get_root().get_children()
 
-	# Search the tree and update the matchine entry in the tree
+	# Search the tree and update the matching entry in the tree
 	while true:
 		if cur_item == null:
 			break
@@ -307,7 +326,7 @@ static func collect_pairs(tree):
 
 	var cur_item = tree.get_root().get_children()
 
-	# Search the tree and update the matchine entry in the tree
+	# Search the tree and update the matching entry in the tree
 	while true:
 		if cur_item == null:
 			break
@@ -408,7 +427,7 @@ static func move_tree_item_down(tree, selected):
 	var selected_index = -1
 	var tree_nodes = []
 
-	# Search the tree and update the matchine entry in the tree
+	# Search the tree and update the matching entry in the tree
 	while true:
 		if cur_item == null:
 			break
