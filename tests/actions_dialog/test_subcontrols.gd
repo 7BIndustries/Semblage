@@ -29,9 +29,10 @@ func test_union_control():
 
 	# Grab the list of components from the component tree
 	var comp_names = Common.get_all_components(ct)
+	var params = gui._get_parameter_items()
 
 	# Simulate a right click on the document tags control to bring up the operations dialog
-	popup.activate_popup(component_text, false, comp_names)
+	popup.activate_popup(component_text, false, comp_names, params)
 
 	# Simulate a click of the 3D button
 	var threed_btn = popup.get_node("VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton")
@@ -123,9 +124,10 @@ func test_cut_control():
 
 	# Grab the list of components from the component tree
 	var comp_names = Common.get_all_components(ct)
+	var params = gui._get_parameter_items()
 
 	# Simulate a right click on the document tags control to bring up the operations dialog
-	popup.activate_popup(component_text, false, comp_names)
+	popup.activate_popup(component_text, false, comp_names, params)
 
 	# Simulate a click of the workplane button
 	var threed_btn = popup.get_node("VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton")
@@ -216,9 +218,10 @@ func test_intersect_control():
 
 	# Grab the list of components from the component tree
 	var comp_names = Common.get_all_components(ct)
+	var params = gui._get_parameter_items()
 
 	# Simulate a right click on the document tags control to bring up the operations dialog
-	popup.activate_popup(component_text, false, comp_names)
+	popup.activate_popup(component_text, false, comp_names, params)
 
 	# Simulate a click of the workplane button
 	var threed_btn = popup.get_node("VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton")
@@ -310,9 +313,10 @@ func test_loft_control():
 
 	# Grab the list of components from the component tree
 	var comp_names = Common.get_all_components(ct)
+	var params = gui._get_parameter_items()
 
 	# Simulate a right click on the document tags control to bring up the operations dialog
-	popup.activate_popup(component_text, false, comp_names)
+	popup.activate_popup(component_text, false, comp_names, params)
 
 	# Simulate a click of the workplane button
 	var threed_btn = popup.get_node("VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton")
@@ -380,9 +384,10 @@ func test_sweep_control():
 
 	# Grab the list of components from the component tree
 	var comp_names = Common.get_all_components(ct)
+	var params = gui._get_parameter_items()
 
 	# Simulate a right click on the document tags control to bring up the operations dialog
-	popup.activate_popup(component_text, false, comp_names)
+	popup.activate_popup(component_text, false, comp_names, params)
 
 	# Simulate a click of the workplane button
 	var threed_btn = popup.get_node("VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton")

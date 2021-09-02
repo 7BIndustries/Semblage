@@ -5,6 +5,7 @@ signal cancel
 signal error
 
 var components = []
+var parameters = {}
 var new_context = null
 var new_template = null
 var prev_template = null
@@ -97,9 +98,10 @@ func _get_selected_trigger():
 """
 Sets the ActionPopupPanel up for an edit of a history item.
 """
-func activate_edit_mode(component_text, item_text, components):
+func activate_edit_mode(component_text, item_text, components, parameters):
 	prev_template = item_text
 	self.components = components
+	self.parameters = parameters
 
 	# Get the control that matches the edit trigger for the history code, if any
 	var popup_action = ContextHandler.find_matching_edit_trigger(item_text)
@@ -109,7 +111,7 @@ func activate_edit_mode(component_text, item_text, components):
 		return
 
 	# Show the popup
-	activate_popup(component_text, true, components)
+	activate_popup(component_text, true, components, parameters)
 
 	# Select the correct group button based on the next action
 	_select_group_button(popup_action.values()[0].group)
@@ -161,9 +163,10 @@ func activate_edit_mode(component_text, item_text, components):
 """
 Attempt to contain popup actions in one place.
 """
-func activate_popup(component_text, edit_mode_new, components):
+func activate_popup(component_text, edit_mode_new, components, parameters):
 	# Save the incoming components for binary operations and duplicate checks
 	self.components = components
+	self.parameters = parameters
 
 	# Save edit mode for when the user hits the OK button
 	self.edit_mode = edit_mode_new
@@ -523,8 +526,14 @@ Collects all of the completed templates in the Action tree and
 renders them on the 2D canvas.
 """
 func _render_action_tree():
+	var script_text = "import cadquery as cq\n"
+
+	# Collect all of the parameters into a string the starts the script
+	for param in parameters.keys():
+		script_text += param + "=" + parameters[param] + "\n"
+
 	# Start to build the preview string based on what is in the actions list
-	var script_text = "import cadquery as cq\nresult=cq.Workplane()"
+	script_text += "result=cq.Workplane()"
 
 	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
 	var action_tree_root = action_tree.get_root()

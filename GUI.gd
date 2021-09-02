@@ -269,6 +269,29 @@ func _convert_component_tree_to_script(include_show):
 
 
 """
+Allows the caller to get the parameter key/value pairs.
+"""
+func _get_parameter_items():
+	var params = {}
+
+	# Attempt to get the parameter tree and its root item
+	var params_tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
+	var params_tree_root = _get_params_tree_root(params_tree)
+
+	# Loop through any parameters that are present and append them to the params section text
+	var cur_param_item = params_tree_root.get_children()
+	while true:
+		if cur_param_item == null:
+			break
+		else:
+			params[cur_param_item.get_text(0)] = cur_param_item.get_text(1)
+
+			cur_param_item = cur_param_item.get_next()
+
+	return params
+
+
+"""
 Collect parameters to be appended to the component text.
 """
 func _collect_parameters():
@@ -289,6 +312,7 @@ func _collect_parameters():
 			cur_param_item = cur_param_item.get_next()
 
 	return param_text
+
 
 """
 Generates a component using the semb CLI, which returns JSON.
@@ -613,8 +637,9 @@ func _on_DocumentTabs_activate_action_popup():
 	# Get the info that the operations dialog uses to set up the next operation
 	var op_text = Common.get_last_op(component_tree)
 	var comps = Common.get_all_components(component_tree)
+	var params = _get_parameter_items()
 
-	$ActionPopupPanel.activate_popup(op_text, false, comps)
+	$ActionPopupPanel.activate_popup(op_text, false, comps, params)
 
 
 """
@@ -1056,10 +1081,11 @@ func _edit_tree_item():
 
 	# Get the component names that are in the component tree
 	var comp_names = Common.get_all_components(ct)
+	var params = _get_parameter_items()
 
 	# If the selected item starts with a period, it is an operation item
 	if sel.begins_with("."):
-		$ActionPopupPanel.activate_edit_mode(prev_text, sel, comp_names)
+		$ActionPopupPanel.activate_edit_mode(prev_text, sel, comp_names, params)
 	else:
 		var edit_child = ct.get_selected().get_children()
 
@@ -1068,7 +1094,7 @@ func _edit_tree_item():
 			edit_child = ct.get_selected()
 
 		edit_child.select(0)
-		$ActionPopupPanel.activate_edit_mode(prev_text, edit_child.get_text(0), comp_names)
+		$ActionPopupPanel.activate_edit_mode(prev_text, edit_child.get_text(0), comp_names, params)
 
 
 """
