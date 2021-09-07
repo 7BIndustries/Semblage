@@ -548,6 +548,7 @@ func _render_action_tree():
 
 			cur_item = cur_item.get_next()
 
+	# Make sure all the wires show up
 	script_text += ".consolidateWires()\nshow_object(result)"
 
 	# Export the file to the user data directory temporarily

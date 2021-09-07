@@ -343,24 +343,93 @@ func _render_component_text(component_text):
 	var untesses = ContextHandler.get_untessellateds(component_text)
 	if len(untesses) > 0:
 		for untess in untesses:
-			var meshes = Meshes.gen_workplane_meshes(untess["origin"], untess["normal"])
+			var meshes = Meshes.gen_workplane_meshes(untess["origin"], untess["normal"], 5)
 			for mesh in meshes:
 				$GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport.add_child(mesh)
 
-	# Pass the script to the Python layer to convert it to tessellated JSON
-	var component_json = cqgipy.build(component_text)
+	# Method that post-processes the results of the script to pull out renderables
+	var render_tree = cqgipy.get_render_tree(component_text)
 
-	# If there was an error, display it
-	if component_json.begins_with("error~"):
+	# See if we got an error
+	if typeof(render_tree) == 4:
 		# Let the user know there was an error
-		var err = component_json.split("~")[1]
+		var err = render_tree.split("~")[1]
 		$ErrorDialog.dialog_text = err
 		$ErrorDialog.popup_centered()
-	else:
+		$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering error")
+
+		return
+
+	# Render any workplanes that need to be rendered
+	for comp_tree in render_tree["components"]:
+		if comp_tree["workplanes"].size() > 0 and not comp_tree["workplanes"][-1]["is_base"]:
+			var cur_wp = comp_tree["workplanes"][-1]
+
+			# Create workplane meshes
+			var meshes = Meshes.gen_workplane_meshes(cur_wp["origin"], cur_wp["normal"], cur_wp["size"])
+			for mesh in meshes:
+				$GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport.add_child(mesh)
+
+		# Make all of the component meshes visible
+		render_component_tree(comp_tree)
+
+	# Pass the script to the Python layer to convert it to tessellated JSON
+	# var component_json = cqgipy.build(component_text)
+
+	# If there was an error, display it
+#	if component_json.begins_with("error~"):
+#		# Let the user know there was an error
+#		var err = component_json.split("~")[1]
+#		$ErrorDialog.dialog_text = err
+#		$ErrorDialog.popup_centered()
+#	else:
+#		pass
 		# Load the JSON into the scene
-		load_component_json(component_json)
+		#load_component_json(component_json)
 
 	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering component...done")
+
+
+"""
+Adds meshes for each of the component entities in the render tree.
+"""
+func render_component_tree(component):
+	var vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
+	var cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
+
+	var new_safe_dist = 0
+
+	# If we've found a larger dimension, save the safe distance, which is the maximum dimension of any component
+	var max_dim = component["largest_dimension"]
+	var min_dim = component["smallest_dimension"]
+
+	# Make sure the line width will be appropriate, even if this is a 2D object
+	if min_dim == 0:
+		min_dim = max_dim
+
+	# Make sure the zoom speed works with the size of the model
+	cam.ZOOMSPEED = 0.075 * max_dim
+
+	# Get the new safe/sane camera distance
+	new_safe_dist = get_safe_camera_distance(max_dim)
+
+	# Get the mesh instance and the maximum distance
+	var mesh_data = Meshes.gen_component_meshes(component)
+	vp.add_child(mesh_data)
+
+	# Add the edge representations
+	for edge in component["edges"]:
+		var line = Meshes.gen_line_mesh_new(0.010 * min_dim, edge)
+		vp.add_child(line)
+
+	# Only reset the view if the same distance changed
+	if new_safe_dist != safe_distance:
+		# Find the safe distance for the camera based on the maximum distance of any vertex from the origin
+		safe_distance = new_safe_dist # get_safe_camera_distance(max_dist)
+
+		_home_view()
+
+	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Redering component...done.")
 
 
 """
@@ -401,7 +470,7 @@ func load_component_json(json_string):
 		# Make sure the line width will be appropriate, even if this is a 2D object
 		if min_dim == 0:
 			min_dim = max_dim
-	
+
 		# Make sure the zoom speed works with the size of the model
 		cam.ZOOMSPEED = 0.075 * max_dim
 
