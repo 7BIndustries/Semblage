@@ -21,16 +21,24 @@ func _ready():
 	OS.set_window_maximized(true)
 
 	# Set the tooltips of the main controls
-	$GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton.hint_tooltip = tr("OPEN_BUTTON_HINT_TOOLTIP")
-	$GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton.hint_tooltip = tr("SAVE_BUTTON_HINT_TOOLTIP")
-	$GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton.hint_tooltip = tr("MAKE_BUTTON_HINT_TOOLTIP")
-	$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.hint_tooltip = tr("RELOAD_BUTTON_HINT_TOOLTIP")
-	$GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton.hint_tooltip = tr("CLOSE_BUTTON_HINT_TOOLTIP")
-	$GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton.hint_tooltip = tr("HOME_VIEW_BUTTON_HINT_TOOLTIP")
-	$GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton.hint_tooltip = tr("ABOUT_BUTTON_HINT_TOOLTIP")
+	var open_button = $GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton
+	var save_button = $GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton
+	var make_button = $GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton
+	var reload_button = $GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton
+	var close_button = $GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton
+	var home_button = $GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton
+	var about_button = $GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton
+	open_button.hint_tooltip = tr("OPEN_BUTTON_HINT_TOOLTIP")
+	save_button.hint_tooltip = tr("SAVE_BUTTON_HINT_TOOLTIP")
+	make_button.hint_tooltip = tr("MAKE_BUTTON_HINT_TOOLTIP")
+	reload_button.hint_tooltip = tr("RELOAD_BUTTON_HINT_TOOLTIP")
+	close_button.hint_tooltip = tr("CLOSE_BUTTON_HINT_TOOLTIP")
+	home_button.hint_tooltip = tr("HOME_VIEW_BUTTON_HINT_TOOLTIP")
+	about_button.hint_tooltip = tr("ABOUT_BUTTON_HINT_TOOLTIP")
 
 	# Let the user know the app is ready to use
-	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text(" Ready")
+	var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
+	status_lbl.set_text(" Ready")
 
 
 """
@@ -45,7 +53,8 @@ func _input(event):
 Handler for when the Open Component button is clicked.
 """
 func _on_OpenButton_button_down():
-	$OpenDialog.popup_centered()
+	var open_dlg = $OpenDialog
+	open_dlg.popup_centered()
 
 """
 Handles rendering the user-selected file to the 3DView.
@@ -73,8 +82,9 @@ func _on_OpenDialog_file_selected(path):
 		var txt = "It appears that the file you are opening contains extra imports.\nSemblage components are simply Python scripts, so certain\n types of imports can be a security risk. Please review the extra\nimports below to ensure they are acceptable.\n\n"
 		txt += PoolStringArray(imports).join("\n")
 		txt += "\n\nDo you still want to open the component file?"
-		$ConfirmationDialog.dialog_text = txt
-		$ConfirmationDialog.popup_centered()
+		var confirm_dlg = $ConfirmationDialog
+		confirm_dlg.dialog_text = txt
+		confirm_dlg.popup_centered()
 	else:
 		_load_component(check_component_text)
 
@@ -95,7 +105,8 @@ func _load_component(component_text):
 	# If this is a Semblage component file, load it into the component tree
 	if Security.IsSemblageFile(component_text):
 		# Prevent the user from reloading the script manually
-		$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.hide()
+		var reload_btn = $GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton
+		reload_btn.hide()
 
 		# Load the component into the component tree and then render it
 		load_semblage_component(component_text)
@@ -178,7 +189,8 @@ func load_semblage_component(text):
 
 				# Parse and save the meta data from the component's file
 				var meta_str = line.split("# ")[1]
-				var meta = JSON.parse(meta_str).result
+				var meta = JSON.parse(meta_str)
+				meta = meta.result
 
 				this_component.set_metadata(0, meta)
 		# See if we have a binary operation
@@ -334,7 +346,8 @@ func _render_component_text(component_text):
 	if component_text.ends_with("=cq\n"):
 		return
 	else:
-		$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering component...")
+		var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
+		status_lbl.set_text("Rednering component...")
 
 	# Clear the 3D viewport
 	self._clear_viewport()
@@ -348,15 +361,18 @@ func _render_component_text(component_text):
 				$GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport.add_child(mesh)
 
 	# Method that post-processes the results of the script to pull out renderables
-	var render_tree = cqgipy.get_render_tree(component_text)
+	var render_tree = cqgipy
+	render_tree = render_tree.get_render_tree(component_text)
 
 	# See if we got an error
 	if typeof(render_tree) == 4:
 		# Let the user know there was an error
 		var err = render_tree.split("~")[1]
-		$ErrorDialog.dialog_text = err
-		$ErrorDialog.popup_centered()
-		$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering error")
+		var error_dlg = $ErrorDialog
+		error_dlg.dialog_text = err
+		error_dlg.popup_centered()
+		var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
+		status_lbl.set_text("Rednering error")
 
 		return
 
@@ -373,21 +389,8 @@ func _render_component_text(component_text):
 		# Make all of the component meshes visible
 		render_component_tree(comp_tree)
 
-	# Pass the script to the Python layer to convert it to tessellated JSON
-	# var component_json = cqgipy.build(component_text)
-
-	# If there was an error, display it
-#	if component_json.begins_with("error~"):
-#		# Let the user know there was an error
-#		var err = component_json.split("~")[1]
-#		$ErrorDialog.dialog_text = err
-#		$ErrorDialog.popup_centered()
-#	else:
-#		pass
-		# Load the JSON into the scene
-		#load_component_json(component_json)
-
-	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Rednering component...done")
+	var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
+	status_lbl.set_text("Rednering component...done")
 
 
 """
@@ -414,12 +417,12 @@ func render_component_tree(component):
 	new_safe_dist = get_safe_camera_distance(max_dim)
 
 	# Get the mesh instance and the maximum distance
-	var mesh_data = Meshes.gen_component_meshes(component)
+	var mesh_data = Meshes.gen_component_mesh(component)
 	vp.add_child(mesh_data)
 
 	# Add the edge representations
 	for edge in component["edges"]:
-		var line = Meshes.gen_line_mesh_new(0.010 * min_dim, edge)
+		var line = Meshes.gen_line_mesh(0.010 * min_dim, edge)
 		vp.add_child(line)
 
 	# Only reset the view if the same distance changed
@@ -429,7 +432,8 @@ func render_component_tree(component):
 
 		_home_view()
 
-	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Redering component...done.")
+	var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
+	status_lbl.set_text("Redering component...done.")
 
 
 """
@@ -444,56 +448,6 @@ func get_safe_camera_distance(max_dim):
 	var dist = max_dim / sin(PI / 180.0 * cam.fov * 0.5)
 
 	return dist
-
-
-"""
-Loads a generated component into a mesh.
-"""
-func load_component_json(json_string):
-	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Redering component...")
-
-	# Get a reference to the 3D viewport
-	var vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
-	var cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
-	var origin_cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer/OriginViewport/OriginOrbitCamera
-	var light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
-
-	var new_safe_dist = 0
-
-	# Convert all of the returned results to meshes that can be displayed
-	var component_json = JSON.parse(json_string).result
-	for component in component_json["components"]:
-		# If we've found a larger dimension, save the safe distance, which is the maximum dimension of any component
-		var max_dim = component["largestDim"]
-		var min_dim = component["smallestDim"]
-
-		# Make sure the line width will be appropriate, even if this is a 2D object
-		if min_dim == 0:
-			min_dim = max_dim
-
-		# Make sure the zoom speed works with the size of the model
-		cam.ZOOMSPEED = 0.075 * max_dim
-
-		# Get the new safe/sane camera distance
-		new_safe_dist = get_safe_camera_distance(max_dim)
-
-		# Get the mesh instance and the maximum distance
-		var mesh_data = Meshes.gen_component_mesh(component)
-		vp.add_child(mesh_data)
-
-		# Add the edge representations
-		for edge in component["cqEdges"]:
-			var line = Meshes.gen_line_mesh(0.010 * min_dim, edge)
-			vp.add_child(line)
-
-	# Only reset the view if the same distance changed
-	if new_safe_dist != safe_distance:
-		# Find the safe distance for the camera based on the maximum distance of any vertex from the origin
-		safe_distance = new_safe_dist # get_safe_camera_distance(max_dist)
-
-		_home_view()
-
-	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Redering component...done.")
 
 
 """
@@ -533,7 +487,7 @@ known poisition and orientation.
 """
 func _home_view():
 	# If the safe distance has not been set, there is nothing to do
-	if self.safe_distance == 0:
+	if safe_distance == 0:
 		return
 
 	var cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
@@ -541,19 +495,17 @@ func _home_view():
 	var light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
 
 	# Adjust the safe distance so that the component fits well within the viewport
-	var sd = self.safe_distance * 0.5
+	var sd = safe_distance * 0.5
 
 	# Set the main camera, the axis indicator camera, and the light to the default locations
 	cam.look_at_from_position(Vector3(sd, sd, sd), Vector3(0, 0, 0), Vector3(0, 0, 1))
 	origin_cam.look_at_from_position(Vector3(3, 3, 3), Vector3(0, 0, 0), Vector3(0, 0, 1))
-	light.look_at_from_position(Vector3(self.safe_distance, self.safe_distance, self.safe_distance), Vector3(0, 0, 0), Vector3(0, 0, 1))
+	light.look_at_from_position(Vector3(safe_distance, safe_distance, safe_distance), Vector3(0, 0, 0), Vector3(0, 0, 1))
 
 """
 Handler that is called when the user clicks the button to close the current component/view.
 """
 func _on_CloseButton_button_down():
-	var cam = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera
-
 	# Reset the tranform for the camera back to the default
 	_home_view()
 
@@ -567,10 +519,12 @@ func _on_CloseButton_button_down():
 	self._reset_trees()
 
 	# Prevent the user from reloading the script manually
-	$GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton.hide()
+	var reload_btn = $GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton
+	reload_btn.hide()
 
 	# Let the user know the UI is ready to procede
-	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Ready")
+	var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
+	status_lbl.set_text("Ready")
 
 
 """
@@ -624,8 +578,7 @@ func _clear_viewport():
 """
 Retries the updated context and makes it the current one.
 """
-func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, new_context, combine_map):
-	var vp = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport
+func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, combine_map):
 	var component_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
 	var component_tree_root = _get_component_tree_root(component_tree)
 
@@ -708,26 +661,29 @@ func _on_DocumentTabs_activate_action_popup():
 	var comps = Common.get_all_components(component_tree)
 	var params = _get_parameter_items()
 
-	$ActionPopupPanel.activate_popup(op_text, false, comps, params)
+	var op_panel = $ActionPopupPanel
+	op_panel.activate_popup(op_text, false, comps, params)
 
 
 """
 Called when the user clicks the Make button.
 """
 func _on_MakeButton_button_down():
-	var pos = $GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton.rect_position
-	var size = $GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton.rect_size
+	var make_btn = $GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton
+	var pos = make_btn.rect_position
+	var size = make_btn.rect_size
 
 	# Clear any previous items
 	_clear_toolbar_popup()
 
 	# Toggle the visiblity of the popup
-	if $ToolbarPopupPanel.visible:
-		$ToolbarPopupPanel.hide()
+	var tb_popup = $ToolbarPopupPanel
+	if tb_popup.visible:
+		tb_popup.hide()
 	else:
-		$ToolbarPopupPanel.rect_position = Vector2(pos.x, pos.y + size.y)
-		$ToolbarPopupPanel.rect_size = Vector2(100, 100)
-		$ToolbarPopupPanel.show()
+		tb_popup.rect_position = Vector2(pos.x, pos.y + size.y)
+		tb_popup.rect_size = Vector2(100, 100)
+		tb_popup.show()
 
 	# Add the STL export button
 	var stl_item = Button.new()
@@ -758,18 +714,20 @@ func _on_MakeButton_button_down():
 Called when the user clicks the save button.
 """
 func _on_SaveButton_button_down():
-	var pos = $GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton.rect_position
-	var size = $GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton.rect_size
+	var save_btn = $GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton
+	var pos = save_btn.rect_position
+	var size = save_btn.rect_size
 
 	# Clear any previous items
 	_clear_toolbar_popup()
 
 	# Toggle the visiblity of the popup
-	if $ToolbarPopupPanel.visible:
-		$ToolbarPopupPanel.hide()
+	var tb_popup = $ToolbarPopupPanel
+	if tb_popup.visible:
+		tb_popup.hide()
 	else:
-		$ToolbarPopupPanel.rect_position = Vector2(pos.x, pos.y + size.y)
-		$ToolbarPopupPanel.show()
+		tb_popup.rect_position = Vector2(pos.x, pos.y + size.y)
+		tb_popup.show()
 
 	# Add the Save Component button
 	var save_item = Button.new()
@@ -788,17 +746,19 @@ func _on_SaveButton_button_down():
 Called when the About button is clicked.
 """
 func _on_AboutButton_button_down():
-	$AboutDialog.semblage_version = VERSIONNUM
-	$AboutDialog.popup_centered()
+	var about_dlg = $AboutDialog
+	about_dlg.semblage_version = VERSIONNUM
+	about_dlg.popup_centered()
 
 
 """
 Called when the Save component button is clicked.
 """
 func _save_component():
-	$ToolbarPopupPanel.hide()
+	var tb_popup = $ToolbarPopupPanel
+	tb_popup.hide()
 
-	if self.open_file_path == null:
+	if open_file_path == null:
 		_save_component_as()
 	else:
 		# Save the current component's text to the specified file
@@ -809,12 +769,14 @@ func _save_component():
 Called when the Save As component button is clicked.
 """
 func _save_component_as():
-	$ToolbarPopupPanel.hide()
+	var tb_popup = $ToolbarPopupPanel
+	tb_popup.hide()
 
-	$SaveDialog.current_file = "component.py"
-	$SaveDialog.clear_filters()
-	$SaveDialog.add_filter('*.py')
-	$SaveDialog.popup_centered()
+	var save_dlg = $SaveDialog
+	save_dlg.current_file = "component.py"
+	save_dlg.clear_filters()
+	save_dlg.add_filter('*.py')
+	save_dlg.popup_centered()
 
 
 """
@@ -823,7 +785,7 @@ Called when a user selects the component's save location.
 func _on_SaveDialog_file_selected(path):
 	if path != null:
 		# Keep track of where the currently open file is
-		self.open_file_path = path
+		open_file_path = path
 
 		# Save the current component's text to the specified file
 		_save_component_text()
@@ -833,28 +795,15 @@ func _on_SaveDialog_file_selected(path):
 Handles the heavy lifting of saving the component text to file.
 """
 func _save_component_text():
-	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("")
+	var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
+	status_lbl.set_text("")
 
 	var file = File.new()
-	file.open(self.open_file_path, File.WRITE)
-	file.store_string(self._convert_component_tree_to_script(true))
+	file.open(open_file_path, File.WRITE)
+	file.store_string(_convert_component_tree_to_script(true))
 	file.close()
 
-	$GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel.set_text("Component saved")
-
-
-"""
-Figures out whether or not a component should be displayed.
-"""
-#func _should_show(component):
-#	var should_show = true
-#
-#	# If there are combined items, search the list to see if it should be displayed
-#	if combined.size() > 0:
-#		if component in combined[combined.keys()[0]]:
-#			should_show = false
-#
-#	return should_show
+	status_lbl.set_text("Component saved")
 
 
 """
@@ -870,34 +819,46 @@ func _clear_toolbar_popup():
 Sets up the export dialog for STL.
 """
 func _show_export_stl():
-	$ToolbarPopupPanel.hide()
-	$ExportDialog.current_file = "component.stl"
-	$ExportDialog.popup_centered()
+	var tb_popup = $ToolbarPopupPanel
+	tb_popup.hide()
+
+	var export_dlg = $ExportDialog
+	export_dlg.current_file = "component.stl"
+	export_dlg.popup_centered()
 
 
 """
 Sets up the export dialog for STEP.
 """
 func _show_export_step():
-	$ToolbarPopupPanel.hide()
-	$ExportDialog.current_file = "component.step"
-	$ExportDialog.popup_centered()
+	var tb_popup = $ToolbarPopupPanel
+	tb_popup.hide()
+
+	var export_dlg = $ExportDialog
+	export_dlg.current_file = "component.step"
+	export_dlg.popup_centered()
 
 
 """
 Sets up and shows the export dialog for SVG.
 """
 func _show_export_svg():
-	$ToolbarPopupPanel.hide()
-	$ExportSVGDialog.popup_centered()
+	var tb_popup = $ToolbarPopupPanel
+	tb_popup.hide()
+
+	var export_dlg = $ExportSVGDialog
+	export_dlg.popup_centered()
 
 
 """
 Sets up and shows the export dialog for DXF.
 """
 func _show_export_dxf():
-	$ToolbarPopupPanel.hide()
-	$ExportDXFDialog.popup_centered()
+	var tb_popup = $ToolbarPopupPanel
+	tb_popup.hide()
+
+	var export_dlg = $ExportDXFDialog
+	export_dlg.popup_centered()
 
 """
 Called when the user selects an export file location.
@@ -907,22 +868,23 @@ func _on_ExportDialog_file_selected(path):
 
 	# Make sure the user gave a valid extension
 	if extension != "stl" and extension != "step":
-		$AddParameterDialog/VBoxContainer/StatusLabel.text = "Export only supports the 'stl' and 'step' file extensions. Please try again."
+		var status_lbl = $AddParameterDialog/VBoxContainer/StatusLabel
+		status_lbl.text = "Export only supports the 'stl' and 'step' file extensions. Please try again."
 		return
-
-	var component_name = _get_component_name()
 
 	var export_text = _convert_component_tree_to_script(true)
 
 	# Export the file to the user data directory temporarily
-	var ret = cqgipy.export(export_text, extension, OS.get_user_data_dir())
+	var ret = cqgipy
+	ret = ret.export(export_text, extension, OS.get_user_data_dir())
 
 	# If the export succeeded, move the contents of the export to the final location
 	if ret.begins_with("error~"):
 		# Let the user know there was an error
 		var err = ret.split("~")[1]
-		$ErrorDialog.dialog_text = err
-		$ErrorDialog.popup_centered()
+		var error_dlg = $ErrorDialog
+		error_dlg.dialog_text = err
+		error_dlg.popup_centered()
 	else:
 		# Read the exported file contents and write them to their final location
 		# Work-around for not being able to write to the broader filesystem via Python
@@ -958,10 +920,12 @@ func _on_ParametersTree_item_activated():
 	var name_text = tree.get_selected().get_text(0)
 	var value_text = tree.get_selected().get_text(1)
 
-	$AddParameterDialog.activate_edit_mode(name_text, value_text)
+	var param_dlg = $AddParameterDialog
+	param_dlg.activate_edit_mode(name_text, value_text)
 
 	# We do not need the popup menu anymore
-	$DataPopupPanel.hide()
+	var data_popup = $DataPopupPanel
+	data_popup.hide()
 
 
 """
@@ -1098,7 +1062,8 @@ func _clear_data_popup():
 The user clicks the Cancel button within the data popup.
 """
 func _cancel_data_popup():
-	$DataPopupPanel.hide()
+	var data_popup = $DataPopupPanel
+	data_popup.hide()
 
 
 """
@@ -1123,7 +1088,8 @@ func _remove_tree_item():
 	ct.visible = true
 
 	# We do not need the popup menu anymore
-	$DataPopupPanel.hide()
+	var data_popup = $DataPopupPanel
+	data_popup.hide()
 
 	# Render any changes to the component tree
 	self._execute_and_render()
@@ -1141,7 +1107,9 @@ func _edit_tree_item():
 	else:
 		return
 
-	$DataPopupPanel.hide()
+	# We do not need the popup menu anymore
+	var data_popup = $DataPopupPanel
+	data_popup.hide()
 
 	# Get the text that will tell the Operations dialog what might come next
 	var prev_text = Common.get_last_op(ct)
@@ -1152,9 +1120,11 @@ func _edit_tree_item():
 	var comp_names = Common.get_all_components(ct)
 	var params = _get_parameter_items()
 
+	var op_panel = $ActionPopupPanel
+
 	# If the selected item starts with a period, it is an operation item
 	if sel.begins_with("."):
-		$ActionPopupPanel.activate_edit_mode(prev_text, sel, comp_names, params)
+		op_panel.activate_edit_mode(prev_text, sel, comp_names, params)
 	else:
 		var edit_child = ct.get_selected().get_children()
 
@@ -1163,7 +1133,7 @@ func _edit_tree_item():
 			edit_child = ct.get_selected()
 
 		edit_child.select(0)
-		$ActionPopupPanel.activate_edit_mode(prev_text, edit_child.get_text(0), comp_names, params)
+		op_panel.activate_edit_mode(prev_text, edit_child.get_text(0), comp_names, params)
 
 
 """
@@ -1199,7 +1169,8 @@ func _show_hide_tree_item():
 		sel.set_metadata(0, {"visible": true})
 
 	# We do not need the popup menu anymore
-	$DataPopupPanel.hide()
+	var data_popup = $DataPopupPanel
+	data_popup.hide()
 
 	# Render any changes to the component tree
 	self._execute_and_render()
@@ -1210,7 +1181,7 @@ Called when the user right clicks on the Component tree.
 """
 func _on_ComponentTree_activate_data_popup():
 	var ct = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree
-	var pos = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree.get_local_mouse_position()
+	var pos = ct.get_local_mouse_position()
 	var size = Vector2(50, 100)
 
 	var popup_height = 75
@@ -1230,12 +1201,13 @@ func _on_ComponentTree_activate_data_popup():
 	_clear_data_popup()
 
 	# Toggle the visiblity of the popup
-	if $DataPopupPanel.visible:
-		$DataPopupPanel.hide()
+	var data_popup = $DataPopupPanel
+	if data_popup.visible:
+		data_popup.hide()
 	else:
-		$DataPopupPanel.rect_position = Vector2(pos.x, pos.y + size.y)
-		$DataPopupPanel.rect_size = Vector2(100, popup_height)
-		$DataPopupPanel.show()
+		data_popup.rect_position = Vector2(pos.x, pos.y + size.y)
+		data_popup.rect_size = Vector2(100, popup_height)
+		data_popup.show()
 
 	# Add the Edit item
 	var edit_item = Button.new()
@@ -1272,12 +1244,14 @@ func _new_param_tree_item():
 
 	# Collect any existing items from the parameters tree for safety checks
 	var items = _collect_param_tree_pairs(tree)
-	$AddParameterDialog.set_existing_parameters(items)
+	var param_dlg = $AddParameterDialog
+	param_dlg.set_existing_parameters(items)
 
-	$AddParameterDialog.popup_centered()
+	param_dlg.popup_centered()
 
 	# We do not need the popup menu anymore
-	$DataPopupPanel.hide()
+	var data_popup = $DataPopupPanel
+	data_popup.hide()
 
 
 """
@@ -1304,7 +1278,8 @@ func _remove_param_tree_item():
 	pt.visible = true
 
 	# We do not need the popup menu anymore
-	$DataPopupPanel.hide()
+	var data_popup = $DataPopupPanel
+	data_popup.hide()
 
 	# Render any changes to the component tree
 	self._execute_and_render()
@@ -1315,10 +1290,7 @@ Handles the right click menu for the parameters tree.
 """
 func _on_ParametersTree_activate_data_popup():
 	var pt = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
-	var global_pos = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree.get_global_mouse_position()
-#	var pos = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree.get_local_mouse_position()
-
-	var size = Vector2(50, 100)
+	var global_pos = pt.get_global_mouse_position()
 
 	var popup_height = 100
 
@@ -1326,12 +1298,13 @@ func _on_ParametersTree_activate_data_popup():
 	_clear_data_popup()
 
 	# Toggle the visiblity of the popup
-	if $DataPopupPanel.visible:
-		$DataPopupPanel.hide()
+	var data_popup = $DataPopupPanel
+	if data_popup.visible:
+		data_popup.hide()
 	else:
-		$DataPopupPanel.rect_position = Vector2(global_pos.x, global_pos.y)
-		$DataPopupPanel.rect_size = Vector2(100, popup_height)
-		$DataPopupPanel.show()
+		data_popup.rect_position = Vector2(global_pos.x, global_pos.y)
+		data_popup.rect_size = Vector2(100, popup_height)
+		data_popup.show()
 
 	# Add the New item
 	var new_item = Button.new()

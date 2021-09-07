@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name ThruCutControl
 
-var is_binary = false
-
 var prev_template = null
 
 var template = ".cutThruAll(clean={clean},taper={taper})"
@@ -53,6 +51,13 @@ func _ready():
 	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

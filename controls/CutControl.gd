@@ -1,10 +1,8 @@
 extends VBoxContainer
 
-signal error
+# signal error
 
 class_name CutControl
-
-var is_binary = true
 
 var prev_template = null
 
@@ -89,13 +87,21 @@ func _ready():
 	add_child(clean_group)
 	add_child(error_btn_group)
 
-	var comp_names = find_parent("ActionPopupPanel").components
+	var comp_names = find_parent("ActionPopupPanel")
+	comp_names = comp_names.components
 
 	# Load up both component option buttons with the names of the found components
 	Common.load_option_button(first_object_opt, comp_names)
 	Common.load_option_button(second_object_opt, comp_names)
 
 	_validate_form()
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return true
 
 
 """

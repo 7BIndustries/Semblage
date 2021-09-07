@@ -1,10 +1,8 @@
 extends VBoxContainer
 
-signal error
+# signal error
 
 class_name SweepControl
-
-var is_binary = true
 
 var prev_template = null
 
@@ -243,7 +241,8 @@ func _ready():
 	add_child(error_btn_group)
 
 	# Pull any component names that already exist in the context
-	var comp_names = find_parent("ActionPopupPanel").components
+	var comp_names = find_parent("ActionPopupPanel")
+	comp_names = comp_names.components
 
 	# Load up both component option buttons with the names of the found components
 	Common.load_option_button(profile_opt, comp_names)
@@ -255,6 +254,12 @@ func _ready():
 
 	_validate_form()
 
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return true
 
 """
 Fills out the template and returns it.

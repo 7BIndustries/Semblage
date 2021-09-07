@@ -7,7 +7,6 @@ var contribs = ["jmwright (GitHub)"]
 var sponsors = ["Ferdinand (Patreon)", "adam-james (Patreon)", "IrevDev (Patreon/Twitter)", "Anonymous", "7B Industries"]
 
 var tab_head = "[center][b]Semblage v{semblage_version}[/b]\nOpen Source CAD[/center]"
-var libs = ""
 var docs = "[center][b]DOCUMENTATION[/b]\n[url=https://semblage.7bindustries.com/en/latest/]Semblage[/url]\n[url=https://cadquery.readthedocs.io/en/latest/]CadQuery[/url]\n[url=https://dev.opencascade.org/doc/overview/html/]OCCT Kernel[/url]"
 var info = "[center][b]INFORMATION[/b]\nSemblage Version: {semblage_version}\nGodot Version: 3.2.2.stable\nGodot-Python Version: 0.50.0\nCadQuery Version: 2.1\nOCP Version: 7.4.0\nOCCT Version: 7.4.0[/center]"
 
@@ -47,17 +46,17 @@ func _on_AboutDialog_about_to_show():
 
 	# Build the sponsors string
 	var sponsors_str = "[center][b]SPONSORS[/b]"
-	sponsors_str += self._randomize(self.sponsors) + "[/center]"
+	sponsors_str += _randomize(sponsors) + "[/center]"
 
 	# Build the contributors string
 	var contribs_str = "[center][b]CONTRIBUTORS[/b]"
-	contribs_str += self._randomize(self.contribs) + "[/center]"
+	contribs_str += _randomize(contribs) + "[/center]"
 
 	# The formatted header
-	var header = self.tab_head.format({"semblage_version": semblage_version})
+	var header = tab_head.format({"semblage_version": semblage_version})
 
 	# The formatted info
-	var information = self.info.format({"semblage_version": semblage_version})
+	var information = info.format({"semblage_version": semblage_version})
 
 	# Set the tab headers
 	var ack_body = self.get_node("AboutTabContainer/Acknowledgements/AckLabel")
@@ -65,7 +64,7 @@ func _on_AboutDialog_about_to_show():
 	ack_body.bbcode_text = header + "\n\n" + contribs_str + "\n" + sponsors_str
 	var docs_body = self.get_node("AboutTabContainer/Docs/DocsLabel")
 	docs_body.bbcode_text = ""
-	docs_body.bbcode_text = header + "\n\n" + self.docs
+	docs_body.bbcode_text = header + "\n\n" + docs
 	var info_body = self.get_node("AboutTabContainer/Info/InfoLabel")
 	info_body.bbcode_text = ""
 	info_body.bbcode_text = header + "\n\n" + information

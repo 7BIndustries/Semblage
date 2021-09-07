@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name BoxControl
 
-var is_binary = false
-
 var length_ctrl = null
 var width_ctrl = null
 var height_ctrl = null
@@ -113,6 +111,14 @@ func _ready():
 	clean_group.add_child(clean_ctrl)
 
 	add_child(clean_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
+
 
 """
 Checks whether or not all the values in the controls are valid.

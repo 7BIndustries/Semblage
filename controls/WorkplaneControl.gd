@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name WorkplaneControl
 
-var is_binary = false
-
 var simple_template = ".Workplane(\"{named_wp}\").workplane(invert={invert},centerOption=\"{center_option}\").tag(\"{comp_name}\")"
 var template = ".Workplane(cq.Plane(origin=({origin_x},{origin_y},{origin_z}), xDir=({xdir_x},{xdir_y},{xdir_z}), normal=({normal_x},{normal_y},{normal_z}))).tag(\"{comp_name}\")"
 
@@ -196,6 +194,13 @@ func _ready():
 	advanced_group.add_child(normal_group)
 
 	add_child(advanced_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name MirrorYControl
 
-var is_binary = false
-
 var prev_template = null
 
 var template = ".mirrorY()"
@@ -14,6 +12,13 @@ func _ready():
 	var close_lbl = Label.new()
 	close_lbl.set_text("No Options")
 	add_child(close_lbl)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

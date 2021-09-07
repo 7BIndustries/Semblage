@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name SelectorControl
 
-var is_binary = false
-
 # Face selector controls
 var face_comps = null
 var face_comps_opt_1 = null
@@ -83,7 +81,7 @@ func _ready():
 	face_comps = HBoxContainer.new()
 
 	# Make sure the appropriate controls are visible
-	if not self.show_faces:
+	if not show_faces:
 		face_comps.hide()
 
 	var face_comps_lbl = Label.new()
@@ -184,7 +182,7 @@ func _ready():
 	edge_comps = HBoxContainer.new()
 
 	# Make sure the appropriate controls are visible
-	if not self.show_edges:
+	if not show_edges:
 		edge_comps.hide()
 
 	var edge_comps_lbl = Label.new()
@@ -285,7 +283,7 @@ func _ready():
 	vertex_comps = HBoxContainer.new()
 
 	# Make sure the appropriate controls are visible
-	if not self.show_vertices:
+	if not show_vertices:
 		vertex_comps.hide()
 
 	var vertex_comps_lbl = Label.new()
@@ -394,6 +392,13 @@ func _ready():
 
 
 """
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
+
+
+"""
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
@@ -442,8 +447,8 @@ func get_completed_template():
 Allows the caller to hide any selectors that do not apply.
 """
 func config_visibility(faces=true, edges=true):
-	self.show_faces = faces
-	self.show_edges = edges
+	show_faces = faces
+	show_edges = edges
 
 
 """
@@ -466,19 +471,19 @@ func _first_face_filter_selected(index):
 	if selected == "None":
 		_update_face_selector_string()
 	
-		self.face_comps_opt_2.hide()
-		self.face_index_1.hide()
-		self.extra_face_selector_adder.hide()
+		face_comps_opt_2.hide()
+		face_index_1.hide()
+		extra_face_selector_adder.hide()
 	elif selected != "All":
 		_update_face_selector_string()
 
-		self.face_comps_opt_2.show()
-		self.face_index_1.show()
-		self.extra_face_selector_adder.show()
+		face_comps_opt_2.show()
+		face_index_1.show()
+		extra_face_selector_adder.show()
 	else:
-		self.face_comps_opt_2.hide()
-		self.face_index_1.hide()
-		self.extra_face_selector_adder.hide()
+		face_comps_opt_2.hide()
+		face_index_1.hide()
+		extra_face_selector_adder.hide()
 		face_selector_txt.set_text("")
 
 
@@ -546,18 +551,18 @@ func _first_edge_filter_selected(index):
 		_update_edge_selector_string()
 
 		edge_comps_opt_2.hide()
-		self.edge_index_1.hide()
-		self.extra_edge_selector_adder.hide()
+		edge_index_1.hide()
+		extra_edge_selector_adder.hide()
 	elif selected != "All":
 		_update_edge_selector_string()
 
 		edge_comps_opt_2.show()
-		self.edge_index_1.show()
-		self.extra_edge_selector_adder.show()
+		edge_index_1.show()
+		extra_edge_selector_adder.show()
 	else:
 		edge_comps_opt_2.hide()
-		self.edge_index_1.hide()
-		self.extra_edge_selector_adder.hide()
+		edge_index_1.hide()
+		extra_edge_selector_adder.hide()
 		edge_selector_txt.set_text("")
 
 
@@ -571,19 +576,19 @@ func _first_vertex_filter_selected(index):
 	if selected == "None":
 		_update_vertex_selector_string()
 
-		self.vertex_comps_opt_2.hide()
-		self.vertex_index_1.hide()
-		self.extra_vertex_selector_adder.hide()
+		vertex_comps_opt_2.hide()
+		vertex_index_1.hide()
+		extra_vertex_selector_adder.hide()
 	elif selected != "All":
 		_update_vertex_selector_string()
 
-		self.vertex_comps_opt_2.show()
-		self.vertex_index_1.show()
-		self.extra_vertex_selector_adder.show()
+		vertex_comps_opt_2.show()
+		vertex_index_1.show()
+		extra_vertex_selector_adder.show()
 	else:
-		self.vertex_comps_opt_2.hide()
-		self.vertex_index_1.hide()
-		self.extra_vertex_selector_adder.hide()
+		vertex_comps_opt_2.hide()
+		vertex_index_1.hide()
+		extra_vertex_selector_adder.hide()
 		vertex_selector_txt.set_text("")
 
 

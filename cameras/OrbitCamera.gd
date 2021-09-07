@@ -2,17 +2,14 @@ extends Camera
 
 class_name OrbitCamera
 
-export var ROTATIONSPEED = 0.5 * PI / 180 #rad/screenpixel
-export var DEFAULTPANDIST = 10
+export var ROTATIONSPEED = 0.5 * PI / 180 # rad/screenpixel
 export var ZOOMSPEED = 0.15
 export var PANSPEED = 0.05
 export var ROTATIONENABLED = true
 export var ZOOMENABLED = true
 export var PANENABLED = true
 
-var RAYLENGTH = 100000
 var focalpoint = Vector3(0, 0, 0)
-var actpandist = 0
 
 
 """

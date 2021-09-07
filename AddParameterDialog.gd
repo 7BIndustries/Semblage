@@ -28,7 +28,7 @@ func _on_OKButton_button_down():
 		return
 
 	# Check to see if the user is trying to add a duplicate parameter name
-	for param in self.params:
+	for param in params:
 		if not edit_mode and param[0] == param_name_txt.get_text():
 			status_txt.set_text("Parameter name already exists.")
 			return
@@ -68,7 +68,8 @@ func _on_OKButton_button_down():
 
 	# Reset the status text and editable status
 	status_txt.set_text("")
-	$VBoxContainer/ParamNameTextEdit.editable = true
+	var text_edit = $VBoxContainer/ParamNameTextEdit
+	text_edit.editable = true
 
 	self.hide()
 
@@ -77,9 +78,11 @@ func _on_OKButton_button_down():
 Called when the user clicks the Cancel button.
 """
 func _on_CancelButton_button_down():
-	$VBoxContainer/StatusLabel.set_text("")
+	var status_lbl = $VBoxContainer/StatusLabel
+	status_lbl.set_text("")
 
-	$VBoxContainer/ParamNameTextEdit.editable = true
+	var text_edit = $VBoxContainer/ParamNameTextEdit
+	text_edit.editable = true
 
 	self.hide()
 
@@ -88,7 +91,7 @@ func _on_CancelButton_button_down():
 Used to set any existing parameters so that duplicates can be checked for.
 """
 func set_existing_parameters(items):
-	self.params = items
+	params = items
 
 
 """
@@ -110,7 +113,8 @@ func activate_edit_mode(param_name, param_value):
 	old_param_value = param_value
 
 	# Clear the status indicator
-	$VBoxContainer/StatusLabel.set_text("")
+	var status_lbl = $VBoxContainer/StatusLabel
+	status_lbl.set_text("")
 
 	# Fill in the values of the controls
 	param_name_txt.set_text(param_name)

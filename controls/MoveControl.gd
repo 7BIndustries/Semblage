@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name MoveControl
 
-var is_binary = false
-
 var prev_template = null
 
 var template = ".move({xDist},{yDist})"
@@ -39,6 +37,13 @@ func _ready():
 	y_dist_ctrl.hint_tooltip = tr("MOVE_Y_DIST_CTRL_HINT_TOOLTIP")
 	y_dims_group.add_child(y_dist_ctrl)
 	add_child(y_dims_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

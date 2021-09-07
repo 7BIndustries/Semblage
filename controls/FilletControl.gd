@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name FilletControl
 
-var is_binary = false
-
 var prev_template = null
 
 var radius_ctrl = null
@@ -25,6 +23,13 @@ func _ready():
 	radius_ctrl.hint_tooltip = tr("FILLET_RADIUS_CTRL_HINT_TOOLTIP")
 	radius_group.add_child(radius_ctrl)
 	add_child(radius_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

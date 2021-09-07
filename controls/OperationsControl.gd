@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name OperationsControl
 
-var is_binary = false
-
 var prev_template = null
 
 var op_list = ["None", "Extrude", "Twist Extrude", "Blind Cut", "Thru Cut", "Revolve"]
@@ -59,6 +57,13 @@ func _ready():
 	revolve_ctrl = RevolveControl.new()
 	revolve_ctrl.hide()
 	add_child(revolve_ctrl)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

@@ -2,8 +2,6 @@ extends LineEdit
 
 class_name WPNameEdit
 
-var is_binary = false
-
 var invalid_lbl = null
 var is_valid = true
 
@@ -12,12 +10,18 @@ var is_valid = true
 Called when the node enters the scene tree for the first time.
 """
 func _ready():
-	self.invalid_lbl = Label.new()
-	self.invalid_lbl.set_text("!")
-	self.invalid_lbl.add_color_override("font_color", Color(1,0,0,1))
-	self.invalid_lbl.hide()
-	add_child(self.invalid_lbl)
+	invalid_lbl = Label.new()
+	invalid_lbl.set_text("!")
+	invalid_lbl.add_color_override("font_color", Color(1,0,0,1))
+	invalid_lbl.hide()
+	add_child(invalid_lbl)
 
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 """
 Called on mouse and key events on the control.
@@ -35,12 +39,12 @@ func _gui_input(event):
 
 		# Check to make sure the input is valid
 		if not valid_tag_name:
-			self.invalid_lbl.show()
+			invalid_lbl.show()
 			self.hint_tooltip = tr("TAG_NAME_CHARACTER_ERROR")
 
 			is_valid = false
 		else:
-			self.invalid_lbl.hide()
+			invalid_lbl.hide()
 			self.hint_tooltip = ""
 
 			is_valid = true

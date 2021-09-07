@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name RotateAboutCenterControl
 
-var is_binary = false
-
 var template = ".rotateAboutCenter(axisEndPoint=({axis_end}),angleDegrees={angle_degrees})"
 
 var prev_template = null
@@ -64,6 +62,13 @@ func _ready():
 	angle_ctrl.hint_tooltip = tr("ROTATE_ANGLE_CTRL_HINT_TOOLTIP")
 	angle_group.add_child(angle_ctrl)
 	add_child(angle_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

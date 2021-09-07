@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name SlotControl
 
-var is_binary = false
-
 var prev_template = null
 
 var template = ".slot2D(length={length},diameter={diameter},angle={angle})"
@@ -51,6 +49,13 @@ func _ready():
 	angle_ctrl.hint_tooltip = tr("SLOT_ANGLE_CTRL_HINT_TOOLTIP")
 	angle_group.add_child(angle_ctrl)
 	add_child(angle_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

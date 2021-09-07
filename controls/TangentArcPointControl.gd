@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name TangentArcPointControl
 
-var is_binary = false
-
 var prev_template = null
 
 var template = ".tangentArcPoint(endpoint=({end_point_x},{end_point_y}),forConstruction={for_construction},relative={relative})"
@@ -66,6 +64,13 @@ func _ready():
 	relative_ctrl.hint_tooltip = tr("TANGENT_ARC_RELATIVE_CTRL_HINT_TOOLTIP")
 	relative_group.add_child(relative_ctrl)
 	add_child(relative_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

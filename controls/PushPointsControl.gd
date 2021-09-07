@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name PushPointsControl
 
-var is_binary = false
-
 signal error
 
 var prev_template = null
@@ -70,6 +68,13 @@ func _ready():
 	delete_point_btn.connect("button_down", self, "_delete_current_point")
 	btn_group.add_child(delete_point_btn)
 	add_child(btn_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

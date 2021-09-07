@@ -7,7 +7,6 @@ class_name Common
 Figure out how many sibling items are after the given item.
 """
 static func find_siblings_after(drop_item):
-	var child_count = 0
 	var after_count = 0
 	var found_dropped_on = false
 	var cur_item = drop_item.get_parent().get_children()
@@ -25,8 +24,6 @@ static func find_siblings_after(drop_item):
 				found_dropped_on = true
 
 			cur_item = cur_item.get_next()
-
-		child_count += 1
 
 	return after_count
 
@@ -48,7 +45,7 @@ static func move_before(drag_item, drop_item):
 		drag_item = drop_item
 
 		# Keeep shifting items until we get them in the correct positions
-		for item in range(0, num_next_item):
+		for _item in range(0, num_next_item):
 			var next = drag_item.get_next()
 			drag_item.move_to_bottom()
 			drag_item = next

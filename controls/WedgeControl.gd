@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name WedgeControl
 
-var is_binary = false
-
 var dx_ctrl = null
 var dy_ctrl = null
 var dz_ctrl = null
@@ -243,6 +241,13 @@ func _ready():
 	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
 	add_child(clean_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

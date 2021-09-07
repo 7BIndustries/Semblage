@@ -1,6 +1,5 @@
 extends TabContainer
 
-var component_text = null
 var accept_input = true
 var rotating = false # Whether or not the user is requesting a camera rotation
 var panning = false # Whether or not the user is requesting a camera pan
@@ -80,7 +79,7 @@ func _on_ActionPopupPanel_cancel():
 Unlocks the 3D mouse controls when the ok button is clicked on the
 action popup panel.
 """
-func _on_ActionPopupPanel_ok_signal(_edit_mode, _new_template, _new_context, _combine_map):
+func _on_ActionPopupPanel_ok_signal(_edit_mode, _new_template, _combine_map):
 	accept_input = true
 
 

@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name SectionControl
 
-var is_binary = false
-
 var height_ctrl = null
 
 var prev_template = null
@@ -25,6 +23,13 @@ func _ready():
 	height_ctrl.hint_tooltip = tr("SECTION_HEIGHT_CTRL_HINT_TOOLTIP")
 	height_group.add_child(height_ctrl)
 	add_child(height_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

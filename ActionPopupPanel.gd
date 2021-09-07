@@ -6,7 +6,6 @@ signal error
 
 var components = []
 var parameters = {}
-var new_context = null
 var new_template = null
 var prev_template = null
 var edit_mode = false
@@ -22,6 +21,7 @@ Called when this control is ready to display.
 """
 func _ready():
 	var three_d_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton
+	three_d_btn.hint_tooltip = tr("THREE_D_BUTTON_HINT_TOOLTIP")
 
 	# Make sure 3D is selected by default
 	three_d_btn.pressed = true
@@ -29,24 +29,32 @@ func _ready():
 	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
 
 	# Add the tooltips to the group buttons
-	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton.hint_tooltip = tr("WORKPLANE_BUTTON_HINT_TOOLTIP")
-	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton.hint_tooltip = tr("THREE_D_BUTTON_HINT_TOOLTIP")
-	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton.hint_tooltip = tr("SKETCH_BUTTON_HINT_TOOLTIP")
-	$VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton.hint_tooltip = tr("SELECTOR_BUTTON_HINT_TOOLTIP")
+	var wp_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton
+	wp_btn.hint_tooltip = tr("WORKPLANE_BUTTON_HINT_TOOLTIP")
+	var sketch_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton
+	sketch_btn.hint_tooltip = tr("SKETCH_BUTTON_HINT_TOOLTIP")
+	var select_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton
+	select_btn.hint_tooltip = tr("SELECTOR_BUTTON_HINT_TOOLTIP")
 
 	# Add a tooltip to the modify operation buttons
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.hint_tooltip = tr("ADD_BUTTON_HINT_TOOLTIP")
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/UpdateButton.hint_tooltip = tr("UPDATE_BUTTON_HINT_TOOLTIP")
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/DeleteButton.hint_tooltip = tr("DELETE_BUTTON_HINT_TOOLTIP")
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveUpButton.hint_tooltip = tr("MOVE_UP_BUTTON_HINT_TOOLTIP")
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveDownButton.hint_tooltip = tr("MOVE_DOWN_BUTTON_HINT_TOOLTIP")
+	var add_btn = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton
+	add_btn.hint_tooltip = tr("ADD_BUTTON_HINT_TOOLTIP")
+	var update_btn = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/UpdateButton
+	update_btn.hint_tooltip = tr("UPDATE_BUTTON_HINT_TOOLTIP")
+	var delete_btn = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/DeleteButton
+	delete_btn.hint_tooltip = tr("DELETE_BUTTON_HINT_TOOLTIP")
+	var move_up_btn = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveUpButton
+	move_up_btn.hint_tooltip = tr("MOVE_UP_BUTTON_HINT_TOOLTIP")
+	var move_down_btn = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveDownButton
+	move_down_btn.hint_tooltip = tr("MOVE_DOWN_BUTTON_HINT_TOOLTIP")
 
 	# Create the root of the object tree
 	var action_tree_root = action_tree.create_item()
 	action_tree_root.set_text(0, "Actions")
 
 	# The sketch control does not need to be taking up space by default
-	$VBoxContainer/HBoxContainer/CanvasMarginContainer.hide()
+	var convas_cont = $VBoxContainer/HBoxContainer/CanvasMarginContainer
+	convas_cont.hide()
 
 	# Work-around to make sure we unlock the mouse controls for the 3D view again
 	var btn = self.get_close_button()
@@ -74,7 +82,10 @@ func _set_action_control():
 
 	# Set the action control
 	_clear_popup()
-	$VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.add_child(load(act.action.control).new())
+	var dyn_cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer
+	var new_cont = load(act.action.control)
+	new_cont = new_cont.new()
+	dyn_cont.add_child(new_cont)
 
 
 """
@@ -98,10 +109,10 @@ func _get_selected_trigger():
 """
 Sets the ActionPopupPanel up for an edit of a history item.
 """
-func activate_edit_mode(component_text, item_text, components, parameters):
+func activate_edit_mode(component_text, item_text, new_components, new_parameters):
 	prev_template = item_text
-	self.components = components
-	self.parameters = parameters
+	components = new_components
+	parameters = new_parameters
 
 	# Get the control that matches the edit trigger for the history code, if any
 	var popup_action = ContextHandler.find_matching_edit_trigger(item_text)
@@ -163,13 +174,13 @@ func activate_edit_mode(component_text, item_text, components, parameters):
 """
 Attempt to contain popup actions in one place.
 """
-func activate_popup(component_text, edit_mode_new, components, parameters):
+func activate_popup(component_text, edit_mode_new, new_components, new_parameters):
 	# Save the incoming components for binary operations and duplicate checks
-	self.components = components
-	self.parameters = parameters
+	components = new_components
+	parameters = new_parameters
 
 	# Save edit mode for when the user hits the OK button
-	self.edit_mode = edit_mode_new
+	edit_mode = edit_mode_new
 
 	# Setup and show the dialog
 	show_modal(true)
@@ -177,12 +188,13 @@ func activate_popup(component_text, edit_mode_new, components, parameters):
 	_on_VBoxContainer_resized()
 
 	# Make sure the Update button is hidden
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer.hide()
+	var is_cont = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer
+	is_cont.hide()
 
 	var next_action = null
 
 	# Get the next action based on whether edit mode is engaged
-	if self.edit_mode:
+	if edit_mode:
 		next_action = ContextHandler.find_matching_edit_trigger(prev_template)
 	else:
 		next_action = ContextHandler.get_next_action(component_text)
@@ -263,21 +275,21 @@ func _on_OkButton_button_down():
 
 	# Handle binary controls
 	var combine_map = null
-	if cont.is_binary:
+	if cont.is_binary():
 		combine_map = cont.get_combine_map()
 
-	emit_signal("ok_signal", edit_mode, new_template, new_context, combine_map)
+	emit_signal("ok_signal", edit_mode, new_template, combine_map)
 	hide()
 
 
 """
 Checks whether or not the component name has been used before.
 """
-func _is_component_dup(original_context, new_template):
+func _is_component_dup(original_context, dup_template):
 	# Regex to search for tags, which are used for component names
 	var rgx = RegEx.new()
 	rgx.compile("\\.tag\\(.*\\)")
-	var res = rgx.search_all(new_template)
+	var res = rgx.search_all(dup_template)
 
 	# If there is no match at all, then we cannot have a duplicate
 	if not res:
@@ -331,8 +343,9 @@ func _on_ActionOptionButton_item_selected(_index):
 Called whenever the contents of the main VBoxContainer require a size change.
 """
 func _on_VBoxContainer_resized():
+	var vb_cont = $VBoxContainer
 	# Make sure the panel is the correct size to contain all controls
-	rect_size = Vector2($VBoxContainer.rect_size[0] + 7, $VBoxContainer.rect_size[1] + 7)
+	rect_size = Vector2(vb_cont.rect_size[0] + 7, vb_cont.rect_size[1] + 7)
 
 	# Work-around to force the size changes to take effect
 	if visible == true:
@@ -361,7 +374,8 @@ func _on_ThreeDButton_toggled(_button_pressed):
 			three_d_actions = ContextHandler.get_3d_actions()
 
 		# Repopulate the action option button
-		$VBoxContainer/ActionOptionButton.clear()
+		var opt_btn = $VBoxContainer/ActionOptionButton
+		opt_btn.clear()
 		Common.load_option_button($VBoxContainer/ActionOptionButton, three_d_actions)
 
 		# Set the help tooltips for all the items in the dropdown
@@ -393,7 +407,8 @@ func _on_SketchButton_toggled(_button_pressed):
 			two_d_actions = ContextHandler.get_2d_actions()
 
 		# Repopulate the action option button
-		$VBoxContainer/ActionOptionButton.clear()
+		var opt_btn = $VBoxContainer/ActionOptionButton
+		opt_btn.clear()
 		Common.load_option_button($VBoxContainer/ActionOptionButton, two_d_actions)
 
 		# Set the help tooltips for all the items in the dropdown
@@ -402,9 +417,12 @@ func _on_SketchButton_toggled(_button_pressed):
 		_set_action_control()
 
 		# Show preview controls
-		$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.show()
-		$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.show()
-		$VBoxContainer/HBoxContainer/CanvasMarginContainer.show()
+		var add_btn = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton
+		add_btn.show()
+		var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+		action_tree.show()
+		var canvas_cont = $VBoxContainer/HBoxContainer/CanvasMarginContainer
+		canvas_cont.show()
 
 		# Make sure the dialog is sized correctly
 		_on_VBoxContainer_resized()
@@ -427,7 +445,8 @@ func _on_WorkplaneButton_toggled(_button_pressed):
 			wp_actions = ContextHandler.get_wp_actions()
 
 		# Repopulate the action option button
-		$VBoxContainer/ActionOptionButton.clear()
+		var opt_btn = $VBoxContainer/ActionOptionButton
+		opt_btn.clear()
 		Common.load_option_button($VBoxContainer/ActionOptionButton, wp_actions)
 
 		# Set the help tooltips for all the items in the dropdown
@@ -460,7 +479,8 @@ func _on_SelectorButton_toggled(_button_pressed):
 			selector_actions = ContextHandler.get_selector_actions()
 
 		# Repopulate the action option button
-		$VBoxContainer/ActionOptionButton.clear()
+		var opt_btn = $VBoxContainer/ActionOptionButton
+		opt_btn.clear()
 		Common.load_option_button($VBoxContainer/ActionOptionButton, selector_actions)
 
 		_set_action_control()
@@ -477,10 +497,14 @@ Called when switching to another group control and needing to hide
 any previously displayed sketch controls.
 """
 func _hide_sketch_controls():
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton.hide()
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionTree.hide()
-	$VBoxContainer/HBoxContainer/CanvasMarginContainer.hide()
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer.hide()
+	var add_btn = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton
+	add_btn.hide()
+	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	action_tree.hide()
+	var canvas_cont = $VBoxContainer/HBoxContainer/CanvasMarginContainer
+	canvas_cont.hide()
+	var is_cont = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer
+	is_cont.hide()
 
 
 """
@@ -552,38 +576,41 @@ func _render_action_tree():
 	script_text += ".consolidateWires()\nshow_object(result)"
 
 	# Export the file to the user data directory temporarily
-	var json_string = cqgipy.build(script_text)
+	var json_string = cqgipy
+	json_string = json_string.build(script_text)
 
 	if json_string.begins_with("error~"):
 		# Let the user know there was an error
 		var err = json_string.split("~")[1]
 		emit_signal("error", err)
 	else:
-		var component_json = JSON.parse(json_string).result
+		var component_json = JSON.parse(json_string)
+		component_json = component_json.result
+		var canvas_2d = $VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D
 
 		for component in component_json["components"]:
 			# If we've found a larger dimension, save the safe scaling, which is the maximum dimension of any component
 			var max_dim = component["largestDim"]
-			$VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D.set_max_dim(max_dim)
+			canvas_2d.set_max_dim(max_dim)
 
 			# Add the edge representations
 			for edge in component["cqEdges"]:
 				# Add the current line
-				$VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D.lines.append([Vector2(edge[0], edge[1]), Vector2(edge[3], edge[4])])
+				canvas_2d.lines.append([Vector2(edge[0], edge[1]), Vector2(edge[3], edge[4])])
 
 		# Have the 2D canvas re-render the lines that are set for it
-		$VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D.update()
+		canvas_2d.update()
 
 
 """
 Allows action items to be edited by selecting the correct control.
 """
-func _on_ActionTree_item_activated():
-	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+#func _on_ActionTree_item_activated():
+#	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
 
 	# Get the action name so that we can set the action option correctly
-	var item_text = action_tree.get_selected().get_text(0)
-	var action_key = item_text.split(".")[1].split("(")[0]
+#	var item_text = action_tree.get_selected().get_text(0)
+#	var action_key = item_text.split(".")[1].split("(")[0]
 
 	# Make sure the correct item is selected
 #	Common.set_option_btn_by_text($VBoxContainer/ActionOptionButton, action_key)
@@ -637,7 +664,8 @@ func _on_ActionTree_item_selected():
 	cur_control.set_values_from_string(selected_text)
 
 	# Unhide the item editing controls so the user can change the selected tree item
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer.show()
+	var is_cont = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer
+	is_cont.show()
 
 
 """
@@ -645,7 +673,8 @@ Called when nothing is selected in the action tree.
 """
 func _on_ActionTree_nothing_selected():
 	# Hide the item editing controls so that the user can no longer change the selected tree item
-	$VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer.hide()
+	var is_cont = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer
+	is_cont.hide()
 
 
 """
@@ -708,8 +737,9 @@ Called whenever the 2D preview needs to be updated.
 """
 func _update_preview():
 	# Reset and update the 2D preview
-	$VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D.reset()
-	$VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D.update()
+	var canvas_2d = $VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D
+	canvas_2d.reset()
+	canvas_2d.update()
 	self._render_action_tree()
 
 """
@@ -730,7 +760,8 @@ func _on_error(error_msg):
 Allows tooltips to be set for each of the operation items.
 """
 func _set_tooltips():
-	var popup = $VBoxContainer/ActionOptionButton.get_popup()
+	var opt_btn = $VBoxContainer/ActionOptionButton
+	var popup = opt_btn.get_popup()
 
 	# Step through all of the items in the popup, adding their tooltips
 	for i in range(0, popup.get_item_count()):

@@ -7,7 +7,8 @@ var orig_size = null # The original size of the dialog
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Hide the selector/section controls until they are needed
-	$MarginContainer/VBoxContainer/SectionContainer.hide()
+	var sect_cont = $MarginContainer/VBoxContainer/SectionContainer
+	sect_cont.hide()
 
 
 """
@@ -15,18 +16,21 @@ Called when the Section button is clicked.
 """
 func _on_CheckButton_toggled(_button_pressed):
 	# Show the selector and section controls if the check button is on, hide otherwise
-	if $MarginContainer/VBoxContainer/SectionCheckContainer/CheckButton.pressed:
-		$MarginContainer/VBoxContainer/SectionContainer.show()
+	var check_btn = $MarginContainer/VBoxContainer/SectionCheckContainer/CheckButton
+	var section_cont = $MarginContainer/VBoxContainer/SectionContainer
 
-		self.orig_size = self.rect_size
+	if check_btn.pressed:
+		section_cont.show()
+
+		orig_size = rect_size
 	
 		# Make sure the panel is the correct size to contain all controls
 		self.rect_size = Vector2(382, 440)
 	else:
-		$MarginContainer/VBoxContainer/SectionContainer.hide()
+		section_cont.hide()
 
 		if orig_size != null:
-			self.rect_size = self.orig_size
+			rect_size = orig_size
 
 """
 Called when the Cancel button is clicked.
@@ -50,7 +54,8 @@ func _on_SelectPathButton_button_down():
 Called after the export file selection has been made.
 """
 func _export_select_finished(path):
-	$MarginContainer/VBoxContainer/PathContainer/PathText.set_text(path)
+	var path_txt = $MarginContainer/VBoxContainer/PathContainer/PathText
+	path_txt.set_text(path)
 
 
 """
@@ -70,10 +75,15 @@ func _on_OkButton_button_down():
 		return
 
 	# Check to see if the user wants to do slicing
-	if $MarginContainer/VBoxContainer/SectionCheckContainer/CheckButton.pressed:
-		var start_height = $MarginContainer/VBoxContainer/SectionContainer/StartHeightText.get_text()
-		var end_height = $MarginContainer/VBoxContainer/SectionContainer/EndHeightText.get_text()
-		var steps = $MarginContainer/VBoxContainer/SectionContainer/StepsText.get_text()
+	var check_btn = $MarginContainer/VBoxContainer/SectionCheckContainer/CheckButton
+	var start_txt = $MarginContainer/VBoxContainer/SectionContainer/StartHeightText
+	var end_txt = $MarginContainer/VBoxContainer/SectionContainer/EndHeightText
+	var steps_txt = $MarginContainer/VBoxContainer/SectionContainer/StepsText
+
+	if check_btn.pressed:
+		var start_height = start_txt.get_text()
+		var end_height = end_txt.get_text()
+		var steps = steps_txt.get_text()
 
 		# Convert the values to the correct data types
 		start_height = float(start_height)
@@ -117,38 +127,55 @@ func _on_OkButton_button_down():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var width_txt = $MarginContainer/VBoxContainer/DimsContainer/WidthText
+	var height_txt = $MarginContainer/VBoxContainer/DimsContainer/HeightText
+	var left_txt = $MarginContainer/VBoxContainer/MarginContainer/LeftText
+	var top_txt = $MarginContainer/VBoxContainer/MarginContainer/TopText
+	var x_txt = $MarginContainer/VBoxContainer/ProjDirContainer/XText
+	var y_txt = $MarginContainer/VBoxContainer/ProjDirContainer/YText
+	var s_width_txt = $MarginContainer/VBoxContainer/StrokeWidthContainer/WidthText
+	var s_r_txt = $MarginContainer/VBoxContainer/StrokeColorContainer/RText
+	var s_g_txt = $MarginContainer/VBoxContainer/StrokeColorContainer/GText
+	var s_b_txt = $MarginContainer/VBoxContainer/StrokeColorContainer/BText
+	var h_r_txt = $MarginContainer/VBoxContainer/HColorContainer/RText
+	var h_g_txt = $MarginContainer/VBoxContainer/HColorContainer/GText
+	var h_b_txt = $MarginContainer/VBoxContainer/HColorContainer/BText
+	var text_start_txt = $MarginContainer/VBoxContainer/SectionContainer/StartHeightText
+	var text_end_txt = $MarginContainer/VBoxContainer/SectionContainer/EndHeightText
+	var text_steps_txt = $MarginContainer/VBoxContainer/SectionContainer/StepsText
+
 	# Make sure all the number controls have valid values in them
-	if not $MarginContainer/VBoxContainer/DimsContainer/WidthText.is_valid:
+	if not width_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/DimsContainer/HeightText.is_valid:
+	if not height_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/MarginContainer/LeftText.is_valid:
+	if not left_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/MarginContainer/TopText.is_valid:
+	if not top_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/ProjDirContainer/XText.is_valid:
+	if not x_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/ProjDirContainer/YText.is_valid:
+	if not y_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/StrokeWidthContainer/WidthText.is_valid:
+	if not s_width_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/StrokeColorContainer/RText.is_valid:
+	if not s_r_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/StrokeColorContainer/GText.is_valid:
+	if not s_g_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/StrokeColorContainer/BText.is_valid:
+	if not s_b_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/HColorContainer/RText.is_valid:
+	if not h_r_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/HColorContainer/GText.is_valid:
+	if not h_g_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/HColorContainer/BText.is_valid:
+	if not h_b_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/SectionContainer/StartHeightText.is_valid:
+	if not text_start_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/SectionContainer/EndHeightText.is_valid:
+	if not text_end_txt.is_valid:
 		return false
-	if not $MarginContainer/VBoxContainer/SectionContainer/StepsText.is_valid:
+	if not text_steps_txt.is_valid:
 		return false
 
 	return true
@@ -157,7 +184,8 @@ func is_valid():
 Called to export a single file to the local file system.
 """
 func _export_to_file(svg_path, output_opts, section_height):
-	var script_text = get_parent()._convert_component_tree_to_script(false)
+	var script_text = get_parent()
+	script_text = script_text._convert_component_tree_to_script(false)
 	var ct = get_parent().get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
 
 	var comp_names = Common.get_all_components(ct)
@@ -170,7 +198,8 @@ func _export_to_file(svg_path, output_opts, section_height):
 		# Make sure something gets exported
 		script_text += "\nshow_object(" + comp_name + ")"
 
-	var ret = cqgipy.export(script_text, "svg", OS.get_user_data_dir(), output_opts)
+	var ret = cqgipy
+	ret = ret.export(script_text, "svg", OS.get_user_data_dir(), output_opts)
 
 	# If the export succeeded, move the contents of the export to the final location
 	if ret.begins_with("error~"):
@@ -192,32 +221,49 @@ func _collect_output_opts():
 	var output_opts = ""
 
 	# Shortcuts for the projection direction controls
-	var x_dir = $MarginContainer/VBoxContainer/ProjDirContainer/XText.get_text()
-	var y_dir = $MarginContainer/VBoxContainer/ProjDirContainer/YText.get_text()
-	var z_dir = $MarginContainer/VBoxContainer/ProjDirContainer/ZText.get_text()
+	var x_dir = $MarginContainer/VBoxContainer/ProjDirContainer/XText
+	x_dir = x_dir.get_text()
+	var y_dir = $MarginContainer/VBoxContainer/ProjDirContainer/YText
+	y_dir = y_dir.get_text()
+	var z_dir = $MarginContainer/VBoxContainer/ProjDirContainer/ZText
+	z_dir = z_dir.get_text()
 
 	# Shortcuts for the stroke color controls
-	var s_red = $MarginContainer/VBoxContainer/StrokeColorContainer/RText.get_text()
-	var s_green = $MarginContainer/VBoxContainer/StrokeColorContainer/GText.get_text()
-	var s_blue = $MarginContainer/VBoxContainer/StrokeColorContainer/BText.get_text()
+	var s_red = $MarginContainer/VBoxContainer/StrokeColorContainer/RText
+	s_red = s_red.get_text()
+	var s_green = $MarginContainer/VBoxContainer/StrokeColorContainer/GText
+	s_green = s_green.get_text()
+	var s_blue = $MarginContainer/VBoxContainer/StrokeColorContainer/BText
+	s_blue = s_blue.get_text()
 
 	# Shortcuts for the hidden color controls
-	var h_red = $MarginContainer/VBoxContainer/HColorContainer/RText.get_text()
-	var h_green = $MarginContainer/VBoxContainer/HColorContainer/GText.get_text()
-	var h_blue = $MarginContainer/VBoxContainer/HColorContainer/BText.get_text()
+	var h_red = $MarginContainer/VBoxContainer/HColorContainer/RText
+	h_red = h_red.get_text()
+	var h_green = $MarginContainer/VBoxContainer/HColorContainer/GText
+	h_green = h_green.get_text()
+	var h_blue = $MarginContainer/VBoxContainer/HColorContainer/BText
+	h_blue = h_blue.get_text()
 
 	# Convert the show hidden checkbox into a string we can use
 	var show_hidden = "False"
-	if $MarginContainer/VBoxContainer/HiddenCheckBox.pressed:
+	var chk_box = $MarginContainer/VBoxContainer/HiddenCheckBox
+	if chk_box.pressed:
 		show_hidden = "True"
 
-	output_opts += "width:" + $MarginContainer/VBoxContainer/DimsContainer/WidthText.get_text() + ";"
-	output_opts += "height:" + $MarginContainer/VBoxContainer/DimsContainer/HeightText.get_text() + ";"
-	output_opts += "marginLeft:" + $MarginContainer/VBoxContainer/MarginContainer/LeftText.get_text() + ";"
-	output_opts += "marginTop:" + $MarginContainer/VBoxContainer/MarginContainer/TopText.get_text() + ";"
+	# The SVG output parameter controls
+	var width_txt = $MarginContainer/VBoxContainer/DimsContainer/WidthText
+	var height_txt = $MarginContainer/VBoxContainer/DimsContainer/HeightText
+	var left_txt = $MarginContainer/VBoxContainer/MarginContainer/LeftText
+	var top_txt = $MarginContainer/VBoxContainer/MarginContainer/TopText
+	var s_width_txt = $MarginContainer/VBoxContainer/StrokeWidthContainer/WidthText
+
+	output_opts += "width:" + width_txt.get_text() + ";"
+	output_opts += "height:" + height_txt.get_text() + ";"
+	output_opts += "marginLeft:" + left_txt.get_text() + ";"
+	output_opts += "marginTop:" + top_txt.get_text() + ";"
 	output_opts += "showAxes:False;"
 	output_opts += "projectionDir:(" + x_dir + "," + y_dir + "," + z_dir + ");"
-	output_opts += "strokeWidth:" + $MarginContainer/VBoxContainer/StrokeWidthContainer/WidthText.get_text() + ";"
+	output_opts += "strokeWidth:" + s_width_txt.get_text() + ";"
 	output_opts += "strokeColor:(" + s_red + "," + s_green + "," + s_blue + ");"
 	output_opts += "hiddenColor:(" + h_red + "," + h_green + "," + h_blue + ");"
 	output_opts += "showHidden:" + show_hidden + ";"

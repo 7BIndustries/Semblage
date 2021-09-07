@@ -4,283 +4,7 @@ import re
 from godot import exposed, export, signal, Node, ResourceLoader, Dictionary, Array, Vector3
 from cadquery import cqgi
 from cadquery import Color
-
-
-semb_json_template = (
-"""
-{
-"metadata": {
-"format": "cadquery-custom",
-"formatVersion": 1.0,
-"generatedBy": "semblage-server"
-},
-"components": %(components)s
-}
-""")
-
-component_template = (
-"""
-{
-"id": -1,
-"vertexCount": %(nVertices)d,
-"triangleCount": %(nTriangles)d,
-"normalCount": 0,
-"colorCount": 0,
-"uvCount": 0,
-"materials": 1,
-"largestDim": %(largestDim)d,
-"smallestDim": %(smallestDim)d,
-"vertices": %(vertices)s,
-"triangles": %(triangles)s,
-"normals": [],
-"uvs": [],
-"color": %(color)s,
-"cqVertices": %(cqVertices)s,
-"cqEdges": %(cqEdges)s,
-"cqFaces": %(cqFaces)s
-}
-""")
-
-cq_vertex_template = (
-"""
-{
-	"id": -1,
-	"x": -1,
-	"y": -1,
-	"z": -1
-}
-"""
-)
-
-cq_edge_template = (
-"""
-{
-	"id": -1,
-	"type": "line",
-	"start": "None",
-	"end": "None",
-	"center": "None",
-	"radius": "None" 
-}
-""")
-
-cq_face_template = (
-"""
-{
-	"id": -1,
-	"vertices": [],
-	"edges": []
-}
-""")
-
-
-class JsonMesh(object):
-	def __init__(self):
-		self.components = []
-		self.vertices = []
-		self.triangles = []
-		self.nVertices = 0
-		self.nTriangles = 0
-		self.cqVertices = []
-		self.cqEdges = []
-		self.cqFaces = []
-		self.largestDim = -1
-		self.smallestDim = 99999999
-		self.color = [] # rgba
-	
-
-	def addVertex(self, x, y, z):
-		self.nVertices += 1
-		self.vertices.extend([x, y, z])
-
-	"""
-	Add triangle composed of the three provided vertex indices
-	"""
-	def addTriangle(self, i, j, k):
-		self.nTriangles += 1
-		self.triangles.extend([int(i), int(j), int(k)])
-
-	"""
-	Adds the largest dimension for the current component
-	"""
-	def addLargestDim(self, dimension):
-		self.largestDim = dimension
-
-	"""
-	Adds the smallest dimension for the current component
-	"""
-	def addSmallestDim(self, dimension):
-		self.smallestDim = dimension
-
-	"""
-	Adds the red, green blue alpha colors to the JSON mesh.
-	"""
-	def addColor(self, r, g, b, a):
-		self.color = [r, g, b, a]
-
-	"""
-	Adds a CadQuery vertex representation.
-	"""
-	def addCQVertex(self, x, y, z):
-		self.cqVertices.append([x, y, z])
-
-	"""
-	Adds a CadQuery edge representation.
-	"""
-	def addCQEdge(self, x1, y1, z1, x2, y2, z2):
-		self.cqEdges.append([x1, y1, z1, x2, y2, z2])
-
-	"""
-	Separates the current set of vertices, triangles, etc into a separate component.
-	"""
-	def addComponent(self):
-		template = component_template % {
-			"vertices": str(self.vertices),
-			"triangles": str(self.triangles),
-			"nVertices": self.nVertices,
-			"nTriangles": self.nTriangles,
-			"cqVertices": str(self.cqVertices),
-			"cqEdges": str(self.cqEdges),
-			"cqFaces": str(self.cqFaces),
-			"largestDim": self.largestDim,
-			"smallestDim": self.smallestDim,
-			"color": self.color
-		}
-
-		self.components.append(template)
-
-		# Reset for the next component
-		self.vertices = []
-		self.triangles = []
-		self.nVertices = 0
-		self.nTriangles = 0
-		self.cqVertices = []
-		self.cqEdges = []
-		self.cqFaces = []
-		self.largestDim = -1
-		self.smallestDim = 99999999
-
-
-	"""
-	Get a json model from this model.
-	For now we'll forget about colors, vertex normals, and all that stuff
-	"""
-	def toJson(self):
-		return_json = semb_json_template % {
-			"components": str(self.components),
-		}
-		return_json = return_json.replace("'", "")
-		return_json = return_json.replace("\\n", "")
-
-		return return_json
-
-
-def convert_components(components):
-	"""
-	Converts a list of components into Semblage JSON.
-	"""
-	mesher = JsonMesh()
-
-	for component in components:
-		# Extract the aspects of the component
-		shape = component[0]
-		largest_dimension = component[1]
-		color = component[2]
-		loc = component[3]
-		smallest_dimension = component[4]
-
-		# Protect against this being called with just a blank workplane object in the stack
-		if hasattr(shape, "ShapeType"):
-			tess = shape.tessellate(0.001)
-	
-			# Use the location, if there is one
-			if loc is not None:
-				loc_x = loc.X()
-				loc_y = loc.Y()
-				loc_z = loc.Z()
-			else:
-				loc_x = 0.0
-				loc_y = 0.0
-				loc_z = 0.0
-		
-			# Add vertices
-			for v in tess[0]:
-				mesher.addVertex(v.x + loc_x, v.y + loc_y, v.z + loc_z)
-		
-			# Add triangles
-			for ixs in tess[1]:
-				mesher.addTriangle(*ixs)
-		
-			# Add CadQuery-reported vertices
-			for vert in shape.Vertices():
-				mesher.addCQVertex(vert.X, vert.Y, vert.Z)
-
-			# Add CadQuery-reported edges
-			for edge in shape.Edges():
-				gt = edge.geomType()
-
-				# Find out if the shape is larger than the largest bounding box we have recorded so far
-				if shape.BoundingBox().DiagonalLength > largest_dimension:
-					largest_dimension = shape.BoundingBox().DiagonalLength
-
-				# Find the smallest dimension so that we can use that for the line width
-				if shape.BoundingBox().xlen < smallest_dimension:
-					smallest_dimension = shape.BoundingBox().xlen
-				if shape.BoundingBox().ylen < smallest_dimension:
-					smallest_dimension = shape.BoundingBox().ylen
-				if shape.BoundingBox().zlen < smallest_dimension:
-					smallest_dimension = shape.BoundingBox().zlen
-
-				# If dealing with some sort of arc, discretize it into individual lines
-				if gt == "CIRCLE" or gt == "ARC" or gt == "SPLINE" or gt == "ELLIPSE":
-					from OCP import GCPnts, BRepAdaptor
-
-					# Discretize the curve
-					disc = GCPnts.GCPnts_TangentialDeflection(BRepAdaptor.BRepAdaptor_Curve(edge.wrapped), 0.5, 0.01)
-
-					# Add each of the discretized sections to the edge list
-					if disc.NbPoints() > 1:
-						for i in range(2, disc.NbPoints() + 1):
-							p_0 = disc.Value(i - 1)
-							p_1 = disc.Value(i)
-
-							# Add the start and end vertices for this edge
-							mesher.addCQEdge(p_0.X(), p_0.Y(), p_0.Z(), p_1.X(), p_1.Y(), p_1.Z())
-				else:
-					# Handle simple lines by collecting their beginning and end points
-					i = 0
-					x1 = 0
-					x2 = 0
-					y1 = 0
-					y2 = 0
-					z1 = 0
-					z2 = 0
-					for vert in edge.Vertices():
-						if i == 0:
-							x1 = vert.X
-							y1 = vert.Y
-							z1 = vert.Z
-						else:
-							x2 = vert.X
-							y2 = vert.Y
-							z2 = vert.Z
-
-						i += 1
-
-					mesher.addCQEdge(x1, y1, z1, x2, y2, z2)
-
-			# Make sure that the largest dimension is represented accurately for camera positioning
-			mesher.addLargestDim(largest_dimension)
-			mesher.addSmallestDim(smallest_dimension)
-		
-			# Make sure that the color is set correctly for the current component
-			if color is None: color = Color(1.0, 0.36, 0.05, 1.0)
-			mesher.addColor(color.wrapped.GetRGB().Red(), color.wrapped.GetRGB().Green(), color.wrapped.GetRGB().Blue(), color.wrapped.Alpha())
-		
-			# Snapshot the current vertices and triangles as a component
-			mesher.addComponent()
-
-	return mesher.toJson()
+from cadquery import exporters
 
 
 @exposed
@@ -294,7 +18,6 @@ class cqgi_interface(Node):
 		Executes and builds a hierarchal tree of everything that needs to be
 		rendered, including things like workplanes.
 		"""
-		component_json = ""
 
 		cq_model = cqgi.parse(str(script_text))
 		build_result = cq_model.build({})
@@ -308,25 +31,15 @@ class cqgi_interface(Node):
 
 		# All of the components and workplanes that the user has requested be rendered
 		render_tree["components"] = Array()
-#		render_tree["workplanes"] = Array()
 
-		# Step through all components and tessellate them
-#		for comp in range(2):
-#			cur_comp = Dictionary()
-#
-#			# Save the variable name given to it by the user
-#			cur_comp["id"] = "box" + str(comp)
-#
-#			# Tessellate and store the object
-#			cur_comp["faces"] = Array() # Each face has references to the triangles that make it up
-#			cur_comp["wires"] = Array() # Each wire has references to the edges that make it up
-#			cur_comp["triangles"] = Array() # Each triangle has a reference to the face it belongs to
-#			cur_comp["edges"] = Array() # Each edge has a reference to the wire and/or triangle it belongs to
-#			cur_comp["edge_segments"] = Array() # Each edge segment has a reference to the edge(s) it belongs to
-#			cur_comp["vertices"] = Array() # Each vertex has a reference to the edge(s) or edge_segment(s) it belongs to
-#
-#			# Add the current component to the array
-#			render_tree["components"].append(cur_comp)
+		# For reference as the ability to select entities is implemented
+#		# Tessellate and store the object
+#		cur_comp["faces"] = Array() # Each face has references to the triangles that make it up
+#		cur_comp["wires"] = Array() # Each wire has references to the edges that make it up
+#		cur_comp["triangles"] = Array() # Each triangle has a reference to the face it belongs to
+#		cur_comp["edges"] = Array() # Each edge has a reference to the wire and/or triangle it belongs to
+#		cur_comp["edge_segments"] = Array() # Each edge segment has a reference to the edge(s) it belongs to
+#		cur_comp["vertices"] = Array() # Each vertex has a reference to the edge(s) or edge_segment(s) it belongs to
 
 		for result in build_result.results:
 			component_id = list(result.shape.ctx.tags)[0]
@@ -517,8 +230,6 @@ class cqgi_interface(Node):
 		# elif sys.platform.startswith('win32'):
 		# 	sys.path.insert(0, 'addons/pythonscript/windows-64/lib')
 
-		component_json = ""
-
 		cq_model = cqgi.parse(str(script_text))
 		build_result = cq_model.build({})
 
@@ -563,8 +274,6 @@ class cqgi_interface(Node):
 		# 	sys.path.insert(0, 'addons/pythonscript/osx-64/lib')
 		# elif sys.platform.startswith('win32'):
 		# 	sys.path.insert(0, 'addons/pythonscript/windows-64/lib')
-
-		from cadquery import exporters
 
 		ret = ""
 
@@ -677,12 +386,4 @@ class cqgi_interface(Node):
 		except Exception as err:
 			component_json = "error~" + str(err)
 
-#		self.call("emit_signal", "build_success", result)
-
 		return component_json
-
-
-	# def build_direct(self, script_text):
-	# 	print("HERE")
-	# 	vp = self.get_tree().get_root().get_children()[1].get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	# 	print(vp.get_children())

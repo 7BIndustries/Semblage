@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name RArrayControl
 
-var is_binary = false
-
 var prev_template = null
 
 var template = ".rarray({xSpacing},{ySpacing},{xCount},{yCount},center={centered})"
@@ -84,6 +82,13 @@ func _ready():
 	centered_ctrl.hint_tooltip = tr("RARRAY_CENTERED_CTRL_HINT_TOOLTIP")
 	centered_group.add_child(centered_ctrl)
 	add_child(centered_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name Offset2DControl
 
-var is_binary = false
-
 var prev_template = null
 
 var template = ".offset2D({thickness},kind=\"{kind}\")"
@@ -41,6 +39,13 @@ func _ready():
 	kind_ctrl.hint_tooltip = tr("CORNER_KIND_CTRL_HINT_TOOLTIP")
 	kind_group.add_child(kind_ctrl)
 	add_child(kind_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

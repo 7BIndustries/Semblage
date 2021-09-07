@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name PolarLineToControl
 
-var is_binary = false
-
 var prev_template = null
 
 var template = ".polarLine({distance},{angle},forConstruction={for_construction})"
@@ -52,6 +50,13 @@ func _ready():
 	const_group.add_child(for_construction_ctrl)
 
 	add_child(const_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

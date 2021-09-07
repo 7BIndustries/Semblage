@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name TextControl
 
-var is_binary = false
-
 var txt_ctrl = null
 var font_size_ctrl = null
 var distance_ctrl = null
@@ -168,6 +166,13 @@ func _ready():
 	valign_ctrl.hint_tooltip = tr("TEXT_VALIGN_CTRL_HINT_TOOLTIP")
 	valign_group.add_child(valign_ctrl)
 	add_child(valign_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

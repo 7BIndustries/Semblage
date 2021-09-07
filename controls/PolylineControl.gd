@@ -4,8 +4,6 @@ class_name PolylineControl
 
 signal error
 
-var is_binary = false
-
 var template = ".polyline(listOfXYTuple=[{listOfXYTuple}],forConstruction={forConstruction},includeCurrent={includeCurrent})"
 
 var prev_template = null
@@ -99,6 +97,13 @@ func _ready():
 	current_ctrl.hint_tooltip = tr("INCLUDE_CTRL_HINT_TOOLTIP")
 	current_group.add_child(current_ctrl)
 	add_child(current_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

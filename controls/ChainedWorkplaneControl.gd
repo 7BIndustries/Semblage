@@ -2,11 +2,8 @@ extends VBoxContainer
 
 class_name ChainedWorkplaneControl
 
-var is_binary = false
-
 var prev_template = null
 
-var wp_name_ctrl = null
 var wp_cen_ctrl = null
 var invert_ctrl = null
 
@@ -16,22 +13,10 @@ const center_option_list = ["CenterOfBoundBox", "CenterOfMass", "ProjectedOrigin
 
 const wp_cen_edit_rgx = "(?<=centerOption\\=\")(.*?)(?=\"\\))"
 const invert_edit_rgx = "(?<=invert\\=)(.*?)(?=,centerOption)"
-#var tag_edit_rgx = "(?<=.tag\\(\")(.*?)(?=\"\\))"
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	# Allow the user to give the Workplane/component a name
-#	var name_group = HBoxContainer.new()
-#	var wp_name_lbl = Label.new()
-#	wp_name_lbl.set_text("Name: ")
-#	name_group.add_child(wp_name_lbl)
-#	wp_name_ctrl = LineEdit.new()
-#	wp_name_ctrl.expand_to_text_length = true
-#	wp_name_ctrl.set_text("Change")
-#	name_group.add_child(wp_name_ctrl)
-#	add_child(name_group)
-
 	# Add a control for the center option
 	var wp_cen_group = HBoxContainer.new()
 	var wp_cen_lbl = Label.new()
@@ -53,6 +38,13 @@ func _ready():
 	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
 	invert_group.add_child(invert_ctrl)
 	add_child(invert_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

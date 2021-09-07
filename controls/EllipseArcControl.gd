@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name EllipseArcControl
 
-var is_binary = false
-
 var prev_template = null
 
 var template = ".ellipseArc({x_radius},{y_radius},angle1={angle1},angle2={angle2},rotation_angle={rotation_angle},sense={sense},forConstruction={forConstruction},startAtCurrent={startAtCurrent},makeWire={makeWire})"
@@ -133,6 +131,13 @@ func _ready():
 	make_wire_ctrl.hint_tooltip = tr("ARC_MAKE_WIRE_CTRL_HINT_TOOLTIP")
 	make_wire_group.add_child(make_wire_ctrl)
 	add_child(make_wire_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

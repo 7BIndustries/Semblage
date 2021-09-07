@@ -402,7 +402,7 @@ func test_sweep_control():
 
 	# Fake out the 2D operation action tree
 	var action_tree = popup.get_node("VBoxContainer/HBoxContainer/ActionContainer/ActionTree")
-	var action_tree_root = action_tree.create_item()
+	action_tree.create_item()
 
 	# Get a reference to the control that has been loaded
 	var sweep_control = popup.get_node("VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer").get_children()[0]

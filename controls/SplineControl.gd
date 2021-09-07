@@ -4,8 +4,6 @@ class_name SplineControl
 
 signal error
 
-var is_binary = false
-
 var template = ".spline(listOfXYTuple=[{listOfXYTuple}],tangents=[{tangents}],periodic={periodic},forConstruction={forConstruction},includeCurrent={includeCurrent},makeWire={makeWire})"
 
 var prev_template = null
@@ -185,6 +183,13 @@ func _ready():
 	wire_ctrl.hint_tooltip = tr("ARC_MAKE_WIRE_CTRL_HINT_TOOLTIP")
 	wire_group.add_child(wire_ctrl)
 	add_child(wire_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

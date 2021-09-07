@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name InlineWorkplaneControl
 
-var is_binary = false
-
 var template = '.workplane(offset={offset},invert={invert},centerOption="{center_option}",origin=({origin_x},{origin_y},{origin_z}))'
 
 var prev_template = null
@@ -103,11 +101,17 @@ func _ready():
 
 
 """
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
+
+
+"""
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
 	var offset_ctrl = get_node("offset_group/offset_ctrl")
-	var invert_ctrl = get_node("invert_group/invert_ctrl")
 	var origin_x_ctrl = get_node("origin_xyz_group/origin_group/origin_x_ctrl")
 	var origin_y_ctrl = get_node("origin_xyz_group/origin_group/origin_y_ctrl")
 	var origin_z_ctrl = get_node("origin_xyz_group/origin_group/origin_z_ctrl")

@@ -249,9 +249,6 @@ func test_parameter_new_button():
 	gui._init_component_tree()
 	gui._init_params_tree()
 
-	# Set up the main component tree with the content we want
-	var pt = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree")
-
 	# Get a reference to the data popup panel
 	var dpp = gui.get_node('DataPopupPanel')
 

@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name SplitControl
 
-var is_binary = false
-
 var prev_template = null
 
 var template = ".workplane({offset}).split(keepTop={keep_top},keepBottom={keep_bottom})"
@@ -57,6 +55,13 @@ func _ready():
 	keep_bottom_ctrl.connect("button_down", self, "_keep_bottom_ctrl_button_down_event")
 	keep_bottom_group.add_child(keep_bottom_ctrl)
 	add_child(keep_bottom_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

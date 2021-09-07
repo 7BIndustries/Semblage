@@ -9,8 +9,10 @@ var max_dim = 1  # Largest dimension of the object being rendered
 Called when the node is asked to redraw its contents.
 """
 func _draw():
-	var par_size = get_parent().rect_size
-	var par_loc = get_parent().rect_position
+	var par_size = get_parent()
+	par_size = par_size.rect_size
+	var par_loc = get_parent()
+	par_loc = par_loc.rect_position
 
 	# Draw all the lines that have been stored for the canvas
 	for line in lines:
@@ -40,6 +42,6 @@ func set_max_dim(dim):
 Resets the 2D sketch canvas back to the default values
 """
 func reset():
-	self.lines = []  # Array of line start-end points to use to draw the line segments
-	self.line_width = 5 # Line width can be adjusted for the size of the object
-	self.max_dim = 1  # Largest dimension of the object being rendered
+	lines = []  # Array of line start-end points to use to draw the line segments
+	line_width = 5 # Line width can be adjusted for the size of the object
+	max_dim = 1  # Largest dimension of the object being rendered

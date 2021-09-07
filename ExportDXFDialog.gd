@@ -8,7 +8,8 @@ var orig_size = null # The original size of the dialog
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Hide the selector/section controls until they are needed
-	$MainVBoxContainer/SectionContainer.hide()
+	var sect_cont = $MainVBoxContainer/SectionContainer
+	sect_cont.hide()
 	
 	self.rect_size = Vector2(355, 125)
 
@@ -18,18 +19,21 @@ Called when the Section button is clicked.
 """
 func _on_CheckButton_toggled(_button_pressed):
 	# Show the selector and section controls if the check button is on, hide otherwise
-	if $MainVBoxContainer/CheckContainer/CheckButton.pressed:
-		$MainVBoxContainer/SectionContainer.show()
+	var chk_btn = $MainVBoxContainer/CheckContainer/CheckButton
+	var sect_cont = $MainVBoxContainer/SectionContainer
 
-		self.orig_size = self.rect_size
+	if chk_btn.pressed:
+		sect_cont.show()
+
+		orig_size = self.rect_size
 	
 		# Make sure the panel is the correct size to contain all controls
 		self.rect_size = Vector2(355, 210)
 	else:
-		$MainVBoxContainer/SectionContainer.hide()
+		sect_cont.hide()
 
 		if orig_size != null:
-			self.rect_size = self.orig_size
+			self.rect_size = orig_size
 
 
 """
@@ -53,7 +57,8 @@ func _on_SelectPathButton_button_down():
 Called after the export file selection has been made.
 """
 func _export_select_finished(path):
-	$MainVBoxContainer/HBoxContainer/PathText.set_text(path)
+	var path_txt = $MainVBoxContainer/HBoxContainer/PathText
+	path_txt.set_text(path)
 
 
 """
@@ -72,11 +77,15 @@ func _on_OkButton_button_down():
 
 		return
 	
-		# Check to see if the user wants to do slicing
-	if $MainVBoxContainer/CheckContainer/CheckButton.pressed:
-		var start_height = $MainVBoxContainer/SectionContainer/StartHeightContainer/StartHeightText.get_text()
-		var end_height = $MainVBoxContainer/SectionContainer/EndHeightContainer/EndHeightText.get_text()
-		var steps = $MainVBoxContainer/SectionContainer/StepsContainer/StepsText.get_text()
+	# Check to see if the user wants to do slicing
+	var chk_btn = $MainVBoxContainer/CheckContainer/CheckButton
+	if chk_btn.pressed:
+		var start_height = $MainVBoxContainer/SectionContainer/StartHeightContainer/StartHeightText
+		start_height = start_height.get_text()
+		var end_height = $MainVBoxContainer/SectionContainer/EndHeightContainer/EndHeightText
+		end_height = end_height.get_text()
+		var steps = $MainVBoxContainer/SectionContainer/StepsContainer/StepsText
+		steps = steps.get_text()
 
 		# Convert the values to the correct data types
 		start_height = float(start_height)
@@ -120,12 +129,16 @@ func _on_OkButton_button_down():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var start_txt = $MainVBoxContainer/SectionContainer/StartHeightContainer/StartHeightText
+	var end_txt = $MainVBoxContainer/SectionContainer/EndHeightContainer/EndHeightText
+	var steps_txt = $MainVBoxContainer/SectionContainer/StepsContainer/StepsText
+
 	# Make sure all the number controls have valid values in them
-	if not $MainVBoxContainer/SectionContainer/StartHeightContainer/StartHeightText.is_valid:
+	if not start_txt.is_valid:
 		return false
-	if not $MainVBoxContainer/SectionContainer/EndHeightContainer/EndHeightText.is_valid:
+	if not end_txt.is_valid:
 		return false
-	if not $MainVBoxContainer/SectionContainer/StepsContainer/StepsText.is_valid:
+	if not steps_txt.is_valid:
 		return false
 
 	return true
@@ -134,7 +147,8 @@ func is_valid():
 Called to export a single file to the local file system.
 """
 func _export_to_file(dxf_path, section_height):
-	var script_text = get_parent()._convert_component_tree_to_script(false)
+	var script_text = get_parent()
+	script_text = script_text._convert_component_tree_to_script(false)
 	var ct = get_parent().get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
 
 	var comp_names = Common.get_all_components(ct)
@@ -148,7 +162,8 @@ func _export_to_file(dxf_path, section_height):
 		# Make sure something gets exported
 		script_text += "\nshow_object(" + comp_name + ")"
 
-	var ret = cqgipy.export(script_text, "dxf", OS.get_user_data_dir())
+	var ret = cqgipy
+	ret = ret.export(script_text, "dxf", OS.get_user_data_dir())
 
 	# If the export succeeded, move the contents of the export to the final location
 	if ret.begins_with("error~"):

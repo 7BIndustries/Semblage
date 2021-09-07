@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name TranslateControl
 
-var is_binary = false
-
 var prev_template = null
 
 var template = ".translate(vec={vec})"
@@ -54,6 +52,13 @@ func _ready():
 
 	vec_lbl_group.add_child(vec_group)
 	add_child(vec_lbl_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """

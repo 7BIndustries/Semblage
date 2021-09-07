@@ -2,8 +2,6 @@ extends VBoxContainer
 
 class_name CenterControl
 
-var is_binary = false
-
 var prev_template = null
 
 var template = ".center({x_coord},{y_coord})"
@@ -36,6 +34,13 @@ func _ready():
 	dims_group.add_child(y_coord_ctrl)
 
 	add_child(dims_group)
+
+
+"""
+Tells whether or not this control represents a binary operation.
+"""
+func is_binary():
+	return false
 
 
 """
