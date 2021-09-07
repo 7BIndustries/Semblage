@@ -48,11 +48,20 @@ class cqgi_interface(Node):
 			cur_comp["id"] = component_id
 			cur_comp["workplanes"] = Array()
 
+			# Figure out if we need to step back one step to get
+			tess_shape = result.shape.val()
+			if len(result.shape.all()) == 0:
+				# See if we can grab the previous shape
+				try:
+					tess_shape = result.shape.end().end().val()
+				except:
+					tess_shape = result.shape.val()
+
 			# Tessellate the enclosed shape object
 			smallest_dimension, largest_dimension,\
 				vertices, edges, triangles, num_of_vertices,\
 				num_of_edges, num_of_triangles = \
-				self.tessellate(result.shape.val())
+				self.tessellate(tess_shape)
 
 			# Save the tessellation information
 			cur_comp["smallest_dimension"] = smallest_dimension
