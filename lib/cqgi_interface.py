@@ -3,8 +3,7 @@ import sys
 import re
 from godot import exposed, export, signal, Node, ResourceLoader, Dictionary, Array, Vector3
 from cadquery import cqgi
-from cadquery import Color
-from cadquery import exporters
+from cadquery import Vector, Color, exporters
 
 
 @exposed
@@ -47,33 +46,10 @@ class cqgi_interface(Node):
 			cur_comp = Dictionary()
 			cur_comp["id"] = component_id
 			cur_comp["workplanes"] = Array()
+			cur_comp["largest_dimension"] = 0
 
-			# Figure out if we need to step back one step to get
+			# Figure out if we need to step back one step to get a non-workplane object
 			tess_shape = result.shape.val()
-			if len(result.shape.all()) == 0:
-				# See if we can grab the previous shape
-				try:
-					tess_shape = result.shape.end().end().val()
-				except:
-					tess_shape = result.shape.val()
-
-			# Tessellate the enclosed shape object
-			smallest_dimension, largest_dimension,\
-				vertices, edges, triangles, num_of_vertices,\
-				num_of_edges, num_of_triangles = \
-				self.tessellate(tess_shape)
-
-			# Save the tessellation information
-			cur_comp["smallest_dimension"] = smallest_dimension
-			cur_comp["largest_dimension"] = largest_dimension
-			cur_comp["vertices"] = vertices
-			cur_comp["edges"] = edges
-			cur_comp["triangles"] = triangles
-			cur_comp["num_of_vertices"] = num_of_vertices
-			cur_comp["num_of_edges"] = num_of_edges
-			cur_comp["num_of_triangles"] = num_of_triangles
-
-			# See if we have a workplane object
 			if len(result.shape.all()) == 0:
 				is_base_wp = False
 
@@ -104,6 +80,76 @@ class cqgi_interface(Node):
 
 				# Add the current workplane to the array
 				cur_comp["workplanes"].append(cur_wp)
+
+				# See if we can grab the previous shape
+				try:
+					tess_shape = result.shape.end().end().val()
+				except:
+					tess_shape = result.shape.val()
+			# We have an object and we want to see if there is a previous workplane to display
+			else:
+				# See if we can grab the previous workplane
+				try:
+					prev_wp = result.shape.end()
+				except:
+					prev_wp = result.shape
+
+				is_base_wp = False
+
+				# See if we have a workplane
+				if type(prev_wp.val()) is Vector:
+					print(prev_wp.val())
+					# Work-around to find out if this is a base workplane
+					try:
+						 prev_wp.end().end()
+					except ValueError:
+						is_base_wp = True
+
+					# If it is not a base workplane we can set it up to be displayed
+					if not is_base_wp:
+						print("Working with an inline workplane.")
+
+						# Get the origin, normal and center from the workplane
+						origin_vec = Vector3(prev_wp.val().x, prev_wp.val().y, prev_wp.val().z)
+						normal_vec = Vector3(prev_wp.plane.zDir.x, prev_wp.plane.zDir.y, prev_wp.plane.zDir.z)
+						center_vec = Vector3(prev_wp.plane.origin.x, prev_wp.plane.origin.y, prev_wp.plane.origin.z)
+						wp_size = result.shape.largestDimension() + prev_wp.largestDimension() * 0.1
+
+						# Compensate for offset workplanes not fitting into the view
+						if origin_vec.x > cur_comp["largest_dimension"]:
+							cur_comp["largest_dimension"] = origin_vec.x * 2
+						if origin_vec.y > cur_comp["largest_dimension"]:
+							cur_comp["largest_dimension"] = origin_vec.y * 2
+						if origin_vec.z > cur_comp["largest_dimension"]:
+							cur_comp["largest_dimension"] = origin_vec.z * 2
+
+						# Start collecting the workplane info into a dictionary
+						cur_wp = Dictionary()
+						cur_wp["is_base"] = is_base_wp
+						cur_wp["origin"] = origin_vec
+						cur_wp["normal"] = normal_vec
+						cur_wp["center"] = center_vec
+						cur_wp["size"] = wp_size
+
+						# Add the current workplane to the array
+						cur_comp["workplanes"].append(cur_wp)
+
+			# Tessellate the enclosed shape object
+			smallest_dimension, largest_dimension,\
+				vertices, edges, triangles, num_of_vertices,\
+				num_of_edges, num_of_triangles = \
+				self.tessellate(tess_shape)
+
+			# Save the tessellation information
+			cur_comp["smallest_dimension"] = smallest_dimension
+			if largest_dimension > cur_comp["largest_dimension"]:
+				cur_comp["largest_dimension"] = largest_dimension
+			cur_comp["vertices"] = vertices
+			cur_comp["edges"] = edges
+			cur_comp["triangles"] = triangles
+			cur_comp["num_of_vertices"] = num_of_vertices
+			cur_comp["num_of_edges"] = num_of_edges
+			cur_comp["num_of_triangles"] = num_of_triangles
 
 			# Add the current component
 			render_tree["components"].append(cur_comp)
