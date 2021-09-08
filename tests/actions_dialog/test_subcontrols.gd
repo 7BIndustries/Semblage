@@ -341,14 +341,14 @@ func test_loft_control():
 
 	# Get the viewport so we can make sure it has contents
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	assert_eq(vp.get_child_count(), 9)
+	assert_eq(vp.get_child_count(), 11)
 
 	# Simulate a click of the OK button on the Operations dialog
 	var ok_btn = popup.get_node("VBoxContainer/OkButton")
 	ok_btn.emit_signal("button_down")
 
 	# See if the results in the 3D viewport have changed appropriately
-	assert_eq(vp.get_child_count(), 50)
+	assert_eq(vp.get_child_count(), 52)
 
 
 """
