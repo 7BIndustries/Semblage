@@ -14,16 +14,6 @@ const combine_edit_rgx = "(?<=combine\\=)(.*?)(?=\\,clean)"
 const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\))"
 const wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
 
-var angle_ctrl = null
-var axis_start_x_ctrl = null
-var axis_start_y_ctrl = null
-var axis_start_z_ctrl = null
-var axis_end_x_ctrl = null
-var axis_end_y_ctrl = null
-var axis_end_z_ctrl = null
-var combine_ctrl = null
-var clean_ctrl = null
-var invert_ctrl = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -32,7 +22,9 @@ func _ready():
 	var angle_lbl = Label.new()
 	angle_lbl.set_text("Angle (Degrees): ")
 	angle_group.add_child(angle_lbl)
-	angle_ctrl = NumberEdit.new()
+	var angle_ctrl = NumberEdit.new()
+	angle_ctrl.name = "angle_ctrl"
+	angle_ctrl.size_flags_horizontal = 3
 	angle_ctrl.MaxValue = 360.0
 	angle_ctrl.set_text("360.0")
 	angle_ctrl.hint_tooltip = tr("REVOLVE_ANGLE_CTRL_HINT_TOOLTIP")
@@ -49,7 +41,9 @@ func _ready():
 	var x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	axis_start_group.add_child(x_lbl)
-	axis_start_x_ctrl = NumberEdit.new()
+	var axis_start_x_ctrl = NumberEdit.new()
+	axis_start_x_ctrl.name = "axis_start_x_ctrl"
+	axis_start_x_ctrl.size_flags_horizontal = 3
 	axis_start_x_ctrl.set_text("0")
 	axis_start_x_ctrl.hint_tooltip = tr("REVOLVE_AXIS_START_X_CTRL_HINT_TOOLTIP")
 	axis_start_group.add_child(axis_start_x_ctrl)
@@ -57,7 +51,9 @@ func _ready():
 	var y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	axis_start_group.add_child(y_lbl)
-	axis_start_y_ctrl = NumberEdit.new()
+	var axis_start_y_ctrl = NumberEdit.new()
+	axis_start_y_ctrl.name = "axis_start_y_ctrl"
+	axis_start_y_ctrl.size_flags_horizontal = 3
 	axis_start_y_ctrl.set_text("0")
 	axis_start_y_ctrl.hint_tooltip = tr("REVOLVE_AXIS_START_Y_CTRL_HINT_TOOLTIP")
 	axis_start_group.add_child(axis_start_y_ctrl)
@@ -65,7 +61,9 @@ func _ready():
 	var z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	axis_start_group.add_child(z_lbl)
-	axis_start_z_ctrl = NumberEdit.new()
+	var axis_start_z_ctrl = NumberEdit.new()
+	axis_start_z_ctrl.name = "axis_start_z_ctrl"
+	axis_start_z_ctrl.size_flags_horizontal = 3
 	axis_start_z_ctrl.set_text("0")
 	axis_start_z_ctrl.hint_tooltip = tr("REVOLVE_AXIS_START_Z_CTRL_HINT_TOOLTIP")
 	axis_start_group.add_child(axis_start_z_ctrl)
@@ -83,7 +81,9 @@ func _ready():
 	x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	axis_end_group.add_child(x_lbl)
-	axis_end_x_ctrl = NumberEdit.new()
+	var axis_end_x_ctrl = NumberEdit.new()
+	axis_end_x_ctrl.name = "axis_end_x_ctrl"
+	axis_end_x_ctrl.size_flags_horizontal = 3
 	axis_end_x_ctrl.set_text("0")
 	axis_end_x_ctrl.hint_tooltip = tr("REVOLVE_AXIS_END_X_CTRL_HINT_TOOLTIP")
 	axis_end_group.add_child(axis_end_x_ctrl)
@@ -91,7 +91,9 @@ func _ready():
 	y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	axis_end_group.add_child(y_lbl)
-	axis_end_y_ctrl = NumberEdit.new()
+	var axis_end_y_ctrl = NumberEdit.new()
+	axis_end_y_ctrl.name = "axis_end_y_ctrl"
+	axis_end_y_ctrl.size_flags_horizontal = 3
 	axis_end_y_ctrl.set_text("0")
 	axis_end_y_ctrl.hint_tooltip = tr("REVOLVE_AXIS_END_Y_CTRL_HINT_TOOLTIP")
 	axis_end_group.add_child(axis_end_y_ctrl)
@@ -99,7 +101,9 @@ func _ready():
 	z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	axis_end_group.add_child(z_lbl)
-	axis_end_z_ctrl = NumberEdit.new()
+	var axis_end_z_ctrl = NumberEdit.new()
+	axis_end_z_ctrl.name = "axis_end_z_ctrl"
+	axis_end_z_ctrl.size_flags_horizontal = 3
 	axis_end_z_ctrl.set_text("1")
 	axis_end_z_ctrl.hint_tooltip = tr("REVOLVE_AXIS_END_Z_CTRL_HINT_TOOLTIP")
 	axis_end_group.add_child(axis_end_z_ctrl)
@@ -112,7 +116,8 @@ func _ready():
 	var combine_lbl = Label.new()
 	combine_lbl.set_text("Combine: ")
 	combine_group.add_child(combine_lbl)
-	combine_ctrl = CheckBox.new()
+	var combine_ctrl = CheckBox.new()
+	combine_ctrl.name = "combine_ctrl"
 	combine_ctrl.pressed = true
 	combine_ctrl.hint_tooltip = tr("COMBINE_CTRL_HINT_TOOLTIP")
 	combine_group.add_child(combine_ctrl)
@@ -123,7 +128,8 @@ func _ready():
 	var clean_lbl = Label.new()
 	clean_lbl.set_text("Clean: ")
 	clean_group.add_child(clean_lbl)
-	clean_ctrl = CheckBox.new()
+	var clean_ctrl = CheckBox.new()
+	clean_ctrl.name = "clean_ctrl"
 	clean_ctrl.pressed = true
 	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
@@ -134,7 +140,8 @@ func _ready():
 	var invert_lbl = Label.new()
 	invert_lbl.set_text("Invert: ")
 	invert_group.add_child(invert_lbl)
-	invert_ctrl = CheckBox.new()
+	var invert_ctrl = CheckBox.new()
+	invert_ctrl.name = "invert_ctrl"
 	invert_ctrl.pressed = false
 	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
 	invert_group.add_child(invert_ctrl)
@@ -152,6 +159,14 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var angle_ctrl = find_node("angle_ctrl", true, false)
+	var axis_start_x_ctrl = find_node("axis_start_x_ctrl", true, false)
+	var axis_start_y_ctrl = find_node("axis_start_y_ctrl", true, false)
+	var axis_start_z_ctrl = find_node("axis_start_z_ctrl", true, false)
+	var axis_end_x_ctrl = find_node("axis_end_x_ctrl", true, false)
+	var axis_end_y_ctrl = find_node("axis_end_y_ctrl", true, false)
+	var axis_end_z_ctrl = find_node("axis_end_z_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not angle_ctrl.is_valid:
 		return false
@@ -175,6 +190,17 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var angle_ctrl = find_node("angle_ctrl", true, false)
+	var axis_start_x_ctrl = find_node("axis_start_x_ctrl", true, false)
+	var axis_start_y_ctrl = find_node("axis_start_y_ctrl", true, false)
+	var axis_start_z_ctrl = find_node("axis_start_z_ctrl", true, false)
+	var axis_end_x_ctrl = find_node("axis_end_x_ctrl", true, false)
+	var axis_end_y_ctrl = find_node("axis_end_y_ctrl", true, false)
+	var axis_end_z_ctrl = find_node("axis_end_z_ctrl", true, false)
+	var combine_ctrl = find_node("combine_ctrl", true, false)
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+	var invert_ctrl = find_node("invert_ctrl", true, false)
+
 	var complete = ""
 
 	# Allow flipping the direction of the operation
@@ -214,6 +240,17 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var angle_ctrl = find_node("angle_ctrl", true, false)
+	var axis_start_x_ctrl = find_node("axis_start_x_ctrl", true, false)
+	var axis_start_y_ctrl = find_node("axis_start_y_ctrl", true, false)
+	var axis_start_z_ctrl = find_node("axis_start_z_ctrl", true, false)
+	var axis_end_x_ctrl = find_node("axis_end_x_ctrl", true, false)
+	var axis_end_y_ctrl = find_node("axis_end_y_ctrl", true, false)
+	var axis_end_z_ctrl = find_node("axis_end_z_ctrl", true, false)
+	var combine_ctrl = find_node("combine_ctrl", true, false)
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+	var invert_ctrl = find_node("invert_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

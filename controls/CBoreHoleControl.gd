@@ -4,14 +4,6 @@ class_name CBoreHoleControl
 
 var prev_template = null
 
-#var select_ctrl = null
-var hole_dia_ctrl = null
-var hole_depth_ctrl = null
-var cbore_dia_ctrl = null
-var cbore_depth_ctrl = null
-var clean_ctrl = null
-#var hide_show_btn = null
-
 var template = ".cboreHole({diameter},{cbore_diameter},{cbore_depth},depth={depth},clean={clean})"
 
 const dims_edit_rgx = "(?<=.cboreHole\\()(.*?)(?=,depth)"
@@ -26,7 +18,9 @@ func _ready():
 	var hole_dia_lbl = Label.new()
 	hole_dia_lbl.set_text("Hole Diameter: ")
 	hole_dia_group.add_child(hole_dia_lbl)
-	hole_dia_ctrl = NumberEdit.new()
+	var hole_dia_ctrl = NumberEdit.new()
+	hole_dia_ctrl.size_flags_horizontal = 3
+	hole_dia_ctrl.name = "hole_dia_ctrl"
 	hole_dia_ctrl.set_text("2.5")
 	hole_dia_ctrl.hint_tooltip = tr("HOLE_DIA_CTRL_HINT_TOOLTIP")
 	hole_dia_group.add_child(hole_dia_ctrl)
@@ -37,7 +31,9 @@ func _ready():
 	var hole_depth_lbl = Label.new()
 	hole_depth_lbl.set_text("Hole Depth (0 = thru): ")
 	hole_depth_group.add_child(hole_depth_lbl)
-	hole_depth_ctrl = NumberEdit.new()
+	var hole_depth_ctrl = NumberEdit.new()
+	hole_depth_ctrl.size_flags_horizontal = 3
+	hole_depth_ctrl.name = "hole_depth_ctrl"
 	hole_depth_ctrl.set_text("0")
 	hole_depth_ctrl.hint_tooltip = tr("HOLE_DEPTH_CTRL_HINT_TOOLTIP")
 	hole_depth_group.add_child(hole_depth_ctrl)
@@ -48,7 +44,9 @@ func _ready():
 	var cbore_dia_lbl = Label.new()
 	cbore_dia_lbl.set_text("Counter-Bore Diameter: ")
 	cbore_dia_group.add_child(cbore_dia_lbl)
-	cbore_dia_ctrl = NumberEdit.new()
+	var cbore_dia_ctrl = NumberEdit.new()
+	cbore_dia_ctrl.size_flags_horizontal = 3
+	cbore_dia_ctrl.name = "cbore_dia_ctrl"
 	cbore_dia_ctrl.set_text("5.0")
 	cbore_dia_ctrl.hint_tooltip = tr("CBORE_CBORE_DIA_CTRL_HINT_TOOLTIP")
 	cbore_dia_group.add_child(cbore_dia_ctrl)
@@ -59,7 +57,9 @@ func _ready():
 	var cbore_depth_lbl = Label.new()
 	cbore_depth_lbl.set_text("Counter-Bore Depth: ")
 	cbore_depth_group.add_child(cbore_depth_lbl)
-	cbore_depth_ctrl = NumberEdit.new()
+	var cbore_depth_ctrl = NumberEdit.new()
+	cbore_depth_ctrl.size_flags_horizontal = 3
+	cbore_depth_ctrl.name = "cbore_depth_ctrl"
 	cbore_depth_ctrl.set_text("3.0")
 	cbore_depth_ctrl.hint_tooltip = tr("CBORE_CBORE_DEPTH_CTRL_HINT_TOOLTIP")
 	cbore_depth_group.add_child(cbore_depth_ctrl)
@@ -70,7 +70,8 @@ func _ready():
 	var clean_lbl = Label.new()
 	clean_lbl.set_text("Clean: ")
 	clean_group.add_child(clean_lbl)
-	clean_ctrl = CheckBox.new()
+	var clean_ctrl = CheckBox.new()
+	clean_ctrl.name = "clean_ctrl"
 	clean_ctrl.pressed = true
 	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
@@ -88,6 +89,11 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var hole_dia_ctrl = find_node("hole_dia_ctrl", true, false)
+	var hole_depth_ctrl = find_node("hole_depth_ctrl", true, false)
+	var cbore_dia_ctrl = find_node("cbore_dia_ctrl", true, false)
+	var cbore_depth_ctrl = find_node("cbore_depth_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not hole_dia_ctrl.is_valid:
 		return false
@@ -106,6 +112,12 @@ Fills out the template and returns it.
 """
 func get_completed_template():
 	var complete = ""
+
+	var hole_dia_ctrl = find_node("hole_dia_ctrl", true, false)
+	var hole_depth_ctrl = find_node("hole_depth_ctrl", true, false)
+	var cbore_dia_ctrl = find_node("cbore_dia_ctrl", true, false)
+	var cbore_depth_ctrl = find_node("cbore_depth_ctrl", true, false)
+	var clean_ctrl = find_node("clean_ctrl", true, false)
 
 	# Convert the hole depth to None if the user wants it all the way thru
 	var depth = hole_depth_ctrl.get_text()
@@ -135,6 +147,12 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var hole_dia_ctrl = find_node("hole_dia_ctrl", true, false)
+	var hole_depth_ctrl = find_node("hole_depth_ctrl", true, false)
+	var cbore_dia_ctrl = find_node("cbore_dia_ctrl", true, false)
+	var cbore_depth_ctrl = find_node("cbore_depth_ctrl", true, false)
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

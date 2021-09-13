@@ -9,41 +9,43 @@ var template = ".line({xDist},{yDist},forConstruction={for_construction})"
 const dims_edit_rgx = "(?<=.line\\()(.*?)(?=,forConstruction)"
 const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 
-var x_dist_ctrl = null
-var y_dist_ctrl = null
-var for_construction_ctrl = null
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Add the rect dimension controls
-	var dims_group = HBoxContainer.new()
+	var x_dist_group = HBoxContainer.new()
+	var y_dist_group = HBoxContainer.new()
 
 	# X coord
 	var x_dist_lbl = Label.new()
 	x_dist_lbl.set_text("X Distance: ")
-	dims_group.add_child(x_dist_lbl)
-	x_dist_ctrl = NumberEdit.new()
+	x_dist_group.add_child(x_dist_lbl)
+	var x_dist_ctrl = NumberEdit.new()
+	x_dist_ctrl.name = "x_dist_ctrl"
+	x_dist_ctrl.size_flags_horizontal = 3
 	x_dist_ctrl.set_text("1.0")
 	x_dist_ctrl.hint_tooltip = tr("LINE_X_DIST_CTRL_HINT_TOOLTIP")
-	dims_group.add_child(x_dist_ctrl)
+	x_dist_group.add_child(x_dist_ctrl)
+	add_child(x_dist_group)
 	# Y coord
 	var y_dist_lbl = Label.new()
 	y_dist_lbl.set_text("Y Distance: ")
-	dims_group.add_child(y_dist_lbl)
-	y_dist_ctrl = NumberEdit.new()
+	y_dist_group.add_child(y_dist_lbl)
+	var y_dist_ctrl = NumberEdit.new()
+	y_dist_ctrl.name = "y_dist_ctrl"
+	y_dist_ctrl.size_flags_horizontal = 3
 	y_dist_ctrl.set_text("1.0")
 	y_dist_ctrl.hint_tooltip = tr("LINE_Y_DIST_CTRL_HINT_TOOLTIP")
-	dims_group.add_child(y_dist_ctrl)
-
-	add_child(dims_group)
+	y_dist_group.add_child(y_dist_ctrl)
+	add_child(y_dist_group)
 
 	# Add the for construction control
 	var const_group = HBoxContainer.new()
 	var const_lbl = Label.new()
 	const_lbl.set_text("For Construction: ")
 	const_group.add_child(const_lbl)
-	for_construction_ctrl = CheckBox.new()
+	var for_construction_ctrl = CheckBox.new()
+	for_construction_ctrl.name = "for_construction_ctrl"
 	for_construction_ctrl.pressed = false
 	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
@@ -62,6 +64,9 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var x_dist_ctrl = find_node("x_dist_ctrl", true, false)
+	var y_dist_ctrl = find_node("y_dist_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not x_dist_ctrl.is_valid:
 		return false
@@ -75,6 +80,10 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var x_dist_ctrl = find_node("x_dist_ctrl", true, false)
+	var y_dist_ctrl = find_node("y_dist_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+
 	var complete = ""
 
 	complete += template.format({
@@ -98,6 +107,10 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var x_dist_ctrl = find_node("x_dist_ctrl", true, false)
+	var y_dist_ctrl = find_node("y_dist_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

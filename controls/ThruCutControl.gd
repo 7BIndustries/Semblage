@@ -11,10 +11,6 @@ const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\,)"
 const taper_edit_rgx = "(?<=taper\\=)(.*?)(?=\\))"
 const wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
 
-var clean_ctrl = null
-var taper_ctrl = null
-var invert_ctrl = null
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -23,7 +19,8 @@ func _ready():
 	var clean_lbl = Label.new()
 	clean_lbl.set_text("Clean: ")
 	clean_group.add_child(clean_lbl)
-	clean_ctrl = CheckBox.new()
+	var clean_ctrl = CheckBox.new()
+	clean_ctrl.name = "clean_ctrl"
 	clean_ctrl.pressed = true
 	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
@@ -34,7 +31,9 @@ func _ready():
 	var taper_lbl = Label.new()
 	taper_lbl.set_text("Taper: ")
 	taper_group.add_child(taper_lbl)
-	taper_ctrl = NumberEdit.new()
+	var taper_ctrl = NumberEdit.new()
+	taper_ctrl.name = "taper_ctrl"
+	taper_ctrl.size_flags_horizontal = 3
 	taper_ctrl.CanBeNegative = true
 	taper_ctrl.set_text("0.0")
 	taper_ctrl.hint_tooltip = tr("TAPER_CTRL_HINT_TOOLTIP")
@@ -46,7 +45,8 @@ func _ready():
 	var invert_lbl = Label.new()
 	invert_lbl.set_text("Invert: ")
 	invert_group.add_child(invert_lbl)
-	invert_ctrl = CheckBox.new()
+	var invert_ctrl = CheckBox.new()
+	invert_ctrl.name = "invert_ctrl"
 	invert_ctrl.pressed = false
 	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
 	invert_group.add_child(invert_ctrl)
@@ -64,6 +64,8 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var taper_ctrl = find_node("taper_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not taper_ctrl.is_valid:
 		return false
@@ -75,6 +77,10 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+	var taper_ctrl = find_node("taper_ctrl", true, false)
+	var invert_ctrl = find_node("invert_ctrl", true, false)
+
 	var complete = ""
 
 	# Allow flipping the direction of the operation
@@ -103,6 +109,10 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+	var taper_ctrl = find_node("taper_ctrl", true, false)
+	var invert_ctrl = find_node("invert_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

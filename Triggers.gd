@@ -8,60 +8,6 @@ Returns the available Action triggers to the caller.
 """
 static func get_triggers():
 	var triggers  = {
-		"Workplane": {
-			"trigger": "cq$",
-			"edit_trigger": "^\\.Workplane\\(.*\\).*",
-			"action": {
-				"name": "New Component",
-				"group": "WP",
-				"control": "res://controls/WorkplaneControl.gd"
-			}
-		},
-		"workplane": {
-			"trigger": "cq$",
-			"edit_trigger": "^\\.workplane\\(.*\\).*",
-			"action": {
-				"name": "workplane (workplane)",
-				"group": "WP",
-				"control": "res://controls/InlineWorkplaneControl.gd"
-			}
-		},
-		"center": {
-			"trigger": "cq$",
-			"edit_trigger": "^\\.center\\(.*\\).*",
-			"action": {
-				"name": "Center (center)",
-				"group": "WP",
-				"control": "res://controls/CenterControl.gd"
-			}
-		},
-		"rotate": {
-			"trigger": "cq$",
-			"edit_trigger": "^\\.rotate\\(.*\\).*",
-			"action": {
-				"name": "Rotate (rotate)",
-				"group": "WP",
-				"control": "res://controls/RotateControl.gd"
-			}
-		},
-		"rotateAboutCenter": {
-			"trigger": "cq$",
-			"edit_trigger": "^\\.rotateAboutCenter\\(.*\\).*",
-			"action": {
-				"name": "Rotate About Center (rotateAboutCenter)",
-				"group": "WP",
-				"control": "res://controls/RotateAboutCenterControl.gd"
-			}
-		},
-		"translate": {
-			"trigger": "cq$",
-			"edit_trigger": "^\\.translate\\(.*\\).*",
-			"action": {
-				"name": "Translate (translate)",
-				"group": "WP",
-				"control": "res://controls/TranslateControl.gd"
-			}
-		},
 		"faces": {
 			"trigger": "cq$",
 			"edit_trigger": "^\\.faces\\(.*\\).*",
@@ -91,7 +37,7 @@ static func get_triggers():
 		},
 		"cutBlind": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": "^\\.cutBlind\\(.*\\)$",
+			"edit_trigger": "\\.cutBlind\\(.*\\)$",
 			"action": {
 				"name": "Blind Cut (cutBlind)",
 				"group": "3D",
@@ -136,7 +82,7 @@ static func get_triggers():
 		},
 		"extrude": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": "^\\.extrude\\(.*\\)$",
+			"edit_trigger": "\\.extrude\\(.*\\)$",
 			"action": {
 				"name": "Extrude (extrude)",
 				"group": "3D",
@@ -172,7 +118,7 @@ static func get_triggers():
 		},
 		"revolve": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": "^\\.revolve\\(.*\\)$",
+			"edit_trigger": "\\.revolve\\(.*\\)$",
 			"action": {
 				"name": "Revolve (revolve)",
 				"group": "3D",
@@ -235,7 +181,7 @@ static func get_triggers():
 		},
 		"cutThruAll": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": "^\\.cutThruAll\\(.*\\)$",
+			"edit_trigger": "\\.cutThruAll\\(.*\\)$",
 			"action": {
 				"name": "Thru Cut (cutThruAll)",
 				"group": "3D",
@@ -244,7 +190,7 @@ static func get_triggers():
 		},
 		"twistExtrude": {
 			"trigger": "\\..*(.*)$",
-			"edit_trigger": "^\\.twistExtrude\\(.*\\)$",
+			"edit_trigger": "\\.twistExtrude\\(.*\\)$",
 			"action": {
 				"name": "Twist Extrude (twistExtrude)",
 				"group": "3D",
@@ -546,6 +492,60 @@ static func get_triggers():
 				"name": "Vertical Line To (vLineTo)",
 				"group": "2D",
 				"control": "res://controls/VLineToControl.gd"
+			}
+		},
+		"Workplane": {
+			"trigger": "cq$",
+			"edit_trigger": "^\\.Workplane\\(.*\\).*",
+			"action": {
+				"name": "New Component",
+				"group": "WP",
+				"control": "res://controls/WorkplaneControl.gd"
+			}
+		},
+		"workplane": {
+			"trigger": "cq$",
+			"edit_trigger": "^\\.workplane\\(.*\\).*",
+			"action": {
+				"name": "workplane (workplane)",
+				"group": "WP",
+				"control": "res://controls/InlineWorkplaneControl.gd"
+			}
+		},
+		"center": {
+			"trigger": "cq$",
+			"edit_trigger": "^\\.center\\(.*\\).*",
+			"action": {
+				"name": "Center (center)",
+				"group": "WP",
+				"control": "res://controls/CenterControl.gd"
+			}
+		},
+		"rotate": {
+			"trigger": "cq$",
+			"edit_trigger": "^\\.rotate\\(.*\\).*",
+			"action": {
+				"name": "Rotate (rotate)",
+				"group": "WP",
+				"control": "res://controls/RotateControl.gd"
+			}
+		},
+		"rotateAboutCenter": {
+			"trigger": "cq$",
+			"edit_trigger": "^\\.rotateAboutCenter\\(.*\\).*",
+			"action": {
+				"name": "Rotate About Center (rotateAboutCenter)",
+				"group": "WP",
+				"control": "res://controls/RotateAboutCenterControl.gd"
+			}
+		},
+		"translate": {
+			"trigger": "cq$",
+			"edit_trigger": "^\\.translate\\(.*\\).*",
+			"action": {
+				"name": "Translate (translate)",
+				"group": "WP",
+				"control": "res://controls/TranslateControl.gd"
 			}
 		}
 	}

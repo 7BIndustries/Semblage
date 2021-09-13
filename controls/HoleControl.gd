@@ -4,15 +4,12 @@ class_name HoleControl
 
 var prev_template = null
 
-var hole_dia_ctrl = null
-var hole_depth_ctrl = null
-var clean_ctrl = null
-
 var template = ".hole({diameter},depth={depth},clean={clean})"
 
 const dims_edit_rgx = "(?<=.cboreHole\\()(.*?)(?=,depth)"
 const depth_edit_rgx = "(?<=depth\\=)(.*?)(?=\\,clean)"
 const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\))"
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -21,7 +18,9 @@ func _ready():
 	var hole_dia_lbl = Label.new()
 	hole_dia_lbl.set_text("Hole Diameter: ")
 	hole_dia_group.add_child(hole_dia_lbl)
-	hole_dia_ctrl = NumberEdit.new()
+	var hole_dia_ctrl = NumberEdit.new()
+	hole_dia_ctrl.name = "hole_dia_ctrl"
+	hole_dia_ctrl.size_flags_horizontal = 3
 	hole_dia_ctrl.set_text("2.5")
 	hole_dia_ctrl.hint_tooltip = tr("HOLE_DIA_CTRL_HINT_TOOLTIP")
 	hole_dia_group.add_child(hole_dia_ctrl)
@@ -30,9 +29,11 @@ func _ready():
 	# Add hole depth control
 	var hole_depth_group = HBoxContainer.new()
 	var hole_depth_lbl = Label.new()
-	hole_depth_lbl.set_text("Hole Depth (0 = thru): ")
+	hole_depth_lbl.set_text("Hole Depth: ")
 	hole_depth_group.add_child(hole_depth_lbl)
-	hole_depth_ctrl = NumberEdit.new()
+	var hole_depth_ctrl = NumberEdit.new()
+	hole_depth_ctrl.name = "hole_depth_ctrl"
+	hole_depth_ctrl.size_flags_horizontal = 3
 	hole_depth_ctrl.set_text("0")
 	hole_depth_ctrl.hint_tooltip = tr("HOLE_DEPTH_CTRL_HINT_TOOLTIP")
 	hole_depth_group.add_child(hole_depth_ctrl)
@@ -43,7 +44,8 @@ func _ready():
 	var clean_lbl = Label.new()
 	clean_lbl.set_text("Clean: ")
 	clean_group.add_child(clean_lbl)
-	clean_ctrl = CheckBox.new()
+	var clean_ctrl = CheckBox.new()
+	clean_ctrl.name = "clean_ctrl"
 	clean_ctrl.pressed = true
 	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
@@ -61,6 +63,9 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var hole_dia_ctrl = find_node("hole_dia_ctrl", true, false)
+	var hole_depth_ctrl = find_node("hole_depth_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not hole_dia_ctrl.is_valid:
 		return false
@@ -74,6 +79,10 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var hole_dia_ctrl = find_node("hole_dia_ctrl", true, false)
+	var hole_depth_ctrl = find_node("hole_depth_ctrl", true, false)
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+
 	var complete = ""
 
 	# Convert the hole depth to None if the user wants it all the way thru
@@ -102,6 +111,10 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var hole_dia_ctrl = find_node("hole_dia_ctrl", true, false)
+	var hole_depth_ctrl = find_node("hole_depth_ctrl", true, false)
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

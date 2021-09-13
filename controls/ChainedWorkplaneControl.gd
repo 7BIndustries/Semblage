@@ -4,9 +4,6 @@ class_name ChainedWorkplaneControl
 
 var prev_template = null
 
-var wp_cen_ctrl = null
-var invert_ctrl = null
-
 var template = ".workplane(invert={invert},centerOption=\"{center_option}\")" #.tag(\"{comp_name}\")"
 
 const center_option_list = ["CenterOfBoundBox", "CenterOfMass", "ProjectedOrigin"]
@@ -22,7 +19,8 @@ func _ready():
 	var wp_cen_lbl = Label.new()
 	wp_cen_lbl.set_text("Center Option: ")
 	wp_cen_group.add_child(wp_cen_lbl)
-	wp_cen_ctrl = OptionButton.new()
+	var wp_cen_ctrl = OptionButton.new()
+	wp_cen_ctrl.name = "wp_cen_ctrl"
 	Common.load_option_button(wp_cen_ctrl, center_option_list)
 	wp_cen_ctrl.hint_tooltip = tr("WP_CEN_CTRL_HINT_TOOLTIP")
 	wp_cen_group.add_child(wp_cen_ctrl)
@@ -33,7 +31,8 @@ func _ready():
 	var invert_lbl = Label.new()
 	invert_lbl.set_text("Invert: ")
 	invert_group.add_child(invert_lbl)
-	invert_ctrl = CheckBox.new()
+	var invert_ctrl = CheckBox.new()
+	invert_ctrl.name = "invert_ctrl"
 	invert_ctrl.pressed = false
 	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
 	invert_group.add_child(invert_ctrl)
@@ -58,6 +57,9 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var wp_cen_ctrl = find_node("wp_cen_ctrl", true, false)
+	var invert_ctrl = find_node("invert_ctrl", true, false)
+
 	var complete = ""
 
 	# Use the simple template
@@ -82,6 +84,9 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var wp_cen_ctrl = find_node("wp_cen_ctrl", true, false)
+	var invert_ctrl = find_node("invert_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

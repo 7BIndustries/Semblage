@@ -26,7 +26,7 @@ func _ready():
 	# Make sure 3D is selected by default
 	three_d_btn.pressed = true
 
-	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree = $VBoxContainer/ActionContainer/ActionTree
 
 	# Add the tooltips to the group buttons
 	var wp_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/WorkplaneButton
@@ -37,24 +37,20 @@ func _ready():
 	select_btn.hint_tooltip = tr("SELECTOR_BUTTON_HINT_TOOLTIP")
 
 	# Add a tooltip to the modify operation buttons
-	var add_btn = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton
+	var add_btn = $VBoxContainer/ActionContainer/ActionButtonContainer/AddButton
 	add_btn.hint_tooltip = tr("ADD_BUTTON_HINT_TOOLTIP")
-	var update_btn = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/UpdateButton
+	var update_btn = $VBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/UpdateButton
 	update_btn.hint_tooltip = tr("UPDATE_BUTTON_HINT_TOOLTIP")
-	var delete_btn = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/DeleteButton
+	var delete_btn = $VBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/DeleteButton
 	delete_btn.hint_tooltip = tr("DELETE_BUTTON_HINT_TOOLTIP")
-	var move_up_btn = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveUpButton
+	var move_up_btn = $VBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveUpButton
 	move_up_btn.hint_tooltip = tr("MOVE_UP_BUTTON_HINT_TOOLTIP")
-	var move_down_btn = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveDownButton
+	var move_down_btn = $VBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer/MoveDownButton
 	move_down_btn.hint_tooltip = tr("MOVE_DOWN_BUTTON_HINT_TOOLTIP")
 
 	# Create the root of the object tree
 	var action_tree_root = action_tree.create_item()
 	action_tree_root.set_text(0, "Actions")
-
-	# The sketch control does not need to be taking up space by default
-	var convas_cont = $VBoxContainer/HBoxContainer/CanvasMarginContainer
-	convas_cont.hide()
 
 	# Work-around to make sure we unlock the mouse controls for the 3D view again
 	var btn = self.get_close_button()
@@ -68,7 +64,7 @@ func _set_action_control():
 	var aob = $VBoxContainer/ActionOptionButton
 
 	# Make sure to free the previous control
-	var cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()
+	var cont = $VBoxContainer/ActionContainer/DynamicContainer.get_children()
 	if cont.size() > 0:
 		var cont_current = cont[0]
 		if cont_current != null:
@@ -82,7 +78,7 @@ func _set_action_control():
 
 	# Set the action control
 	_clear_popup()
-	var dyn_cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer
+	var dyn_cont = $VBoxContainer/ActionContainer/DynamicContainer
 	var new_cont = load(act.action.control)
 	new_cont = new_cont.new()
 	dyn_cont.add_child(new_cont)
@@ -93,8 +89,8 @@ Clears the previous dynamic controls from this popup.
 """
 func _clear_popup():
 	# Clear the previous control item(s) from the DynamicContainer
-	for child in $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children():
-		$VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.remove_child(child)
+	for child in $VBoxContainer/ActionContainer/DynamicContainer.get_children():
+		$VBoxContainer/ActionContainer/DynamicContainer.remove_child(child)
 		child.free()
 
 
@@ -132,7 +128,7 @@ func activate_edit_mode(component_text, item_text, new_components, new_parameter
 
 	_set_action_control()
 
-	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree = $VBoxContainer/ActionContainer/ActionTree
 	var action_tree_root = action_tree.get_root()
 
 	# Check to see if there are multiple actions in the item_text
@@ -165,10 +161,10 @@ func activate_edit_mode(component_text, item_text, new_components, new_parameter
 
 			i += 1
 
-		_render_action_tree()
+		# _render_action_tree()
 
 	# Set the values of the control being edited
-	$VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0].set_values_from_string(item_text)
+	$VBoxContainer/ActionContainer/DynamicContainer.get_children()[0].set_values_from_string(item_text)
 
 
 """
@@ -188,7 +184,7 @@ func activate_popup(component_text, edit_mode_new, new_components, new_parameter
 	_on_VBoxContainer_resized()
 
 	# Make sure the Update button is hidden
-	var is_cont = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer
+	var is_cont = $VBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer
 	is_cont.hide()
 
 	var next_action = null
@@ -206,7 +202,7 @@ func activate_popup(component_text, edit_mode_new, new_components, new_parameter
 	# Select the correct group button based on the next action
 	_select_group_button(next_action[next_action.keys()[0]].group)
 
-	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree = $VBoxContainer/ActionContainer/ActionTree
 	var action_tree_root = action_tree.get_root()
 
 	# Clear any left-over actions from the action tree
@@ -246,7 +242,7 @@ Called when the Ok button is pressed so that the GUI can collect the changed con
 """
 func _on_OkButton_button_down():
 	# Current control loaded
-	var cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
+	var cont = $VBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
 
 	# Make sure the form is valid
 	if not cont.is_valid():
@@ -257,7 +253,7 @@ func _on_OkButton_button_down():
 	# Get the completed template from the current control
 	new_template = cont.get_completed_template()
 
-	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree = $VBoxContainer/ActionContainer/ActionTree
 	var action_tree_root = action_tree.get_root()
 
 	# Used if the user added multiple actions to the actions tree
@@ -417,12 +413,10 @@ func _on_SketchButton_toggled(_button_pressed):
 		_set_action_control()
 
 		# Show preview controls
-		var add_btn = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton
+		var add_btn = $VBoxContainer/ActionContainer/ActionButtonContainer/AddButton
 		add_btn.show()
-		var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+		var action_tree = $VBoxContainer/ActionContainer/ActionTree
 		action_tree.show()
-		var canvas_cont = $VBoxContainer/HBoxContainer/CanvasMarginContainer
-		canvas_cont.show()
 
 		# Make sure the dialog is sized correctly
 		_on_VBoxContainer_resized()
@@ -497,13 +491,11 @@ Called when switching to another group control and needing to hide
 any previously displayed sketch controls.
 """
 func _hide_sketch_controls():
-	var add_btn = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/AddButton
+	var add_btn = $VBoxContainer/ActionContainer/ActionButtonContainer/AddButton
 	add_btn.hide()
-	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree = $VBoxContainer/ActionContainer/ActionTree
 	action_tree.hide()
-	var canvas_cont = $VBoxContainer/HBoxContainer/CanvasMarginContainer
-	canvas_cont.hide()
-	var is_cont = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer
+	var is_cont = $VBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer
 	is_cont.hide()
 
 
@@ -533,73 +525,73 @@ Called when the Add button is clicked.
 """
 func _on_AddButton_button_down():
 	# Get the template from the active control
-	var cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
+	var cont = $VBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
 	var preview_context = cont.get_completed_template()
 
-	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree = $VBoxContainer/ActionContainer/ActionTree
 	var action_tree_root = action_tree.get_root()
 
 	# Add the item to the action tree
-	Common.add_item_to_tree(preview_context, $VBoxContainer/HBoxContainer/ActionContainer/ActionTree, action_tree_root)
+	Common.add_item_to_tree(preview_context, $VBoxContainer/ActionContainer/ActionTree, action_tree_root)
 
-	_render_action_tree()
+	# _render_action_tree()
 
 
 """
 Collects all of the completed templates in the Action tree and
 renders them on the 2D canvas.
 """
-func _render_action_tree():
-	var script_text = "import cadquery as cq\n"
-
-	# Collect all of the parameters into a string the starts the script
-	for param in parameters.keys():
-		script_text += param + "=" + parameters[param] + "\n"
-
-	# Start to build the preview string based on what is in the actions list
-	script_text += "result=cq.Workplane()"
-
-	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
-	var action_tree_root = action_tree.get_root()
-
-	# Search the tree and update the matchine entry in the tree
-	var cur_item = action_tree_root.get_children()
-	while true:
-		if cur_item == null:
-			break
-		else:
-			script_text += cur_item.get_text(0)
-
-			cur_item = cur_item.get_next()
-
-	# Make sure all the wires show up
-	script_text += ".consolidateWires()\nshow_object(result)"
-
-	# Export the file to the user data directory temporarily
-	var json_string = cqgipy
-	json_string = json_string.build(script_text)
-
-	if json_string.begins_with("error~"):
-		# Let the user know there was an error
-		var err = json_string.split("~")[1]
-		emit_signal("error", err)
-	else:
-		var component_json = JSON.parse(json_string)
-		component_json = component_json.result
-		var canvas_2d = $VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D
-
-		for component in component_json["components"]:
-			# If we've found a larger dimension, save the safe scaling, which is the maximum dimension of any component
-			var max_dim = component["largestDim"]
-			canvas_2d.set_max_dim(max_dim)
-
-			# Add the edge representations
-			for edge in component["cqEdges"]:
-				# Add the current line
-				canvas_2d.lines.append([Vector2(edge[0], edge[1]), Vector2(edge[3], edge[4])])
-
-		# Have the 2D canvas re-render the lines that are set for it
-		canvas_2d.update()
+#func _render_action_tree():
+#	var script_text = "import cadquery as cq\n"
+#
+#	# Collect all of the parameters into a string the starts the script
+#	for param in parameters.keys():
+#		script_text += param + "=" + parameters[param] + "\n"
+#
+#	# Start to build the preview string based on what is in the actions list
+#	script_text += "result=cq.Workplane()"
+#
+#	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+#	var action_tree_root = action_tree.get_root()
+#
+#	# Search the tree and update the matchine entry in the tree
+#	var cur_item = action_tree_root.get_children()
+#	while true:
+#		if cur_item == null:
+#			break
+#		else:
+#			script_text += cur_item.get_text(0)
+#
+#			cur_item = cur_item.get_next()
+#
+#	# Make sure all the wires show up
+#	script_text += ".consolidateWires()\nshow_object(result)"
+#
+#	# Export the file to the user data directory temporarily
+#	var json_string = cqgipy
+#	json_string = json_string.build(script_text)
+#
+#	if json_string.begins_with("error~"):
+#		# Let the user know there was an error
+#		var err = json_string.split("~")[1]
+#		emit_signal("error", err)
+#	else:
+#		var component_json = JSON.parse(json_string)
+#		component_json = component_json.result
+#		var canvas_2d = $VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D
+#
+#		for component in component_json["components"]:
+#			# If we've found a larger dimension, save the safe scaling, which is the maximum dimension of any component
+#			var max_dim = component["largestDim"]
+#			canvas_2d.set_max_dim(max_dim)
+#
+#			# Add the edge representations
+#			for edge in component["cqEdges"]:
+#				# Add the current line
+#				canvas_2d.lines.append([Vector2(edge[0], edge[1]), Vector2(edge[3], edge[4])])
+#
+#		# Have the 2D canvas re-render the lines that are set for it
+#		canvas_2d.update()
 
 
 """
@@ -622,26 +614,26 @@ Allows action items to be edited by selecting the correct control.
 Updates the selected action tree item with new settings.
 """
 func _on_UpdateButton_button_down():
-	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree = $VBoxContainer/ActionContainer/ActionTree
 
 	var orig_text = action_tree.get_selected().get_text(0)
 
 	# Get the template from the active control
-	var cont = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
+	var cont = $VBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
 	var new_text = cont.get_completed_template()
 
 	# Update the old action template to reflect the new settings
 	Common.update_tree_item(action_tree, orig_text, new_text)
 
 	# Re-render everything in the action tree
-	_update_preview()
+	# _update_preview()
 
 
 """
 Called when an item is selected in the Action tree.
 """
 func _on_ActionTree_item_selected():
-	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree = $VBoxContainer/ActionContainer/ActionTree
 
 	var selected = action_tree.get_selected()
 
@@ -660,11 +652,11 @@ func _on_ActionTree_item_selected():
 	_on_ActionOptionButton_item_selected(0)
 
 	# Repopulate the control with the previous settings
-	var cur_control = $VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
+	var cur_control = $VBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
 	cur_control.set_values_from_string(selected_text)
 
 	# Unhide the item editing controls so the user can change the selected tree item
-	var is_cont = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer
+	var is_cont = $VBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer
 	is_cont.show()
 
 
@@ -673,7 +665,7 @@ Called when nothing is selected in the action tree.
 """
 func _on_ActionTree_nothing_selected():
 	# Hide the item editing controls so that the user can no longer change the selected tree item
-	var is_cont = $VBoxContainer/HBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer
+	var is_cont = $VBoxContainer/ActionContainer/ActionButtonContainer/ItemSelectedContainer
 	is_cont.hide()
 
 
@@ -681,7 +673,7 @@ func _on_ActionTree_nothing_selected():
 Called when the user clicks the delete tree item button.
 """
 func _on_DeleteButton_button_down():
-	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree = $VBoxContainer/ActionContainer/ActionTree
 	var action_tree_root = action_tree.get_root()
 
 	var selected = action_tree.get_selected()
@@ -698,13 +690,13 @@ func _on_DeleteButton_button_down():
 	action_tree.update()
 
 	# Updated the 2D preview
-	_update_preview()
+	# _update_preview()
 
 """
 Called when the move action item up button is pressed.
 """
 func _on_MoveUpButton_button_down():
-	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree = $VBoxContainer/ActionContainer/ActionTree
 
 	var selected = action_tree.get_selected()
 
@@ -720,7 +712,7 @@ func _on_MoveUpButton_button_down():
 Called when the move action item down button is pressed.
 """
 func _on_MoveDownButton_button_down():
-	var action_tree = $VBoxContainer/HBoxContainer/ActionContainer/ActionTree
+	var action_tree = $VBoxContainer/ActionContainer/ActionTree
 
 	var selected = action_tree.get_selected()
 
@@ -735,12 +727,13 @@ func _on_MoveDownButton_button_down():
 """
 Called whenever the 2D preview needs to be updated.
 """
-func _update_preview():
-	# Reset and update the 2D preview
-	var canvas_2d = $VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D
-	canvas_2d.reset()
-	canvas_2d.update()
-	self._render_action_tree()
+#func _update_preview():
+#	# Reset and update the 2D preview
+#	var canvas_2d = $VBoxContainer/HBoxContainer/CanvasMarginContainer/Canvas2D
+#	canvas_2d.reset()
+#	canvas_2d.update()
+#	self._render_action_tree()
+
 
 """
 Called when the control loaded in the dynamic contrainer

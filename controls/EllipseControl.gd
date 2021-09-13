@@ -10,11 +10,6 @@ const radius_edit_rgx = "(?<=.ellipseArc\\()(.*?)(?=,angle1)"
 const rotation_angle_edit_rgx = "(?<=rotation_angle\\=)(.*?)(?=\\,sense)"
 const for_construction_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 
-var x_radius_ctrl = null
-var y_radius_ctrl = null
-var rotation_angle_ctrl = null
-var for_construction_ctrl = null
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -23,7 +18,9 @@ func _ready():
 	var x_radius_lbl = Label.new()
 	x_radius_lbl.set_text("X Radius: ")
 	x_radius_group.add_child(x_radius_lbl)
-	x_radius_ctrl = NumberEdit.new()
+	var x_radius_ctrl = NumberEdit.new()
+	x_radius_ctrl.name = "x_radius_ctrl"
+	x_radius_ctrl.size_flags_horizontal = 3
 	x_radius_ctrl.set_text("5.0")
 	x_radius_ctrl.hint_tooltip = tr("ARC_X_RADIUS_CTRL_HINT_TOOLTIP")
 	x_radius_group.add_child(x_radius_ctrl)
@@ -34,7 +31,9 @@ func _ready():
 	var y_radius_lbl = Label.new()
 	y_radius_lbl.set_text("Y Radius: ")
 	y_radius_group.add_child(y_radius_lbl)
-	y_radius_ctrl = NumberEdit.new()
+	var y_radius_ctrl = NumberEdit.new()
+	y_radius_ctrl.name = "y_radius_ctrl"
+	y_radius_ctrl.size_flags_horizontal = 3
 	y_radius_ctrl.set_text("10.0")
 	y_radius_ctrl.hint_tooltip = tr("ARC_Y_RADIUS_CTRL_HINT_TOOLTIP")
 	y_radius_group.add_child(y_radius_ctrl)
@@ -45,7 +44,9 @@ func _ready():
 	var rotation_angle_lbl = Label.new()
 	rotation_angle_lbl.set_text("Rotation Angle: ")
 	rotation_angle_group.add_child(rotation_angle_lbl)
-	rotation_angle_ctrl = NumberEdit.new()
+	var rotation_angle_ctrl = NumberEdit.new()
+	rotation_angle_ctrl.name = "rotation_angle_ctrl"
+	rotation_angle_ctrl.size_flags_horizontal = 3
 	rotation_angle_ctrl.MaxValue = 360.0
 	rotation_angle_ctrl.set_text("0.0")
 	rotation_angle_ctrl.hint_tooltip = tr("ARC_ROTATION_ANGLE_CTRL_HINT_TOOLTIP")
@@ -57,7 +58,8 @@ func _ready():
 	var const_lbl = Label.new()
 	const_lbl.set_text("For Construction: ")
 	const_group.add_child(const_lbl)
-	for_construction_ctrl = CheckBox.new()
+	var for_construction_ctrl = CheckBox.new()
+	for_construction_ctrl.name = "for_construction_ctrl"
 	for_construction_ctrl.pressed = false
 	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
@@ -75,6 +77,10 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var x_radius_ctrl = find_node("x_radius_ctrl", true, false)
+	var y_radius_ctrl = find_node("y_radius_ctrl", true, false)
+	var rotation_angle_ctrl = find_node("rotation_angle_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not x_radius_ctrl.is_valid:
 		return false
@@ -90,6 +96,11 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var x_radius_ctrl = find_node("x_radius_ctrl", true, false)
+	var y_radius_ctrl = find_node("y_radius_ctrl", true, false)
+	var rotation_angle_ctrl = find_node("rotation_angle_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+
 	var complete = ""
 
 	complete += template.format({
@@ -114,6 +125,11 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var x_radius_ctrl = find_node("x_radius_ctrl", true, false)
+	var y_radius_ctrl = find_node("y_radius_ctrl", true, false)
+	var rotation_angle_ctrl = find_node("rotation_angle_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

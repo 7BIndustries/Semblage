@@ -2,25 +2,6 @@ extends VBoxContainer
 
 class_name WedgeControl
 
-var dx_ctrl = null
-var dy_ctrl = null
-var dz_ctrl = null
-var xmin_ctrl = null
-var zmin_ctrl = null
-var xmax_ctrl = null
-var zmax_ctrl = null
-var pnt_x_ctrl = null
-var pnt_y_ctrl = null
-var pnt_z_ctrl = null
-var dir_x_ctrl = null
-var dir_y_ctrl = null
-var dir_z_ctrl = null
-var centered_x_ctrl = null
-var centered_y_ctrl = null
-var centered_z_ctrl = null
-var combine_ctrl = null
-var clean_ctrl = null
-
 var prev_template = null
 
 var template = ".wedge({dx},{dy},{dz},{xmin},{zmin},{xmax},{zmax},pnt=({pnt_x},{pnt_y},{pnt_z}),dir=({dir_x},{dir_y},{dir_z}),centered=({centered_x},{centered_y},{centered_z}),combine={combine},clean={clean})"
@@ -31,6 +12,7 @@ const dir_edit_rgx = "(?<=dir\\=\\()(.*?)(?=\\),centered)"
 const centered_edit_rgx = "(?<=centered\\=\\()(.*?)(?=\\),combine)"
 const combine_edit_rgx = "(?<=combine\\=\\()(.*?)(?=\\),clean)"
 const clean_edit_rgx = "(?<=clean\\=\\()(.*?)(?=\\))"
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -44,7 +26,9 @@ func _ready():
 	var x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	dir_group.add_child(x_lbl)
-	dx_ctrl = NumberEdit.new()
+	var dx_ctrl = NumberEdit.new()
+	dx_ctrl.name = "dx_ctrl"
+	dx_ctrl.size_flags_horizontal = 3
 	dx_ctrl.set_text("2.5")
 	dx_ctrl.hint_tooltip = tr("WEDGE_DX_CTRL_HINT_TOOLTIP")
 	dir_group.add_child(dx_ctrl)
@@ -52,7 +36,9 @@ func _ready():
 	var y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	dir_group.add_child(y_lbl)
-	dy_ctrl = NumberEdit.new()
+	var dy_ctrl = NumberEdit.new()
+	dy_ctrl.name = "dy_ctrl"
+	dy_ctrl.size_flags_horizontal = 3
 	dy_ctrl.set_text("5.0")
 	dy_ctrl.hint_tooltip = tr("WEDGE_DY_CTRL_HINT_TOOLTIP")
 	dir_group.add_child(dy_ctrl)
@@ -60,7 +46,9 @@ func _ready():
 	var z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	dir_group.add_child(z_lbl)
-	dz_ctrl = NumberEdit.new()
+	var dz_ctrl = NumberEdit.new()
+	dz_ctrl.name = "dz_ctrl"
+	dz_ctrl.size_flags_horizontal = 3
 	dz_ctrl.set_text("1.0")
 	dz_ctrl.hint_tooltip = tr("WEDGE_DZ_CTRL_HINT_TOOLTIP")
 	dir_group.add_child(dz_ctrl)
@@ -78,7 +66,9 @@ func _ready():
 	x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	min_group.add_child(x_lbl)
-	xmin_ctrl = NumberEdit.new()
+	var xmin_ctrl = NumberEdit.new()
+	xmin_ctrl.name = "xmin_ctrl"
+	xmin_ctrl.size_flags_horizontal = 3
 	xmin_ctrl.set_text("2.5")
 	xmin_ctrl.hint_tooltip = tr("WEDGE_XMIN_CTRL_HINT_TOOLTIP")
 	min_group.add_child(xmin_ctrl)
@@ -86,7 +76,9 @@ func _ready():
 	z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	min_group.add_child(z_lbl)
-	zmin_ctrl = NumberEdit.new()
+	var zmin_ctrl = NumberEdit.new()
+	zmin_ctrl.name = "zmin_ctrl"
+	zmin_ctrl.size_flags_horizontal = 3
 	zmin_ctrl.set_text("1.0")
 	zmin_ctrl.hint_tooltip = tr("WEDGE_ZMIN_CTRL_HINT_TOOLTIP")
 	min_group.add_child(zmin_ctrl)
@@ -104,7 +96,9 @@ func _ready():
 	x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	max_group.add_child(x_lbl)
-	xmax_ctrl = NumberEdit.new()
+	var xmax_ctrl = NumberEdit.new()
+	xmax_ctrl.name = "xmax_ctrl"
+	xmax_ctrl.size_flags_horizontal = 3
 	xmax_ctrl.set_text("2.5")
 	xmax_ctrl.hint_tooltip = tr("WEDGE_XMAX_CTRL_HINT_TOOLTIP")
 	max_group.add_child(xmax_ctrl)
@@ -112,7 +106,9 @@ func _ready():
 	z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	max_group.add_child(z_lbl)
-	zmax_ctrl = NumberEdit.new()
+	var zmax_ctrl = NumberEdit.new()
+	zmax_ctrl.name = "zmax_ctrl"
+	zmax_ctrl.size_flags_horizontal = 3
 	zmax_ctrl.set_text("1.0")
 	zmax_ctrl.hint_tooltip = tr("WEDGE_ZMAX_CTRL_HINT_TOOLTIP")
 	max_group.add_child(zmax_ctrl)
@@ -130,7 +126,9 @@ func _ready():
 	x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	pnt_group.add_child(x_lbl)
-	pnt_x_ctrl = NumberEdit.new()
+	var pnt_x_ctrl = NumberEdit.new()
+	pnt_x_ctrl.name = "pnt_x_ctrl"
+	pnt_x_ctrl.size_flags_horizontal = 3
 	pnt_x_ctrl.set_text("2.5")
 	pnt_x_ctrl.hint_tooltip = tr("WEDGE_PNT_X_CTRL_HINT_TOOLTIP")
 	pnt_group.add_child(pnt_x_ctrl)
@@ -138,7 +136,9 @@ func _ready():
 	y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	pnt_group.add_child(y_lbl)
-	pnt_y_ctrl = NumberEdit.new()
+	var pnt_y_ctrl = NumberEdit.new()
+	pnt_y_ctrl.name = "pnt_y_ctrl"
+	pnt_y_ctrl.size_flags_horizontal = 3
 	pnt_y_ctrl.set_text("5.0")
 	pnt_y_ctrl.hint_tooltip = tr("WEDGE_PNT_Y_CTRL_HINT_TOOLTIP")
 	pnt_group.add_child(pnt_y_ctrl)
@@ -146,7 +146,9 @@ func _ready():
 	z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	pnt_group.add_child(z_lbl)
-	pnt_z_ctrl = NumberEdit.new()
+	var pnt_z_ctrl = NumberEdit.new()
+	pnt_z_ctrl.name = "pnt_z_ctrl"
+	pnt_z_ctrl.size_flags_horizontal = 3
 	pnt_z_ctrl.set_text("1.0")
 	pnt_z_ctrl.hint_tooltip = tr("WEDGE_PNT_Z_CTRL_HINT_TOOLTIP")
 	pnt_group.add_child(pnt_z_ctrl)
@@ -164,7 +166,9 @@ func _ready():
 	x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	d_group.add_child(x_lbl)
-	dir_x_ctrl = NumberEdit.new()
+	var dir_x_ctrl = NumberEdit.new()
+	dir_x_ctrl.name = "dir_x_ctrl"
+	dir_x_ctrl.size_flags_horizontal = 3
 	dir_x_ctrl.set_text("0")
 	dir_x_ctrl.hint_tooltip = tr("WEDGE_DIR_X_CTRL_HINT_TOOLTIP")
 	d_group.add_child(dir_x_ctrl)
@@ -172,7 +176,9 @@ func _ready():
 	y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	d_group.add_child(y_lbl)
-	dir_y_ctrl = NumberEdit.new()
+	var dir_y_ctrl = NumberEdit.new()
+	dir_y_ctrl.name = "dir_y_ctrl"
+	dir_y_ctrl.size_flags_horizontal = 3
 	dir_y_ctrl.set_text("0")
 	dir_y_ctrl.hint_tooltip = tr("WEDGE_DIR_Y_CTRL_HINT_TOOLTIP")
 	d_group.add_child(dir_y_ctrl)
@@ -180,7 +186,9 @@ func _ready():
 	z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	d_group.add_child(z_lbl)
-	dir_z_ctrl = NumberEdit.new()
+	var dir_z_ctrl = NumberEdit.new()
+	dir_z_ctrl.name = "dir_z_ctrl"
+	dir_z_ctrl.size_flags_horizontal = 3
 	dir_z_ctrl.set_text("1")
 	dir_z_ctrl.hint_tooltip = tr("WEDGE_DIR_Z_CTRL_HINT_TOOLTIP")
 	d_group.add_child(dir_z_ctrl)
@@ -197,7 +205,8 @@ func _ready():
 	var cen_x_lbl = Label.new()
 	cen_x_lbl.set_text("X: ")
 	centered_group.add_child(cen_x_lbl)
-	centered_x_ctrl = CheckBox.new()
+	var centered_x_ctrl = CheckBox.new()
+	centered_x_ctrl.name = "centered_x_ctrl"
 	centered_x_ctrl.pressed = true
 	centered_x_ctrl.hint_tooltip = tr("CEN_X_CTRL_HINT_TOOLTIP")
 	centered_group.add_child(centered_x_ctrl)
@@ -205,7 +214,8 @@ func _ready():
 	var cen_y_lbl = Label.new()
 	cen_y_lbl.set_text("Y: ")
 	centered_group.add_child(cen_y_lbl)
-	centered_y_ctrl = CheckBox.new()
+	var centered_y_ctrl = CheckBox.new()
+	centered_y_ctrl.name = "centered_y_ctrl"
 	centered_y_ctrl.pressed = true
 	centered_y_ctrl.hint_tooltip = tr("CEN_Y_CTRL_HINT_TOOLTIP")
 	centered_group.add_child(centered_y_ctrl)
@@ -213,7 +223,8 @@ func _ready():
 	var cen_z_lbl = Label.new()
 	cen_z_lbl.set_text("Z: ")
 	centered_group.add_child(cen_z_lbl)
-	centered_z_ctrl = CheckBox.new()
+	var centered_z_ctrl = CheckBox.new()
+	centered_z_ctrl.name = "centered_z_ctrl"
 	centered_z_ctrl.pressed = true
 	centered_z_ctrl.hint_tooltip = tr("CEN_Z_CTRL_HINT_TOOLTIP")
 	centered_group.add_child(centered_z_ctrl)
@@ -225,7 +236,8 @@ func _ready():
 	var combine_lbl = Label.new()
 	combine_lbl.set_text("Combine: ")
 	combine_group.add_child(combine_lbl)
-	combine_ctrl = CheckBox.new()
+	var combine_ctrl = CheckBox.new()
+	combine_ctrl.name = "combine_ctrl"
 	combine_ctrl.pressed = true
 	combine_ctrl.hint_tooltip = tr("COMBINE_CTRL_HINT_TOOLTIP")
 	combine_group.add_child(combine_ctrl)
@@ -236,7 +248,8 @@ func _ready():
 	var clean_lbl = Label.new()
 	clean_lbl.set_text("Clean: ")
 	clean_group.add_child(clean_lbl)
-	clean_ctrl = CheckBox.new()
+	var clean_ctrl = CheckBox.new()
+	clean_ctrl.name = "clean_ctrl"
 	clean_ctrl.pressed = true
 	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
@@ -254,6 +267,20 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var dx_ctrl = find_node("dx_ctrl", true, false)
+	var dy_ctrl = find_node("dy_ctrl", true, false)
+	var dz_ctrl = find_node("dz_ctrl", true, false)
+	var xmin_ctrl = find_node("xmin_ctrl", true, false)
+	var zmin_ctrl = find_node("zmin_ctrl", true, false)
+	var xmax_ctrl = find_node("xmax_ctrl", true, false)
+	var zmax_ctrl = find_node("zmax_ctrl", true, false)
+	var pnt_x_ctrl = find_node("pnt_x_ctrl", true, false)
+	var pnt_y_ctrl = find_node("pnt_y_ctrl", true, false)
+	var pnt_z_ctrl = find_node("pnt_z_ctrl", true, false)
+	var dir_x_ctrl = find_node("dir_x_ctrl", true, false)
+	var dir_y_ctrl = find_node("dir_y_ctrl", true, false)
+	var dir_z_ctrl = find_node("dir_z_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not dx_ctrl.is_valid:
 		return false
@@ -288,7 +315,26 @@ func is_valid():
 """
 Fills out the template and returns it.
 """
-func get_completed_template():	
+func get_completed_template():
+	var dx_ctrl = find_node("dx_ctrl", true, false)
+	var dy_ctrl = find_node("dy_ctrl", true, false)
+	var dz_ctrl = find_node("dz_ctrl", true, false)
+	var xmin_ctrl = find_node("xmin_ctrl", true, false)
+	var zmin_ctrl = find_node("zmin_ctrl", true, false)
+	var xmax_ctrl = find_node("xmax_ctrl", true, false)
+	var zmax_ctrl = find_node("zmax_ctrl", true, false)
+	var pnt_x_ctrl = find_node("pnt_x_ctrl", true, false)
+	var pnt_y_ctrl = find_node("pnt_y_ctrl", true, false)
+	var pnt_z_ctrl = find_node("pnt_z_ctrl", true, false)
+	var dir_x_ctrl = find_node("dir_x_ctrl", true, false)
+	var dir_y_ctrl = find_node("dir_y_ctrl", true, false)
+	var dir_z_ctrl = find_node("dir_z_ctrl", true, false)
+	var centered_x_ctrl = find_node("centered_x_ctrl", true, false)
+	var centered_y_ctrl = find_node("centered_y_ctrl", true, false)
+	var centered_z_ctrl = find_node("centered_z_ctrl", true, false)
+	var combine_ctrl = find_node("combine_ctrl", true, false)
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+
 	var complete = template.format({
 		"dx": dx_ctrl.get_text(),
 		"dy": dy_ctrl.get_text(),
@@ -325,6 +371,25 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var dx_ctrl = find_node("dx_ctrl", true, false)
+	var dy_ctrl = find_node("dy_ctrl", true, false)
+	var dz_ctrl = find_node("dz_ctrl", true, false)
+	var xmin_ctrl = find_node("xmin_ctrl", true, false)
+	var zmin_ctrl = find_node("zmin_ctrl", true, false)
+	var xmax_ctrl = find_node("xmax_ctrl", true, false)
+	var zmax_ctrl = find_node("zmax_ctrl", true, false)
+	var pnt_x_ctrl = find_node("pnt_x_ctrl", true, false)
+	var pnt_y_ctrl = find_node("pnt_y_ctrl", true, false)
+	var pnt_z_ctrl = find_node("pnt_z_ctrl", true, false)
+	var dir_x_ctrl = find_node("dir_x_ctrl", true, false)
+	var dir_y_ctrl = find_node("dir_y_ctrl", true, false)
+	var dir_z_ctrl = find_node("dir_z_ctrl", true, false)
+	var centered_x_ctrl = find_node("centered_x_ctrl", true, false)
+	var centered_y_ctrl = find_node("centered_y_ctrl", true, false)
+	var centered_z_ctrl = find_node("centered_z_ctrl", true, false)
+	var combine_ctrl = find_node("combine_ctrl", true, false)
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

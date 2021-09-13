@@ -10,12 +10,6 @@ const point1_edit_rgx = "(?<=point1\\=\\()(.*?)(?=\\),point2)"
 const point2_edit_rgx = "(?<=point2\\=\\()(.*?)(?=\\),forConstruction)"
 const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 
-var point_1_x_ctrl = null
-var point_1_y_ctrl = null
-var point_2_x_ctrl = null
-var point_2_y_ctrl = null
-var for_construction_ctrl = null
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -29,7 +23,9 @@ func _ready():
 	var x_length_lbl = Label.new()
 	x_length_lbl.set_text("X: ")
 	point_1_group.add_child(x_length_lbl)
-	point_1_x_ctrl = NumberEdit.new()
+	var point_1_x_ctrl = NumberEdit.new()
+	point_1_x_ctrl.name = "point_1_x_ctrl"
+	point_1_x_ctrl.size_flags_horizontal = 3
 	point_1_x_ctrl.CanBeNegative = true
 	point_1_x_ctrl.set_text("4.0")
 	point_1_x_ctrl.hint_tooltip = tr("THREE_POINT_ARC_POINT_1_X_CTRL_HINT_TOOLTIP")
@@ -38,7 +34,9 @@ func _ready():
 	var y_length_lbl = Label.new()
 	y_length_lbl.set_text("Y: ")
 	point_1_group.add_child(y_length_lbl)
-	point_1_y_ctrl = NumberEdit.new()
+	var point_1_y_ctrl = NumberEdit.new()
+	point_1_y_ctrl.name = "point_1_y_ctrl"
+	point_1_y_ctrl.size_flags_horizontal = 3
 	point_1_y_ctrl.CanBeNegative = true
 	point_1_y_ctrl.set_text("0.0")
 	point_1_y_ctrl.hint_tooltip = tr("THREE_POINT_ARC_POINT_1_Y_CTRL_HINT_TOOLTIP")
@@ -56,7 +54,9 @@ func _ready():
 	x_length_lbl = Label.new()
 	x_length_lbl.set_text("X: ")
 	point_2_group.add_child(x_length_lbl)
-	point_2_x_ctrl = NumberEdit.new()
+	var point_2_x_ctrl = NumberEdit.new()
+	point_2_x_ctrl.name = "point_2_x_ctrl"
+	point_2_x_ctrl.size_flags_horizontal = 3
 	point_2_x_ctrl.CanBeNegative = true
 	point_2_x_ctrl.set_text("0.0")
 	point_2_x_ctrl.hint_tooltip = tr("THREE_POINT_ARC_POINT_2_X_CTRL_HINT_TOOLTIP")
@@ -65,7 +65,9 @@ func _ready():
 	y_length_lbl = Label.new()
 	y_length_lbl.set_text("Y: ")
 	point_2_group.add_child(y_length_lbl)
-	point_2_y_ctrl = NumberEdit.new()
+	var point_2_y_ctrl = NumberEdit.new()
+	point_2_y_ctrl.name = "point_2_y_ctrl"
+	point_2_y_ctrl.size_flags_horizontal = 3
 	point_2_y_ctrl.CanBeNegative = true
 	point_2_y_ctrl.set_text("-4.0")
 	point_2_y_ctrl.hint_tooltip = tr("THREE_POINT_ARC_POINT_2_Y_CTRL_HINT_TOOLTIP")
@@ -78,7 +80,8 @@ func _ready():
 	var const_lbl = Label.new()
 	const_lbl.set_text("For Construction: ")
 	const_group.add_child(const_lbl)
-	for_construction_ctrl = CheckBox.new()
+	var for_construction_ctrl = CheckBox.new()
+	for_construction_ctrl.name = "for_construction_ctrl"
 	for_construction_ctrl.pressed = false
 	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
@@ -97,6 +100,11 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var point_1_x_ctrl = find_node("point_1_x_ctrl", true, false)
+	var point_1_y_ctrl = find_node("point_1_y_ctrl", true, false)
+	var point_2_x_ctrl = find_node("point_2_x_ctrl", true, false)
+	var point_2_y_ctrl = find_node("point_2_y_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not point_1_x_ctrl.is_valid:
 		return false
@@ -114,6 +122,12 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var point_1_x_ctrl = find_node("point_1_x_ctrl", true, false)
+	var point_1_y_ctrl = find_node("point_1_y_ctrl", true, false)
+	var point_2_x_ctrl = find_node("point_2_x_ctrl", true, false)
+	var point_2_y_ctrl = find_node("point_2_y_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+
 	var complete = ""
 
 	complete += template.format({
@@ -139,6 +153,12 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var point_1_x_ctrl = find_node("point_1_x_ctrl", true, false)
+	var point_1_y_ctrl = find_node("point_1_y_ctrl", true, false)
+	var point_2_x_ctrl = find_node("point_2_x_ctrl", true, false)
+	var point_2_y_ctrl = find_node("point_2_y_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

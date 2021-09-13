@@ -25,7 +25,7 @@ func _ready():
 	offset_group.name = "offset_group"
 	offset_group.add_child(offset_lbl)
 	var offset_ctrl = NumberEdit.new()
-	offset_ctrl.set_expand_to_text_length(true)
+	offset_ctrl.size_flags_horizontal = 3
 	offset_ctrl.CanBeAVariable = true
 	offset_ctrl.CanBeNegative = true
 	offset_ctrl.set_text("0.0")
@@ -69,6 +69,7 @@ func _ready():
 	x_lbl.set_text("X: ")
 	origin_group.add_child(x_lbl)
 	var origin_x_ctrl = NumberEdit.new()
+	origin_x_ctrl.size_flags_horizontal = 3
 	origin_x_ctrl.name = "origin_x_ctrl"
 	origin_x_ctrl.set_text("0")
 	origin_x_ctrl.hint_tooltip = tr("WP_ORIGIN_X_CTRL_HINT_TOOLTIP")
@@ -78,6 +79,7 @@ func _ready():
 	y_lbl.set_text("Y: ")
 	origin_group.add_child(y_lbl)
 	var origin_y_ctrl = NumberEdit.new()
+	origin_y_ctrl.size_flags_horizontal = 3
 	origin_y_ctrl.name = "origin_y_ctrl"
 	origin_y_ctrl.set_text("0")
 	origin_y_ctrl.hint_tooltip = tr("WP_ORIGIN_Y_CTRL_HINT_TOOLTIP")
@@ -87,6 +89,7 @@ func _ready():
 	z_lbl.set_text("Z: ")
 	origin_group.add_child(z_lbl)
 	var origin_z_ctrl = NumberEdit.new()
+	origin_z_ctrl.size_flags_horizontal = 3
 	origin_z_ctrl.name = "origin_z_ctrl"
 	origin_z_ctrl.set_text("0")
 	origin_z_ctrl.hint_tooltip = tr("WP_ORIGIN_Z_CTRL_HINT_TOOLTIP")

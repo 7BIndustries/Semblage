@@ -10,9 +10,6 @@ const dims_edit_rgx = "(?<=.hLineTo\\()(.*?)(?=,forConstruction)"
 const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 const select_edit_rgx = "^.faces\\(.*\\)\\."
 
-var x_coord_ctrl = null
-var for_construction_ctrl = null
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -23,7 +20,9 @@ func _ready():
 	var x_coord_lbl = Label.new()
 	x_coord_lbl.set_text("X Coordinate: ")
 	x_coord_group.add_child(x_coord_lbl)
-	x_coord_ctrl = NumberEdit.new()
+	var x_coord_ctrl = NumberEdit.new()
+	x_coord_ctrl.name = "x_coord_ctrl"
+	x_coord_ctrl.size_flags_horizontal = 3
 	x_coord_ctrl.CanBeNegative = true
 	x_coord_ctrl.set_text("1.0")
 	x_coord_ctrl.hint_tooltip = tr("HLINETO_X_COORD_CTRL_HINT_TOOLTIP")
@@ -35,7 +34,8 @@ func _ready():
 	var const_lbl = Label.new()
 	const_lbl.set_text("For Construction: ")
 	const_group.add_child(const_lbl)
-	for_construction_ctrl = CheckBox.new()
+	var for_construction_ctrl = CheckBox.new()
+	for_construction_ctrl.name = "for_construction_ctrl"
 	for_construction_ctrl.pressed = false
 	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
@@ -54,6 +54,8 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var x_coord_ctrl = find_node("x_coord_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not x_coord_ctrl.is_valid:
 		return false
@@ -65,6 +67,9 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var x_coord_ctrl = find_node("x_coord_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+
 	var complete = ""
 
 	complete += template.format({
@@ -87,6 +92,9 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var x_coord_ctrl = find_node("x_coord_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

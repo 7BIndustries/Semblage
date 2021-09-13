@@ -2,33 +2,21 @@ extends VBoxContainer
 
 class_name TextControl
 
-var txt_ctrl = null
-var font_size_ctrl = null
-var distance_ctrl = null
-var cut_ctrl = null
-var font_ctrl = null
-var font_path_ctrl = null
-var kind_ctrl = null
-var halign_ctrl = null
-var valign_ctrl = null
-var combine_ctrl = null
-var clean_ctrl = null
-
 var prev_template = null
 
 var template = ".text({txt},fontsize={font_size},distance={distance},cut={cut},font={font},fontPath={font_path},kind={kind},halign={halign},valign={valign},combine={combine},clean={clean})"
 
 const txt_edit_rgx = "(?<=.text\\()(.*?)(?=,fontsize)"
-const font_size_edit_rgx = "(?<=fontsize\\=\\()(.*?)(?=,distance)"
-const distance_edit_rgx = "(?<=distance\\=\\()(.*?)(?=,cut)"
-const cut_edit_rgx = "(?<=cut\\=\\()(.*?)(?=,font)"
-const font_edit_rgx = "(?<=font\\=\\()(.*?)(?=,font_path)"
-const font_path_edit_rgx = "(?<=fontPath\\=\\()(.*?)(?=,kind)"
-const kind_edit_rgx = "(?<=kind\\=\\()(.*?)(?=,halign)"
-const halign_edit_rgx = "(?<=halign\\=\\()(.*?)(?=,valign)"
-const valign_edit_rgx = "(?<=valign\\=\\()(.*?)(?=,combine)"
-const combine_edit_rgx = "(?<=combine\\=\\()(.*?)(?=,clean)"
-const clean_edit_rgx = "(?<=clean\\=\\()(.*?)(?=\\))"
+const font_size_edit_rgx = "(?<=fontsize\\=)(.*?)(?=,distance)"
+const distance_edit_rgx = "(?<=distance\\=)(.*?)(?=,cut)"
+const cut_edit_rgx = "(?<=cut\\=)(.*?)(?=,font)"
+const font_edit_rgx = "(?<=font\\=)(.*?)(?=,fontPath)"
+const font_path_edit_rgx = "(?<=fontPath\\=)(.*?)(?=,kind)"
+const kind_edit_rgx = "(?<=kind\\=)(.*?)(?=,halign)"
+const halign_edit_rgx = "(?<=halign\\=)(.*?)(?=,valign)"
+const valign_edit_rgx = "(?<=valign\\=)(.*?)(?=,combine)"
+const combine_edit_rgx = "(?<=combine\\=)(.*?)(?=,clean)"
+const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\))"
 
 
 # Called when the node enters the scene tree for the first time.
@@ -38,7 +26,8 @@ func _ready():
 	var txt_ctrl_lbl = Label.new()
 	txt_ctrl_lbl.set_text("Text: ")
 	txt_group.add_child(txt_ctrl_lbl)
-	txt_ctrl = LineEdit.new()
+	var txt_ctrl = LineEdit.new()
+	txt_ctrl.name = "txt_ctrl"
 	txt_ctrl.expand_to_text_length = true
 	txt_ctrl.set_text("Change This")
 	txt_ctrl.hint_tooltip = tr("TEXT_TXT_CTRL_HINT_TOOLTIP")
@@ -50,7 +39,9 @@ func _ready():
 	var distance_ctrl_lbl = Label.new()
 	distance_ctrl_lbl.set_text("Text Depth: ")
 	distance_group.add_child(distance_ctrl_lbl)
-	distance_ctrl = NumberEdit.new()
+	var distance_ctrl = NumberEdit.new()
+	distance_ctrl.name = "distance_ctrl"
+	distance_ctrl.size_flags_horizontal = 3
 	distance_ctrl.expand_to_text_length = true
 	distance_ctrl.set_text("5")
 	distance_ctrl.hint_tooltip = tr("TEXT_DISTANCE_CTRL_HINT_TOOLTIP")
@@ -62,7 +53,8 @@ func _ready():
 	var cut_lbl = Label.new()
 	cut_lbl.set_text("Cut: ")
 	cut_group.add_child(cut_lbl)
-	cut_ctrl = CheckBox.new()
+	var cut_ctrl = CheckBox.new()
+	cut_ctrl.name = "cut_ctrl"
 	cut_ctrl.pressed = false
 	cut_ctrl.hint_tooltip = tr("TEXT_CUT_CTRL_HINT_TOOLTIP")
 	cut_group.add_child(cut_ctrl)
@@ -73,7 +65,8 @@ func _ready():
 	var combine_lbl = Label.new()
 	combine_lbl.set_text("Combine: ")
 	combine_group.add_child(combine_lbl)
-	combine_ctrl = CheckBox.new()
+	var combine_ctrl = CheckBox.new()
+	combine_ctrl.name = "combine_ctrl"
 	combine_ctrl.pressed = true
 	combine_ctrl.hint_tooltip = tr("COMBINE_CTRL_HINT_TOOLTIP")
 	combine_group.add_child(combine_ctrl)
@@ -84,7 +77,8 @@ func _ready():
 	var clean_lbl = Label.new()
 	clean_lbl.set_text("Clean: ")
 	clean_group.add_child(clean_lbl)
-	clean_ctrl = CheckBox.new()
+	var clean_ctrl = CheckBox.new()
+	clean_ctrl.name = "clean_ctrl"
 	clean_ctrl.pressed = true
 	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
@@ -102,7 +96,9 @@ func _ready():
 	var font_size_ctrl_lbl = Label.new()
 	font_size_ctrl_lbl.set_text("Size: ")
 	font_size_group.add_child(font_size_ctrl_lbl)
-	font_size_ctrl = NumberEdit.new()
+	var font_size_ctrl = NumberEdit.new()
+	font_size_ctrl.name = "font_size_ctrl"
+	font_size_ctrl.size_flags_horizontal = 3
 	font_size_ctrl.expand_to_text_length = true
 	font_size_ctrl.NumberFormat = "int"
 	font_size_ctrl.set_text("12")
@@ -115,7 +111,8 @@ func _ready():
 	var font_ctrl_lbl = Label.new()
 	font_ctrl_lbl.set_text("Type: ")
 	font_group.add_child(font_ctrl_lbl)
-	font_ctrl = LineEdit.new()
+	var font_ctrl = LineEdit.new()
+	font_ctrl.name = "font_ctrl"
 	font_ctrl.expand_to_text_length = true
 	font_ctrl.set_text("Arial")
 	font_ctrl.hint_tooltip = tr("TEXT_FONT_CTRL_HINT_TOOLTIP")
@@ -127,7 +124,8 @@ func _ready():
 	var font_path_ctrl_lbl = Label.new()
 	font_path_ctrl_lbl.set_text("Custom Path: ")
 	font_path_group.add_child(font_path_ctrl_lbl)
-	font_path_ctrl = LineEdit.new()
+	var font_path_ctrl = LineEdit.new()
+	font_path_ctrl.name = "font_path_ctrl"
 	font_path_ctrl.expand_to_text_length = true
 	font_path_ctrl.set_text("")
 	font_path_ctrl.hint_tooltip = tr("TEXT_FONT_PATH_CTRL_HINT_TOOLTIP")
@@ -139,7 +137,8 @@ func _ready():
 	var kind_ctrl_lbl = Label.new()
 	kind_ctrl_lbl.set_text("Style: ")
 	kind_group.add_child(kind_ctrl_lbl)
-	kind_ctrl = OptionButton.new()
+	var kind_ctrl = OptionButton.new()
+	kind_ctrl.name = "kind_ctrl"
 	Common.load_option_button(kind_ctrl, ["regular", "bold", "italic"])
 	kind_ctrl.hint_tooltip = tr("TEXT_FONT_KIND_CTRL_HINT_TOOLTIP")
 	kind_group.add_child(kind_ctrl)
@@ -150,7 +149,8 @@ func _ready():
 	var halign_ctrl_lbl = Label.new()
 	halign_ctrl_lbl.set_text("Horizontal Alignment: ")
 	halign_group.add_child(halign_ctrl_lbl)
-	halign_ctrl = OptionButton.new()
+	var halign_ctrl = OptionButton.new()
+	halign_ctrl.name = "halign_ctrl"
 	Common.load_option_button(halign_ctrl, ["center", "left", "right"])
 	halign_ctrl.hint_tooltip = tr("TEXT_HALIGN_CTRL_HINT_TOOLTIP")
 	halign_group.add_child(halign_ctrl)
@@ -161,7 +161,8 @@ func _ready():
 	var valign_ctrl_lbl = Label.new()
 	valign_ctrl_lbl.set_text("Vertical Alignment: ")
 	valign_group.add_child(valign_ctrl_lbl)
-	valign_ctrl = OptionButton.new()
+	var valign_ctrl = OptionButton.new()
+	valign_ctrl.name = "valign_ctrl"
 	Common.load_option_button(valign_ctrl, ["center", "top", "bottom"])
 	valign_ctrl.hint_tooltip = tr("TEXT_VALIGN_CTRL_HINT_TOOLTIP")
 	valign_group.add_child(valign_ctrl)
@@ -179,6 +180,9 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var font_size_ctrl = find_node("font_size_ctrl", true, false)
+	var distance_ctrl = find_node("distance_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not distance_ctrl.is_valid:
 		return false
@@ -192,6 +196,18 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var txt_ctrl = find_node("txt_ctrl", true, false)
+	var font_size_ctrl = find_node("font_size_ctrl", true, false)
+	var distance_ctrl = find_node("distance_ctrl", true, false)
+	var cut_ctrl = find_node("cut_ctrl", true, false)
+	var font_ctrl = find_node("font_ctrl", true, false)
+	var font_path_ctrl = find_node("font_path_ctrl", true, false)
+	var kind_ctrl = find_node("kind_ctrl", true, false)
+	var halign_ctrl = find_node("halign_ctrl", true, false)
+	var valign_ctrl = find_node("valign_ctrl", true, false)
+	var combine_ctrl = find_node("combine_ctrl", true, false)
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+
 	var complete = ""
 
 	# Make sure to handle the possible Python None value in the font path
@@ -231,6 +247,18 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var txt_ctrl = find_node("txt_ctrl", true, false)
+	var font_size_ctrl = find_node("font_size_ctrl", true, false)
+	var distance_ctrl = find_node("distance_ctrl", true, false)
+	var cut_ctrl = find_node("cut_ctrl", true, false)
+	var font_ctrl = find_node("font_ctrl", true, false)
+	var font_path_ctrl = find_node("font_path_ctrl", true, false)
+	var kind_ctrl = find_node("kind_ctrl", true, false)
+	var halign_ctrl = find_node("halign_ctrl", true, false)
+	var valign_ctrl = find_node("valign_ctrl", true, false)
+	var combine_ctrl = find_node("combine_ctrl", true, false)
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()
@@ -285,7 +313,7 @@ func set_values_from_string(text_line):
 	res = rgx.search(text_line)
 	if res:
 		# Fill in the sphere radius control
-		var font = res.get_string()
+		var font = res.get_string().replace("\"", "")
 		font_ctrl.set_text(font)
 
 	# Font path
@@ -293,7 +321,7 @@ func set_values_from_string(text_line):
 	res = rgx.search(text_line)
 	if res:
 		# Fill in the sphere radius control
-		var font_path = res.get_string()
+		var font_path = res.get_string().replace("\"", "")
 
 		# Handle the Python None type
 		if font_path == "None":
@@ -306,7 +334,7 @@ func set_values_from_string(text_line):
 	res = rgx.search(text_line)
 	if res:
 		# Fill in the sphere radius control
-		var kind = res.get_string()
+		var kind = res.get_string().replace("\"", "")
 		Common.set_option_btn_by_text(kind_ctrl, kind)
 
 	# Horizontal alignment
@@ -314,7 +342,7 @@ func set_values_from_string(text_line):
 	res = rgx.search(text_line)
 	if res:
 		# Fill in the sphere radius control
-		var halign = res.get_string()
+		var halign = res.get_string().replace("\"", "")
 		Common.set_option_btn_by_text(halign_ctrl, halign)
 
 	# Vertical alignment
@@ -322,5 +350,5 @@ func set_values_from_string(text_line):
 	res = rgx.search(text_line)
 	if res:
 		# Fill in the sphere radius control
-		var valign = res.get_string()
+		var valign = res.get_string().replace("\"", "")
 		Common.set_option_btn_by_text(valign_ctrl, valign)

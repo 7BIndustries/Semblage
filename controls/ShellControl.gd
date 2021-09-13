@@ -7,10 +7,7 @@ var prev_template = null
 var template = ".shell(thickness={thickness},kind=\"{kind}\")"
 
 const thickness_edit_rgx = "(?<=thickness\\=)(.*?)(?=\\,)"
-var kind_edit_rgx = "(?<=kind\\=\")(.*?)(?=\"\\)"
-
-var thickness_ctrl = null
-var kind_ctrl = null
+var kind_edit_rgx = "(?<=kind\\=\")(.*?)(?=\"\\))"
 
 const kind_list = ["arc", "intersection"]
 
@@ -21,7 +18,9 @@ func _ready():
 	var thickness_lbl = Label.new()
 	thickness_lbl.set_text("Thickness: ")
 	thickness_group.add_child(thickness_lbl)
-	thickness_ctrl = NumberEdit.new()
+	var thickness_ctrl = NumberEdit.new()
+	thickness_ctrl.name = "thickness_ctrl"
+	thickness_ctrl.size_flags_horizontal = 3
 	thickness_ctrl.CanBeNegative = true
 	thickness_ctrl.set_text("0.1")
 	thickness_ctrl.hint_tooltip = tr("SHELL_THICKNESS_CTRL_HINT_TOOLTIP")
@@ -33,7 +32,8 @@ func _ready():
 	var kind_lbl = Label.new()
 	kind_lbl.set_text("Kind: ")
 	kind_group.add_child(kind_lbl)
-	kind_ctrl = OptionButton.new()
+	var kind_ctrl = OptionButton.new()
+	kind_ctrl.name = "kind_ctrl"
 	Common.load_option_button(kind_ctrl, kind_list)
 	kind_ctrl.hint_tooltip = tr("CORNER_KIND_CTRL_HINT_TOOLTIP")
 	kind_group.add_child(kind_ctrl)
@@ -51,6 +51,8 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var thickness_ctrl = find_node("thickness_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not thickness_ctrl.is_valid:
 		return false
@@ -61,6 +63,9 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var thickness_ctrl = find_node("thickness_ctrl", true, false)
+	var kind_ctrl = find_node("kind_ctrl", true, false)
+
 	var complete = ""
 
 	complete += template.format({
@@ -83,6 +88,9 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var thickness_ctrl = find_node("thickness_ctrl", true, false)
+	var kind_ctrl = find_node("kind_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

@@ -14,13 +14,6 @@ const both_edit_rgx = "(?<=both\\=)(.*?)(?=\\,)"
 const taper_edit_rgx = "(?<=taper\\=)(.*?)(?=\\))"
 const wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
 
-var distance_ctrl = null
-var combine_ctrl = null
-var clean_ctrl = null
-var both_ctrl = null
-var taper_ctrl = null
-var invert_ctrl = null
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Add the control for the distance to extrude
@@ -28,8 +21,9 @@ func _ready():
 	var distance_lbl = Label.new()
 	distance_lbl.set_text("Distance: ")
 	distance_group.add_child(distance_lbl)
-	distance_ctrl = NumberEdit.new()
-	distance_ctrl.set_expand_to_text_length(true)
+	var distance_ctrl = NumberEdit.new()
+	distance_ctrl.name = "distance_ctrl"
+	distance_ctrl.size_flags_horizontal = 3
 	distance_ctrl.set_text("1.0")
 	distance_ctrl.hint_tooltip = tr("EXTRUDE_DISTANCE_CTRL_HINT_TOOLTIP")
 	distance_group.add_child(distance_ctrl)
@@ -41,7 +35,8 @@ func _ready():
 	var combine_lbl = Label.new()
 	combine_lbl.set_text("Combine: ")
 	combine_group.add_child(combine_lbl)
-	combine_ctrl = CheckBox.new()
+	var combine_ctrl = CheckBox.new()
+	combine_ctrl.name = "combine_ctrl"
 	combine_ctrl.pressed = true
 	combine_ctrl.hint_tooltip = tr("COMBINE_CTRL_HINT_TOOLTIP")
 	combine_group.add_child(combine_ctrl)
@@ -53,7 +48,8 @@ func _ready():
 	var clean_lbl = Label.new()
 	clean_lbl.set_text("Clean: ")
 	clean_group.add_child(clean_lbl)
-	clean_ctrl = CheckBox.new()
+	var clean_ctrl = CheckBox.new()
+	clean_ctrl.name = "clean_ctrl"
 	clean_ctrl.pressed = true
 	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
@@ -65,7 +61,8 @@ func _ready():
 	var both_lbl = Label.new()
 	both_lbl.set_text("Both: ")
 	both_group.add_child(both_lbl)
-	both_ctrl = CheckBox.new()
+	var both_ctrl = CheckBox.new()
+	both_ctrl.name = "both_ctrl"
 	both_ctrl.pressed = false
 	both_ctrl.hint_tooltip = tr("EXTRUDE_BOTH_CTRL_HINT_TOOLTIP")
 	both_group.add_child(both_ctrl)
@@ -77,7 +74,9 @@ func _ready():
 	var taper_lbl = Label.new()
 	taper_lbl.set_text("Taper: ")
 	taper_group.add_child(taper_lbl)
-	taper_ctrl = NumberEdit.new()
+	var taper_ctrl = NumberEdit.new()
+	taper_ctrl.name = "taper_ctrl"
+	taper_ctrl.size_flags_horizontal = 3
 	taper_ctrl.CanBeNegative = true
 	taper_ctrl.set_text("0.0")
 	taper_ctrl.hint_tooltip = tr("TAPER_CTRL_HINT_TOOLTIP")
@@ -90,7 +89,8 @@ func _ready():
 	var invert_lbl = Label.new()
 	invert_lbl.set_text("Invert: ")
 	invert_group.add_child(invert_lbl)
-	invert_ctrl = CheckBox.new()
+	var invert_ctrl = CheckBox.new()
+	invert_ctrl.name = "invert_ctrl"
 	invert_ctrl.pressed = false
 	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
 	invert_group.add_child(invert_ctrl)
@@ -108,6 +108,9 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var distance_ctrl = find_node("distance_ctrl", true, false)
+	var taper_ctrl = find_node("taper_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not distance_ctrl.is_valid:
 		return false
@@ -121,6 +124,13 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var distance_ctrl = find_node("distance_ctrl", true, false)
+	var combine_ctrl = find_node("combine_ctrl", true, false)
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+	var both_ctrl = find_node("both_ctrl", true, false)
+	var taper_ctrl = find_node("taper_ctrl", true, false)
+	var invert_ctrl = find_node("invert_ctrl", true, false)
+
 	var complete = ""
 
 	# Allow flipping the direction of the operation
@@ -152,6 +162,13 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var distance_ctrl = find_node("distance_ctrl", true, false)
+	var combine_ctrl = find_node("combine_ctrl", true, false)
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+	var both_ctrl = find_node("both_ctrl", true, false)
+	var taper_ctrl = find_node("taper_ctrl", true, false)
+	var invert_ctrl = find_node("invert_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

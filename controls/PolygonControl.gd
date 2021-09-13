@@ -10,10 +10,6 @@ const nsides_edit_rgx = "(?<=nSides\\=)(.*?)(?=,diameter)"
 const dia_edit_rgx = "(?<=diameter\\=)(.*?)(?=\\,forConstruction)"
 const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 
-var nsides_ctrl = null
-var dia_ctrl = null
-var for_construction_ctrl = null
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -22,7 +18,9 @@ func _ready():
 	var nsides_lbl = Label.new()
 	nsides_lbl.set_text("Number of Sides: ")
 	nsides_group.add_child(nsides_lbl)
-	nsides_ctrl = NumberEdit.new()
+	var nsides_ctrl = NumberEdit.new()
+	nsides_ctrl.name = "nsides_ctrl"
+	nsides_ctrl.size_flags_horizontal = 3
 	nsides_ctrl.NumberFormat = "int"
 	nsides_ctrl.set_text("5")
 	nsides_ctrl.MinValue = 3
@@ -36,7 +34,9 @@ func _ready():
 	var dia_lbl = Label.new()
 	dia_lbl.set_text("Diameter: ")
 	dia_group.add_child(dia_lbl)
-	dia_ctrl = NumberEdit.new()
+	var dia_ctrl = NumberEdit.new()
+	dia_ctrl.name = "dia_ctrl"
+	dia_ctrl.size_flags_horizontal = 3
 	dia_ctrl.set_text("10.0")
 	dia_ctrl.hint_tooltip = tr("POLYGON_DIA_CTRL_HINT_TOOLTIP")
 	dia_group.add_child(dia_ctrl)
@@ -47,7 +47,8 @@ func _ready():
 	var const_lbl = Label.new()
 	const_lbl.set_text("For Construction: ")
 	const_group.add_child(const_lbl)
-	for_construction_ctrl = CheckBox.new()
+	var for_construction_ctrl = CheckBox.new()
+	for_construction_ctrl.name = "for_construction_ctrl"
 	for_construction_ctrl.pressed = false
 	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
@@ -66,6 +67,9 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var nsides_ctrl = find_node("nsides_ctrl", true, false)
+	var dia_ctrl = find_node("dia_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not nsides_ctrl.is_valid:
 		return false
@@ -79,6 +83,10 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var nsides_ctrl = find_node("nsides_ctrl", true, false)
+	var dia_ctrl = find_node("dia_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+
 	var complete = ""
 
 	complete += template.format({
@@ -102,6 +110,10 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var nsides_ctrl = find_node("nsides_ctrl", true, false)
+	var dia_ctrl = find_node("dia_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

@@ -10,8 +10,6 @@ var prev_template = null
 const workplane_list = ["XY", "YZ", "XZ"]
 const center_option_list = ["CenterOfBoundBox", "CenterOfMass", "ProjectedOrigin"]
 
-var advanced_group = null
-
 const wp_name_edit_rgx = "(?<=.Workplane\\(\")(.*?)(?=\"\\))"
 const wp_cen_edit_rgx = "(?<=centerOption\\=\")(.*?)(?=\"\\))"
 const invert_edit_rgx = "(?<=invert\\=)(.*?)(?=,centerOption)"
@@ -30,7 +28,7 @@ func _ready():
 	name_group.add_child(wp_name_lbl)
 	var wp_name_ctrl = WPNameEdit.new()
 	wp_name_ctrl.name = "wp_name_ctrl"
-	wp_name_ctrl.expand_to_text_length = true
+	wp_name_ctrl.size_flags_horizontal = 3
 	wp_name_ctrl.set_text("change_me")
 	wp_name_ctrl.hint_tooltip = tr("WP_NAME_CTRL_HINT_TOOLTIP")
 	name_group.add_child(wp_name_ctrl)
@@ -83,7 +81,7 @@ func _ready():
 	add_child(hide_show_btn)
 
 	# The advanced workplane controls
-	advanced_group = VBoxContainer.new()
+	var advanced_group = VBoxContainer.new()
 	advanced_group.name = "advanced_group"
 	advanced_group.hide()
 	var origin_lbl = Label.new()
@@ -262,6 +260,7 @@ func get_completed_template():
 	var normal_x_ctrl = get_node("advanced_group/normal_group/normal_x_ctrl")
 	var normal_y_ctrl = get_node("advanced_group/normal_group/normal_y_ctrl")
 	var normal_z_ctrl = get_node("advanced_group/normal_group/normal_z_ctrl")
+	var advanced_group = find_node("advanced_group", true, false)
 
 	# If the advanced group is visible, fill the advanced template out with those controls
 	if advanced_group.visible:
@@ -301,6 +300,8 @@ func get_previous_template():
 Shows/hides the advanced workplane controls.
 """
 func _show_advanced():
+	var advanced_group = find_node("advanced_group", true, false)
+
 	if advanced_group.visible:
 		advanced_group.hide()
 	else:

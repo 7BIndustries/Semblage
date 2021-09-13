@@ -2,15 +2,6 @@ extends VBoxContainer
 
 class_name BoxControl
 
-var length_ctrl = null
-var width_ctrl = null
-var height_ctrl = null
-var cen_x_ctrl = null
-var cen_y_ctrl = null
-var cen_z_ctrl = null
-var combine_ctrl = null
-var clean_ctrl = null
-
 var prev_template = null
 
 var template = ".box({length},{width},{height},centered=({centered_x},{centered_y},{centered_z}),combine={combine},clean={clean})"
@@ -21,39 +12,43 @@ const combine_edit_rgx = "(?<=combine\\=)(.*?)(?=\\,)"
 const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\))"
 
 func _ready():
-	# Add a label for the box size group controls
-	var size_lbl = Label.new()
-	size_lbl.set_text("Size")
-	add_child(size_lbl)
-
 	# Add the box size controls
-	var size_group = HBoxContainer.new()
+	var length_group = HBoxContainer.new()
+	var width_group = HBoxContainer.new()
+	var height_group = HBoxContainer.new()
 	var length_ctrl_lbl = Label.new()
 	# Length
 	length_ctrl_lbl.set_text("Length: ")
-	size_group.add_child(length_ctrl_lbl)
-	length_ctrl = NumberEdit.new()
+	length_group.add_child(length_ctrl_lbl)
+	var length_ctrl = NumberEdit.new()
+	length_ctrl.size_flags_horizontal = 3
+	length_ctrl.name = "length_ctrl"
 	length_ctrl.set_text("10.0")
 	length_ctrl.hint_tooltip = tr("BOX_LENGTH_CTRL_HINT_TOOLTIP")
-	size_group.add_child(length_ctrl)
+	length_group.add_child(length_ctrl)
+	add_child(length_group)
 	# Width
 	var width_ctrl_lbl = Label.new()
-	width_ctrl_lbl.set_text("Width: ")
-	size_group.add_child(width_ctrl_lbl)
-	width_ctrl = NumberEdit.new()
+	width_ctrl_lbl.set_text("Width:  ")
+	width_group.add_child(width_ctrl_lbl)
+	var width_ctrl = NumberEdit.new()
+	width_ctrl.size_flags_horizontal = 3
+	width_ctrl.name = "width_ctrl"
 	width_ctrl.set_text("10.0")
 	width_ctrl.hint_tooltip = tr("BOX_WIDTH_CTRL_HINT_TOOLTIP")
-	size_group.add_child(width_ctrl)
+	width_group.add_child(width_ctrl)
+	add_child(width_group)
 	# Height
 	var height_ctrl_lbl = Label.new()
 	height_ctrl_lbl.set_text("Height: ")
-	size_group.add_child(height_ctrl_lbl)
-	height_ctrl = NumberEdit.new()
+	height_group.add_child(height_ctrl_lbl)
+	var height_ctrl = NumberEdit.new()
+	height_ctrl.size_flags_horizontal = 3
+	height_ctrl.name = "height_ctrl"
 	height_ctrl.set_text("10.0")
 	height_ctrl.hint_tooltip = tr("BOX_HEIGHT_CTRL_HINT_TOOLTIP")
-	size_group.add_child(height_ctrl)
-	
-	add_child(size_group)
+	height_group.add_child(height_ctrl)
+	add_child(height_group)
 
 	var centered_lbl = Label.new()
 	centered_lbl.set_text("Centered")
@@ -65,7 +60,8 @@ func _ready():
 	var cen_x_lbl = Label.new()
 	cen_x_lbl.set_text("X: ")
 	centered_group.add_child(cen_x_lbl)
-	cen_x_ctrl = CheckBox.new()
+	var cen_x_ctrl = CheckBox.new()
+	cen_x_ctrl.name = "cen_x_ctrl"
 	cen_x_ctrl.pressed = true
 	cen_x_ctrl.hint_tooltip = tr("CEN_X_CTRL_HINT_TOOLTIP")
 	centered_group.add_child(cen_x_ctrl)
@@ -73,7 +69,8 @@ func _ready():
 	var cen_y_lbl = Label.new()
 	cen_y_lbl.set_text("Y: ")
 	centered_group.add_child(cen_y_lbl)
-	cen_y_ctrl = CheckBox.new()
+	var cen_y_ctrl = CheckBox.new()
+	cen_y_ctrl.name = "cen_y_ctrl"
 	cen_y_ctrl.pressed = true
 	cen_y_ctrl.hint_tooltip = tr("CEN_Y_CTRL_HINT_TOOLTIP")
 	centered_group.add_child(cen_y_ctrl)
@@ -81,7 +78,8 @@ func _ready():
 	var cen_z_lbl = Label.new()
 	cen_z_lbl.set_text("Z: ")
 	centered_group.add_child(cen_z_lbl)
-	cen_z_ctrl = CheckBox.new()
+	var cen_z_ctrl = CheckBox.new()
+	cen_z_ctrl.name = "cen_z_ctrl"
 	cen_z_ctrl.pressed = true
 	cen_z_ctrl.hint_tooltip = tr("CEN_Z_CTRL_HINT_TOOLTIP")
 	centered_group.add_child(cen_z_ctrl)
@@ -93,7 +91,8 @@ func _ready():
 	var combine_lbl = Label.new()
 	combine_lbl.set_text("Combine: ")
 	combine_group.add_child(combine_lbl)
-	combine_ctrl = CheckBox.new()
+	var combine_ctrl = CheckBox.new()
+	combine_ctrl.name = "combine_ctrl"
 	combine_ctrl.pressed = true
 	combine_ctrl.hint_tooltip = tr("COMBINE_CTRL_HINT_TOOLTIP")
 	combine_group.add_child(combine_ctrl)
@@ -105,7 +104,8 @@ func _ready():
 	var clean_lbl = Label.new()
 	clean_lbl.set_text("Clean: ")
 	clean_group.add_child(clean_lbl)
-	clean_ctrl = CheckBox.new()
+	var clean_ctrl = CheckBox.new()
+	clean_ctrl.name = "clean_ctrl"
 	clean_ctrl.pressed = true
 	clean_ctrl.hint_tooltip = tr("CLEAN_CTRL_HINT_TOOLTIP")
 	clean_group.add_child(clean_ctrl)
@@ -124,6 +124,10 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var length_ctrl = find_node("length_ctrl", true, false)
+	var width_ctrl = find_node("width_ctrl", true, false)
+	var height_ctrl = find_node("height_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not length_ctrl.is_valid:
 		return false
@@ -138,7 +142,16 @@ func is_valid():
 """
 Fills out the template and returns it.
 """
-func get_completed_template():	
+func get_completed_template():
+	var length_ctrl = find_node("length_ctrl", true, false)
+	var width_ctrl = find_node("width_ctrl", true, false)
+	var height_ctrl = find_node("height_ctrl", true, false)
+	var cen_x_ctrl = find_node("cen_x_ctrl", true, false)
+	var cen_y_ctrl = find_node("cen_y_ctrl", true, false)
+	var cen_z_ctrl = find_node("cen_z_ctrl", true, false)
+	var combine_ctrl = find_node("combine_ctrl", true, false)
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+
 	var complete = template.format({
 		"length": length_ctrl.get_text(),
 		"width": width_ctrl.get_text(),
@@ -165,6 +178,15 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var length_ctrl = find_node("length_ctrl", true, false)
+	var width_ctrl = find_node("width_ctrl", true, false)
+	var height_ctrl = find_node("height_ctrl", true, false)
+	var cen_x_ctrl = find_node("cen_x_ctrl", true, false)
+	var cen_y_ctrl = find_node("cen_y_ctrl", true, false)
+	var cen_z_ctrl = find_node("cen_z_ctrl", true, false)
+	var combine_ctrl = find_node("combine_ctrl", true, false)
+	var clean_ctrl = find_node("clean_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

@@ -8,32 +8,34 @@ var template = ".center({x_coord},{y_coord})"
 
 const dims_edit_rgx = "(?<=.center\\()(.*?)(?=\\))"
 
-var x_coord_ctrl = null
-var y_coord_ctrl = null
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	# Add the X and Y coordinate controls
-	var dims_group = HBoxContainer.new()
+	# Add the X and Y coordinate control groups
+	var x_group = HBoxContainer.new()
+	var y_group = HBoxContainer.new()
 
 	# X coordinate
 	var x_length_lbl = Label.new()
 	x_length_lbl.set_text("X: ")
-	dims_group.add_child(x_length_lbl)
-	x_coord_ctrl = NumberEdit.new()
+	x_group.add_child(x_length_lbl)
+	var x_coord_ctrl = NumberEdit.new()
+	x_coord_ctrl.name = "x_coord_ctrl"
+	x_coord_ctrl.size_flags_horizontal = 3
 	x_coord_ctrl.set_text("1.0")
 	x_coord_ctrl.hint_tooltip = tr("CENTER_X_COORD_CTRL_HINT_TOOLTIP")
-	dims_group.add_child(x_coord_ctrl)
+	x_group.add_child(x_coord_ctrl)
+	add_child(x_group)
 	# Y coordinate
 	var y_length_lbl = Label.new()
 	y_length_lbl.set_text("Y: ")
-	dims_group.add_child(y_length_lbl)
-	y_coord_ctrl = NumberEdit.new()
+	y_group.add_child(y_length_lbl)
+	var y_coord_ctrl = NumberEdit.new()
+	y_coord_ctrl.name = "y_coord_ctrl"
+	y_coord_ctrl.size_flags_horizontal = 3
 	y_coord_ctrl.set_text("1.0")
 	y_coord_ctrl.hint_tooltip = tr("CENTER_Y_COORD_CTRL_HINT_TOOLTIP")
-	dims_group.add_child(y_coord_ctrl)
-
-	add_child(dims_group)
+	y_group.add_child(y_coord_ctrl)
+	add_child(y_group)
 
 
 """
@@ -47,6 +49,9 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var x_coord_ctrl = find_node("x_coord_ctrl", true, false)
+	var y_coord_ctrl = find_node("y_coord_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not x_coord_ctrl.is_valid:
 		return false
@@ -60,6 +65,9 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var x_coord_ctrl = find_node("x_coord_ctrl", true, false)
+	var y_coord_ctrl = find_node("y_coord_ctrl", true, false)
+
 	var complete = template.format({
 		"x_coord": x_coord_ctrl.get_text(),
 		"y_coord": y_coord_ctrl.get_text()
@@ -80,6 +88,9 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var x_coord_ctrl = find_node("x_coord_ctrl", true, false)
+	var y_coord_ctrl = find_node("y_coord_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

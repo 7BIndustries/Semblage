@@ -6,10 +6,6 @@ signal error
 
 var prev_template = null
 
-var point_list_ctrl = null
-var point_lr_ctrl = null
-var point_tb_ctrl = null
-
 var template = ".pushPoints([{point_list}])"
 
 const point_list_edit_rgx = "(?<=.pushPoints\\(\\[)(.*?)(?=\\]\\))"
@@ -20,7 +16,8 @@ func _ready():
 	# The point list control
 	var point_list_lbl = Label.new()
 	point_list_lbl.set_text("Point List")
-	point_list_ctrl = ItemList.new()
+	var point_list_ctrl = ItemList.new()
+	point_list_ctrl.name = "point_list_ctrl"
 	point_list_ctrl.auto_height = true
 	point_list_ctrl.connect("item_activated", self, "_populate_point_controls_from_list")
 	add_child(point_list_lbl)
@@ -34,7 +31,9 @@ func _ready():
 	var point_lr_lbl = Label.new()
 	point_lr_lbl.set_text("Point Left-to-Right: ")
 	point_lr_group.add_child(point_lr_lbl)
-	point_lr_ctrl = NumberEdit.new()
+	var point_lr_ctrl = NumberEdit.new()
+	point_lr_ctrl.name = "point_lr_ctrl"
+	point_lr_ctrl.size_flags_horizontal = 3
 	point_lr_ctrl.CanBeNegative = true
 	point_lr_ctrl.set_text("1.0")
 	point_lr_ctrl.hint_tooltip = tr("PUSH_POINTS_POINT_LR_CTRL_HINT_TOOLTIP")
@@ -46,7 +45,9 @@ func _ready():
 	var point_tb_lbl = Label.new()
 	point_tb_lbl.set_text("Point Top-to-Bottom: ")
 	point_tb_group.add_child(point_tb_lbl)
-	point_tb_ctrl = NumberEdit.new()
+	var point_tb_ctrl = NumberEdit.new()
+	point_tb_ctrl.name = "point_tb_ctrl"
+	point_tb_ctrl.size_flags_horizontal = 3
 	point_tb_ctrl.CanBeNegative = true
 	point_tb_ctrl.set_text("1.0")
 	point_tb_ctrl.hint_tooltip = tr("PUSH_POINTS_POINT_TB_CTRL_HINT_TOOLTIP")
@@ -81,6 +82,9 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var point_lr_ctrl = find_node("point_lr_ctrl", true, false)
+	var point_tb_ctrl = find_node("point_tb_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not point_lr_ctrl.is_valid:
 		return false
@@ -94,6 +98,10 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var point_list_ctrl = find_node("point_list_ctrl", true, false)
+	var point_lr_ctrl = find_node("point_lr_ctrl", true, false)
+	var point_tb_ctrl = find_node("point_tb_ctrl", true, false)
+
 	var complete = ""
 
 	# Collect all of the points from the ItemList
@@ -124,6 +132,10 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var point_list_ctrl = find_node("point_list_ctrl", true, false)
+	var point_lr_ctrl = find_node("point_lr_ctrl", true, false)
+	var point_tb_ctrl = find_node("point_tb_ctrl", true, false)
+
 	prev_template = text_line
 
 	# Clear the previous point list
@@ -148,6 +160,10 @@ func set_values_from_string(text_line):
 Adds the current values of the left-to-right and top-to-bottom fields as points.
 """
 func _add_current_point_to_list():
+	var point_list_ctrl = find_node("point_list_ctrl", true, false)
+	var point_lr_ctrl = find_node("point_lr_ctrl", true, false)
+	var point_tb_ctrl = find_node("point_tb_ctrl", true, false)
+
 	if not is_valid():
 		var res = connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
 		if res != 0:
@@ -164,6 +180,10 @@ func _add_current_point_to_list():
 Allows the user to edit the currently selected point.
 """
 func _edit_current_point():
+	var point_list_ctrl = find_node("point_list_ctrl", true, false)
+	var point_lr_ctrl = find_node("point_lr_ctrl", true, false)
+	var point_tb_ctrl = find_node("point_tb_ctrl", true, false)
+
 	if not is_valid():
 		var res = connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
 		if res != 0:
@@ -186,6 +206,8 @@ func _edit_current_point():
 Allows the user to delete the currently selected point.
 """
 func _delete_current_point():
+	var point_list_ctrl = find_node("point_list_ctrl", true, false)
+
 	# Item to delete
 	var selected_id = point_list_ctrl.get_selected_items()[0]
 	point_list_ctrl.remove_item(selected_id)
@@ -195,6 +217,10 @@ func _delete_current_point():
 Fills in the point controls from an item that is selected in the list
 """
 func _populate_point_controls_from_list(id):
+	var point_list_ctrl = find_node("point_list_ctrl", true, false)
+	var point_lr_ctrl = find_node("point_lr_ctrl", true, false)
+	var point_tb_ctrl = find_node("point_tb_ctrl", true, false)
+
 	# Extract the points from the selected item
 	var points = point_list_ctrl.get_item_text(id).split(",")
 

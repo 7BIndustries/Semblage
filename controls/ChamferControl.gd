@@ -4,9 +4,6 @@ class_name ChamferControl
 
 var prev_template = null
 
-var length_ctrl = null
-var asym_length_ctrl = null
-
 var template = ".chamfer({chamfer_length},length2={asym_length})"
 
 const len_edit_rgx = "(?<=.chamfer\\()(.*?)(?=,length2)"
@@ -21,7 +18,9 @@ func _ready():
 	var length_lbl = Label.new()
 	length_lbl.set_text("Length: ")
 	length_group.add_child(length_lbl)
-	length_ctrl = NumberEdit.new()
+	var length_ctrl = NumberEdit.new()
+	length_ctrl.name = "length_ctrl"
+	length_ctrl.size_flags_horizontal = 3
 	length_ctrl.CanBeZero = false
 	length_ctrl.set_text("0.1")
 	length_ctrl.hint_tooltip = tr("CHAMFER_LENGTH_CTRL_HINT_TOOLTIP")
@@ -30,9 +29,11 @@ func _ready():
 
 	# Add the assymmetric length control
 	var asym_length_lbl = Label.new()
-	asym_length_lbl.set_text("Asym Length (0 = ignore): ")
+	asym_length_lbl.set_text("Asym Length: ")
 	asym_length_group.add_child(asym_length_lbl)
-	asym_length_ctrl = NumberEdit.new()
+	var asym_length_ctrl = NumberEdit.new()
+	asym_length_ctrl.name = "asym_length_ctrl"
+	asym_length_ctrl.size_flags_horizontal = 3
 	asym_length_ctrl.set_text("0")
 	asym_length_ctrl.hint_tooltip = tr("CHAMFER_ASYM_LENGTH_CTRL_HINT_TOOLTIP")
 	asym_length_group.add_child(asym_length_ctrl)
@@ -50,6 +51,9 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var length_ctrl = find_node("length_ctrl", true, false)
+	var asym_length_ctrl = find_node("asym_length_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not length_ctrl.is_valid:
 		return false
@@ -63,6 +67,9 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var length_ctrl = find_node("length_ctrl", true, false)
+	var asym_length_ctrl = find_node("asym_length_ctrl", true, false)
+
 	var complete = ""
 
 	# Account for the fact that the assymmetrical distance can be None
@@ -90,6 +97,9 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var length_ctrl = find_node("length_ctrl", true, false)
+	var asym_length_ctrl = find_node("asym_length_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

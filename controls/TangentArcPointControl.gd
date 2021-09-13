@@ -6,14 +6,9 @@ var prev_template = null
 
 var template = ".tangentArcPoint(endpoint=({end_point_x},{end_point_y}),forConstruction={for_construction},relative={relative})"
 
-const end_point_edit_rgx = "(?<=endpoint\\=)(.*?)(?=,forConstruction)"
+const end_point_edit_rgx = "(?<=endpoint\\=\\()(.*?)(?=\\),forConstruction)"
 const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\,relative)"
 const relative_edit_rgx = "(?<=relative\\=)(.*?)(?=\\))"
-
-var end_point_x_ctrl = null
-var end_point_y_ctrl = null
-var for_construction_ctrl = null
-var relative_ctrl = null
 
 
 # Called when the node enters the scene tree for the first time.
@@ -28,7 +23,9 @@ func _ready():
 	var x_length_lbl = Label.new()
 	x_length_lbl.set_text("X: ")
 	end_point_group.add_child(x_length_lbl)
-	end_point_x_ctrl = NumberEdit.new()
+	var end_point_x_ctrl = NumberEdit.new()
+	end_point_x_ctrl.name = "end_point_x_ctrl"
+	end_point_x_ctrl.size_flags_horizontal = 3
 	end_point_x_ctrl.set_text("0.0")
 	end_point_x_ctrl.hint_tooltip = tr("TANGENT_ARC_END_POINT_X_CTRL_HINT_TOOLTIP")
 	end_point_group.add_child(end_point_x_ctrl)
@@ -36,7 +33,9 @@ func _ready():
 	var y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	end_point_group.add_child(y_lbl)
-	end_point_y_ctrl = NumberEdit.new()
+	var end_point_y_ctrl = NumberEdit.new()
+	end_point_y_ctrl.name = "end_point_y_ctrl"
+	end_point_y_ctrl.size_flags_horizontal = 3
 	end_point_y_ctrl.set_text("0.0")
 	end_point_y_ctrl.hint_tooltip = tr("TANGENT_ARC_END_POINT_Y_CTRL_HINT_TOOLTIP")
 	end_point_group.add_child(end_point_y_ctrl)
@@ -48,7 +47,8 @@ func _ready():
 	var const_lbl = Label.new()
 	const_lbl.set_text("For Construction: ")
 	const_group.add_child(const_lbl)
-	for_construction_ctrl = CheckBox.new()
+	var for_construction_ctrl = CheckBox.new()
+	for_construction_ctrl.name = "for_construction_ctrl"
 	for_construction_ctrl.pressed = false
 	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
@@ -59,7 +59,8 @@ func _ready():
 	var relative_lbl = Label.new()
 	relative_lbl.set_text("Relative: ")
 	relative_group.add_child(relative_lbl)
-	relative_ctrl = CheckBox.new()
+	var relative_ctrl = CheckBox.new()
+	relative_ctrl.name = "relative_ctrl"
 	relative_ctrl.pressed = true
 	relative_ctrl.hint_tooltip = tr("TANGENT_ARC_RELATIVE_CTRL_HINT_TOOLTIP")
 	relative_group.add_child(relative_ctrl)
@@ -77,6 +78,9 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var end_point_x_ctrl = find_node("end_point_x_ctrl", true, false)
+	var end_point_y_ctrl = find_node("end_point_y_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not end_point_x_ctrl.is_valid:
 		return false
@@ -90,6 +94,11 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var end_point_x_ctrl = find_node("end_point_x_ctrl", true, false)
+	var end_point_y_ctrl = find_node("end_point_y_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+	var relative_ctrl = find_node("relative_ctrl", true, false)
+
 	var complete = ""
 
 	complete += template.format({
@@ -114,6 +123,11 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var end_point_x_ctrl = find_node("end_point_x_ctrl", true, false)
+	var end_point_y_ctrl = find_node("end_point_y_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+	var relative_ctrl = find_node("relative_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

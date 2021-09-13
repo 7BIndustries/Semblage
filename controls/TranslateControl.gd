@@ -8,10 +8,6 @@ var template = ".translate(vec={vec})"
 
 const vec_edit_rgx = "(?<=vec\\=)(.*?)(?=\\))"
 
-var vec_x_ctrl = null
-var vec_y_ctrl = null
-var vec_z_ctrl = null
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -26,7 +22,9 @@ func _ready():
 	var x_lbl = Label.new()
 	x_lbl.set_text("X: ")
 	vec_group.add_child(x_lbl)
-	vec_x_ctrl = NumberEdit.new()
+	var vec_x_ctrl = NumberEdit.new()
+	vec_x_ctrl.name = "vec_x_ctrl"
+	vec_x_ctrl.size_flags_horizontal = 3
 	vec_x_ctrl.CanBeNegative = true
 	vec_x_ctrl.set_text("0")
 	vec_x_ctrl.hint_tooltip = tr("TRANSLATE_VEC_X_CTRL_HINT_TOOLTIP")
@@ -35,7 +33,9 @@ func _ready():
 	var y_lbl = Label.new()
 	y_lbl.set_text("Y: ")
 	vec_group.add_child(y_lbl)
-	vec_y_ctrl = NumberEdit.new()
+	var vec_y_ctrl = NumberEdit.new()
+	vec_y_ctrl.name = "vec_y_ctrl"
+	vec_y_ctrl.size_flags_horizontal = 3
 	vec_y_ctrl.CanBeNegative = true
 	vec_y_ctrl.set_text("0")
 	vec_y_ctrl.hint_tooltip = tr("TRANSLATE_VEC_Y_CTRL_HINT_TOOLTIP")
@@ -44,7 +44,9 @@ func _ready():
 	var z_lbl = Label.new()
 	z_lbl.set_text("Z: ")
 	vec_group.add_child(z_lbl)
-	vec_z_ctrl = NumberEdit.new()
+	var vec_z_ctrl = NumberEdit.new()
+	vec_z_ctrl.name = "vec_z_ctrl"
+	vec_z_ctrl.size_flags_horizontal = 3
 	vec_z_ctrl.CanBeNegative = true
 	vec_z_ctrl.set_text("10")
 	vec_z_ctrl.hint_tooltip = tr("TRANSLATE_VEC_Z_CTRL_HINT_TOOLTIP")
@@ -65,6 +67,10 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var vec_x_ctrl = find_node("vec_x_ctrl", true, false)
+	var vec_y_ctrl = find_node("vec_y_ctrl", true, false)
+	var vec_z_ctrl = find_node("vec_z_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not vec_x_ctrl.is_valid:
 		return false
@@ -80,6 +86,10 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var vec_x_ctrl = find_node("vec_x_ctrl", true, false)
+	var vec_y_ctrl = find_node("vec_y_ctrl", true, false)
+	var vec_z_ctrl = find_node("vec_z_ctrl", true, false)
+
 	var complete = ""
 
 	# Build the translation vector
@@ -106,6 +116,10 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var vec_x_ctrl = find_node("vec_x_ctrl", true, false)
+	var vec_y_ctrl = find_node("vec_y_ctrl", true, false)
+	var vec_z_ctrl = find_node("vec_z_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

@@ -10,11 +10,6 @@ const dims_edit_rgx = "(?<=.rect\\()(.*?)(?=,centered)"
 const centered_edit_rgx = "(?<=centered\\=)(.*?)(?=\\,)"
 const const_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\))"
 
-var x_length_ctrl = null
-var y_length_ctrl = null
-var centered_ctrl = null
-var for_construction_ctrl = null
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -26,8 +21,9 @@ func _ready():
 	var x_length_lbl = Label.new()
 	x_length_lbl.set_text("Width: ")
 	x_length_group.add_child(x_length_lbl)
-	x_length_ctrl = NumberEdit.new()
-	x_length_ctrl.set_expand_to_text_length(true)
+	var x_length_ctrl = NumberEdit.new()
+	x_length_ctrl.name = "x_length_ctrl"
+	x_length_ctrl.size_flags_horizontal = 3
 	x_length_ctrl.set_text("1.0")
 	x_length_ctrl.hint_tooltip = tr("RECT_X_LENGTH_CTRL_HINT_TOOLTIP")
 	x_length_group.add_child(x_length_ctrl)
@@ -35,8 +31,9 @@ func _ready():
 	var y_length_lbl = Label.new()
 	y_length_lbl.set_text("Height: ")
 	y_length_group.add_child(y_length_lbl)
-	y_length_ctrl = NumberEdit.new()
-	y_length_ctrl.set_expand_to_text_length(true)
+	var y_length_ctrl = NumberEdit.new()
+	y_length_ctrl.name = "y_length_ctrl"
+	y_length_ctrl.size_flags_horizontal = 3
 	y_length_ctrl.set_text("1.0")
 	y_length_ctrl.hint_tooltip = tr("RECT_Y_LENGTH_CTRL_HINT_TOOLTIP")
 	y_length_group.add_child(y_length_ctrl)
@@ -49,7 +46,8 @@ func _ready():
 	var centered_lbl = Label.new()
 	centered_lbl.set_text("Centered: ")
 	centered_group.add_child(centered_lbl)
-	centered_ctrl = CheckBox.new()
+	var centered_ctrl = CheckBox.new()
+	centered_ctrl.name = "centered_ctrl"
 	centered_ctrl.pressed = true
 	centered_ctrl.hint_tooltip = tr("RECT_CENTERED_CTRL_HINT_TOOLTIP")
 	centered_group.add_child(centered_ctrl)
@@ -61,7 +59,8 @@ func _ready():
 	var const_lbl = Label.new()
 	const_lbl.set_text("For Construction: ")
 	const_group.add_child(const_lbl)
-	for_construction_ctrl = CheckBox.new()
+	var for_construction_ctrl = CheckBox.new()
+	for_construction_ctrl.name = "for_construction_ctrl"
 	for_construction_ctrl.pressed = false
 	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
@@ -80,6 +79,9 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var x_length_ctrl = find_node("x_length_ctrl", true, false)
+	var y_length_ctrl = find_node("y_length_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not x_length_ctrl.is_valid:
 		return false
@@ -93,6 +95,11 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var x_length_ctrl = find_node("x_length_ctrl", true, false)
+	var y_length_ctrl = find_node("y_length_ctrl", true, false)
+	var centered_ctrl = find_node("centered_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+
 	var complete = ""
 
 	complete += template.format({
@@ -117,6 +124,11 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var x_length_ctrl = find_node("x_length_ctrl", true, false)
+	var y_length_ctrl = find_node("y_length_ctrl", true, false)
+	var centered_ctrl = find_node("centered_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

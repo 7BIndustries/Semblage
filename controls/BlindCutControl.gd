@@ -22,6 +22,7 @@ func _ready():
 	distance_lbl.set_text("Distance to Cut: ")
 	distance_group.add_child(distance_lbl)
 	var distance_ctrl = NumberEdit.new()
+	distance_ctrl.size_flags_horizontal = 3
 	distance_ctrl.name = "distance_ctrl"
 	distance_ctrl.CanBeNegative = true
 	distance_ctrl.set_text("1.0")
@@ -49,6 +50,7 @@ func _ready():
 	taper_lbl.set_text("Taper: ")
 	taper_group.add_child(taper_lbl)
 	var taper_ctrl = NumberEdit.new()
+	taper_ctrl.size_flags_horizontal = 3
 	taper_ctrl.name = "taper_ctrl"
 	taper_ctrl.CanBeNegative = true
 	taper_ctrl.set_text("0.0")

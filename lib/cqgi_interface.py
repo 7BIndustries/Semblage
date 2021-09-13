@@ -98,7 +98,6 @@ class cqgi_interface(Node):
 
 				# See if we have a workplane
 				if type(prev_wp.val()) is Vector:
-					print(prev_wp.val())
 					# Work-around to find out if this is a base workplane
 					try:
 						 prev_wp.end().end()
@@ -107,8 +106,6 @@ class cqgi_interface(Node):
 
 					# If it is not a base workplane we can set it up to be displayed
 					if not is_base_wp:
-						print("Working with an inline workplane.")
-
 						# Get the origin, normal and center from the workplane
 						origin_vec = Vector3(prev_wp.val().x, prev_wp.val().y, prev_wp.val().z)
 						normal_vec = Vector3(prev_wp.plane.zDir.x, prev_wp.plane.zDir.y, prev_wp.plane.zDir.z)

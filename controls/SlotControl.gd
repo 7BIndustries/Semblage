@@ -10,9 +10,6 @@ const length_edit_rgx = "(?<=.slot2D\\(length\\=)(.*?)(?=,diameter)"
 const diameter_edit_rgx = "(?<=\\,diameter\\=)(.*?)(?=,angle)"
 const angle_edit_rgx = "(?<=\\,angle\\=)(.*?)(?=\\))"
 
-var length_ctrl = null
-var diameter_ctrl = null
-var angle_ctrl = null
 
 # Called when the node enters the scene tree for the first time
 func _ready():
@@ -21,7 +18,9 @@ func _ready():
 	var length_lbl = Label.new()
 	length_lbl.set_text("Length: ")
 	length_group.add_child(length_lbl)
-	length_ctrl = NumberEdit.new()
+	var length_ctrl = NumberEdit.new()
+	length_ctrl.name = "length_ctrl"
+	length_ctrl.size_flags_horizontal = 3
 	length_ctrl.set_text("5.0")
 	length_ctrl.hint_tooltip = tr("SLOT_LENGTH_CTRL_HINT_TOOLTIP")
 	length_group.add_child(length_ctrl)
@@ -32,7 +31,9 @@ func _ready():
 	var diameter_lbl = Label.new()
 	diameter_lbl.set_text("Diameter: ")
 	diameter_group.add_child(diameter_lbl)
-	diameter_ctrl = NumberEdit.new()
+	var diameter_ctrl = NumberEdit.new()
+	diameter_ctrl.name = "diameter_ctrl"
+	diameter_ctrl.size_flags_horizontal = 3
 	diameter_ctrl.set_text("0.5")
 	diameter_ctrl.hint_tooltip = tr("SLOT_DIAMETER_CTRL_HINT_TOOLTIP")
 	diameter_group.add_child(diameter_ctrl)
@@ -43,7 +44,9 @@ func _ready():
 	var angle_lbl = Label.new()
 	angle_lbl.set_text("Angle: ")
 	angle_group.add_child(angle_lbl)
-	angle_ctrl = NumberEdit.new()
+	var angle_ctrl = NumberEdit.new()
+	angle_ctrl.name = "angle_ctrl"
+	angle_ctrl.size_flags_horizontal = 3
 	angle_ctrl.MaxValue = 360.0
 	angle_ctrl.set_text("0")
 	angle_ctrl.hint_tooltip = tr("SLOT_ANGLE_CTRL_HINT_TOOLTIP")
@@ -62,6 +65,10 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var length_ctrl = find_node("length_ctrl", true, false)
+	var diameter_ctrl = find_node("diameter_ctrl", true, false)
+	var angle_ctrl = find_node("angle_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not length_ctrl.is_valid:
 		return false
@@ -77,6 +84,10 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var length_ctrl = find_node("length_ctrl", true, false)
+	var diameter_ctrl = find_node("diameter_ctrl", true, false)
+	var angle_ctrl = find_node("angle_ctrl", true, false)
+
 	var complete = ""
 
 	# Fill out the main template
@@ -101,6 +112,10 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var length_ctrl = find_node("length_ctrl", true, false)
+	var diameter_ctrl = find_node("diameter_ctrl", true, false)
+	var angle_ctrl = find_node("angle_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

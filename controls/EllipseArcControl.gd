@@ -17,16 +17,6 @@ const make_wire_edit_rgx = "(?<=makeWire\\=)(.*?)(?=\\))"
 
 const sense_option_list = ["Clockwise", "Counter-Clockwise"]
 
-var x_radius_ctrl = null
-var y_radius_ctrl = null
-var angle_1_ctrl = null
-var angle_2_ctrl = null
-var rotation_angle_ctrl = null
-var sense_ctrl = null
-var for_construction_ctrl = null
-var start_at_current_ctrl = null
-var make_wire_ctrl = null
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -35,7 +25,9 @@ func _ready():
 	var x_radius_lbl = Label.new()
 	x_radius_lbl.set_text("X Radius: ")
 	x_radius_group.add_child(x_radius_lbl)
-	x_radius_ctrl = NumberEdit.new()
+	var x_radius_ctrl = NumberEdit.new()
+	x_radius_ctrl.name = "x_radius_ctrl"
+	x_radius_ctrl.size_flags_horizontal = 3
 	x_radius_ctrl.set_text("5.0")
 	x_radius_ctrl.hint_tooltip = tr("ARC_X_RADIUS_CTRL_HINT_TOOLTIP")
 	x_radius_group.add_child(x_radius_ctrl)
@@ -46,7 +38,9 @@ func _ready():
 	var y_radius_lbl = Label.new()
 	y_radius_lbl.set_text("Y Radius: ")
 	y_radius_group.add_child(y_radius_lbl)
-	y_radius_ctrl = NumberEdit.new()
+	var y_radius_ctrl = NumberEdit.new()
+	y_radius_ctrl.name = "y_radius_ctrl"
+	y_radius_ctrl.size_flags_horizontal = 3
 	y_radius_ctrl.set_text("10.0")
 	y_radius_ctrl.hint_tooltip = tr("ARC_Y_RADIUS_CTRL_HINT_TOOLTIP")
 	y_radius_group.add_child(y_radius_ctrl)
@@ -57,7 +51,9 @@ func _ready():
 	var angle_1_lbl = Label.new()
 	angle_1_lbl.set_text("Angle 1: ")
 	angle_1_group.add_child(angle_1_lbl)
-	angle_1_ctrl = NumberEdit.new()
+	var angle_1_ctrl = NumberEdit.new()
+	angle_1_ctrl.name = "angle_1_ctrl"
+	angle_1_ctrl.size_flags_horizontal = 3
 	angle_1_ctrl.MaxValue = 360.0
 	angle_1_ctrl.set_text("360.0")
 	angle_1_ctrl.hint_tooltip = tr("ARC_ANGLE_1_CTRL_HINT_TOOLTIP")
@@ -69,7 +65,9 @@ func _ready():
 	var angle_2_lbl = Label.new()
 	angle_2_lbl.set_text("Angle 2: ")
 	angle_2_group.add_child(angle_2_lbl)
-	angle_2_ctrl = NumberEdit.new()
+	var angle_2_ctrl = NumberEdit.new()
+	angle_2_ctrl.name = "angle_2_ctrl"
+	angle_2_ctrl.size_flags_horizontal = 3
 	angle_2_ctrl.MaxValue = 360.0
 	angle_2_ctrl.set_text("360.0")
 	angle_2_ctrl.hint_tooltip = tr("ARC_ANGLE_2_CTRL_HINT_TOOLTIP")
@@ -81,7 +79,9 @@ func _ready():
 	var rotation_angle_lbl = Label.new()
 	rotation_angle_lbl.set_text("Rotation Angle: ")
 	rotation_angle_group.add_child(rotation_angle_lbl)
-	rotation_angle_ctrl = NumberEdit.new()
+	var rotation_angle_ctrl = NumberEdit.new()
+	rotation_angle_ctrl.name = "rotation_angle_ctrl"
+	rotation_angle_ctrl.size_flags_horizontal = 3
 	rotation_angle_ctrl.MaxValue = 360.0
 	rotation_angle_ctrl.set_text("360.0")
 	rotation_angle_ctrl.hint_tooltip = tr("ARC_ROTATION_ANGLE_CTRL_HINT_TOOLTIP")
@@ -93,7 +93,8 @@ func _ready():
 	var sense_lbl = Label.new()
 	sense_lbl.set_text("Sense: ")
 	sense_group.add_child(sense_lbl)
-	sense_ctrl = OptionButton.new()
+	var sense_ctrl = OptionButton.new()
+	sense_ctrl.name = "sense_ctrl"
 	Common.load_option_button(sense_ctrl, sense_option_list)
 	sense_ctrl.hint_tooltip = tr("ARC_SENSE_CTRL_HINT_TOOLTIP")
 	sense_group.add_child(sense_ctrl)
@@ -104,7 +105,8 @@ func _ready():
 	var const_lbl = Label.new()
 	const_lbl.set_text("For Construction: ")
 	const_group.add_child(const_lbl)
-	for_construction_ctrl = CheckBox.new()
+	var for_construction_ctrl = CheckBox.new()
+	for_construction_ctrl.name = "for_construction_ctrl"
 	for_construction_ctrl.pressed = false
 	for_construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	const_group.add_child(for_construction_ctrl)
@@ -115,7 +117,8 @@ func _ready():
 	var start_at_current_lbl = Label.new()
 	start_at_current_lbl.set_text("Start at Current: ")
 	start_at_current_group.add_child(start_at_current_lbl)
-	start_at_current_ctrl = CheckBox.new()
+	var start_at_current_ctrl = CheckBox.new()
+	start_at_current_ctrl.name = "start_at_current_ctrl"
 	start_at_current_ctrl.pressed = false
 	start_at_current_ctrl.hint_tooltip = tr("ARC_START_AT_CURRENT_CTRL_HINT_TOOLTIP")
 	start_at_current_group.add_child(start_at_current_ctrl)
@@ -126,7 +129,8 @@ func _ready():
 	var make_wire_lbl = Label.new()
 	make_wire_lbl.set_text("Make Wire: ")
 	make_wire_group.add_child(make_wire_lbl)
-	make_wire_ctrl = CheckBox.new()
+	var make_wire_ctrl = CheckBox.new()
+	make_wire_ctrl.name = "make_wire_ctrl"
 	make_wire_ctrl.pressed = false
 	make_wire_ctrl.hint_tooltip = tr("ARC_MAKE_WIRE_CTRL_HINT_TOOLTIP")
 	make_wire_group.add_child(make_wire_ctrl)
@@ -144,6 +148,12 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var x_radius_ctrl = find_node("x_radius_ctrl", true, false)
+	var y_radius_ctrl = find_node("y_radius_ctrl", true, false)
+	var angle_1_ctrl = find_node("angle_1_ctrl", true, false)
+	var angle_2_ctrl = find_node("angle_2_ctrl", true, false)
+	var rotation_angle_ctrl = find_node("rotation_angle_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not x_radius_ctrl.is_valid:
 		return false
@@ -163,6 +173,16 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var x_radius_ctrl = find_node("x_radius_ctrl", true, false)
+	var y_radius_ctrl = find_node("y_radius_ctrl", true, false)
+	var angle_1_ctrl = find_node("angle_1_ctrl", true, false)
+	var angle_2_ctrl = find_node("angle_2_ctrl", true, false)
+	var rotation_angle_ctrl = find_node("rotation_angle_ctrl", true, false)
+	var sense_ctrl = find_node("sense_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+	var start_at_current_ctrl = find_node("start_at_current_ctrl", true, false)
+	var make_wire_ctrl = find_node("make_wire_ctrl", true, false)
+
 	var complete = ""
 
 	# Get the sense drop-down's value
@@ -199,6 +219,16 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var x_radius_ctrl = find_node("x_radius_ctrl", true, false)
+	var y_radius_ctrl = find_node("y_radius_ctrl", true, false)
+	var angle_1_ctrl = find_node("angle_1_ctrl", true, false)
+	var angle_2_ctrl = find_node("angle_2_ctrl", true, false)
+	var rotation_angle_ctrl = find_node("rotation_angle_ctrl", true, false)
+	var sense_ctrl = find_node("sense_ctrl", true, false)
+	var for_construction_ctrl = find_node("for_construction_ctrl", true, false)
+	var start_at_current_ctrl = find_node("start_at_current_ctrl", true, false)
+	var make_wire_ctrl = find_node("make_wire_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()

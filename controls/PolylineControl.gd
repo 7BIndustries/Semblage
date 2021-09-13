@@ -8,16 +8,9 @@ var template = ".polyline(listOfXYTuple=[{listOfXYTuple}],forConstruction={forCo
 
 var prev_template = null
 
-const tuple_edit_rgx = "(?<=listOfXYTuple\\=)(.*?)(?=\\,forConstruction)"
+const tuple_edit_rgx = "(?<=listOfXYTuple\\=\\[)(.*?)(?=\\]\\,forConstruction)"
 const construction_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\,includeCurrent)"
 const current_edit_rgx = "(?<=includeCurrent\\=)(.*?)(?=\"\\))"
-
-var tuple_x_ctrl = null
-var tuple_y_ctrl = null
-var tuple_ctrl = null
-var tuple_ctrl_root = null
-var construction_ctrl = null
-var current_ctrl = null
 
 
 # Called when the node enters the scene tree for the first time.
@@ -32,7 +25,9 @@ func _ready():
 	var x_length_lbl = Label.new()
 	x_length_lbl.set_text("X: ")
 	pos_group.add_child(x_length_lbl)
-	tuple_x_ctrl = NumberEdit.new()
+	var tuple_x_ctrl = NumberEdit.new()
+	tuple_x_ctrl.name = "tuple_x_ctrl"
+	tuple_x_ctrl.size_flags_horizontal = 3
 	tuple_x_ctrl.set_text("10.0")
 	tuple_x_ctrl.hint_tooltip = tr("POLYLINE_TUPLE_X_CTRL_HINT_TOOLTIP")
 	pos_group.add_child(tuple_x_ctrl)
@@ -40,7 +35,9 @@ func _ready():
 	var y_length_lbl = Label.new()
 	y_length_lbl.set_text("Y: ")
 	pos_group.add_child(y_length_lbl)
-	tuple_y_ctrl = NumberEdit.new()
+	var tuple_y_ctrl = NumberEdit.new()
+	tuple_y_ctrl.name = "tuple_y_ctrl"
+	tuple_y_ctrl.size_flags_horizontal = 3
 	tuple_y_ctrl.set_text("10.0")
 	tuple_y_ctrl.hint_tooltip = tr("POLYLINE_TUPLE_Y_CTRL_HINT_TOOLTIP")
 	pos_group.add_child(tuple_y_ctrl)
@@ -68,11 +65,12 @@ func _ready():
 	add_child(points_lbl)
 
 	# The tree to hold the tuples
-	tuple_ctrl = Tree.new()
+	var tuple_ctrl = Tree.new()
+	tuple_ctrl.name = "tuple_ctrl"
 	tuple_ctrl.columns = 2
 	tuple_ctrl.rect_min_size = Vector2(50, 50)
 	tuple_ctrl.hide_root = true
-	tuple_ctrl_root = tuple_ctrl.create_item()
+	var tuple_ctrl_root = tuple_ctrl.create_item()
 	tuple_ctrl_root.set_text(0, "tuples")
 	add_child(tuple_ctrl)
 
@@ -81,7 +79,8 @@ func _ready():
 	var construction_lbl = Label.new()
 	construction_lbl.set_text("For Construction: ")
 	construction_group.add_child(construction_lbl)
-	construction_ctrl = CheckBox.new()
+	var construction_ctrl = CheckBox.new()
+	construction_ctrl.name = "construction_ctrl"
 	construction_ctrl.pressed = false
 	construction_ctrl.hint_tooltip = tr("FOR_CONSTRUCTION_CTRL_HINT_TOOLTIP")
 	construction_group.add_child(construction_ctrl)
@@ -92,7 +91,8 @@ func _ready():
 	var current_lbl = Label.new()
 	current_lbl.set_text("Include Current: ")
 	current_group.add_child(current_lbl)
-	current_ctrl = CheckBox.new()
+	var current_ctrl = CheckBox.new()
+	current_ctrl.name = "current_ctrl"
 	current_ctrl.pressed = false
 	current_ctrl.hint_tooltip = tr("INCLUDE_CTRL_HINT_TOOLTIP")
 	current_group.add_child(current_ctrl)
@@ -110,6 +110,9 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var tuple_x_ctrl = find_node("tuple_x_ctrl", true, false)
+	var tuple_y_ctrl = find_node("tuple_y_ctrl", true, false)
+
 	# Make sure all of the numeric controls have valid values
 	if not tuple_x_ctrl.is_valid:
 		return false
@@ -132,6 +135,11 @@ func _add_tuple():
 
 		return
 
+	var tuple_x_ctrl = find_node("tuple_x_ctrl", true, false)
+	var tuple_y_ctrl = find_node("tuple_y_ctrl", true, false)
+	var tuple_ctrl = find_node("tuple_ctrl", true, false)
+	var tuple_ctrl_root = tuple_ctrl.get_root()
+
 	# Add the tuple X and Y values to different columns
 	var new_tuple_item = tuple_ctrl.create_item(tuple_ctrl_root)
 
@@ -144,6 +152,8 @@ func _add_tuple():
 Allows a tuple tree item to be removed.
 """
 func _delete_tuple():
+	var tuple_ctrl = find_node("tuple_ctrl", true, false)
+
 	# Get the selected item in the tuple list/tree
 	var selected = tuple_ctrl.get_selected()
 
@@ -156,6 +166,12 @@ func _delete_tuple():
 Fills out the template and returns it.
 """
 func get_completed_template():
+	var tuple_x_ctrl = find_node("tuple_x_ctrl", true, false)
+	var tuple_y_ctrl = find_node("tuple_y_ctrl", true, false)
+	var tuple_ctrl = find_node("tuple_ctrl", true, false)
+	var construction_ctrl = find_node("construction_ctrl", true, false)
+	var current_ctrl = find_node("current_ctrl", true, false)
+
 	var complete = ""
 
 	# Collect the tuple pairs
@@ -182,6 +198,11 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
+	var tuple_x_ctrl = find_node("tuple_x_ctrl", true, false)
+	var tuple_y_ctrl = find_node("tuple_y_ctrl", true, false)
+	var construction_ctrl = find_node("construction_ctrl", true, false)
+	var current_ctrl = find_node("current_ctrl", true, false)
+
 	prev_template = text_line
 
 	var rgx = RegEx.new()
@@ -191,8 +212,17 @@ func set_values_from_string(text_line):
 	var res = rgx.search(text_line)
 	if res:
 		# Add the items back to the tuple list
-		var pairs = res.get_string().split(",")
+		var pairs = res.get_string()
+		pairs = pairs.replace('(', '')
+		pairs = pairs.replace(' ', '')
+		pairs = pairs.split("),")
+		print(str(pairs))
 		for pair in pairs:
+			# Make sure we do not have an empty pair at the end of the array
+			if pair == "":
+				continue
+
+			# Get the final pair X and Y values
 			var xy = pair.split(",")
 			_add_tuple_xy(xy[0], xy[1])
 
@@ -215,6 +245,9 @@ func set_values_from_string(text_line):
 Allows the tuple list to be populated via string.
 """
 func _add_tuple_xy(x, y):
+	var tuple_ctrl = find_node("tuple_ctrl", true, false)
+	var tuple_ctrl_root = tuple_ctrl.get_root()
+
 	# Add the tuple X and Y values to different columns
 	var new_tuple_item = tuple_ctrl.create_item(tuple_ctrl_root)
 

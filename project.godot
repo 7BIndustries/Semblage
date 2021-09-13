@@ -174,11 +174,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/Offset2DControl.gd"
 }, {
-"base": "VBoxContainer",
-"class": "OperationsControl",
-"language": "GDScript",
-"path": "res://controls/OperationsControl.gd"
-}, {
 "base": "Camera",
 "class": "OrbitCamera",
 "language": "GDScript",
@@ -393,7 +388,6 @@ _global_script_class_icons={
 "MoveToControl": "",
 "NumberEdit": "",
 "Offset2DControl": "",
-"OperationsControl": "",
 "OrbitCamera": "",
 "PolarArrayControl": "",
 "PolarLineControl": "",

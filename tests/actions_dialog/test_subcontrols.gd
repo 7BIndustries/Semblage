@@ -47,7 +47,7 @@ func test_union_control():
 	action_btn.emit_signal("item_selected", 0)
 
 	# Get a reference to the control that has been loaded
-	var union_control = popup.get_node("VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer").get_children()[0]
+	var union_control = popup.get_node("VBoxContainer/ActionContainer/DynamicContainer").get_children()[0]
 	assert_not_null(union_control, "Make sure we got a valid reference to the union control.")
 
 	# Make sure all subcontrols are set up and ready to go
@@ -141,7 +141,7 @@ func test_cut_control():
 	action_btn.emit_signal("item_selected", 0)
 
 	# Get a reference to the control that has been loaded
-	var cut_control = popup.get_node("VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer").get_children()[0]
+	var cut_control = popup.get_node("VBoxContainer/ActionContainer/DynamicContainer").get_children()[0]
 	assert_not_null(cut_control, "Make sure we got a valid reference to the cut control.")
 
 	# Make sure all subcontrols are set up and ready to go
@@ -235,7 +235,7 @@ func test_intersect_control():
 	action_btn.emit_signal("item_selected", 0)
 
 	# Get a reference to the control that has been loaded
-	var intersect_control = popup.get_node("VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer").get_children()[0]
+	var intersect_control = popup.get_node("VBoxContainer/ActionContainer/DynamicContainer").get_children()[0]
 	assert_not_null(intersect_control, "Make sure we got a valid reference to the intersect control.")
 
 	# Make sure all subcontrols are set up and ready to go
@@ -333,7 +333,7 @@ func test_loft_control():
 	action_btn.emit_signal("item_selected", 0)
 
 	# Get the control ready for use
-	var loft_control = popup.get_node("VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer").get_children()[0]
+	var loft_control = popup.get_node("VBoxContainer/ActionContainer/DynamicContainer").get_children()[0]
 	loft_control._ready()
 
 	# Render the object in the 3D viewport
@@ -401,11 +401,11 @@ func test_sweep_control():
 	action_btn.emit_signal("item_selected", 0)
 
 	# Fake out the 2D operation action tree
-	var action_tree = popup.get_node("VBoxContainer/HBoxContainer/ActionContainer/ActionTree")
+	var action_tree = popup.get_node("VBoxContainer/ActionContainer/ActionTree")
 	action_tree.create_item()
 
 	# Get a reference to the control that has been loaded
-	var sweep_control = popup.get_node("VBoxContainer/HBoxContainer/ActionContainer/DynamicContainer").get_children()[0]
+	var sweep_control = popup.get_node("VBoxContainer/ActionContainer/DynamicContainer").get_children()[0]
 	sweep_control._ready()
 
 	# Get references to the controls on the form
