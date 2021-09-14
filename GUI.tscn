@@ -419,7 +419,6 @@ size_flags_vertical = 3
 valign = 1
 
 [node name="ActionPopupPanel" type="WindowDialog" parent="."]
-visible = true
 margin_right = 96.0
 margin_bottom = 1.0
 size_flags_horizontal = 0
@@ -1159,39 +1158,41 @@ margin_bottom = 14.0
 text = "Name"
 
 [node name="ParamNameTextEdit" type="LineEdit" parent="AddParameterDialog/VBoxContainer"]
-margin_right = 58.0
-margin_bottom = 24.0
+margin_top = 18.0
+margin_right = 278.0
+margin_bottom = 42.0
 text = "parameter_name"
 
 [node name="ParamValueLabel" type="Label" parent="AddParameterDialog/VBoxContainer"]
-margin_top = 47.0
+margin_top = 46.0
 margin_right = 278.0
-margin_bottom = 61.0
+margin_bottom = 60.0
 text = "Value"
 
 [node name="ParamValueTextEdit" type="LineEdit" parent="AddParameterDialog/VBoxContainer"]
-margin_right = 58.0
-margin_bottom = 24.0
+margin_top = 64.0
+margin_right = 278.0
+margin_bottom = 88.0
 text = "parameter_value"
 
 [node name="StatusLabel" type="Label" parent="AddParameterDialog/VBoxContainer"]
-margin_top = 94.0
+margin_top = 92.0
 margin_right = 278.0
-margin_bottom = 129.0
+margin_bottom = 127.0
 rect_min_size = Vector2( 0, 35 )
 autowrap = true
 
 [node name="OKButton" type="Button" parent="AddParameterDialog/VBoxContainer"]
-margin_top = 133.0
+margin_top = 131.0
 margin_right = 278.0
-margin_bottom = 153.0
+margin_bottom = 151.0
 size_flags_horizontal = 3
 text = "OK"
 
 [node name="CancelButton" type="Button" parent="AddParameterDialog/VBoxContainer"]
-margin_top = 157.0
+margin_top = 155.0
 margin_right = 278.0
-margin_bottom = 177.0
+margin_bottom = 175.0
 size_flags_horizontal = 3
 text = "Cancel"
 

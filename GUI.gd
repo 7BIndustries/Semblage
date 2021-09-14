@@ -362,7 +362,12 @@ func _render_component_text(component_text):
 
 	# Method that post-processes the results of the script to pull out renderables
 	var render_tree = cqgipy
-	render_tree = render_tree.get_render_tree(component_text)
+	if cqgipy.has_method('get_render_tree'):
+		render_tree = render_tree.get_render_tree(component_text)
+	else:
+		var error_dlg = $ErrorDialog
+		error_dlg.dialog_text = "The current component has invalid geometry. Please undo the last operation and try a different method."
+		error_dlg.popup_centered()
 
 	# See if we got an error
 	if typeof(render_tree) == 4:
@@ -876,7 +881,12 @@ func _on_ExportDialog_file_selected(path):
 
 	# Export the file to the user data directory temporarily
 	var ret = cqgipy
-	ret = ret.export(export_text, extension, OS.get_user_data_dir())
+	if cqgipy.has_method('export'):
+		ret = ret.export(export_text, extension, OS.get_user_data_dir())
+	else:
+		var error_dlg = $ErrorDialog
+		error_dlg.dialog_text = "The current component has invalid geometry. Please undo the last operation and try a different method."
+		error_dlg.popup_centered()
 
 	# If the export succeeded, move the contents of the export to the final location
 	if ret.begins_with("error~"):
