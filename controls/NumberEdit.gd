@@ -10,13 +10,13 @@ export(int) var MinValue
 export(int) var MaxValue
 
 
-var invalid_lbl = null
 var is_valid = true
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	invalid_lbl = Label.new()
+	var invalid_lbl = Label.new()
+	invalid_lbl.name = "invalid_lbl"
 	invalid_lbl.set_text("!")
 	invalid_lbl.add_color_override("font_color", Color(1,0,0,1))
 	invalid_lbl.hide()
@@ -27,6 +27,8 @@ func _ready():
 Called on mouse and key events on the control.
 """
 func _gui_input(event):
+	var invalid_lbl = get_node("invalid_lbl")
+
 	# Check to see a key was pressed
 	if event is InputEventKey:
 		# Get the key that was pressed
@@ -59,6 +61,12 @@ func _gui_input(event):
 		elif MinValue != MaxValue and (float(txt) < MinValue or float(txt) > MaxValue):
 			invalid_lbl.show()
 			self.hint_tooltip = "Value must be between " + str(MinValue) + " and " + str(MaxValue)
+
+			is_valid = false
+		elif txt.empty():
+			# The user has not entered anything
+			invalid_lbl.show()
+			self.hint_tooltip = "Enter a value"
 
 			is_valid = false
 		else:

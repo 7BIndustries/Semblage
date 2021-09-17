@@ -1,5 +1,7 @@
 extends WindowDialog
 
+signal error
+
 signal add_parameter
 signal edit_parameter
 
@@ -9,66 +11,111 @@ var old_param_name = null
 var old_param_value = null
 
 
+func _ready():
+	_reset_tuple_tree()
+
+	# Make sure that the spacer is visible
+	var status_lbl = get_node("MarginContainer/VBoxContainer/StatusLabel")
+	status_lbl.show()
+
+
+"""
+Resets the tuple tree to its initial condition.
+"""
+func _reset_tuple_tree():
+	# Create the tuple list root item
+	var tuple_list = get_node("MarginContainer/VBoxContainer/TupleList")
+	tuple_list.clear()
+	var root_item = tuple_list.create_item()
+
+	# Add a default entry to the tuple list
+	var new_item = tuple_list.create_item(root_item)
+	new_item.set_text(0, "0.0")
+	new_item.set_text(1, "0.0")
+	new_item.set_text(2, "0.0")
+
+	# Make sure the columns are editable
+	new_item.set_editable(0, true)
+	new_item.set_editable(1, true)
+	new_item.set_editable(2, true)
+
+	# Create an add row at the bottom so the user can easily add another row
+	var add_item = tuple_list.create_item(root_item)
+	add_item.set_text(0, "Add")
+	add_item.set_editable(0, true)
+	add_item.set_editable(1, true)
+	add_item.set_editable(2, true)
+
+
 """
 Called when the user clicks the OK button.
 """
 func _on_OKButton_button_down():
-	var param_name_txt = $VBoxContainer/ParamNameTextEdit
-	var param_value_txt = $VBoxContainer/ParamValueTextEdit
-	var status_txt = $VBoxContainer/StatusLabel
-	
-	# Check to make sure the user changed the default name text
-	if param_name_txt.get_text() == "parameter_name" or param_name_txt.get_text() == "":
-		status_txt.set_text("Please input a parameter name")
-		return
+	var param_name_txt = get_node("MarginContainer/VBoxContainer/ParamNameTextEdit")
+	var param_value_txt = get_node("MarginContainer/VBoxContainer/ParamValueTextEdit")
+	var param_value_num = get_node("MarginContainer/VBoxContainer/NumberEdit")
 
-	# Check to make sure the user changed the default value text
-	if param_value_txt.get_text() == "parameter_value" or param_value_txt.get_text() == "":
-		status_txt.set_text("Please input a parameter value")
+	# Get the radio buttons to determine the data type
+	var string_radio = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/StringCheckBox")
+	var num_radio = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/NumCheckBox")
+	var tuple_radio = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/TupleListCheckBox")
+
+	# Check to make sure the user changed the default name text
+	if param_name_txt.get_text() == "":
+		emit_signal("error", "Please input a parameter name")
 		return
 
 	# Check to see if the user is trying to add a duplicate parameter name
 	for param in params:
 		if not edit_mode and param[0] == param_name_txt.get_text():
-			status_txt.set_text("Parameter name already exists.")
+			emit_signal("error", "Parameter name already exists.")
 			return
 
 	# Check to make sure that the parameter name starts with a character
 	var rgx = RegEx.new()
 	rgx.compile("^[a-zA-Z][a-zA-Z0-9_]*$")
 	if not rgx.search(param_name_txt.get_text()):
-		status_txt.set_text("Name must start with a letter and can contain letters, numbers and underscores.")
+		emit_signal("error", "Name must start with a letter and can contain letters, numbers and underscores.")
 		return
 
-	# Check to see if the parameter includes a formula
-#	if param_value_txt.get_text().find("%") > 0 or\
-#	   param_value_txt.get_text().find("/") > 0 or\
-#	   param_value_txt.get_text().find("*") > 0 or\
-#	   param_value_txt.get_text().find("+") > 0 or\
-#	   param_value_txt.get_text().find("-") > 0:
-		# Check to make sure any variables 
+	# Check to make sure the user changed the default value text
+	if string_radio.pressed and param_value_txt.get_text() == "":
+		emit_signal("error", "Please input a valid parameter value.")
+		return
 
-#	rgx = RegEx.new()
-#	rgx.compile("^.*[\\/\\*\\+\\-\\%]*.*$")
-#	if rgx.search(param_value_txt.get_text()):
-#		print("Uses a formula.")
+	# Check to see if a valid numeric value has been set
+	if num_radio.pressed and not param_value_num.is_valid:
+		emit_signal("error", "Please input a valid parameter value.")
+		return
+
+	# Get the comment, if any, that is to be attached to the parameter
+	var param_comment = get_node("MarginContainer/VBoxContainer/CommentLineEdit").get_text()
+
+	# Determine the data type of the parameter
+	var param_data_type = "string"
+	var param_value = param_value_txt.get_text()
+	if num_radio.pressed:
+		param_data_type = "number"
+		param_value = param_value_num.get_text()
+	elif tuple_radio.pressed:
+		param_data_type = "tuple"
+		param_value = _get_tuple_list()
 
 	# Send the appropriate signal for add vs edit
 	if edit_mode:
 		# Collect the new parameter and send the signal to add it
-		var new_param = [ old_param_name, param_value_txt.get_text() ]
-		emit_signal("edit_parameter", new_param)
+		var new_param = [ old_param_name, param_value ]
+		emit_signal("edit_parameter", new_param, param_data_type, param_comment)
 
 		# Turn edit mode back off
 		edit_mode = false
 	else:
 		# Collect the new parameter and send the signal to add it
-		var new_param = [ param_name_txt.get_text(), param_value_txt.get_text() ]
-		emit_signal("add_parameter", new_param)
+		var new_param = [ param_name_txt.get_text(), param_value ]
+		emit_signal("add_parameter", new_param, param_data_type, param_comment)
 
 	# Reset the status text and editable status
-	status_txt.set_text("")
-	var text_edit = $VBoxContainer/ParamNameTextEdit
+	var text_edit = get_node("MarginContainer/VBoxContainer/ParamNameTextEdit")
 	text_edit.editable = true
 
 	self.hide()
@@ -78,13 +125,38 @@ func _on_OKButton_button_down():
 Called when the user clicks the Cancel button.
 """
 func _on_CancelButton_button_down():
-	var status_lbl = $VBoxContainer/StatusLabel
+	var status_lbl = get_node("MarginContainer/VBoxContainer/StatusLabel")
 	status_lbl.set_text("")
 
-	var text_edit = $VBoxContainer/ParamNameTextEdit
+	var text_edit = get_node("MarginContainer/VBoxContainer/ParamNameTextEdit")
 	text_edit.editable = true
 
 	self.hide()
+
+
+"""
+Walk the tuple table and collect it into the string list.
+"""
+func _get_tuple_list():
+	var tuple_list = get_node("MarginContainer/VBoxContainer/TupleList")
+	var cur_item = tuple_list.get_root().get_children()
+	var list = "["
+
+	# Search the tree and return only the last item
+	while true:
+		if cur_item == null:
+			break
+		else:
+			if cur_item.get_text(0) == "Add":
+				break
+
+			list += "(" + cur_item.get_text(0) + "," + cur_item.get_text(1) + "," + cur_item.get_text(2) + "),"
+
+			cur_item = cur_item.get_next()
+
+	list += "]"
+
+	return list
 
 
 """
@@ -98,12 +170,36 @@ func set_existing_parameters(items):
 Fills in the controls to allow a parameter name and value
 to be edited.
 """
-func activate_edit_mode(param_name, param_value):
+func activate_edit_mode(param_name, param_value, data_type, comment):
 	# Tell the rest of the logic that we are in edit mode
 	edit_mode = true
 
-	var param_name_txt = $VBoxContainer/ParamNameTextEdit
-	var param_value_txt = $VBoxContainer/ParamValueTextEdit
+	var string_radio = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/StringCheckBox")
+	var num_radio = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/NumCheckBox")
+	var tuple_radio = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/TupleListCheckBox")
+
+	var param_name_txt = get_node("MarginContainer/VBoxContainer/ParamNameTextEdit")
+	var param_value_txt = get_node("MarginContainer/VBoxContainer/ParamValueTextEdit")
+	var param_num_txt = get_node("MarginContainer/VBoxContainer/NumberEdit")
+	var tuple_list = get_node("MarginContainer/VBoxContainer/TupleList")
+
+	# Reset the controls to the default
+	param_name_txt.set_text("parameter_name")
+	param_value_txt.set_text("parameter_value")
+	param_num_txt.set_text("0.0")
+	_reset_tuple_tree()
+
+	# Set the selected data type
+	if data_type == "string":
+		string_radio.emit_signal("button_down")
+	elif data_type == "number":
+		num_radio.emit_signal("button_down")
+	elif data_type == "tuple":
+		tuple_radio.emit_signal("button_down")
+
+	# Set the comment field to what it was before
+	var comment_txt = get_node("MarginContainer/VBoxContainer/CommentLineEdit")
+	comment_txt.set_text(comment)
 
 	# Disable the name text box since if the user changes it, we cannot find the value to replace
 	param_name_txt.editable = false
@@ -113,11 +209,183 @@ func activate_edit_mode(param_name, param_value):
 	old_param_value = param_value
 
 	# Clear the status indicator
-	var status_lbl = $VBoxContainer/StatusLabel
+	var status_lbl = get_node("MarginContainer/VBoxContainer/StatusLabel")
 	status_lbl.set_text("")
 
 	# Fill in the values of the controls
 	param_name_txt.set_text(param_name)
-	param_value_txt.set_text(param_value)
+
+	# Set the value in the appropriate control based on the datatype
+	if data_type == "string":
+		param_value_txt.set_text(param_value)
+	elif data_type == "number":
+		param_num_txt.set_text(param_value)
+	elif data_type == "tuple":
+		# Clear the tuple list tree to re-populate it
+		tuple_list.clear()
+		tuple_list.create_item()
+
+		# Populate the tuple list with the items from the parameter declaration
+		_populate_tuple_list(param_value)
+
+		# Create an add row at the bottom so the user can easily add another row
+		var add_item = tuple_list.create_item(tuple_list.get_root())
+		add_item.set_text(0, "Add")
+		add_item.set_editable(0, true)
+		add_item.set_editable(1, true)
+		add_item.set_editable(2, true)
 
 	self.popup_centered()
+
+
+"""
+Parses the string tuple list back into something that can
+be added to the tuple list.
+"""
+func _populate_tuple_list(tuple_list_str):
+	var tuple_list = get_node("MarginContainer/VBoxContainer/TupleList")
+
+	# Break the square brackets from the tuple list
+	var list = tuple_list_str.split("[")[1].split("]")[0]
+
+	# Add all of the vectors in turn
+	var list_parts = list.split("),")
+
+	for list_part in list_parts:
+		if list_part.empty():
+			break
+
+		# Get rid of the leading tuple character
+		list_part = list_part.replace("(", "")
+
+		# Extract the X, Y and Z parts out of the current tuple
+		var xyz = list_part.split(",")
+
+		# Add the current set of X, Y and Z points
+		var item = tuple_list.create_item(tuple_list.get_root())
+		item.set_text(0, xyz[0])
+		item.set_text(1, xyz[1])
+		item.set_text(2, xyz[2])
+
+		# Make sure the columns are editable
+		item.set_editable(0, true)
+		item.set_editable(1, true)
+		item.set_editable(2, true)
+
+
+"""
+Called when the user clicks the String parameter type radio button.
+"""
+func _on_StringCheckBox_button_down():
+	# Hide all other controls
+	_unset_all_input_controls()
+
+	# String parameter type radio button
+	var str_radio_btn = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/StringCheckBox")
+	str_radio_btn.pressed = true
+
+	# Show only the string control
+	var param_value_txt = get_node("MarginContainer/VBoxContainer/ParamValueTextEdit")
+	param_value_txt.show()
+
+	var status_lbl = get_node("MarginContainer/VBoxContainer/StatusLabel")
+	status_lbl.show()
+
+
+"""
+Called when the user clicks the Number parameter type radio button.
+"""
+func _on_NumCheckBox_button_down():
+	# Hide all other controls
+	_unset_all_input_controls()
+
+	# Number parameter type radio button
+	var num_radio_btn = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/NumCheckBox")
+	num_radio_btn.pressed = true
+
+	var param_value_num = get_node("MarginContainer/VBoxContainer/NumberEdit")
+	param_value_num.show()
+
+	var status_lbl = get_node("MarginContainer/VBoxContainer/StatusLabel")
+	status_lbl.show()
+
+
+"""
+Called when the user clicks the Tuple List parameter type radio button.
+"""
+func _on_TupleListCheckBox_button_down():
+	# Hide all other controls
+	_unset_all_input_controls()
+
+	# Tuple list parameter type radio button
+	var tuple_radio_btn = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/TupleListCheckBox")
+	tuple_radio_btn.pressed = true
+
+	# Show the tuple list control
+	var tuple_list = get_node("MarginContainer/VBoxContainer/TupleList")
+	tuple_list.show()
+
+	# Hide the status label spacer control
+	var status_lbl = get_node("MarginContainer/VBoxContainer/StatusLabel")
+	status_lbl.hide()
+
+
+"""
+Allows all parameter input controls to be hidden so that only the needed one can be shown.
+"""
+func _unset_all_input_controls():
+	# String parameter type radio button
+	var str_radio_btn = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/StringCheckBox")
+	str_radio_btn.pressed = false
+
+	# Number parameter type radio button
+	var num_radio_btn = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/NumCheckBox")
+	num_radio_btn.pressed = false
+
+	# Tuple list parameter type radio button
+	var tuple_radio_btn = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/TupleListCheckBox")
+	tuple_radio_btn.pressed = false
+
+	# Hide the string field
+	var param_value_txt = get_node("MarginContainer/VBoxContainer/ParamValueTextEdit")
+	param_value_txt.hide()
+
+	# Hide the number field
+	var param_value_num = get_node("MarginContainer/VBoxContainer/NumberEdit")
+	param_value_num.hide()
+
+	# Hide the tuple list table
+	var tuple_list = get_node("MarginContainer/VBoxContainer/TupleList")
+	tuple_list.hide()
+
+
+"""
+Called when the user clicks in a cell.
+"""
+func _on_TupleList_cell_selected():
+	var tuple_list = get_node("MarginContainer/VBoxContainer/TupleList")
+
+	if tuple_list.get_selected().get_text(0) == "Add":
+		# Set the current row to be all 0.0
+		var cur_row = tuple_list.get_selected()
+		cur_row.set_text(0, "0.0")
+		cur_row.set_text(1, "0.0")
+		cur_row.set_text(2, "0.0")
+		cur_row.deselect(0)
+
+
+"""
+Work-around to add the Add item at the bottom of the table because the
+tree is still locked from the cell selected event.
+"""
+func _on_TupleList_item_edited():
+	var tuple_list = get_node("MarginContainer/VBoxContainer/TupleList")
+
+	# If there is not already an Add item to add a new row, add it
+	if Common.get_last_component(tuple_list).get_text(0) != "Add":
+		# Create the next add item
+		var new_item = tuple_list.create_item()
+		new_item.set_text(0, "Add")
+		new_item.set_editable(0, true)
+		new_item.set_editable(1, true)
+		new_item.set_editable(2, true)

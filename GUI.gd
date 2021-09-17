@@ -161,8 +161,15 @@ func load_semblage_component(text):
 			if param == "":
 				continue
 
+			# Get the parameter assignment parts and the metadata
 			var param_parts = param.split("=")
-			Common.add_columns_to_tree(param_parts, params_tree, params_tree_root)
+			var param_meta = param_parts[1].split("#")
+
+			# Add the parameter with the meta data to the parameter tree
+			var new_param_item = params_tree.create_item(params_tree_root)
+			new_param_item.set_text(0, param_parts[0].replace(" ", ""))
+			new_param_item.set_text(1, param_meta[0].replace(" ", ""))
+			new_param_item.set_metadata(0, JSON.parse(param_meta[1].replace(" ", "").replace("\n", "")).result)
 
 	var component_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
 	var component_tree_root = _get_component_tree_root(component_tree)
@@ -207,7 +214,8 @@ func load_semblage_component(text):
 			Common.add_operation(cur_component, new_operation, component_tree)
 
 	# Selecting the first component in the list is a sane default
-	component_tree_root.get_children().select(0)
+	if component_tree_root.get_children():
+		component_tree_root.get_children().select(0)
 
 	# Step through all the components and set their visibility properly
 	var cur_item = component_tree_root.get_children()
@@ -319,7 +327,7 @@ func _collect_parameters():
 		if cur_param_item == null:
 			break
 		else:
-			param_text += cur_param_item.get_text(0) + "=" + cur_param_item.get_text(1) + "\n"
+			param_text += cur_param_item.get_text(0) + "=" + cur_param_item.get_text(1) + " # " + JSON.print(cur_param_item.get_metadata(0)) + "\n"
 
 			cur_param_item = cur_param_item.get_next()
 
@@ -347,7 +355,7 @@ func _render_component_text(component_text):
 		return
 	else:
 		var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
-		status_lbl.set_text("Rednering component...")
+		status_lbl.set_text("Rendering component...")
 
 	# Clear the 3D viewport
 	self._clear_viewport()
@@ -377,7 +385,7 @@ func _render_component_text(component_text):
 		error_dlg.dialog_text = err
 		error_dlg.popup_centered()
 		var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
-		status_lbl.set_text("Rednering error")
+		status_lbl.set_text("Rendering error")
 
 		return
 
@@ -395,7 +403,7 @@ func _render_component_text(component_text):
 		render_component_tree(comp_tree)
 
 	var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
-	status_lbl.set_text("Rednering component...done")
+	status_lbl.set_text("Rendering component...done")
 
 
 """
@@ -913,10 +921,17 @@ func _on_ConfirmationDialog_confirmed():
 """
 Called when a new parameter is being added via the Parameter dialog.
 """
-func _on_AddParameterDialog_add_parameter(new_param):
+func _on_AddParameterDialog_add_parameter(new_param, data_type, comment):
 	var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
 
 	Common.add_columns_to_tree(new_param, tree, tree.get_root())
+
+	# Assemble the metadata JSON string
+	var meta = {"data_type": data_type, "comment": comment}
+
+	# Get the last entry that was added to the tree
+	var last_item = Common.get_last_component(tree)
+	last_item.set_metadata(0, meta)
 
 	self._execute_and_render()
 
@@ -930,8 +945,11 @@ func _on_ParametersTree_item_activated():
 	var name_text = tree.get_selected().get_text(0)
 	var value_text = tree.get_selected().get_text(1)
 
+	# Get the meta data from the selected item
+	var meta = tree.get_selected().get_metadata(0)
+
 	var param_dlg = $AddParameterDialog
-	param_dlg.activate_edit_mode(name_text, value_text)
+	param_dlg.activate_edit_mode(name_text, value_text, meta["data_type"], meta["comment"])
 
 	# We do not need the popup menu anymore
 	var data_popup = $DataPopupPanel
@@ -941,10 +959,17 @@ func _on_ParametersTree_item_activated():
 """
 Called when the user is completed editing a parameter.
 """
-func _on_AddParameterDialog_edit_parameter(new_param):
+func _on_AddParameterDialog_edit_parameter(new_param, data_type, comment):
 	var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
 
 	self._update_param_tree_items(tree, new_param[0], new_param[1])
+
+	# Assemble the metadata JSON string
+	var meta = {"data_type": data_type, "comment": comment}
+
+	# Attach the metadata to the selected component
+	var selected_item = tree.get_selected()
+	selected_item.set_metadata(0, meta)
 
 	# Render the component tree unless the user is just pre-loading parameters
 	self._execute_and_render()
