@@ -169,7 +169,8 @@ func load_semblage_component(text):
 			var new_param_item = params_tree.create_item(params_tree_root)
 			new_param_item.set_text(0, param_parts[0].replace(" ", ""))
 			new_param_item.set_text(1, param_meta[0].replace(" ", ""))
-			new_param_item.set_metadata(0, JSON.parse(param_meta[1].replace(" ", "").replace("\n", "")).result)
+			var new_json = JSON.parse(param_meta[1].replace(" ", "").replace("\n", ""))
+			new_param_item.set_metadata(0, new_json.result)
 
 	var component_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
 	var component_tree_root = _get_component_tree_root(component_tree)

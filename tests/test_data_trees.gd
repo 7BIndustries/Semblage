@@ -51,7 +51,7 @@ func test_component_edit_button():
 	assert_eq(edit_btn.get_text(), "Edit", "Make sure that the Edit button was selected.")
 
 	# Get a reference to the Operations dialog so that we can make sure it is shown when it should be
-	var op_dlg = gui.get_node("ActionPopupPanel")
+	# var op_dlg = gui.get_node("ActionPopupPanel")
 	var op_dlg_op = gui.get_node("ActionPopupPanel/VBoxContainer/ActionOptionButton")
 
 	# Make sure that the Operations dialog is not visible currently
@@ -278,7 +278,7 @@ func test_parameter_new_button():
 	new_btn.emit_signal("button_down")
 
 	# Make sure that the Parameters dialog is visible and that the right operation is selected
-	assert_true(param_dlg.get_node("VBoxContainer/ParamNameLabel").visible, "Make sure that the Parameters dialog is visible now.")
+	assert_true(param_dlg.get_node("MarginContainer/VBoxContainer/ParamNameLabel").visible, "Make sure that the Parameters dialog is visible now.")
 
 
 """
@@ -301,6 +301,8 @@ func test_parameter_edit_button():
 	Common.add_columns_to_tree(["dim1", "10"], pt, pt.get_root())
 	var dim_item = pt.get_root().get_children()
 	dim_item.select(0)
+	var meta = {"data_type": "number", "comment": "Test dimension"}
+	dim_item.set_metadata(0, meta)
 
 	# Get a reference to the data popup panel
 	var dpp = gui.get_node('DataPopupPanel')
@@ -331,7 +333,7 @@ func test_parameter_edit_button():
 	edit_btn.emit_signal("button_down")
 
 	# Make sure that the Parameters dialog is visible and that the right operation is selected
-	assert_true(param_dlg.get_node("VBoxContainer/ParamNameLabel").visible, "Make sure that the Parameters dialog is visible now.")
+	assert_true(param_dlg.get_node("MarginContainer/VBoxContainer/ParamNameLabel").visible, "Make sure that the Parameters dialog is visible now.")
 
 
 """

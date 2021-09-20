@@ -89,7 +89,8 @@ func _on_OKButton_button_down():
 		return
 
 	# Get the comment, if any, that is to be attached to the parameter
-	var param_comment = get_node("MarginContainer/VBoxContainer/CommentLineEdit").get_text()
+	var param_comment = get_node("MarginContainer/VBoxContainer/CommentLineEdit")
+	param_comment = param_comment.get_text()
 
 	# Determine the data type of the parameter
 	var param_data_type = "string"
