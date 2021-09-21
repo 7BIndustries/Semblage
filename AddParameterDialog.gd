@@ -39,13 +39,6 @@ func _reset_tuple_tree():
 	new_item.set_editable(1, true)
 	new_item.set_editable(2, true)
 
-	# Create an add row at the bottom so the user can easily add another row
-	var add_item = tuple_list.create_item(root_item)
-	add_item.set_text(0, "Add")
-	add_item.set_editable(0, true)
-	add_item.set_editable(1, true)
-	add_item.set_editable(2, true)
-
 
 """
 Called when the user clicks the OK button.
@@ -102,18 +95,24 @@ func _on_OKButton_button_down():
 		param_data_type = "tuple"
 		param_value = _get_tuple_list()
 
+	var new_param = []
+
 	# Send the appropriate signal for add vs edit
 	if edit_mode:
 		# Collect the new parameter and send the signal to add it
-		var new_param = [ old_param_name, param_value ]
+		new_param = [ old_param_name, param_value ]
 		emit_signal("edit_parameter", new_param, param_data_type, param_comment)
 
 		# Turn edit mode back off
 		edit_mode = false
 	else:
 		# Collect the new parameter and send the signal to add it
-		var new_param = [ param_name_txt.get_text(), param_value ]
+		new_param = [ param_name_txt.get_text(), param_value ]
 		emit_signal("add_parameter", new_param, param_data_type, param_comment)
+
+	# Broadcast the message that lets any controls know that a tuple has been created
+	if param_data_type == "tuple":
+		get_tree().call_group("new_tuple", "new_tuple_added", new_param)
 
 	# Reset the status text and editable status
 	var text_edit = get_node("MarginContainer/VBoxContainer/ParamNameTextEdit")
@@ -148,7 +147,7 @@ func _get_tuple_list():
 		if cur_item == null:
 			break
 		else:
-			if cur_item.get_text(0) == "Add":
+			if cur_item.get_text(0) == "":
 				break
 
 			list += "(" + cur_item.get_text(0) + "," + cur_item.get_text(1) + "," + cur_item.get_text(2) + "),"
@@ -228,13 +227,6 @@ func activate_edit_mode(param_name, param_value, data_type, comment):
 
 		# Populate the tuple list with the items from the parameter declaration
 		_populate_tuple_list(param_value)
-
-		# Create an add row at the bottom so the user can easily add another row
-		var add_item = tuple_list.create_item(tuple_list.get_root())
-		add_item.set_text(0, "Add")
-		add_item.set_editable(0, true)
-		add_item.set_editable(1, true)
-		add_item.set_editable(2, true)
 
 	self.popup_centered()
 
@@ -361,32 +353,111 @@ func _unset_all_input_controls():
 
 
 """
-Called when the user clicks in a cell.
+Called when the user right clicks on the tuple list.
 """
-func _on_TupleList_cell_selected():
+func _on_TupleList_activate_data_popup():
+	var tl = get_node("MarginContainer/VBoxContainer/TupleList")
+	var global_pos = tl.get_global_mouse_position()
+	var vb = get_node("TuplePopupPanel/TupleVBox")
+
+	var popup_height = 75
+
+	# Clear any previous items
+	_clear_tuple_popup()
+
+	# Toggle the visiblity of the popup
+	var tuple_popup = $TuplePopupPanel
+	if tuple_popup.visible:
+		tuple_popup.hide()
+	else:
+		tuple_popup.rect_position = Vector2(global_pos.x, global_pos.y)
+		tuple_popup.rect_size = Vector2(100, popup_height)
+		tuple_popup.show()
+
+	# Add the Add button
+	var add_item = Button.new()
+	add_item.set_text("Add")
+	add_item.connect("button_down", self, "_add_tuple_point")
+	vb.add_child(add_item)
+
+	# Add the Remove button
+	var remove_item = Button.new()
+	remove_item.set_text("Remove")
+	remove_item.connect("button_down", self, "_remove_tuple_point")
+	vb.add_child(remove_item)
+
+	# Add the Cancel item
+	var cancel_item = Button.new()
+	cancel_item.set_text("Cancel")
+	cancel_item.connect("button_down", self, "_cancel_tuple_popup")
+	vb.add_child(cancel_item)
+
+
+"""
+Clear the previous items from the data popup.
+"""
+func _clear_tuple_popup():
+	var vb = get_node("TuplePopupPanel/TupleVBox")
+
+	# Clear the previous control item(s) from the DynamicContainer
+	for child in vb.get_children():
+		vb.remove_child(child)
+
+"""
+Allows the user to add a list item to the table.
+"""
+func _add_tuple_point():
+	var tpp = get_node("TuplePopupPanel")
 	var tuple_list = get_node("MarginContainer/VBoxContainer/TupleList")
 
-	if tuple_list.get_selected().get_text(0) == "Add":
+	var last_item = tuple_list.get_selected()
+
+	# If the last item is blank, just fill it in and do not create a new line
+	if last_item != null and last_item.get_text(0).empty():
+		last_item.set_text(0, "0.0")
+		last_item.set_text(1, "0.0")
+		last_item.set_text(2, "0.0")
+	else:
+		var new_item = tuple_list.create_item(tuple_list.get_root())
+
 		# Set the current row to be all 0.0
-		var cur_row = tuple_list.get_selected()
-		cur_row.set_text(0, "0.0")
-		cur_row.set_text(1, "0.0")
-		cur_row.set_text(2, "0.0")
-		cur_row.deselect(0)
+		new_item.set_text(0, "0.0")
+		new_item.set_text(1, "0.0")
+		new_item.set_text(2, "0.0")
 
-
-"""
-Work-around to add the Add item at the bottom of the table because the
-tree is still locked from the cell selected event.
-"""
-func _on_TupleList_item_edited():
-	var tuple_list = get_node("MarginContainer/VBoxContainer/TupleList")
-
-	# If there is not already an Add item to add a new row, add it
-	if Common.get_last_component(tuple_list).get_text(0) != "Add":
-		# Create the next add item
-		var new_item = tuple_list.create_item()
-		new_item.set_text(0, "Add")
+		# Make sure the fields are edited
 		new_item.set_editable(0, true)
 		new_item.set_editable(1, true)
 		new_item.set_editable(2, true)
+
+	# Hide the popup panel
+	tpp.hide()
+
+
+"""
+Removes a tuple point from the list.
+"""
+func _remove_tuple_point():
+	var tpp = get_node("TuplePopupPanel")
+	var tuple_list = get_node("MarginContainer/VBoxContainer/TupleList")
+
+	var sel = tuple_list.get_selected()
+
+	# Remove the selected item from the tree
+	tuple_list.get_root().remove_child(sel)
+	sel.free()
+
+	# Work-around to force the tree to updated visually
+	tuple_list.hide()
+	tuple_list.show()
+
+	# Hide the popup panel
+	tpp.hide()
+
+
+"""
+Close the popup without doing anything.
+"""
+func _cancel_tuple_popup():
+	var tuple_popup = get_node("TuplePopupPanel")
+	tuple_popup.hide()

@@ -977,6 +977,19 @@ func _on_AddParameterDialog_edit_parameter(new_param, data_type, comment):
 
 
 """
+Called when the user requests a new tuple list parameter.
+"""
+func _on_new_tuple():
+	var param_dlg = $AddParameterDialog
+
+	var param_name = param_dlg.get_node("MarginContainer/VBoxContainer/ParamNameTextEdit")
+	param_name.set_text("point_list")
+	param_dlg._on_TupleListCheckBox_button_down()
+
+	param_dlg.popup_centered()
+
+
+"""
 Called when the user wants to update a parameter in the tree.
 """
 func _update_param_tree_items(tree, name, new_value):

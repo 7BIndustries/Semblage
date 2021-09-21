@@ -1,4 +1,4 @@
-[gd_scene load_steps=70 format=2]
+[gd_scene load_steps=71 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -31,6 +31,7 @@
 [ext_resource path="res://AddParameterDialog.gd" type="Script" id=29]
 [ext_resource path="res://controls/NumberEdit.gd" type="Script" id=30]
 [ext_resource path="res://ExportDXFDialog.gd" type="Script" id=31]
+[ext_resource path="res://TupleList.gd" type="Script" id=32]
 [ext_resource path="res://ComponentTree.gd" type="Script" id=33]
 [ext_resource path="res://ParametersTree.gd" type="Script" id=34]
 
@@ -1232,6 +1233,7 @@ margin_bottom = 40.0
 rect_min_size = Vector2( 40, 80 )
 columns = 3
 hide_root = true
+script = ExtResource( 32 )
 
 [node name="CommentLabel" type="Label" parent="AddParameterDialog/MarginContainer/VBoxContainer"]
 margin_left = -5.0
@@ -1264,6 +1266,14 @@ margin_right = 278.0
 margin_bottom = 175.0
 size_flags_horizontal = 3
 text = "Cancel"
+
+[node name="TuplePopupPanel" type="PopupPanel" parent="AddParameterDialog"]
+margin_right = 8.0
+margin_bottom = 8.0
+
+[node name="TupleVBox" type="VBoxContainer" parent="AddParameterDialog/TuplePopupPanel"]
+margin_right = 40.0
+margin_bottom = 40.0
 
 [node name="ExportDXFDialog" type="WindowDialog" parent="."]
 margin_right = 355.0
@@ -1468,8 +1478,7 @@ text = "Cancel"
 [connection signal="button_down" from="AddParameterDialog/MarginContainer/VBoxContainer/ParamTypeContainer/StringCheckBox" to="AddParameterDialog" method="_on_StringCheckBox_button_down"]
 [connection signal="button_down" from="AddParameterDialog/MarginContainer/VBoxContainer/ParamTypeContainer/NumCheckBox" to="AddParameterDialog" method="_on_NumCheckBox_button_down"]
 [connection signal="button_down" from="AddParameterDialog/MarginContainer/VBoxContainer/ParamTypeContainer/TupleListCheckBox" to="AddParameterDialog" method="_on_TupleListCheckBox_button_down"]
-[connection signal="cell_selected" from="AddParameterDialog/MarginContainer/VBoxContainer/TupleList" to="AddParameterDialog" method="_on_TupleList_cell_selected"]
-[connection signal="item_edited" from="AddParameterDialog/MarginContainer/VBoxContainer/TupleList" to="AddParameterDialog" method="_on_TupleList_item_edited"]
+[connection signal="activate_data_popup" from="AddParameterDialog/MarginContainer/VBoxContainer/TupleList" to="AddParameterDialog" method="_on_TupleList_activate_data_popup"]
 [connection signal="button_down" from="AddParameterDialog/MarginContainer/VBoxContainer/OKButton" to="AddParameterDialog" method="_on_OKButton_button_down"]
 [connection signal="button_down" from="AddParameterDialog/MarginContainer/VBoxContainer/CancelButton" to="AddParameterDialog" method="_on_CancelButton_button_down"]
 [connection signal="about_to_show" from="ExportDXFDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]

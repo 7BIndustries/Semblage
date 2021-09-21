@@ -3,72 +3,88 @@ extends VBoxContainer
 class_name PushPointsControl
 
 signal error
+signal new_tuple
 
 var prev_template = null
 
-var template = ".pushPoints([{point_list}])"
+var template = ".pushPoints({point_list})"
 
-const point_list_edit_rgx = "(?<=.pushPoints\\(\\[)(.*?)(?=\\]\\))"
+const point_list_edit_rgx = "(?<=.pushPoints\\()(.*?)(?=\\))"
 
+var filtered_param_names = []
+var filtered_params = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	# The point list control
-	var point_list_lbl = Label.new()
-	point_list_lbl.set_text("Point List")
-	var point_list_ctrl = ItemList.new()
-	point_list_ctrl.name = "point_list_ctrl"
-	point_list_ctrl.auto_height = true
-	point_list_ctrl.connect("item_activated", self, "_populate_point_controls_from_list")
-	add_child(point_list_lbl)
-	add_child(point_list_ctrl)
+	# Add this control to a group so that we can broadcast messages
+	add_to_group("new_tuple")
+
+	# Pull the parameters from the action popup panel
+	var param_names = find_parent("ActionPopupPanel")
+	param_names = param_names.parameters
+
+	# Filter the paramters down to only tuple lists
+	var filtered_params = {}
+	for param_name in param_names.keys():
+		# The parameter is a tuple list
+		if param_names[param_name].begins_with("["):
+			filtered_params[param_name] = param_names[param_name]
+			filtered_param_names.append(param_name)
+
+	# If there are no parameters, we insert a blank one at the top to force the user to select "New"
+	if filtered_param_names.size() == 0:
+		filtered_param_names.append("")
+
+	# Allow the user to create a new tuple list variable
+	filtered_param_names.append("New")
+
+	# Add the option button to display the list of available tuple list parameters
+	var param_group = VBoxContainer.new()
+	var param_lbl = Label.new()
+	param_lbl.set_text("Point List Parameter")
+	param_group.name = "param_group"
+	param_group.add_child(param_lbl)
+	var param_opt = OptionButton.new()
+	param_opt.name = "param_opt"
+	param_opt.connect("item_selected", self, "_on_item_selected")
+	param_group.add_child(param_opt)
+	add_child(param_group)
+
+	# Load up both component option buttons with the names of the found components
+	Common.load_option_button(param_opt, filtered_param_names)
 
 	# Add a horizontal rule to break things up
 	add_child(HSeparator.new())
 
-	# Left to right control
-	var point_lr_group = HBoxContainer.new()
-	var point_lr_lbl = Label.new()
-	point_lr_lbl.set_text("Point Left-to-Right: ")
-	point_lr_group.add_child(point_lr_lbl)
-	var point_lr_ctrl = NumberEdit.new()
-	point_lr_ctrl.name = "point_lr_ctrl"
-	point_lr_ctrl.size_flags_horizontal = 3
-	point_lr_ctrl.CanBeNegative = true
-	point_lr_ctrl.set_text("1.0")
-	point_lr_ctrl.hint_tooltip = tr("PUSH_POINTS_POINT_LR_CTRL_HINT_TOOLTIP")
-	point_lr_group.add_child(point_lr_ctrl)
-	add_child(point_lr_group)
 
-	# Top to bottom control
-	var point_tb_group = HBoxContainer.new()
-	var point_tb_lbl = Label.new()
-	point_tb_lbl.set_text("Point Top-to-Bottom: ")
-	point_tb_group.add_child(point_tb_lbl)
-	var point_tb_ctrl = NumberEdit.new()
-	point_tb_ctrl.name = "point_tb_ctrl"
-	point_tb_ctrl.size_flags_horizontal = 3
-	point_tb_ctrl.CanBeNegative = true
-	point_tb_ctrl.set_text("1.0")
-	point_tb_ctrl.hint_tooltip = tr("PUSH_POINTS_POINT_TB_CTRL_HINT_TOOLTIP")
-	point_tb_group.add_child(point_tb_ctrl)
-	add_child(point_tb_group)
+"""
+Broadcast received by all controls in the new_tuple group.
+"""
+func new_tuple_added(new_parameter):
+	# Get the option button so we can set it
+	var opt = get_node("param_group/param_opt")
 
-	# Button to add, edit or delete current point to the point list
-	var btn_group = HBoxContainer.new()
-	var add_point_btn = Button.new()
-	add_point_btn.set_text("Add")
-	add_point_btn.connect("button_down", self, "_add_current_point_to_list")
-	btn_group.add_child(add_point_btn)
-	var edit_point_btn = Button.new()
-	edit_point_btn.set_text("Edit")
-	edit_point_btn.connect("button_down", self, "_edit_current_point")
-	btn_group.add_child(edit_point_btn)
-	var delete_point_btn = Button.new()
-	delete_point_btn.set_text("Delete")
-	delete_point_btn.connect("button_down", self, "_delete_current_point")
-	btn_group.add_child(delete_point_btn)
-	add_child(btn_group)
+	# Set the first item, which should be blank, to the new parameter name
+	opt.set_item_text(0, new_parameter[0])
+
+"""
+Called when the user selects an item from the parameter list.
+"""
+func _on_item_selected(index):
+	var opt = get_node("param_group/param_opt")
+
+	var sel = opt.get_item_text(index)
+
+	# Handle the user wanting to add a new tuple list parameter
+	if sel == "":
+		return
+	elif sel == "New":
+		# Switch back to the blank item at the beginning of the option button
+		opt.select(0)
+
+		# Fire the event that launches the add parameter dialog set up to do the tuple
+		connect("new_tuple", self.find_parent("Control"), "_on_new_tuple")
+		emit_signal("new_tuple")
 
 
 """
@@ -82,15 +98,6 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
-	var point_lr_ctrl = find_node("point_lr_ctrl", true, false)
-	var point_tb_ctrl = find_node("point_tb_ctrl", true, false)
-
-	# Make sure all of the numeric controls have valid values
-	if not point_lr_ctrl.is_valid:
-		return false
-	if not point_tb_ctrl.is_valid:
-		return false
-
 	return true
 
 
@@ -98,22 +105,11 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
-	var point_list_ctrl = find_node("point_list_ctrl", true, false)
-	var point_lr_ctrl = find_node("point_lr_ctrl", true, false)
-	var point_tb_ctrl = find_node("point_tb_ctrl", true, false)
+	var opt = get_node("param_group/param_opt")
 
-	var complete = ""
+	var points = opt.get_item_text(opt.selected)
 
-	# Collect all of the points from the ItemList
-	var points = ""
-	for i in range(0, point_list_ctrl.get_item_count(), 1):
-		# See if we need to prepend a comma
-		if i > 0:
-			points += ","
-
-		points += "(" + point_list_ctrl.get_item_text(i) + ")"
-
-	complete += template.format({
+	var complete = template.format({
 		"point_list": points
 	})
 
@@ -132,28 +128,16 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
-	var point_list_ctrl = find_node("point_list_ctrl", true, false)
-	var point_lr_ctrl = find_node("point_lr_ctrl", true, false)
-	var point_tb_ctrl = find_node("point_tb_ctrl", true, false)
-
-	prev_template = text_line
-
-	# Clear the previous point list
-	for i in range(0, point_list_ctrl.get_item_count(), 1):
-		point_list_ctrl.remove_item(i)
-
-	var rgx = RegEx.new()
+	var opt = get_node("param_group/param_opt")
 
 	# Point list
+	var rgx = RegEx.new()
 	rgx.compile(point_list_edit_rgx)
 	var res = rgx.search(text_line)
 	if res:
 		# Extract the points
-		var points = res.get_string().split(")")
-		for point in points:
-			var clean_point = point.replace(",(", "").replace("(", "")
-			if clean_point != "":
-				point_list_ctrl.add_item(clean_point)
+		var points = res.get_string()
+		Common.set_option_btn_by_text(opt, points)
 
 
 """
