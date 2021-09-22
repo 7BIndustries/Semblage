@@ -26,13 +26,9 @@ func _ready():
 	# Pull the parameters from the action popup panel
 	var app = find_parent("ActionPopupPanel")
 	var filtered_param_names = app.get_tuple_param_names()
-	var filtered_param_names_orig = filtered_param_names
 
-	# If there are no parameters, we insert a blank one at the top to force the user to select "New"
-	if filtered_param_names.size() == 0:
-		filtered_param_names.append("")
-
-	# Allow the user to create a new tuple list variable
+	# The default selection of None, and an item to add a New list parameter
+	filtered_param_names.insert(0, "None")
 	filtered_param_names.append("New")
 
 	# SPLINE POINTS
@@ -60,10 +56,8 @@ func _ready():
 	tangents_param_opt.connect("item_selected", self, "_on_tangent_item_selected")
 	add_child(tangents_param_opt)
 
-	filtered_param_names_orig.insert(0, "None")
-
 	# Load up both component option buttons with the names of the found components
-	Common.load_option_button(tangents_param_opt, filtered_param_names_orig)
+	Common.load_option_button(tangents_param_opt, filtered_param_names)
 
 	# Make sure that "None" is selected by default
 	tangents_param_opt.select(0)
@@ -146,11 +140,16 @@ func new_tuple_added(new_parameter):
 	var points_param_opt = get_node("points_param_opt")
 	var tan_param_opt = get_node("tangents_param_opt")
 
-	# Set the first item, which should be blank, to the new parameter name
-	if points_param_opt.get_item_text(points_param_opt.selected).empty():
-		points_param_opt.set_item_text(0, new_parameter[0])
-	elif tan_param_opt.get_item_text(tan_param_opt.selected).empty():
-		tan_param_opt.set_item_text(0, new_parameter[0])
+	# Add the new parameter to each of the point drop downs
+	points_param_opt.add_item(new_parameter[0])
+	tan_param_opt.add_item(new_parameter[0])
+
+	# If the first option button is None, it should probably be set to the new parameter
+	if points_param_opt.get_item_text(points_param_opt.selected) == "None":
+		points_param_opt.select(points_param_opt.get_item_count() - 1)
+		# If the second option button is None but not the first, the second should probably be set to the new parameter
+	elif tan_param_opt.get_item_text(tan_param_opt.selected) == "None":
+		tan_param_opt.select(tan_param_opt.get_item_count() - 1)
 
 	_validate_form()
 
@@ -164,15 +163,15 @@ func _on_item_selected(index):
 	var sel = opt.get_item_text(index)
 
 	# Handle the user wanting to add a new tuple list parameter
-	if sel == "":
-		return
-	elif sel == "New":
+	if sel == "New":
 		# Switch back to the blank item at the beginning of the option button
 		opt.select(0)
 
 		# Fire the event that launches the add parameter dialog set up to do the tuple
 		connect("new_tuple", self.find_parent("Control"), "_on_new_tuple")
 		emit_signal("new_tuple")
+
+	_validate_form()
 
 
 """
@@ -184,9 +183,7 @@ func _on_tangent_item_selected(index):
 	var sel = opt.get_item_text(index)
 
 	# Handle the user wanting to add a new tuple list parameter
-	if sel == "":
-		return
-	elif sel == "New":
+	if sel == "New":
 		# Switch back to the blank item at the beginning of the option button
 		opt.select(0)
 
@@ -207,6 +204,7 @@ Validates the form as the user makes changes.
 """
 func _validate_form():
 	var points_opt = get_node("points_param_opt")
+	var tan_param_opt = get_node("tangents_param_opt")
 	var error_btn_group = get_node("error_btn_group")
 	var error_btn = get_node("error_btn_group/error_btn")
 
@@ -214,7 +212,11 @@ func _validate_form():
 	error_btn_group.hide()
 
 	# A points list parameter must be selected
-	if points_opt.get_item_text(points_opt.selected).empty():
+	if points_opt.get_item_text(points_opt.selected) == "None":
+		error_btn_group.show()
+		error_btn.hint_tooltip = tr("POINTS_LIST_PARAMETER_SELECTION_ERROR")
+		valid = false
+	elif points_opt.get_item_text(points_opt.selected) == tan_param_opt.get_item_text(tan_param_opt.selected):
 		error_btn_group.show()
 		error_btn.hint_tooltip = tr("POINTS_LIST_PARAMETER_SELECTION_ERROR")
 		valid = false

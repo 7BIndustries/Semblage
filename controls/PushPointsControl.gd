@@ -21,11 +21,8 @@ func _ready():
 	var app = find_parent("ActionPopupPanel")
 	var filtered_param_names = app.get_tuple_param_names()
 
-	# If there are no parameters, we insert a blank one at the top to force the user to select "New"
-	if filtered_param_names.size() == 0:
-		filtered_param_names.append("")
-
-	# Allow the user to create a new tuple list variable
+	# The default selection of None, and an item to add a New list parameter
+	filtered_param_names.insert(0, "None")
 	filtered_param_names.append("New")
 
 	# Add the option button to display the list of available tuple list parameters
@@ -66,8 +63,10 @@ func new_tuple_added(new_parameter):
 	# Get the option button so we can set it
 	var opt = get_node("param_group/param_opt")
 
-	# Set the first item, which should be blank, to the new parameter name
-	opt.set_item_text(0, new_parameter[0])
+	# Add the item to the list of parameters
+	opt.add_item(new_parameter[0])
+
+	opt.select(opt.get_item_count() - 1)
 
 	_validate_form()
 
@@ -81,15 +80,15 @@ func _on_item_selected(index):
 	var sel = opt.get_item_text(index)
 
 	# Handle the user wanting to add a new tuple list parameter
-	if sel == "":
-		return
-	elif sel == "New":
+	if sel == "New":
 		# Switch back to the blank item at the beginning of the option button
 		opt.select(0)
 
 		# Fire the event that launches the add parameter dialog set up to do the tuple
 		var _success = connect("new_tuple", self.find_parent("Control"), "_on_new_tuple")
 		emit_signal("new_tuple")
+
+	_validate_form()
 
 
 """
@@ -118,7 +117,7 @@ func _validate_form():
 	error_btn_group.hide()
 
 	# A points list parameter must be selected
-	if points_opt.get_item_text(points_opt.selected).empty():
+	if points_opt.get_item_text(points_opt.selected) == "None":
 		error_btn_group.show()
 		error_btn.hint_tooltip = tr("POINTS_LIST_PARAMETER_SELECTION_ERROR")
 		valid = false
