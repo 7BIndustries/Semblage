@@ -18,138 +18,142 @@ class cqgi_interface(Node):
 		rendered, including things like workplanes.
 		"""
 
-		cq_model = cqgi.parse(str(script_text))
-		build_result = cq_model.build({})
+		try:
+			cq_model = cqgi.parse(str(script_text))
+			build_result = cq_model.build({})
 
-		# Make sure the build was successful
-		if not build_result.success:
-			return "error~" + str(build_result.exception)
+			# Make sure the build was successful
+			if not build_result.success:
+				return "error~" + str(build_result.exception)
 
-		# The highest level render tree that holds all items (components and workplanes)
-		render_tree = Dictionary()
+			# The highest level render tree that holds all items (components and workplanes)
+			render_tree = Dictionary()
 
-		# All of the components and workplanes that the user has requested be rendered
-		render_tree["components"] = Array()
+			# All of the components and workplanes that the user has requested be rendered
+			render_tree["components"] = Array()
 
-		# For reference as the ability to select entities is implemented
-#		# Tessellate and store the object
-#		cur_comp["faces"] = Array() # Each face has references to the triangles that make it up
-#		cur_comp["wires"] = Array() # Each wire has references to the edges that make it up
-#		cur_comp["triangles"] = Array() # Each triangle has a reference to the face it belongs to
-#		cur_comp["edges"] = Array() # Each edge has a reference to the wire and/or triangle it belongs to
-#		cur_comp["edge_segments"] = Array() # Each edge segment has a reference to the edge(s) it belongs to
-#		cur_comp["vertices"] = Array() # Each vertex has a reference to the edge(s) or edge_segment(s) it belongs to
+			# For reference as the ability to select entities is implemented
+	#		# Tessellate and store the object
+	#		cur_comp["faces"] = Array() # Each face has references to the triangles that make it up
+	#		cur_comp["wires"] = Array() # Each wire has references to the edges that make it up
+	#		cur_comp["triangles"] = Array() # Each triangle has a reference to the face it belongs to
+	#		cur_comp["edges"] = Array() # Each edge has a reference to the wire and/or triangle it belongs to
+	#		cur_comp["edge_segments"] = Array() # Each edge segment has a reference to the edge(s) it belongs to
+	#		cur_comp["vertices"] = Array() # Each vertex has a reference to the edge(s) or edge_segment(s) it belongs to
 
-		for result in build_result.results:
-			component_id = list(result.shape.ctx.tags)[0]
+			for result in build_result.results:
+				component_id = list(result.shape.ctx.tags)[0]
 
-			cur_comp = Dictionary()
-			cur_comp["id"] = component_id
-			cur_comp["workplanes"] = Array()
-			cur_comp["largest_dimension"] = 0
+				cur_comp = Dictionary()
+				cur_comp["id"] = component_id
+				cur_comp["workplanes"] = Array()
+				cur_comp["largest_dimension"] = 0
 
-			# Figure out if we need to step back one step to get a non-workplane object
-			tess_shape = result.shape.val()
-			if len(result.shape.all()) == 0:
-				is_base_wp = False
+				# Figure out if we need to step back one step to get a non-workplane object
+				tess_shape = result.shape.val()
+				if len(result.shape.all()) == 0:
+					is_base_wp = False
 
-				# Work-around to find out if this is a base workplane
-				try:
-					 result.shape.end().end()
-				except ValueError:
-					is_base_wp = True
-
-				# Get the origin, normal and center from the workplane
-				origin_vec = Vector3(result.shape.val().x, result.shape.val().y, result.shape.val().z)
-				normal_vec = Vector3(result.shape.plane.zDir.x, result.shape.plane.zDir.y, result.shape.plane.zDir.z)
-				center_vec = Vector3(result.shape.plane.origin.x, result.shape.plane.origin.y, result.shape.plane.origin.z)
-
-				# Get the appropriate size of the workplane, which is just a little larger than the underlying object
-				try:
-					wp_size = result.shape.end().largestDimension() + result.shape.end().largestDimension() * 0.1
-				except:
-					wp_size = 5
-
-				# Start collecting the workplane info into a dictionary
-				cur_wp = Dictionary()
-				cur_wp["is_base"] = is_base_wp
-				cur_wp["origin"] = origin_vec
-				cur_wp["normal"] = normal_vec
-				cur_wp["center"] = center_vec
-				cur_wp["size"] = wp_size
-
-				# Add the current workplane to the array
-				cur_comp["workplanes"].append(cur_wp)
-
-				# See if we can grab the previous shape
-				try:
-					tess_shape = result.shape.end().end().val()
-				except:
-					tess_shape = result.shape.val()
-			# We have an object and we want to see if there is a previous workplane to display
-			else:
-				# See if we can grab the previous workplane
-				try:
-					prev_wp = result.shape.end()
-				except:
-					prev_wp = result.shape
-
-				is_base_wp = False
-
-				# See if we have a workplane
-				if type(prev_wp.val()) is Vector:
 					# Work-around to find out if this is a base workplane
 					try:
-						 prev_wp.end().end()
+						 result.shape.end().end()
 					except ValueError:
 						is_base_wp = True
 
-					# If it is not a base workplane we can set it up to be displayed
-					if not is_base_wp:
-						# Get the origin, normal and center from the workplane
-						origin_vec = Vector3(prev_wp.val().x, prev_wp.val().y, prev_wp.val().z)
-						normal_vec = Vector3(prev_wp.plane.zDir.x, prev_wp.plane.zDir.y, prev_wp.plane.zDir.z)
-						center_vec = Vector3(prev_wp.plane.origin.x, prev_wp.plane.origin.y, prev_wp.plane.origin.z)
-						wp_size = result.shape.largestDimension() + prev_wp.largestDimension() * 0.1
+					# Get the origin, normal and center from the workplane
+					origin_vec = Vector3(result.shape.val().x, result.shape.val().y, result.shape.val().z)
+					normal_vec = Vector3(result.shape.plane.zDir.x, result.shape.plane.zDir.y, result.shape.plane.zDir.z)
+					center_vec = Vector3(result.shape.plane.origin.x, result.shape.plane.origin.y, result.shape.plane.origin.z)
 
-						# Compensate for offset workplanes not fitting into the view
-						if origin_vec.x > cur_comp["largest_dimension"]:
-							cur_comp["largest_dimension"] = origin_vec.x * 2
-						if origin_vec.y > cur_comp["largest_dimension"]:
-							cur_comp["largest_dimension"] = origin_vec.y * 2
-						if origin_vec.z > cur_comp["largest_dimension"]:
-							cur_comp["largest_dimension"] = origin_vec.z * 2
+					# Get the appropriate size of the workplane, which is just a little larger than the underlying object
+					try:
+						wp_size = result.shape.end().largestDimension() + result.shape.end().largestDimension() * 0.1
+					except:
+						wp_size = 5
 
-						# Start collecting the workplane info into a dictionary
-						cur_wp = Dictionary()
-						cur_wp["is_base"] = is_base_wp
-						cur_wp["origin"] = origin_vec
-						cur_wp["normal"] = normal_vec
-						cur_wp["center"] = center_vec
-						cur_wp["size"] = wp_size
+					# Start collecting the workplane info into a dictionary
+					cur_wp = Dictionary()
+					cur_wp["is_base"] = is_base_wp
+					cur_wp["origin"] = origin_vec
+					cur_wp["normal"] = normal_vec
+					cur_wp["center"] = center_vec
+					cur_wp["size"] = wp_size
 
-						# Add the current workplane to the array
-						cur_comp["workplanes"].append(cur_wp)
+					# Add the current workplane to the array
+					cur_comp["workplanes"].append(cur_wp)
 
-			# Tessellate the enclosed shape object
-			smallest_dimension, largest_dimension,\
-				vertices, edges, triangles, num_of_vertices,\
-				num_of_edges, num_of_triangles = \
-				self.tessellate(tess_shape)
+					# See if we can grab the previous shape
+					try:
+						tess_shape = result.shape.end().end().val()
+					except:
+						tess_shape = result.shape.val()
+				# We have an object and we want to see if there is a previous workplane to display
+				else:
+					# See if we can grab the previous workplane
+					try:
+						prev_wp = result.shape.end()
+					except:
+						prev_wp = result.shape
 
-			# Save the tessellation information
-			cur_comp["smallest_dimension"] = smallest_dimension
-			if largest_dimension > cur_comp["largest_dimension"]:
-				cur_comp["largest_dimension"] = largest_dimension
-			cur_comp["vertices"] = vertices
-			cur_comp["edges"] = edges
-			cur_comp["triangles"] = triangles
-			cur_comp["num_of_vertices"] = num_of_vertices
-			cur_comp["num_of_edges"] = num_of_edges
-			cur_comp["num_of_triangles"] = num_of_triangles
+					is_base_wp = False
 
-			# Add the current component
-			render_tree["components"].append(cur_comp)
+					# See if we have a workplane
+					if type(prev_wp.val()) is Vector:
+						# Work-around to find out if this is a base workplane
+						try:
+							 prev_wp.end().end()
+						except ValueError:
+							is_base_wp = True
+
+						# If it is not a base workplane we can set it up to be displayed
+						if not is_base_wp:
+							# Get the origin, normal and center from the workplane
+							origin_vec = Vector3(prev_wp.val().x, prev_wp.val().y, prev_wp.val().z)
+							normal_vec = Vector3(prev_wp.plane.zDir.x, prev_wp.plane.zDir.y, prev_wp.plane.zDir.z)
+							center_vec = Vector3(prev_wp.plane.origin.x, prev_wp.plane.origin.y, prev_wp.plane.origin.z)
+							wp_size = result.shape.largestDimension() + prev_wp.largestDimension() * 0.1
+
+							# Compensate for offset workplanes not fitting into the view
+							if origin_vec.x > cur_comp["largest_dimension"]:
+								cur_comp["largest_dimension"] = origin_vec.x * 2
+							if origin_vec.y > cur_comp["largest_dimension"]:
+								cur_comp["largest_dimension"] = origin_vec.y * 2
+							if origin_vec.z > cur_comp["largest_dimension"]:
+								cur_comp["largest_dimension"] = origin_vec.z * 2
+
+							# Start collecting the workplane info into a dictionary
+							cur_wp = Dictionary()
+							cur_wp["is_base"] = is_base_wp
+							cur_wp["origin"] = origin_vec
+							cur_wp["normal"] = normal_vec
+							cur_wp["center"] = center_vec
+							cur_wp["size"] = wp_size
+
+							# Add the current workplane to the array
+							cur_comp["workplanes"].append(cur_wp)
+
+				# Tessellate the enclosed shape object
+				smallest_dimension, largest_dimension,\
+					vertices, edges, triangles, num_of_vertices,\
+					num_of_edges, num_of_triangles = \
+					self.tessellate(tess_shape)
+
+				# Save the tessellation information
+				cur_comp["smallest_dimension"] = smallest_dimension
+				if largest_dimension > cur_comp["largest_dimension"]:
+					cur_comp["largest_dimension"] = largest_dimension
+				cur_comp["vertices"] = vertices
+				cur_comp["edges"] = edges
+				cur_comp["triangles"] = triangles
+				cur_comp["num_of_vertices"] = num_of_vertices
+				cur_comp["num_of_edges"] = num_of_edges
+				cur_comp["num_of_triangles"] = num_of_triangles
+
+				# Add the current component
+				render_tree["components"].append(cur_comp)
+		except Exception as err:
+			ret = "error~" + str(err)
+			return ret
 
 		return render_tree
 
