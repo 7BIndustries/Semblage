@@ -2,7 +2,6 @@ extends VBoxContainer
 
 class_name PushPointsControl
 
-signal error
 signal new_tuple
 
 var prev_template = null
@@ -11,8 +10,7 @@ var template = ".pushPoints({point_list})"
 
 const point_list_edit_rgx = "(?<=.pushPoints\\()(.*?)(?=\\))"
 
-var filtered_param_names = []
-var filtered_params = {}
+var valid = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -20,16 +18,8 @@ func _ready():
 	add_to_group("new_tuple")
 
 	# Pull the parameters from the action popup panel
-	var param_names = find_parent("ActionPopupPanel")
-	param_names = param_names.parameters
-
-	# Filter the paramters down to only tuple lists
-	var filtered_params = {}
-	for param_name in param_names.keys():
-		# The parameter is a tuple list
-		if param_names[param_name].begins_with("["):
-			filtered_params[param_name] = param_names[param_name]
-			filtered_param_names.append(param_name)
+	var app = find_parent("ActionPopupPanel")
+	var filtered_param_names = app.get_tuple_param_names()
 
 	# If there are no parameters, we insert a blank one at the top to force the user to select "New"
 	if filtered_param_names.size() == 0:
@@ -53,8 +43,20 @@ func _ready():
 	# Load up both component option buttons with the names of the found components
 	Common.load_option_button(param_opt, filtered_param_names)
 
+	# Create the button that lets the user know that there is an error on the form
+	var error_btn_group = HBoxContainer.new()
+	error_btn_group.name = "error_btn_group"
+	var error_btn = Button.new()
+	error_btn.name = "error_btn"
+	error_btn.set_text("!")
+	error_btn_group.add_child(error_btn)
+	error_btn_group.hide()
+	add_child(error_btn_group)
+
 	# Add a horizontal rule to break things up
 	add_child(HSeparator.new())
+
+	_validate_form()
 
 
 """
@@ -66,6 +68,9 @@ func new_tuple_added(new_parameter):
 
 	# Set the first item, which should be blank, to the new parameter name
 	opt.set_item_text(0, new_parameter[0])
+
+	_validate_form()
+
 
 """
 Called when the user selects an item from the parameter list.
@@ -83,7 +88,7 @@ func _on_item_selected(index):
 		opt.select(0)
 
 		# Fire the event that launches the add parameter dialog set up to do the tuple
-		connect("new_tuple", self.find_parent("Control"), "_on_new_tuple")
+		var _success = connect("new_tuple", self.find_parent("Control"), "_on_new_tuple")
 		emit_signal("new_tuple")
 
 
@@ -98,7 +103,27 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
-	return true
+	return valid
+
+
+"""
+Validates the form as the user makes changes.
+"""
+func _validate_form():
+	var points_opt = get_node("param_group/param_opt")
+	var error_btn_group = get_node("error_btn_group")
+	var error_btn = get_node("error_btn_group/error_btn")
+
+	# Start with the error button hidden
+	error_btn_group.hide()
+
+	# A points list parameter must be selected
+	if points_opt.get_item_text(points_opt.selected).empty():
+		error_btn_group.show()
+		error_btn.hint_tooltip = tr("POINTS_LIST_PARAMETER_SELECTION_ERROR")
+		valid = false
+	else:
+		valid = true
 
 
 """
@@ -138,76 +163,3 @@ func set_values_from_string(text_line):
 		# Extract the points
 		var points = res.get_string()
 		Common.set_option_btn_by_text(opt, points)
-
-
-"""
-Adds the current values of the left-to-right and top-to-bottom fields as points.
-"""
-func _add_current_point_to_list():
-	var point_list_ctrl = find_node("point_list_ctrl", true, false)
-	var point_lr_ctrl = find_node("point_lr_ctrl", true, false)
-	var point_tb_ctrl = find_node("point_tb_ctrl", true, false)
-
-	if not is_valid():
-		var res = connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
-		if res != 0:
-			print("Error connecting a signal: " + str(res))
-		else:
-			emit_signal("error", "There is invalid tuple data in the form.")
-
-		return
-
-	point_list_ctrl.add_item(point_lr_ctrl.get_text() + "," + point_tb_ctrl.get_text())
-
-
-"""
-Allows the user to edit the currently selected point.
-"""
-func _edit_current_point():
-	var point_list_ctrl = find_node("point_list_ctrl", true, false)
-	var point_lr_ctrl = find_node("point_lr_ctrl", true, false)
-	var point_tb_ctrl = find_node("point_tb_ctrl", true, false)
-
-	if not is_valid():
-		var res = connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
-		if res != 0:
-			print("Error connecting a signal: " + str(res))
-		else:
-			emit_signal("error", "There is invalid tuple data in the form.")
-
-		return
-
-	# Item to edit
-	var selected_id = point_list_ctrl.get_selected_items()[0]
-
-	# Replacement text
-	var item_text = point_lr_ctrl.get_text() + "," + point_tb_ctrl.get_text()
-
-	point_list_ctrl.set_item_text(selected_id, item_text)
-
-
-"""
-Allows the user to delete the currently selected point.
-"""
-func _delete_current_point():
-	var point_list_ctrl = find_node("point_list_ctrl", true, false)
-
-	# Item to delete
-	var selected_id = point_list_ctrl.get_selected_items()[0]
-	point_list_ctrl.remove_item(selected_id)
-
-
-"""
-Fills in the point controls from an item that is selected in the list
-"""
-func _populate_point_controls_from_list(id):
-	var point_list_ctrl = find_node("point_list_ctrl", true, false)
-	var point_lr_ctrl = find_node("point_lr_ctrl", true, false)
-	var point_tb_ctrl = find_node("point_tb_ctrl", true, false)
-
-	# Extract the points from the selected item
-	var points = point_list_ctrl.get_item_text(id).split(",")
-
-	# Set the point input controls
-	point_lr_ctrl.set_text(points[0])
-	point_tb_ctrl.set_text(points[1])

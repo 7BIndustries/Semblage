@@ -3,8 +3,9 @@ extends VBoxContainer
 class_name SplineControl
 
 signal error
+signal new_tuple
 
-var template = ".spline(listOfXYTuple=[{listOfXYTuple}],tangents=[{tangents}],periodic={periodic},forConstruction={forConstruction},includeCurrent={includeCurrent},makeWire={makeWire})"
+var template = ".spline(listOfXYTuple={listOfXYTuple},tangents={tangents},periodic={periodic},forConstruction={forConstruction},includeCurrent={includeCurrent},makeWire={makeWire})"
 
 var prev_template = null
 
@@ -15,127 +16,57 @@ const construction_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\,includeCurrent)
 const current_edit_rgx = "(?<=includeCurrent\\=)(.*?)(?=\\,makeWire)"
 const wire_edit_rgx = "(?<=makeWire\\=)(.*?)(?=\\))"
 
+var valid = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	# POINTS
+	# Add this control to a group so that we can broadcast messages
+	add_to_group("new_tuple")
+
+	# Pull the parameters from the action popup panel
+	var app = find_parent("ActionPopupPanel")
+	var filtered_param_names = app.get_tuple_param_names()
+	var filtered_param_names_orig = filtered_param_names
+
+	# If there are no parameters, we insert a blank one at the top to force the user to select "New"
+	if filtered_param_names.size() == 0:
+		filtered_param_names.append("")
+
+	# Allow the user to create a new tuple list variable
+	filtered_param_names.append("New")
+
+	# SPLINE POINTS
 	var new_tuple_lbl = Label.new()
-	new_tuple_lbl.set_text("New Point")
+	new_tuple_lbl.set_text("Spline Points")
 	add_child(new_tuple_lbl)
 
-	# X pos
-	var pos_group = HBoxContainer.new()
-	var x_length_lbl = Label.new()
-	x_length_lbl.set_text("X: ")
-	pos_group.add_child(x_length_lbl)
-	var tuple_x_ctrl = NumberEdit.new()
-	tuple_x_ctrl.name = "tuple_x_ctrl"
-	tuple_x_ctrl.size_flags_horizontal = 3
-	tuple_x_ctrl.set_text("10.0")
-	tuple_x_ctrl.hint_tooltip = tr("SPLINE_TUPLE_X_CTRL_HINT_TOOLTIP")
-	pos_group.add_child(tuple_x_ctrl)
-	# Y pos
-	var y_length_lbl = Label.new()
-	y_length_lbl.set_text("Y: ")
-	pos_group.add_child(y_length_lbl)
-	var tuple_y_ctrl = NumberEdit.new()
-	tuple_y_ctrl.name = "tuple_y_ctrl"
-	tuple_y_ctrl.size_flags_horizontal = 3
-	tuple_y_ctrl.set_text("10.0")
-	tuple_y_ctrl.hint_tooltip = tr("SPLINE_TUPLE_Y_CTRL_HINT_TOOLTIP")
-	pos_group.add_child(tuple_y_ctrl)
-	add_child(pos_group)
+	# Add the points parameter option button
+	var points_param_opt = OptionButton.new()
+	points_param_opt.name = "points_param_opt"
+	points_param_opt.connect("item_selected", self, "_on_item_selected")
+	add_child(points_param_opt)
 
-	var tuple_btn_group = HBoxContainer.new()
-
-	# Button to add the current tuple to the list
-	var add_tuple_btn = Button.new()
-	add_tuple_btn.icon = load("res://assets/icons/add_tree_item_button_flat_ready.svg")
-	add_tuple_btn.hint_tooltip = tr("SPLINE_ADD_TUPLE_BTN_HINT_TOOLTIP")
-	add_tuple_btn.connect("button_down", self, "_add_tuple")
-	tuple_btn_group.add_child(add_tuple_btn)
-
-	# Button to remove the current tuple from the list
-	var delete_tuple_btn = Button.new()
-	delete_tuple_btn.icon = load("res://assets/icons/delete_tree_item_button_flat_ready.svg")
-	delete_tuple_btn.hint_tooltip = tr("SPLINE_DELETE_TUPLE_BTN_HINT_TOOLTIP")
-	delete_tuple_btn.connect("button_down", self, "_delete_tuple")
-	tuple_btn_group.add_child(delete_tuple_btn)
-
-	add_child(tuple_btn_group)
-
-	# Label for the points list
-	var points_lbl = Label.new()
-	points_lbl.set_text("Points")
-	add_child(points_lbl)
-
-	# The tree to hold the tuples
-	var tuple_ctrl = Tree.new()
-	tuple_ctrl.name = "tuple_ctrl"
-	tuple_ctrl.columns = 2
-	tuple_ctrl.rect_min_size = Vector2(50, 50)
-	tuple_ctrl.hide_root = true
-	var tuple_ctrl_root = tuple_ctrl.create_item()
-	tuple_ctrl_root.set_text(0, "tuples")
-	add_child(tuple_ctrl)
+	# Load up both component option buttons with the names of the found components
+	Common.load_option_button(points_param_opt, filtered_param_names)
 
 	# TANGENTS
 	var new_tangent_lbl = Label.new()
-	new_tangent_lbl.set_text("New Tangent")
+	new_tangent_lbl.set_text("Tangent Points")
 	add_child(new_tangent_lbl)
 
-	# Tan X
-	var tan_group = HBoxContainer.new()
-	var x_tan_lbl = Label.new()
-	x_tan_lbl.set_text("X: ")
-	tan_group.add_child(x_tan_lbl)
-	var tan_x_ctrl = NumberEdit.new()
-	tan_x_ctrl.name = "tan_x_ctrl"
-	tan_x_ctrl.size_flags_horizontal = 3
-	tan_x_ctrl.set_text("1.0")
-	tan_x_ctrl.hint_tooltip = tr("SPLINE_TAN_X_CTRL_HINT_TOOLTIP")
-	tan_group.add_child(tan_x_ctrl)
-	# Tan Y
-	var y_tan_lbl = Label.new()
-	y_tan_lbl.set_text("Y: ")
-	tan_group.add_child(y_tan_lbl)
-	var tan_y_ctrl = NumberEdit.new()
-	tan_y_ctrl.name = "tan_y_ctrl"
-	tan_y_ctrl.size_flags_horizontal = 3
-	tan_y_ctrl.set_text("1.0")
-	tan_y_ctrl.hint_tooltip = tr("SPLINE_TAN_Y_CTRL_HINT_TOOLTIP")
-	tan_group.add_child(tan_y_ctrl)
-	add_child(tan_group)
+	# Add the points parameter option button
+	var tangents_param_opt = OptionButton.new()
+	tangents_param_opt.name = "tangents_param_opt"
+	tangents_param_opt.connect("item_selected", self, "_on_tangent_item_selected")
+	add_child(tangents_param_opt)
 
-	var tan_btn_group = HBoxContainer.new()
-	# Button to add the current tuple to the list
-	var add_tan_btn = Button.new()
-	add_tan_btn.icon = load("res://assets/icons/add_tree_item_button_flat_ready.svg")
-	add_tan_btn.hint_tooltip = tr("SPLINE_ADD_TAN_BTN_HINT_TOOLTIP")
-	add_tan_btn.connect("button_down", self, "_add_tan")
-	tan_btn_group.add_child(add_tan_btn)
-	add_child(tan_btn_group)
-	var delete_tan_btn = Button.new()
-	delete_tan_btn.icon = load("res://assets/icons/delete_tree_item_button_flat_ready.svg")
-	delete_tan_btn.hint_tooltip = tr("SPLINE_DELETE_TAN_BTN_HINT_TOOLTIP")
-	delete_tan_btn.connect("button_down", self, "_delete_tan")
-	tan_btn_group.add_child(delete_tan_btn)
-	add_child(tan_btn_group)
+	filtered_param_names_orig.insert(0, "None")
 
-	# Label for the points list
-	var tans_lbl = Label.new()
-	tans_lbl.set_text("Tangents")
-	add_child(tans_lbl)
+	# Load up both component option buttons with the names of the found components
+	Common.load_option_button(tangents_param_opt, filtered_param_names_orig)
 
-	# The tree to hold the tuples
-	var tan_ctrl = Tree.new()
-	tan_ctrl.name = "tan_ctrl"
-	tan_ctrl.columns = 2
-	tan_ctrl.rect_min_size = Vector2(50, 50)
-	tan_ctrl.hide_root = true
-	var tan_ctrl_root = tan_ctrl.create_item()
-	tan_ctrl_root.set_text(0, "tangents")
-	add_child(tan_ctrl)
+	# Make sure that "None" is selected by default
+	tangents_param_opt.select(0)
 
 	# PERIODIC
 	var periodic_group = HBoxContainer.new()
@@ -185,6 +116,20 @@ func _ready():
 	wire_group.add_child(wire_ctrl)
 	add_child(wire_group)
 
+	# Create the button that lets the user know that there is an error on the form
+	var error_btn_group = HBoxContainer.new()
+	error_btn_group.name = "error_btn_group"
+	var error_btn = Button.new()
+	error_btn.name = "error_btn"
+	error_btn.set_text("!")
+	error_btn_group.add_child(error_btn)
+	error_btn_group.hide()
+	add_child(error_btn_group)
+
+	# Add a horizontal rule to break things up
+	add_child(HSeparator.new())
+
+	_validate_form()
 
 """
 Tells whether or not this control represents a binary operation.
@@ -194,161 +139,108 @@ func is_binary():
 
 
 """
+Broadcast received by all controls in the new_tuple group.
+"""
+func new_tuple_added(new_parameter):
+	# Get the option buttons so we can set them
+	var points_param_opt = get_node("points_param_opt")
+	var tan_param_opt = get_node("tangents_param_opt")
+
+	# Set the first item, which should be blank, to the new parameter name
+	if points_param_opt.get_item_text(points_param_opt.selected).empty():
+		points_param_opt.set_item_text(0, new_parameter[0])
+	elif tan_param_opt.get_item_text(tan_param_opt.selected).empty():
+		tan_param_opt.set_item_text(0, new_parameter[0])
+
+	_validate_form()
+
+
+"""
+Called when the user selects an item from the parameter list.
+"""
+func _on_item_selected(index):
+	var opt = get_node("points_param_opt")
+
+	var sel = opt.get_item_text(index)
+
+	# Handle the user wanting to add a new tuple list parameter
+	if sel == "":
+		return
+	elif sel == "New":
+		# Switch back to the blank item at the beginning of the option button
+		opt.select(0)
+
+		# Fire the event that launches the add parameter dialog set up to do the tuple
+		connect("new_tuple", self.find_parent("Control"), "_on_new_tuple")
+		emit_signal("new_tuple")
+
+
+"""
+Called when the user selects an item from the tangent parameter list.
+"""
+func _on_tangent_item_selected(index):
+	var opt = get_node("tangents_param_opt")
+
+	var sel = opt.get_item_text(index)
+
+	# Handle the user wanting to add a new tuple list parameter
+	if sel == "":
+		return
+	elif sel == "New":
+		# Switch back to the blank item at the beginning of the option button
+		opt.select(0)
+
+		# Fire the event that launches the add parameter dialog set up to do the tuple
+		connect("new_tuple", self.find_parent("Control"), "_on_new_tuple")
+		emit_signal("new_tuple")
+
+
+"""
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
-	var tuple_x_ctrl = find_node("tuple_x_ctrl", true, false)
-	var tuple_y_ctrl = find_node("tuple_y_ctrl", true, false)
-	var tan_x_ctrl = find_node("tan_x_ctrl", true, false)
-	var tan_y_ctrl = find_node("tan_y_ctrl", true, false)
-
-	# Make sure all of the numeric controls have valid values
-	if not tuple_x_ctrl.is_valid:
-		return false
-	if not tuple_y_ctrl.is_valid:
-		return false
-	if not tan_x_ctrl.is_valid:
-		return false
-	if not tan_y_ctrl.is_valid:
-		return false
-
-	return true
+	return valid
 
 
 """
-Called when the user clicks the add button to add the current
-tuple X and Y to the list.
+Validates the form as the user makes changes.
 """
-func _add_tuple():
-	if not is_valid():
-		var res = connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
-		if res != 0:
-			print("Error connecting a signal: " + str(res))
-		else:
-			emit_signal("error", "There is invalid tuple data in the form.")
+func _validate_form():
+	var points_opt = get_node("points_param_opt")
+	var error_btn_group = get_node("error_btn_group")
+	var error_btn = get_node("error_btn_group/error_btn")
 
-		return
+	# Start with the error button hidden
+	error_btn_group.hide()
 
-	var tuple_x_ctrl = find_node("tuple_x_ctrl", true, false)
-	var tuple_y_ctrl = find_node("tuple_y_ctrl", true, false)
-	var tuple_ctrl = find_node("tuple_ctrl", true, false)
-	var tuple_ctrl_root = tuple_ctrl.get_root()
-
-	# Add the tuple X and Y values to different columns
-	var new_tuple_item = tuple_ctrl.create_item(tuple_ctrl_root)
-
-	# Add the items to the tree
-	new_tuple_item.set_text(0, tuple_x_ctrl.get_text())
-	new_tuple_item.set_text(1, tuple_y_ctrl.get_text())
-
-
-"""
-Allows a tuple tree item to be removed.
-"""
-func _delete_tuple():
-	var tuple_ctrl = find_node("tuple_ctrl", true, false)
-
-	# Get the selected item in the tuple list/tree
-	var selected = tuple_ctrl.get_selected()
-
-	# Make sure there is something to remove
-	if selected != null:
-		selected.free()
-
-
-"""
-Called when the user clicks the add button to add the current
-tangent X and Y to the list.
-"""
-func _add_tan():
-	if not is_valid():
-		var res = connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
-		if res != 0:
-			print("Error connecting a signal: " + str(res))
-		else:
-			emit_signal("error", "There is invalid tuple data in the form.")
-
-		return
-
-	var tan_x_ctrl = find_node("tan_x_ctrl", true, false)
-	var tan_y_ctrl = find_node("tan_y_ctrl", true, false)
-	var tan_ctrl = find_node("tan_ctrl", true, false)
-	var tan_ctrl_root = tan_ctrl.get_root()
-
-	# Add the tangent X and Y values to different columns
-	var new_tan_item = tan_ctrl.create_item(tan_ctrl_root)
-	new_tan_item.set_text(0, tan_x_ctrl.get_text())
-	new_tan_item.set_text(1, tan_y_ctrl.get_text())
-
-
-"""
-Allows a tuple tree item to be removed.
-"""
-func _delete_tan():
-	var tan_ctrl = find_node("tan_ctrl", true, false)
-
-	# Get the selected item in the tuple list/tree
-	var selected = tan_ctrl.get_selected()
-
-	# Make sure there is something to remove
-	if selected != null:
-		selected.free()
-
-
-"""
-Allows the tuple list to be populated via string.
-"""
-func _add_tuple_xy(x, y):
-	var tuple_ctrl = find_node("tuple_ctrl", true, false)
-	var tuple_ctrl_root = tuple_ctrl.get_root()
-
-	# Add the tuple X and Y values to different columns
-	var new_tuple_item = tuple_ctrl.create_item(tuple_ctrl_root)
-
-	# Add the items to the tree
-	new_tuple_item.set_text(0, x)
-	new_tuple_item.set_text(1, y)
-
-
-"""
-Allows the tangents list to be populated via string.
-"""
-func _add_tan_xy(x, y):
-	var tan_ctrl = find_node("tan_ctrl", true, false)
-	var tan_ctrl_root = tan_ctrl.get_root()
-
-	# Add the tangent X and Y values to different columns
-	var new_tan_item = tan_ctrl.create_item(tan_ctrl_root)
-	new_tan_item.set_text(0, x)
-	new_tan_item.set_text(1, y)
+	# A points list parameter must be selected
+	if points_opt.get_item_text(points_opt.selected).empty():
+		error_btn_group.show()
+		error_btn.hint_tooltip = tr("POINTS_LIST_PARAMETER_SELECTION_ERROR")
+		valid = false
+	else:
+		valid = true
 
 
 """
 Fills out the template and returns it.
 """
 func get_completed_template():
-	var tuple_x_ctrl = find_node("tuple_x_ctrl", true, false)
-	var tuple_y_ctrl = find_node("tuple_y_ctrl", true, false)
-	var tuple_ctrl = find_node("tuple_ctrl", true, false)
-	var tan_x_ctrl = find_node("tan_x_ctrl", true, false)
-	var tan_y_ctrl = find_node("tan_y_ctrl", true, false)
-	var tan_ctrl = find_node("tan_ctrl", true, false)
+	var points_param_opt = get_node("points_param_opt")
+	var tan_param_opt = get_node("tangents_param_opt")
 	var periodic_ctrl = find_node("periodic_ctrl", true, false)
 	var construction_ctrl = find_node("construction_ctrl", true, false)
 	var current_ctrl = find_node("current_ctrl", true, false)
 	var wire_ctrl = find_node("wire_ctrl", true, false)
 
-	var complete = ""
+	# See if the tangent vector list needs to be None
+	var tan_param_name = tan_param_opt.get_item_text(tan_param_opt.selected)
+	if tan_param_name.empty():
+		tan_param_name = "None"
 
-	# Collect the tuple pairs
-	var tuple_pairs = Common.collect_pairs(tuple_ctrl)
-
-	# Collect the tangent pairs
-	var tan_pairs = Common.collect_pairs(tan_ctrl)
-
-	complete += template.format({
-		"listOfXYTuple": tuple_pairs,
-		"tangents": tan_pairs,
+	var complete = template.format({
+		"listOfXYTuple": points_param_opt.get_item_text(points_param_opt.selected),
+		"tangents": tan_param_name,
 		"periodic": periodic_ctrl.pressed,
 		"forConstruction": construction_ctrl.pressed,
 		"includeCurrent": current_ctrl.pressed,
@@ -370,12 +262,8 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
-	var tuple_x_ctrl = find_node("tuple_x_ctrl", true, false)
-	var tuple_y_ctrl = find_node("tuple_y_ctrl", true, false)
-	var tuple_ctrl = find_node("tuple_ctrl", true, false)
-	var tan_x_ctrl = find_node("tan_x_ctrl", true, false)
-	var tan_y_ctrl = find_node("tan_y_ctrl", true, false)
-	var tan_ctrl = find_node("tan_ctrl", true, false)
+	var points_param_opt = get_node("points_param_opt")
+	var tan_param_opt = get_node("tangents_param_opt")
 	var periodic_ctrl = find_node("periodic_ctrl", true, false)
 	var construction_ctrl = find_node("construction_ctrl", true, false)
 	var current_ctrl = find_node("current_ctrl", true, false)
@@ -385,33 +273,19 @@ func set_values_from_string(text_line):
 
 	var rgx = RegEx.new()
 
-	# Tuples
+	# Spline points
 	rgx.compile(tuple_edit_rgx)
 	var res = rgx.search(text_line)
 	if res:
-		# Add the items back to the tuple list
-		var pairs = res.get_string().split(",")
-		for pair in pairs:
-			var xy = pair.split(",")
-			# Safety catch for a trailing comma in the point list
-			if xy.size() < 2:
-				continue
-
-			_add_tuple_xy(xy[0], xy[1])
+		# Set the spline points parameter
+		Common.set_option_btn_by_text(points_param_opt, res.get_string())
 
 	# Tangents
 	rgx.compile(tangents_edit_rgx)
 	res = rgx.search(text_line)
 	if res:
-		# Add the items back to the tuple list
-		var pairs = res.get_string().split(",")
-		for pair in pairs:
-			var xy = pair.split(",")
-			# Safety catch for a trailing comma in the point list
-			if xy.size() < 2:
-				continue
-
-			_add_tan_xy(xy[0], xy[1])
+		if res.get_string() != "None":
+			Common.set_option_btn_by_text(tan_param_opt, res.get_string())
 
 	# Periodic
 	rgx.compile(periodic_edit_rgx)

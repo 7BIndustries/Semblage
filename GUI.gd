@@ -1,5 +1,7 @@
 extends Control
 
+signal error
+
 var VERSIONNUM = "0.4.0-alpha"
 
 var open_file_path # The component/CQ file that the user opened
@@ -35,6 +37,9 @@ func _ready():
 	close_button.hint_tooltip = tr("CLOSE_BUTTON_HINT_TOOLTIP")
 	home_button.hint_tooltip = tr("HOME_VIEW_BUTTON_HINT_TOOLTIP")
 	about_button.hint_tooltip = tr("ABOUT_BUTTON_HINT_TOOLTIP")
+
+	# Connect the error signal to the handler method for errors
+	connect("error", self, "_on_error")
 
 	# Let the user know the app is ready to use
 	var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
@@ -374,17 +379,14 @@ func _render_component_text(component_text):
 	if cqgipy.has_method('get_render_tree'):
 		render_tree = render_tree.get_render_tree(component_text)
 	else:
-		var error_dlg = $ErrorDialog
-		error_dlg.dialog_text = "The current component has invalid geometry. Please undo the last operation and try a different method."
-		error_dlg.popup_centered()
+		emit_signal("error", "The current component has invalid geometry. Please undo the last operation and try a different method.")
 
 	# See if we got an error
 	if typeof(render_tree) == 4:
 		# Let the user know there was an error
 		var err = render_tree.split("~")[1]
-		var error_dlg = $ErrorDialog
-		error_dlg.dialog_text = err
-		error_dlg.popup_centered()
+		# Let the user know that an error occurred
+		emit_signal("error", err)
 		var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
 		status_lbl.set_text("Rendering error")
 
@@ -893,17 +895,13 @@ func _on_ExportDialog_file_selected(path):
 	if cqgipy.has_method('export'):
 		ret = ret.export(export_text, extension, OS.get_user_data_dir())
 	else:
-		var error_dlg = $ErrorDialog
-		error_dlg.dialog_text = "The current component has invalid geometry. Please undo the last operation and try a different method."
-		error_dlg.popup_centered()
+		emit_signal("error", "The current component has invalid geometry. Please undo the last operation and try a different method.")
 
 	# If the export succeeded, move the contents of the export to the final location
 	if ret.begins_with("error~"):
 		# Let the user know there was an error
 		var err = ret.split("~")[1]
-		var error_dlg = $ErrorDialog
-		error_dlg.dialog_text = err
-		error_dlg.popup_centered()
+		emit_signal("error", err)
 	else:
 		# Read the exported file contents and write them to their final location
 		# Work-around for not being able to write to the broader filesystem via Python
@@ -1078,8 +1076,14 @@ func _get_component_name():
 Allows an arbitrary error to be displayed to the user.
 """
 func _on_error(error_text):
-	var dlg = $ErrorDialog
+	var dlg = get_node("ErrorDialog")
+
+	# Intercept the generic BRep_API error
+	if error_text.begins_with("BRep_API: command not done"):
+		error_text = "You have received a general error from the CAD kernel.\nPlease undo your last change and try another operation\nor parameter setting."
+
 	dlg.dialog_text = error_text
+
 	dlg.popup_centered()
 
 

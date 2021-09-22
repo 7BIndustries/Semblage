@@ -247,3 +247,4 @@ BINARY_OP_ERROR_TWO_DIFF_COMPONENTS,Two different components must be selected fo
 TAG_NAME_CHARACTER_ERROR,"Component names can only contain letters, numbers and underscores, and\ncannot start with a number."
 LOFT_WIRE_WP_OPT_HINT_TOOLTIP,Component containing wires that are to be used in the loft operation.
 NO_COMPONENT_SELECTED_ERROR,A component must be selected for this operation.
+POINTS_LIST_PARAMETER_SELECTION_ERROR,A point list parameter must be selected from the drop down.

@@ -768,3 +768,20 @@ func _set_tooltips():
 
 		# Combine the prefix with the postfix to dynamically find the correct tooltip text
 		popup.set_item_tooltip(i, tr(child_name_upper) + "_TOOLTIP")
+
+
+"""
+Allows a control to get only the names of parameters that are tuples.
+"""
+func get_tuple_param_names():
+	# Filter the paramters down to only tuple lists
+#	var filtered_params = {}
+	var filtered_param_names = []
+
+	for param_name in parameters.keys():
+		# The parameter is a tuple list
+		if parameters[param_name].begins_with("["):
+#			filtered_params[param_name] = parameters[param_name]
+			filtered_param_names.append(param_name)
+
+	return filtered_param_names

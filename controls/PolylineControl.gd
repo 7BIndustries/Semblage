@@ -2,77 +2,49 @@ extends VBoxContainer
 
 class_name PolylineControl
 
+signal new_tuple
 signal error
 
-var template = ".polyline(listOfXYTuple=[{listOfXYTuple}],forConstruction={forConstruction},includeCurrent={includeCurrent})"
+var template = ".polyline(listOfXYTuple={listOfXYTuple},forConstruction={forConstruction},includeCurrent={includeCurrent})"
 
 var prev_template = null
 
-const tuple_edit_rgx = "(?<=listOfXYTuple\\=\\[)(.*?)(?=\\]\\,forConstruction)"
+const tuple_edit_rgx = "(?<=listOfXYTuple\\=)(.*?)(?=\\,forConstruction)"
 const construction_edit_rgx = "(?<=forConstruction\\=)(.*?)(?=\\,includeCurrent)"
-const current_edit_rgx = "(?<=includeCurrent\\=)(.*?)(?=\"\\))"
+const current_edit_rgx = "(?<=includeCurrent\\=)(.*?)(?=\\))"
 
+var valid = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	# Add this control to a group so that we can broadcast messages
+	add_to_group("new_tuple")
+
+	# Pull the parameters from the action popup panel
+	var app = find_parent("ActionPopupPanel")
+	var filtered_param_names = app.get_tuple_param_names()
+
+	# If there are no parameters, we insert a blank one at the top to force the user to select "New"
+	if filtered_param_names.size() == 0:
+		filtered_param_names.append("")
+
+	# Allow the user to create a new tuple list variable
+	filtered_param_names.append("New")
+
 	# POINTS
 	var new_tuple_lbl = Label.new()
-	new_tuple_lbl.set_text("New Point")
+	new_tuple_lbl.set_text("Polyline Points Parameter")
 	add_child(new_tuple_lbl)
 
-	# X pos
-	var pos_group = HBoxContainer.new()
-	var x_length_lbl = Label.new()
-	x_length_lbl.set_text("X: ")
-	pos_group.add_child(x_length_lbl)
-	var tuple_x_ctrl = NumberEdit.new()
-	tuple_x_ctrl.name = "tuple_x_ctrl"
-	tuple_x_ctrl.size_flags_horizontal = 3
-	tuple_x_ctrl.set_text("10.0")
-	tuple_x_ctrl.hint_tooltip = tr("POLYLINE_TUPLE_X_CTRL_HINT_TOOLTIP")
-	pos_group.add_child(tuple_x_ctrl)
-	# Y pos
-	var y_length_lbl = Label.new()
-	y_length_lbl.set_text("Y: ")
-	pos_group.add_child(y_length_lbl)
-	var tuple_y_ctrl = NumberEdit.new()
-	tuple_y_ctrl.name = "tuple_y_ctrl"
-	tuple_y_ctrl.size_flags_horizontal = 3
-	tuple_y_ctrl.set_text("10.0")
-	tuple_y_ctrl.hint_tooltip = tr("POLYLINE_TUPLE_Y_CTRL_HINT_TOOLTIP")
-	pos_group.add_child(tuple_y_ctrl)
-	add_child(pos_group)
+	# Add the points parameter option button
+	var points_param_opt = OptionButton.new()
+	points_param_opt.name = "points_param_opt"
+	points_param_opt.connect("item_selected", self, "_on_item_selected")
+	add_child(points_param_opt)
 
-	var tuple_btn_group = HBoxContainer.new()
+	# Load up both component option buttons with the names of the found components
+	Common.load_option_button(points_param_opt, filtered_param_names)
 
-	# Button to add the current tuple to the list
-	var add_tuple_btn = Button.new()
-	add_tuple_btn.icon = load("res://assets/icons/add_tree_item_button_flat_ready.svg")
-	add_tuple_btn.connect("button_down", self, "_add_tuple")
-	tuple_btn_group.add_child(add_tuple_btn)
-
-	# Button to remove the current tuple from the list
-	var delete_tuple_btn = Button.new()
-	delete_tuple_btn.icon = load("res://assets/icons/delete_tree_item_button_flat_ready.svg")
-	delete_tuple_btn.connect("button_down", self, "_delete_tuple")
-	tuple_btn_group.add_child(delete_tuple_btn)
-
-	add_child(tuple_btn_group)
-
-	# Label for the points list
-	var points_lbl = Label.new()
-	points_lbl.set_text("Points")
-	add_child(points_lbl)
-
-	# The tree to hold the tuples
-	var tuple_ctrl = Tree.new()
-	tuple_ctrl.name = "tuple_ctrl"
-	tuple_ctrl.columns = 2
-	tuple_ctrl.rect_min_size = Vector2(50, 50)
-	tuple_ctrl.hide_root = true
-	var tuple_ctrl_root = tuple_ctrl.create_item()
-	tuple_ctrl_root.set_text(0, "tuples")
-	add_child(tuple_ctrl)
 
 	# FOR CONSTRUCTION
 	var construction_group = HBoxContainer.new()
@@ -98,6 +70,21 @@ func _ready():
 	current_group.add_child(current_ctrl)
 	add_child(current_group)
 
+	# Create the button that lets the user know that there is an error on the form
+	var error_btn_group = HBoxContainer.new()
+	error_btn_group.name = "error_btn_group"
+	var error_btn = Button.new()
+	error_btn.name = "error_btn"
+	error_btn.set_text("!")
+	error_btn_group.add_child(error_btn)
+	error_btn_group.hide()
+	add_child(error_btn_group)
+
+	# Add a horizontal rule to break things up
+	add_child(HSeparator.new())
+
+	_validate_form()
+
 
 """
 Tells whether or not this control represents a binary operation.
@@ -107,78 +94,75 @@ func is_binary():
 
 
 """
+Broadcast received by all controls in the new_tuple group.
+"""
+func new_tuple_added(new_parameter):
+	# Get the option button so we can set it
+	var opt = get_node("points_param_opt")
+
+	# Set the first item, which should be blank, to the new parameter name
+	opt.set_item_text(0, new_parameter[0])
+
+	_validate_form()
+
+
+"""
+Called when the user selects an item from the parameter list.
+"""
+func _on_item_selected(index):
+	var opt = get_node("points_param_opt")
+
+	var sel = opt.get_item_text(index)
+
+	# Handle the user wanting to add a new tuple list parameter
+	if sel == "":
+		return
+	elif sel == "New":
+		# Switch back to the blank item at the beginning of the option button
+		opt.select(0)
+
+		# Fire the event that launches the add parameter dialog set up to do the tuple
+		connect("new_tuple", self.find_parent("Control"), "_on_new_tuple")
+		emit_signal("new_tuple")
+
+
+"""
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
-	var tuple_x_ctrl = find_node("tuple_x_ctrl", true, false)
-	var tuple_y_ctrl = find_node("tuple_y_ctrl", true, false)
-
-	# Make sure all of the numeric controls have valid values
-	if not tuple_x_ctrl.is_valid:
-		return false
-	if not tuple_y_ctrl.is_valid:
-		return false
-
-	return true
-
-"""
-Called when the user clicks the add button to add the current
-tuple X and Y to the list.
-"""
-func _add_tuple():
-	if not is_valid():
-		var res = connect("error", self.find_parent("ActionPopupPanel"), "_on_error")
-		if res != 0:
-			print("Error connecting a signal: " + str(res))
-		else:
-			emit_signal("error", "There is invalid tuple data in the form.")
-
-		return
-
-	var tuple_x_ctrl = find_node("tuple_x_ctrl", true, false)
-	var tuple_y_ctrl = find_node("tuple_y_ctrl", true, false)
-	var tuple_ctrl = find_node("tuple_ctrl", true, false)
-	var tuple_ctrl_root = tuple_ctrl.get_root()
-
-	# Add the tuple X and Y values to different columns
-	var new_tuple_item = tuple_ctrl.create_item(tuple_ctrl_root)
-
-	# Add the items to the tree
-	new_tuple_item.set_text(0, tuple_x_ctrl.get_text())
-	new_tuple_item.set_text(1, tuple_y_ctrl.get_text())
+	return valid
 
 
 """
-Allows a tuple tree item to be removed.
+Validates the form as the user makes changes.
 """
-func _delete_tuple():
-	var tuple_ctrl = find_node("tuple_ctrl", true, false)
+func _validate_form():
+	var points_opt = get_node("points_param_opt")
+	var error_btn_group = get_node("error_btn_group")
+	var error_btn = get_node("error_btn_group/error_btn")
 
-	# Get the selected item in the tuple list/tree
-	var selected = tuple_ctrl.get_selected()
+	# Start with the error button hidden
+	error_btn_group.hide()
 
-	# Make sure there is something to remove
-	if selected != null:
-		selected.free()
+	# A points list parameter must be selected
+	if points_opt.get_item_text(points_opt.selected).empty():
+		error_btn_group.show()
+		error_btn.hint_tooltip = tr("POINTS_LIST_PARAMETER_SELECTION_ERROR")
+		valid = false
+	else:
+		valid = true
 
 
 """
 Fills out the template and returns it.
 """
 func get_completed_template():
-	var tuple_x_ctrl = find_node("tuple_x_ctrl", true, false)
-	var tuple_y_ctrl = find_node("tuple_y_ctrl", true, false)
-	var tuple_ctrl = find_node("tuple_ctrl", true, false)
+	var points_opt = get_node("points_param_opt")
 	var construction_ctrl = find_node("construction_ctrl", true, false)
 	var current_ctrl = find_node("current_ctrl", true, false)
 
-	var complete = ""
-
-	# Collect the tuple pairs
-	var tuple_pairs = Common.collect_pairs(tuple_ctrl)
-
-	complete += template.format({
-		"listOfXYTuple": tuple_pairs,
+	var complete = template.format({
+		"listOfXYTuple": points_opt.get_item_text(points_opt.selected),
 		"forConstruction": construction_ctrl.pressed,
 		"includeCurrent": current_ctrl.pressed
 		})
@@ -198,8 +182,7 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
-	var tuple_x_ctrl = find_node("tuple_x_ctrl", true, false)
-	var tuple_y_ctrl = find_node("tuple_y_ctrl", true, false)
+	var points_opt = get_node("points_param_opt")
 	var construction_ctrl = find_node("construction_ctrl", true, false)
 	var current_ctrl = find_node("current_ctrl", true, false)
 
@@ -211,20 +194,8 @@ func set_values_from_string(text_line):
 	rgx.compile(tuple_edit_rgx)
 	var res = rgx.search(text_line)
 	if res:
-		# Add the items back to the tuple list
-		var pairs = res.get_string()
-		pairs = pairs.replace('(', '')
-		pairs = pairs.replace(' ', '')
-		pairs = pairs.split("),")
-		print(str(pairs))
-		for pair in pairs:
-			# Make sure we do not have an empty pair at the end of the array
-			if pair == "":
-				continue
-
-			# Get the final pair X and Y values
-			var xy = pair.split(",")
-			_add_tuple_xy(xy[0], xy[1])
+		# Set the points option button to have the tuple selected
+		Common.set_option_btn_by_text(points_opt, res.get_string())
 
 	# For construction
 	rgx.compile(construction_edit_rgx)
@@ -239,18 +210,3 @@ func set_values_from_string(text_line):
 	if res:
 		var cur = res.get_string()
 		current_ctrl.pressed = true if cur == "True" else false
-
-
-"""
-Allows the tuple list to be populated via string.
-"""
-func _add_tuple_xy(x, y):
-	var tuple_ctrl = find_node("tuple_ctrl", true, false)
-	var tuple_ctrl_root = tuple_ctrl.get_root()
-
-	# Add the tuple X and Y values to different columns
-	var new_tuple_item = tuple_ctrl.create_item(tuple_ctrl_root)
-
-	# Add the items to the tree
-	new_tuple_item.set_text(0, x)
-	new_tuple_item.set_text(1, y)
