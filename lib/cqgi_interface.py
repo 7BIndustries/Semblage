@@ -140,6 +140,8 @@ class cqgi_interface(Node):
 
 				# Save the tessellation information
 				cur_comp["smallest_dimension"] = smallest_dimension
+				if cur_comp["smallest_dimension"] == 0:
+					cur_comp["smallest_dimension"] = cur_comp["largest_dimension"]
 				if largest_dimension > cur_comp["largest_dimension"]:
 					cur_comp["largest_dimension"] = largest_dimension
 				cur_comp["vertices"] = vertices
@@ -215,15 +217,15 @@ class cqgi_interface(Node):
 					largest_dimension = shape.BoundingBox().DiagonalLength
 
 				# Find the smallest dimension so that we can use that for the line width
-				if shape.BoundingBox().xlen < smallest_dimension:
+				if shape.BoundingBox().xlen > 0.01 and shape.BoundingBox().xlen < smallest_dimension:
 					smallest_dimension = shape.BoundingBox().xlen
-				if shape.BoundingBox().ylen < smallest_dimension:
+				if shape.BoundingBox().ylen > 0.01 and shape.BoundingBox().ylen < smallest_dimension:
 					smallest_dimension = shape.BoundingBox().ylen
-				if shape.BoundingBox().zlen < smallest_dimension:
+				if shape.BoundingBox().zlen > 0.01 and shape.BoundingBox().zlen < smallest_dimension:
 					smallest_dimension = shape.BoundingBox().zlen
 
 				# If dealing with some sort of arc, discretize it into individual lines
-				if gt == "CIRCLE" or gt == "ARC" or gt == "SPLINE" or gt == "ELLIPSE":
+				if gt == "CIRCLE" or gt == "ARC" or gt == "SPLINE" or gt == "BSPLINE" or gt == "ELLIPSE":
 					from OCP import GCPnts, BRepAdaptor
 
 					# Discretize the curve
