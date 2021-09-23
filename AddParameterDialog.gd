@@ -111,7 +111,8 @@ func _on_OKButton_button_down():
 		emit_signal("add_parameter", new_param, param_data_type, param_comment)
 
 	# Broadcast the message that lets any controls know that a tuple has been created
-	if param_data_type == "tuple":
+	# The get_tree call is a work-around for the testing framework
+	if param_data_type == "tuple" and get_tree() != null:
 		get_tree().call_group("new_tuple", "new_tuple_added", new_param)
 
 	# Reset the status text and editable status

@@ -3,7 +3,6 @@ extends VBoxContainer
 class_name PolylineControl
 
 signal new_tuple
-signal error
 
 var template = ".polyline(listOfXYTuple={listOfXYTuple},forConstruction={forConstruction},includeCurrent={includeCurrent})"
 
@@ -120,7 +119,7 @@ func _on_item_selected(index):
 		opt.select(0)
 
 		# Fire the event that launches the add parameter dialog set up to do the tuple
-		connect("new_tuple", self.find_parent("Control"), "_on_new_tuple")
+		var _ret = connect("new_tuple", self.find_parent("Control"), "_on_new_tuple")
 		emit_signal("new_tuple")
 
 	_validate_form()

@@ -469,3 +469,164 @@ func test_operation_drag_and_drop():
 	# Make sure the items got swapped
 	assert_eq(drop_item.get_text(0), '.box(10,10,10)', "Make sure that we grabbed the right item.")
 	assert_eq(drag_item.get_text(0), '.Workplane().tag("box1")', "Make sure that we grabbed the right item.")
+
+
+"""
+Tests the ability for the user to add a new parameter with metadata.
+"""
+func test_metadata_addition():
+	# Get a reference to the whole interface and make sure we got it
+	var gui = partial_double("res://GUI.tscn").instance()
+	gui._ready()
+
+	# Initialize the trees
+	gui._init_component_tree()
+	gui._init_params_tree()
+
+	# Simulate a right click on the item
+	gui._on_ParametersTree_activate_data_popup()
+
+	# Get a reference to the New button
+	var new_btn = gui.get_node("DataPopupPanel/DataPopupVBox")
+	new_btn = new_btn.get_children()[0]
+
+	# Trigger the New button
+	new_btn.emit_signal("button_down")
+
+	# Get a reference to the Parameters dialog so that we can make sure it is shown when it should be
+	var param_dlg = gui.get_node("AddParameterDialog")
+	param_dlg._ready()
+
+	# Set the data type to number
+	param_dlg._on_NumCheckBox_button_down()
+
+	# Set a comment to make sure it is set correctly
+	var comment_txt = param_dlg.get_node("MarginContainer/VBoxContainer/CommentLineEdit")
+	comment_txt.set_text("Test Comment")
+
+	# Confirm the settings
+	param_dlg._on_OKButton_button_down()
+
+	# Check to make sure that the metadata was added to the tree item
+	var param_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree")
+	var param_item = param_tree.get_root().get_children()
+
+	# Make sure that the metadata is set correctly on the tree items
+	var meta = {"comment":"Test Comment", "data_type":"number"}
+	assert_eq(param_item.get_metadata(0)["comment"], meta["comment"])
+	assert_eq(param_item.get_metadata(0)["data_type"], meta["data_type"])
+
+	# Save the component so that we can make sure the parameters are reloaded properly
+	var save_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton")
+	var popup = gui.get_node("ToolbarPopupPanel")
+	save_btn.emit_signal("button_down")
+	var save_sub_btn = popup.get_child(0).get_child(0)
+	var save_dlg = gui.get_node("SaveDialog")
+	save_sub_btn.emit_signal("button_down")
+	save_dlg.current_dir = "/tmp"
+	save_dlg.current_file = "test.py"
+	save_dlg.current_path = "/tmp"
+	save_dlg.get_line_edit().set_text("/tmp/test.py")
+	save_dlg.emit_signal("file_selected", "/tmp/test.py")
+
+	# Give the file time to be written
+	yield(yield_to(save_dlg, "file_selected", 5), YIELD)
+
+	# Remove the parameter so that we can reload it
+	var close_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton")
+	close_btn.emit_signal("button_down")
+
+	# Load the component again so we can make sure the metadata is loaded properly
+	var open_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton")
+	var open_dlg = gui.get_node("OpenDialog")
+	open_btn.emit_signal("button_down")
+	open_dlg.current_dir = "/tmp"
+	open_dlg.current_file = "test.py"
+	open_dlg.current_path = "/tmp"
+	open_dlg.get_line_edit().set_text("/tmp/test.py")
+	open_dlg.emit_signal("file_selected", "/tmp/test.py")
+
+	# Give the file time to be read
+	yield(yield_to(open_dlg, "file_selected", 5), YIELD)
+
+	# Get the fresh parameter data
+	param_item = param_tree.get_root().get_children()
+	assert_eq(param_item.get_metadata(0)["comment"], meta["comment"])
+	assert_eq(param_item.get_metadata(0)["data_type"], meta["data_type"])
+
+
+"""
+Tests the ability for a user to add a new tuple parameter.
+"""
+func test_tuple_parameter():
+	# Get a reference to the whole interface and make sure we got it
+	var gui = partial_double("res://GUI.tscn").instance()
+	gui._ready()
+
+	# Initialize the trees
+	gui._init_component_tree()
+	gui._init_params_tree()
+
+	# Simulate a right click on the item
+	gui._on_ParametersTree_activate_data_popup()
+
+	# Get a reference to the New button
+	var new_btn = gui.get_node("DataPopupPanel/DataPopupVBox")
+	new_btn = new_btn.get_children()[0]
+
+	# Trigger the New button
+	new_btn.emit_signal("button_down")
+
+	# Get a reference to the Parameters dialog so that we can make sure it is shown when it should be
+	var param_dlg = gui.get_node("AddParameterDialog")
+	param_dlg._ready()
+
+	# Set the data type to tuple
+	param_dlg._on_TupleListCheckBox_button_down()
+
+	# Confirm the settings
+	param_dlg._on_OKButton_button_down()
+
+	# Check to make sure that the parameter was added to the tree item
+	var param_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree")
+	var param_item = param_tree.get_root().get_children()
+	assert_eq(param_item.get_text(0), "parameter_name")
+	assert_eq(param_item.get_text(1), "[(0.0,0.0,0.0),]")
+
+	# Save the component so that we can make sure the parameters are reloaded properly
+	var save_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton")
+	var popup = gui.get_node("ToolbarPopupPanel")
+	save_btn.emit_signal("button_down")
+	var save_sub_btn = popup.get_child(0).get_child(0)
+	var save_dlg = gui.get_node("SaveDialog")
+	save_sub_btn.emit_signal("button_down")
+	save_dlg.current_dir = "/tmp"
+	save_dlg.current_file = "test.py"
+	save_dlg.current_path = "/tmp"
+	save_dlg.get_line_edit().set_text("/tmp/test.py")
+	save_dlg.emit_signal("file_selected", "/tmp/test.py")
+
+	# Give the file time to be written
+	yield(yield_to(save_dlg, "file_selected", 5), YIELD)
+
+	# Remove the parameter so that we can reload it
+	var close_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton")
+	close_btn.emit_signal("button_down")
+
+	# Load the component again so we can make sure the metadata is loaded properly
+	var open_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton")
+	var open_dlg = gui.get_node("OpenDialog")
+	open_btn.emit_signal("button_down")
+	open_dlg.current_dir = "/tmp"
+	open_dlg.current_file = "test.py"
+	open_dlg.current_path = "/tmp"
+	open_dlg.get_line_edit().set_text("/tmp/test.py")
+	open_dlg.emit_signal("file_selected", "/tmp/test.py")
+
+	# Give the file time to be read
+	yield(yield_to(open_dlg, "file_selected", 5), YIELD)
+
+	# Get the fresh parameter data
+	param_item = param_tree.get_root().get_children()
+	assert_eq(param_item.get_text(0), "parameter_name")
+	assert_eq(param_item.get_text(1), "[(0.0,0.0,0.0),]")

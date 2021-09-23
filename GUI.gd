@@ -39,7 +39,7 @@ func _ready():
 	about_button.hint_tooltip = tr("ABOUT_BUTTON_HINT_TOOLTIP")
 
 	# Connect the error signal to the handler method for errors
-	connect("error", self, "_on_error")
+	var _ret = connect("error", self, "_on_error")
 
 	# Let the user know the app is ready to use
 	var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
@@ -174,7 +174,7 @@ func load_semblage_component(text):
 			var new_param_item = params_tree.create_item(params_tree_root)
 			new_param_item.set_text(0, param_parts[0].replace(" ", ""))
 			new_param_item.set_text(1, param_meta[0].replace(" ", ""))
-			var new_json = JSON.parse(param_meta[1].replace(" ", "").replace("\n", ""))
+			var new_json = JSON.parse(param_meta[1].replace("\n", ""))
 			new_param_item.set_metadata(0, new_json.result)
 
 	var component_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")

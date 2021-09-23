@@ -2,7 +2,6 @@ extends VBoxContainer
 
 class_name SplineControl
 
-signal error
 signal new_tuple
 
 var template = ".spline(listOfXYTuple={listOfXYTuple},tangents={tangents},periodic={periodic},forConstruction={forConstruction},includeCurrent={includeCurrent},makeWire={makeWire})"
@@ -168,7 +167,7 @@ func _on_item_selected(index):
 		opt.select(0)
 
 		# Fire the event that launches the add parameter dialog set up to do the tuple
-		connect("new_tuple", self.find_parent("Control"), "_on_new_tuple")
+		var _ret = connect("new_tuple", self.find_parent("Control"), "_on_new_tuple")
 		emit_signal("new_tuple")
 
 	_validate_form()
@@ -188,7 +187,7 @@ func _on_tangent_item_selected(index):
 		opt.select(0)
 
 		# Fire the event that launches the add parameter dialog set up to do the tuple
-		connect("new_tuple", self.find_parent("Control"), "_on_new_tuple")
+		var _ret = connect("new_tuple", self.find_parent("Control"), "_on_new_tuple")
 		emit_signal("new_tuple")
 
 

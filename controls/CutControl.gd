@@ -1,7 +1,5 @@
 extends VBoxContainer
 
-# signal error
-
 class_name CutControl
 
 var prev_template = null
