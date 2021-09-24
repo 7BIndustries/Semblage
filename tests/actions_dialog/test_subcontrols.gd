@@ -377,7 +377,7 @@ func test_sweep_control():
 
 	# Get the viewport so we can make sure it has contents
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	assert_eq(vp.get_child_count(), 30, "Make sure the viewport has the correct number of objects in it.")
+	assert_eq(vp.get_child_count(), 35, "Make sure the viewport has the correct number of objects in it.")
 
 	# Make sure the component tree is converted into the script for the operations dialog
 	var component_text = gui._convert_component_tree_to_script(false)
@@ -437,4 +437,4 @@ func test_sweep_control():
 	ok_btn.emit_signal("button_down")
 
 	# See if the results in the 3D viewport have changed appropriately
-	assert_eq(vp.get_child_count(), 30, "Make sure the viewport has the correct number of objects in it.")
+	assert_eq(vp.get_child_count(), 35, "Make sure the viewport has the correct number of objects in it.")
