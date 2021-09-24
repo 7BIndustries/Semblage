@@ -51,6 +51,7 @@ class cqgi_interface(Node):
 
 				# Figure out if we need to step back one step to get a non-workplane object
 				tess_shape = result.shape.val()
+				tess_edges = result.shape.edges()
 				if len(result.shape.all()) == 0:
 					is_base_wp = False
 
@@ -136,7 +137,7 @@ class cqgi_interface(Node):
 				smallest_dimension, largest_dimension,\
 					vertices, edges, triangles, num_of_vertices,\
 					num_of_edges, num_of_triangles = \
-					self.tessellate(tess_shape)
+					self.tessellate(tess_shape, tess_edges)
 
 				# Save the tessellation information
 				cur_comp["smallest_dimension"] = smallest_dimension
@@ -163,7 +164,7 @@ class cqgi_interface(Node):
 	"""
 	Turns a shape into faces, edges and vertices.
 	"""
-	def tessellate(self, shape):
+	def tessellate(self, shape, shape_edges):
 		loc = None
 		largest_dimension = 0
 		smallest_dimension = 999999999
@@ -209,12 +210,24 @@ class cqgi_interface(Node):
 #				mesher.addCQVertex(vert.X, vert.Y, vert.Z)
 
 			# Add CadQuery-reported edges
-			for edge in shape.Edges():
+			for edge in shape_edges.edges().all():#shape.Edges():
+				edge = edge.val()
 				gt = edge.geomType()
 
 				# Find out if the shape is larger than the largest bounding box we have recorded so far
 				if shape.BoundingBox().DiagonalLength > largest_dimension:
 					largest_dimension = shape.BoundingBox().DiagonalLength
+
+				# Handle objects that may not be at the origin
+				if shape.BoundingBox().xmax > largest_dimension:
+					largest_dimension = shape.BoundingBox().xmax
+					print(str(largest_dimension))
+				if shape.BoundingBox().ymax > largest_dimension:
+					largest_dimension = shape.BoundingBox().ymax
+					print(str(largest_dimension))
+				if shape.BoundingBox().zmax > largest_dimension:
+					largest_dimension = shape.BoundingBox().zmax
+					print(str(largest_dimension))
 
 				# Find the smallest dimension so that we can use that for the line width
 				if shape.BoundingBox().xlen > 0.01 and shape.BoundingBox().xlen < smallest_dimension:
