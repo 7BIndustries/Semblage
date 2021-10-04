@@ -17,6 +17,38 @@ func _input(event):
 	if not accept_input:
 		return
 
+	# Make sure no dialogs are present over the top of the viewport
+	var error_dlg = find_parent('Control').get_node("ErrorDialog")
+	if error_dlg.visible:
+		return
+	var open_dlg = find_parent('Control').get_node("OpenDialog")
+	if open_dlg.visible:
+		return
+	var export_dlg = find_parent('Control').get_node("ExportDialog")
+	if export_dlg.visible:
+		return
+	var save_dlg = find_parent('Control').get_node("SaveDialog")
+	if save_dlg.visible:
+		return
+	var export_file_dlg = find_parent('Control').get_node("ExportFileDialog")
+	if export_file_dlg.visible:
+		return
+	var confirmation_dlg = find_parent('Control').get_node("ConfirmationDialog")
+	if confirmation_dlg.visible:
+		return
+	var export_svg_dlg = find_parent('Control').get_node("ExportSVGDialog")
+	if export_svg_dlg.visible:
+		return
+	var about_dlg = find_parent('Control').get_node("AboutDialog")
+	if about_dlg.visible:
+		return
+	var add_parameter_dlg = find_parent('Control').get_node("AddParameterDialog")
+	if add_parameter_dlg.visible:
+		return
+	var export_dxf_dlg = find_parent('Control').get_node("ExportDXFDialog")
+	if export_dxf_dlg.visible:
+		return
+
 	act_pos2d = get_viewport().get_mouse_position()
 
 	match event.get_class():
