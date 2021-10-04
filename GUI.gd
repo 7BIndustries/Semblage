@@ -173,9 +173,16 @@ func load_semblage_component(text):
 			# Add the parameter with the meta data to the parameter tree
 			var new_param_item = params_tree.create_item(params_tree_root)
 			new_param_item.set_text(0, param_parts[0].replace(" ", ""))
-			new_param_item.set_text(1, param_meta[0].replace(" ", ""))
-			var new_json = JSON.parse(param_meta[1].replace("\n", ""))
-			new_param_item.set_metadata(0, new_json.result)
+			new_param_item.set_text(1, param_parts[1].split("#")[0].replace(" ", ""))
+
+			# Make sure there is parameter metadata
+			if param_meta.size() > 1:
+				var new_json = JSON.parse(param_meta[1].replace("\n", ""))
+				new_param_item.set_metadata(0, new_json.result)
+			else:
+				# Automatically update any older Semblage files
+				var meta = {"data_type": "string", "comment": ""}
+				new_param_item.set_metadata(0, meta)
 
 	var component_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
 	var component_tree_root = _get_component_tree_root(component_tree)
@@ -537,6 +544,9 @@ func _on_CloseButton_button_down():
 	# Prevent the user from reloading the script manually
 	var reload_btn = $GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton
 	reload_btn.hide()
+
+	# Make sure the user cannot save a blank component over the previously opened one
+	open_file_path = null
 
 	# Let the user know the UI is ready to procede
 	var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
