@@ -824,8 +824,17 @@ func _save_component_text():
 	var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
 	status_lbl.set_text("")
 
+	# Attempt to open the file for writing
 	var file = File.new()
-	file.open(open_file_path, File.WRITE)
+	var err = file.open(open_file_path, File.WRITE)
+
+	# Let the user know if they do not have write access
+	if err != OK:
+		emit_signal("error", "The file cannot be written. Please make sure that\nyou have write permissions to the directory.")
+		status_lbl.set_text("Component save error")
+		return
+
+	# It is ok to write the contents to the file
 	file.store_string(_convert_component_tree_to_script(true))
 	file.close()
 

@@ -22,6 +22,7 @@ func _ready():
 	x_coord_ctrl.name = "x_coord_ctrl"
 	x_coord_ctrl.size_flags_horizontal = 3
 	x_coord_ctrl.set_text("1.0")
+	x_coord_ctrl.CanBeNegative = true
 	x_coord_ctrl.hint_tooltip = tr("CENTER_X_COORD_CTRL_HINT_TOOLTIP")
 	x_group.add_child(x_coord_ctrl)
 	add_child(x_group)
@@ -33,6 +34,7 @@ func _ready():
 	y_coord_ctrl.name = "y_coord_ctrl"
 	y_coord_ctrl.size_flags_horizontal = 3
 	y_coord_ctrl.set_text("1.0")
+	y_coord_ctrl.CanBeNegative = true
 	y_coord_ctrl.hint_tooltip = tr("CENTER_Y_COORD_CTRL_HINT_TOOLTIP")
 	y_group.add_child(y_coord_ctrl)
 	add_child(y_group)

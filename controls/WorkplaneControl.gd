@@ -2,7 +2,7 @@ extends VBoxContainer
 
 class_name WorkplaneControl
 
-var simple_template = ".Workplane(\"{named_wp}\").workplane(invert={invert},centerOption=\"{center_option}\").tag(\"{comp_name}\")"
+var simple_template = ".Workplane(\"{named_wp}\").workplane(offset={offset},invert={invert},centerOption=\"{center_option}\").tag(\"{comp_name}\")"
 var template = ".Workplane(cq.Plane(origin=({origin_x},{origin_y},{origin_z}), xDir=({xdir_x},{xdir_y},{xdir_z}), normal=({normal_x},{normal_y},{normal_z}))).tag(\"{comp_name}\")"
 
 var prev_template = null
@@ -11,8 +11,9 @@ const workplane_list = ["XY", "YZ", "XZ"]
 const center_option_list = ["CenterOfBoundBox", "CenterOfMass", "ProjectedOrigin"]
 
 const wp_name_edit_rgx = "(?<=.Workplane\\(\")(.*?)(?=\"\\))"
-const wp_cen_edit_rgx = "(?<=centerOption\\=\")(.*?)(?=\"\\))"
+const offset_edit_rgx = "(?<=offset\\=)(.*?)(?=,invert)"
 const invert_edit_rgx = "(?<=invert\\=)(.*?)(?=,centerOption)"
+const wp_cen_edit_rgx = "(?<=centerOption\\=\")(.*?)(?=\"\\))"
 const origin_edit_rgx = "(?<=origin\\=\\()(.*?)(?=\\))"
 const xdir_edit_rgx = "(?<=xdir\\=\\()(.*?)(?=\\))"
 const normal_edit_rgx = "(?<=normal\\=\\()(.*?)(?=\\))"
@@ -59,6 +60,20 @@ func _ready():
 	wp_cen_ctrl.hint_tooltip = tr("WP_CEN_CTRL_HINT_TOOLTIP")
 	wp_cen_group.add_child(wp_cen_ctrl)
 	add_child(wp_cen_group)
+
+	# Allow the user to set the offset for the workplane away from the origin in the direction defined by the normal
+	var offset_group = HBoxContainer.new()
+	offset_group.name = "offset_group"
+	var offset_lbl = Label.new()
+	offset_lbl.set_text("Offset: ")
+	offset_group.add_child(offset_lbl)
+	var offset_ctrl = NumberEdit.new()
+	offset_ctrl.name = "offset_ctrl"
+	offset_ctrl.set_text("0.0")
+	offset_ctrl.size_flags_horizontal = 3
+	offset_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
+	offset_group.add_child(offset_ctrl)
+	add_child(offset_group)
 
 	# Allow the user to set whether the workplane normal is inverted
 	var invert_group = HBoxContainer.new()
@@ -205,6 +220,7 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var offset_ctrl = get_node("offset_group/offset_ctrl")
 	var wp_name_ctrl = get_node("name_group/wp_name_ctrl")
 	var origin_x_ctrl = get_node("advanced_group/origin_group/origin_x_ctrl")
 	var origin_y_ctrl = get_node("advanced_group/origin_group/origin_y_ctrl")
@@ -217,6 +233,8 @@ func is_valid():
 	var normal_z_ctrl = get_node("advanced_group/normal_group/normal_z_ctrl")
 
 	# Make sure all of the numeric controls have valid values
+	if not offset_ctrl.is_valid:
+		return false
 	if not origin_x_ctrl.is_valid:
 		return false
 	if not origin_y_ctrl.is_valid:
@@ -247,6 +265,7 @@ Fills out the template and returns it.
 func get_completed_template():
 	var complete = ""
 
+	var offset_ctrl = get_node("offset_group/offset_ctrl")
 	var wp_ctrl = get_node("wp_group/wp_ctrl")
 	var wp_cen_ctrl = get_node("wp_cen_group/wp_cen_ctrl")
 	var invert_ctrl = get_node("invert_group/invert_ctrl")
@@ -281,6 +300,7 @@ func get_completed_template():
 		complete = simple_template.format({
 			"comp_name": wp_name_ctrl.get_text(),
 			"named_wp": wp_ctrl.get_item_text(wp_ctrl.get_selected_id()),
+			"offset": offset_ctrl.get_text(),
 			"center_option": wp_cen_ctrl.get_item_text(wp_cen_ctrl.get_selected_id()),
 			"invert": invert_ctrl.pressed
 		})
@@ -316,6 +336,7 @@ func set_values_from_string(text_line):
 
 	var rgx = RegEx.new()
 
+	var offset_ctrl = get_node("offset_group/offset_ctrl")
 	var wp_ctrl = get_node("wp_group/wp_ctrl")
 	var wp_cen_ctrl = get_node("wp_cen_group/wp_cen_ctrl")
 	var invert_ctrl = get_node("invert_group/invert_ctrl")
@@ -341,6 +362,14 @@ func set_values_from_string(text_line):
 	res = rgx.search(text_line)
 	if res:
 		Common.set_option_btn_by_text(wp_cen_ctrl, res.get_string())
+
+	# The offset option
+	rgx.compile(offset_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		print(res.get_string())
+		# Fill in the offset text
+		offset_ctrl.set_text(res.get_string())
 
 	# The invert option
 	rgx.compile(invert_edit_rgx)
