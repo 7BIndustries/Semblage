@@ -71,7 +71,7 @@ func _ready():
 	offset_ctrl.name = "offset_ctrl"
 	offset_ctrl.set_text("0.0")
 	offset_ctrl.size_flags_horizontal = 3
-	offset_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
+	offset_ctrl.hint_tooltip = tr("WP_OFFSET_CTRL")
 	offset_group.add_child(offset_ctrl)
 	add_child(offset_group)
 
