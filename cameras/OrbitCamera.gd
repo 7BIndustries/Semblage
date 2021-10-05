@@ -19,7 +19,21 @@ step of the wheel.
 func ZoomingInOut(dir):
 	var Zoomdist = dir * ZOOMSPEED
 
-	translate_object_local(Vector3(0, 0, Zoomdist))
+	# Handle orthographic and perspective zooming differently
+	if projection == PROJECTION_PERSPECTIVE:
+		translate_object_local(Vector3(0, 0, Zoomdist))
+	else:
+		# Check to see if we are zooming in or out
+		if Zoomdist < 0:
+			size -= 1
+		elif Zoomdist > 0:
+			size += 1
+
+	# Clamp the zoom at both ends
+	if size <= 0:
+		size = 0.1
+	elif size >= 16384:
+		size = 16384
 
 
 """

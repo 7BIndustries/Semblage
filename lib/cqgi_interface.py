@@ -221,13 +221,10 @@ class cqgi_interface(Node):
 				# Handle objects that may not be at the origin
 				if shape.BoundingBox().xmax > largest_dimension:
 					largest_dimension = shape.BoundingBox().xmax
-					print(str(largest_dimension))
 				if shape.BoundingBox().ymax > largest_dimension:
 					largest_dimension = shape.BoundingBox().ymax
-					print(str(largest_dimension))
 				if shape.BoundingBox().zmax > largest_dimension:
 					largest_dimension = shape.BoundingBox().zmax
-					print(str(largest_dimension))
 
 				# Find the smallest dimension so that we can use that for the line width
 				if shape.BoundingBox().xlen > 0.01 and shape.BoundingBox().xlen < smallest_dimension:

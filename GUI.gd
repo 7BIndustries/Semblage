@@ -525,6 +525,8 @@ func _home_view():
 	origin_cam.look_at_from_position(Vector3(3, 3, 3), Vector3(0, 0, 0), Vector3(0, 0, 1))
 	light.look_at_from_position(Vector3(safe_distance, safe_distance, safe_distance), Vector3(0, 0, 0), Vector3(0, 0, 1))
 
+	# If we are working with the perspective camera, we need to set the size as well
+	cam.size = sd
 """
 Handler that is called when the user clicks the button to close the current component/view.
 """
