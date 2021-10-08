@@ -8,6 +8,8 @@ var open_file_path # The component/CQ file that the user opened
 var confirm_component_text = null
 var safe_distance = 0 # The distance away the camera should be placed to be able to view the components
 var combined = {}
+var insert_mode = false # The user wants to insert an operation in the components tree
+var edit_mode = false # The user wants to edit an entry in the components tree
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -518,7 +520,7 @@ func _home_view():
 	var light = $GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/OmniLight
 
 	# Adjust the safe distance so that the component fits well within the viewport
-	var sd = safe_distance * 0.5
+	var sd = safe_distance * 0.75
 
 	# Set the main camera, the axis indicator camera, and the light to the default locations
 	cam.look_at_from_position(Vector3(sd, sd, sd), Vector3(0, 0, 0), Vector3(0, 0, 1))
@@ -606,7 +608,7 @@ func _clear_viewport():
 """
 Retries the updated context and makes it the current one.
 """
-func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, combine_map):
+func _on_ActionPopupPanel_ok_signal(new_template, combine_map):
 	var component_tree = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
 	var component_tree_root = _get_component_tree_root(component_tree)
 
@@ -624,6 +626,8 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, combine_map):
 
 	# We are in edit mode
 	if edit_mode:
+		edit_mode = false
+
 		# If the old component name does not match the new one, we want to update it
 		var prev_template = ""
 
@@ -641,6 +645,21 @@ func _on_ActionPopupPanel_ok_signal(edit_mode, new_template, combine_map):
 
 			# Make sure that the parent that was edited is selected for future operations
 			Common.select_tree_item_by_text(component_tree, new_component)
+	elif insert_mode:
+		insert_mode = false
+
+		# Get the selected tree item so that we can insert before it
+		var sel = component_tree.get_selected()
+
+		# Get the parent of the selected item since that is where we should add the new operation
+		var par = sel.get_parent()
+
+		# Create a tree item holding the operation that was selected
+		var tree_item = component_tree.create_item(par)
+		tree_item.set_text(0, new_template)
+
+		# Insert the new item before selected one
+		Common.move_before(tree_item, sel)
 	else:
 		# Add the componenent name to the component tree if it had a name
 		if new_component:
@@ -1141,6 +1160,39 @@ func _cancel_data_popup():
 
 
 """
+The user clicks the Insert Above button within the data popup.
+"""
+func _insert_tree_item():
+	var ct = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+
+	# Get the selected item and make sure it is valid
+	var sel = ct.get_selected()
+
+	if sel:
+		sel = sel.get_text(0)
+	else:
+		return
+
+	# We do not need the popup menu anymore
+	var data_popup = get_node("DataPopupPanel")
+	data_popup.hide()
+
+	# Make sure that we are dealing with an operation
+	if sel.begins_with("."):
+		var op_panel = get_node("ActionPopupPanel")
+
+		# Get the component names that are in the component tree
+		var comp_names = Common.get_all_components(ct)
+		var params = _get_parameter_items()
+
+		var component_text = _convert_component_tree_to_script(false)
+
+		# Keep track of the fact that we want to insert an operation, and not edit or append
+		insert_mode = true
+		op_panel.activate_popup(component_text, null, comp_names, params)
+
+
+"""
 The user wants to remove a tree item, like an operation or component.
 """
 func _remove_tree_item():
@@ -1198,6 +1250,7 @@ func _edit_tree_item():
 
 	# If the selected item starts with a period, it is an operation item
 	if sel.begins_with("."):
+		edit_mode = true
 		op_panel.activate_edit_mode(prev_text, sel, comp_names, params)
 	else:
 		var edit_child = ct.get_selected().get_children()
@@ -1206,6 +1259,7 @@ func _edit_tree_item():
 		if edit_child == null:
 			edit_child = ct.get_selected()
 
+		edit_mode = true
 		edit_child.select(0)
 		op_panel.activate_edit_mode(prev_text, edit_child.get_text(0), comp_names, params)
 
@@ -1269,7 +1323,7 @@ func _on_ComponentTree_activate_data_popup():
 
 	# If we are selecting a Component, there are some different options
 	if is_component:
-		popup_height = 100
+		popup_height = 125
 
 	# Clear any previous items
 	_clear_data_popup()
@@ -1302,6 +1356,12 @@ func _on_ComponentTree_activate_data_popup():
 		show_hide_item.set_text("Show/Hide")
 		show_hide_item.connect("button_down", self, "_show_hide_tree_item")
 		$DataPopupPanel/DataPopupVBox.add_child(show_hide_item)
+	else:
+		# Add the Insert Above item to insert an operation entry before the selected one
+		var insert_item = Button.new()
+		insert_item.set_text("Insert Above")
+		insert_item.connect("button_down", self, "_insert_tree_item")
+		$DataPopupPanel/DataPopupVBox.add_child(insert_item)
 
 	# Add the Cancel item
 	var cancel_item = Button.new()

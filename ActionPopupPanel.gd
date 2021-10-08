@@ -9,6 +9,7 @@ var parameters = {}
 var new_template = null
 var prev_template = null
 var edit_mode = false
+var insert_mode = false
 var action_filter = "3D"
 var three_d_actions = null
 var two_d_actions = null
@@ -274,7 +275,7 @@ func _on_OkButton_button_down():
 	if cont.is_binary():
 		combine_map = cont.get_combine_map()
 
-	emit_signal("ok_signal", edit_mode, new_template, combine_map)
+	emit_signal("ok_signal", new_template, combine_map)
 	hide()
 
 

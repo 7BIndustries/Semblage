@@ -111,7 +111,7 @@ func _on_ActionPopupPanel_cancel():
 Unlocks the 3D mouse controls when the ok button is clicked on the
 action popup panel.
 """
-func _on_ActionPopupPanel_ok_signal(_edit_mode, _new_template, _combine_map):
+func _on_ActionPopupPanel_ok_signal(_new_template, _combine_map):
 	accept_input = true
 
 
