@@ -895,7 +895,7 @@ func test_home_button():
 	var cam = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera")
 	assert_not_null(cam)
 
-	assert_eq(str(cam.transform), "-0.707107, -0.408248, 0.57735, 0.707107, -0.408248, 0.57735, 0, 0.816497, 0.57735 - 15.113791, 15.113791, 15.113791", "Make sure the camera is in the right position with the correct rotation.")
+	assert_eq(str(cam.transform), "-0.707107, -0.408248, 0.57735, 0.707107, -0.408248, 0.57735, 0, 0.816497, 0.57735 - 22.670687, 22.670687, 22.670687", "Make sure the camera is in the right position with the correct rotation.")
 
 
 """

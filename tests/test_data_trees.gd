@@ -45,7 +45,7 @@ func test_component_edit_button():
 
 	# Get a reference to the Edit button
 	var edit_btn = gui.get_node("DataPopupPanel/DataPopupVBox")
-	edit_btn = edit_btn.get_children()[0]
+	edit_btn = edit_btn.get_children()[1]
 
 	# Make sure that we got the Edit button that was expected
 	assert_eq(edit_btn.get_text(), "Edit", "Make sure that the Edit button was selected.")
@@ -109,7 +109,7 @@ func test_component_remove_button():
 
 	# Get a reference to the Remove button
 	var remove_btn = gui.get_node("DataPopupPanel/DataPopupVBox")
-	remove_btn = remove_btn.get_children()[1]
+	remove_btn = remove_btn.get_children()[2]
 
 	# Make sure that we got the Remove button that was expected
 	assert_eq(remove_btn.get_text(), "Remove", "Make sure that the Edit button was selected.")
@@ -166,7 +166,7 @@ func test_component_show_hide_button():
 
 	# Get a reference to the Show/Hide button
 	var show_hide_btn = gui.get_node("DataPopupPanel/DataPopupVBox")
-	show_hide_btn = show_hide_btn.get_children()[2]
+	show_hide_btn = show_hide_btn.get_children()[3]
 
 	# Make sure that we got the Show/Hide button that was expected
 	assert_eq(show_hide_btn.get_text(), "Show/Hide", "Make sure that the Show/Hide button was selected.")
@@ -224,7 +224,7 @@ func test_component_cancel_button():
 
 	# Get a reference to the Cancel button
 	var cancel_btn = gui.get_node("DataPopupPanel/DataPopupVBox")
-	cancel_btn = cancel_btn.get_children()[2]
+	cancel_btn = cancel_btn.get_children()[4]
 
 	# Make sure that we got the Cancel button that was expected
 	assert_eq(cancel_btn.get_text(), "Cancel", "Make sure that the Cancel button was selected.")

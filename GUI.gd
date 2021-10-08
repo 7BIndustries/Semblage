@@ -1158,6 +1158,17 @@ func _cancel_data_popup():
 	var data_popup = $DataPopupPanel
 	data_popup.hide()
 
+"""
+Allows the user to add a component or operation to the components tree.
+"""
+func _add_tree_item():
+	# Act as if the user right-clicked on the 3D view
+	_on_DocumentTabs_activate_action_popup()
+
+	# We do not need the popup menu anymore
+	var data_popup = $DataPopupPanel
+	data_popup.hide()
+
 
 """
 The user clicks the Insert Above button within the data popup.
@@ -1312,7 +1323,7 @@ func _on_ComponentTree_activate_data_popup():
 	var pos = ct.get_local_mouse_position()
 	var size = Vector2(50, 100)
 
-	var popup_height = 75
+	var popup_height = 125
 
 	# If there is nothing in the tree, do not display the menu
 	if not ct.get_selected():
@@ -1336,6 +1347,12 @@ func _on_ComponentTree_activate_data_popup():
 		data_popup.rect_position = Vector2(pos.x, pos.y + size.y)
 		data_popup.rect_size = Vector2(100, popup_height)
 		data_popup.show()
+
+	# Add the Add component/operation item
+	var add_item = Button.new()
+	add_item.set_text("Add")
+	add_item.connect("button_down", self, "_add_tree_item")
+	$DataPopupPanel/DataPopupVBox.add_child(add_item)
 
 	# Add the Edit item
 	var edit_item = Button.new()
