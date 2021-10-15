@@ -1146,8 +1146,8 @@ __meta__ = {
 
 [node name="AddParameterDialog" type="WindowDialog" parent="."]
 margin_right = 250.0
-margin_bottom = 277.0
-rect_min_size = Vector2( 250, 277 )
+margin_bottom = 293.0
+rect_min_size = Vector2( 250, 293 )
 window_title = "Add/Edit Parameter"
 script = ExtResource( 29 )
 __meta__ = {
@@ -1164,7 +1164,7 @@ size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="AddParameterDialog/MarginContainer"]
 margin_right = 240.0
-margin_bottom = 266.0
+margin_bottom = 284.0
 rect_min_size = Vector2( 140, 100 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -1183,29 +1183,6 @@ margin_right = 278.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 text = "parameter_name"
-
-[node name="ParamTypeContainer" type="HBoxContainer" parent="AddParameterDialog/MarginContainer/VBoxContainer"]
-margin_right = 40.0
-margin_bottom = 40.0
-
-[node name="StringCheckBox" type="CheckBox" parent="AddParameterDialog/MarginContainer/VBoxContainer/ParamTypeContainer"]
-margin_right = 24.0
-margin_bottom = 24.0
-pressed = true
-group = SubResource( 34 )
-text = "String"
-
-[node name="NumCheckBox" type="CheckBox" parent="AddParameterDialog/MarginContainer/VBoxContainer/ParamTypeContainer"]
-margin_right = 24.0
-margin_bottom = 24.0
-group = SubResource( 35 )
-text = "Number"
-
-[node name="TupleListCheckBox" type="CheckBox" parent="AddParameterDialog/MarginContainer/VBoxContainer/ParamTypeContainer"]
-margin_right = 24.0
-margin_bottom = 24.0
-group = SubResource( 36 )
-text = "Point List"
 
 [node name="ParamValueLabel" type="Label" parent="AddParameterDialog/MarginContainer/VBoxContainer"]
 margin_top = 46.0
@@ -1230,11 +1207,39 @@ CanBeNegative = true
 [node name="TupleList" type="Tree" parent="AddParameterDialog/MarginContainer/VBoxContainer"]
 visible = false
 margin_right = 40.0
-margin_bottom = 40.0
+margin_bottom = 80.0
 rect_min_size = Vector2( 40, 80 )
 columns = 3
 hide_root = true
 script = ExtResource( 32 )
+
+[node name="ParamTypeLabel" type="Label" parent="AddParameterDialog/MarginContainer/VBoxContainer"]
+margin_right = 40.0
+margin_bottom = 14.0
+text = "Type"
+
+[node name="ParamTypeContainer" type="HBoxContainer" parent="AddParameterDialog/MarginContainer/VBoxContainer"]
+margin_right = 240.0
+margin_bottom = 40.0
+
+[node name="StringCheckBox" type="CheckBox" parent="AddParameterDialog/MarginContainer/VBoxContainer/ParamTypeContainer"]
+margin_right = 24.0
+margin_bottom = 24.0
+pressed = true
+group = SubResource( 34 )
+text = "String"
+
+[node name="NumCheckBox" type="CheckBox" parent="AddParameterDialog/MarginContainer/VBoxContainer/ParamTypeContainer"]
+margin_right = 24.0
+margin_bottom = 24.0
+group = SubResource( 35 )
+text = "Number"
+
+[node name="TupleListCheckBox" type="CheckBox" parent="AddParameterDialog/MarginContainer/VBoxContainer/ParamTypeContainer"]
+margin_right = 24.0
+margin_bottom = 24.0
+group = SubResource( 36 )
+text = "Point List"
 
 [node name="CommentLabel" type="Label" parent="AddParameterDialog/MarginContainer/VBoxContainer"]
 margin_left = -5.0
@@ -1478,10 +1483,10 @@ text = "Cancel"
 [connection signal="edit_parameter" from="AddParameterDialog" to="." method="_on_AddParameterDialog_edit_parameter"]
 [connection signal="error" from="AddParameterDialog" to="." method="_on_error"]
 [connection signal="popup_hide" from="AddParameterDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_popup_hide"]
+[connection signal="activate_data_popup" from="AddParameterDialog/MarginContainer/VBoxContainer/TupleList" to="AddParameterDialog" method="_on_TupleList_activate_data_popup"]
 [connection signal="button_down" from="AddParameterDialog/MarginContainer/VBoxContainer/ParamTypeContainer/StringCheckBox" to="AddParameterDialog" method="_on_StringCheckBox_button_down"]
 [connection signal="button_down" from="AddParameterDialog/MarginContainer/VBoxContainer/ParamTypeContainer/NumCheckBox" to="AddParameterDialog" method="_on_NumCheckBox_button_down"]
 [connection signal="button_down" from="AddParameterDialog/MarginContainer/VBoxContainer/ParamTypeContainer/TupleListCheckBox" to="AddParameterDialog" method="_on_TupleListCheckBox_button_down"]
-[connection signal="activate_data_popup" from="AddParameterDialog/MarginContainer/VBoxContainer/TupleList" to="AddParameterDialog" method="_on_TupleList_activate_data_popup"]
 [connection signal="button_down" from="AddParameterDialog/MarginContainer/VBoxContainer/OKButton" to="AddParameterDialog" method="_on_OKButton_button_down"]
 [connection signal="button_down" from="AddParameterDialog/MarginContainer/VBoxContainer/CancelButton" to="AddParameterDialog" method="_on_CancelButton_button_down"]
 [connection signal="about_to_show" from="ExportDXFDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]

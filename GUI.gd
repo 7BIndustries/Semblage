@@ -981,6 +981,10 @@ Called when a parameter entry is selected for editing.
 func _on_ParametersTree_item_activated():
 	var tree = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ParametersTree
 
+	# Make sure that something was visible/selected in the tree
+	if tree.get_selected() == null:
+		return
+
 	var name_text = tree.get_selected().get_text(0)
 	var value_text = tree.get_selected().get_text(1)
 
