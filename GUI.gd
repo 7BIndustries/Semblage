@@ -774,6 +774,7 @@ func _on_SaveButton_button_down():
 		tb_popup.hide()
 	else:
 		tb_popup.rect_position = Vector2(pos.x, pos.y + size.y)
+		tb_popup.rect_size = Vector2(100, 50)
 		tb_popup.show()
 
 	# Add the Save Component button
