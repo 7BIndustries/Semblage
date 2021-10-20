@@ -924,8 +924,9 @@ func _on_ExportDialog_file_selected(path):
 
 	# Make sure the user gave a valid extension
 	if extension != "stl" and extension != "step":
-		var status_lbl = $AddParameterDialog/VBoxContainer/StatusLabel
-		status_lbl.text = "Export only supports the 'stl' and 'step' file extensions. Please try again."
+		var status_lbl = get_node("GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel") #$AddParameterDialog/VBoxContainer/StatusLabel
+		status_lbl.text = "Export Error"
+		emit_signal("error", "Export only supports the 'stl' and 'step'\nfile extensions. Please try again.")
 		return
 
 	var export_text = _convert_component_tree_to_script(true)

@@ -1,9 +1,14 @@
 import os
 import sys
 import re
+import uuid
 from godot import exposed, export, signal, Node, ResourceLoader, Dictionary, Array, Vector3
 from cadquery import cqgi
 from cadquery import Vector, Color, exporters
+from OCP.TopLoc import TopLoc_Location
+from OCP.BRep import BRep_Tool
+from OCP.BRepMesh import BRepMesh_IncrementalMesh
+from OCP.TopAbs import TopAbs_Orientation
 
 
 @exposed
@@ -133,6 +138,8 @@ class cqgi_interface(Node):
 							# Add the current workplane to the array
 							cur_comp["workplanes"].append(cur_wp)
 
+				obj = self.tess(tess_shape)
+
 				# Tessellate the enclosed shape object
 				smallest_dimension, largest_dimension,\
 					vertices, edges, triangles, num_of_vertices,\
@@ -160,6 +167,81 @@ class cqgi_interface(Node):
 
 		return render_tree
 
+
+	def tess(self, shape):
+		shape_tess = Dictionary()
+		faces_tess = Dictionary()
+		triangles_tess = Dictionary()
+		wires_tess = Dictionary()
+		edges_tess = Dictionary()
+		vertices_tess = Dictionary()
+		tolerance = 0.1
+		angular_tolerance = 0.1
+
+		offset = 0
+
+		# Protect against this being called with just a blank workplane object in the stack
+		if hasattr(shape, "ShapeType"):
+			for face in shape.Faces():
+				cur_face = Dictionary()
+
+				# Construct a unique permanent ID so that the vertices, edges
+				# and triangles can be associated with this face
+				perm_id = "face_" + str(uuid.uuid4())
+
+				# Construct the unique ID of the face based on its attributes
+				area = face.Area()
+				attrib_id = "face_area_" + str(area)
+				cur_face["attrib_id"] = attrib_id
+
+				# Location information of the face to place the vertices and edges correctly
+				loc = TopLoc_Location()
+				Trsf = loc.Transformation()
+
+				# Perform the triangulation
+				BRepMesh_IncrementalMesh(shape.wrapped, tolerance, True, angular_tolerance)
+				face_mesh = BRep_Tool.Triangulation_s(face.wrapped, loc)
+
+				reverse = (
+					True
+					if face.wrapped.Orientation() == TopAbs_Orientation.TopAbs_REVERSED
+					else False
+				)
+
+				faces_tess[perm_id] = cur_face
+
+				# Step through all the triangles and add associate them with the face
+				for triangle in face_mesh.Triangles():
+					# Construct a permanent unique ID for this triangle
+
+					# Construct a unique ID for this triangle based on its properties
+					tri_perm_id = "triangle_" + str(uuid.uuid4())
+
+					triangles_tess[tri_perm_id] = Array()
+
+					cur_triangle = Dictionary()
+
+					if reverse:
+						cur_triangle["X"] = triangle.Value(1) + offset - 1
+						cur_triangle["Y"] = triangle.Value(3) + offset - 1
+						cur_triangle["Z"] = triangle.Value(2) + offset - 1
+					else:
+						cur_triangle["X"] = triangle.Value(1) + offset - 1
+						cur_triangle["Y"] = triangle.Value(2) + offset - 1
+						cur_triangle["Z"] = triangle.Value(3) + offset - 1
+
+					# Save the current triangle and make sure it is associated with its parent face
+					cur_triangle["parent"] = perm_id
+					triangles_tess[tri_perm_id].append(cur_triangle)
+
+					offset += face_mesh.NbNodes()
+
+		shape_tess["faces"] = faces_tess
+		shape_tess["triangles"] = triangles_tess
+
+		print(shape_tess)
+
+				#print(face_mesh.Nodes())
 
 	"""
 	Turns a shape into faces, edges and vertices.
