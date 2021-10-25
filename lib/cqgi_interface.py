@@ -152,6 +152,7 @@ class cqgi_interface(Node):
 					cur_comp["smallest_dimension"] = cur_comp["largest_dimension"]
 				if largest_dimension > cur_comp["largest_dimension"]:
 					cur_comp["largest_dimension"] = largest_dimension
+				cur_comp["faces"] = obj["faces"]
 				cur_comp["vertices"] = vertices
 				cur_comp["edges"] = edges
 				cur_comp["triangles"] = triangles
@@ -177,6 +178,7 @@ class cqgi_interface(Node):
 		vertices_tess = Dictionary()
 		tolerance = 0.1
 		angular_tolerance = 0.1
+		vertices = []
 
 		offset = 0
 
@@ -208,6 +210,12 @@ class cqgi_interface(Node):
 					else False
 				)
 
+				# Collect vertices from the tessellation
+				vertices += [
+					Vector(v.X(), v.Y(), v.Z())
+					for v in (v.Transformed(Trsf) for v in face_mesh.Nodes())
+				]
+
 				cur_face["triangles"] = Array()
 				faces_tess[perm_id] = cur_face
 
@@ -216,34 +224,47 @@ class cqgi_interface(Node):
 					# Construct a permanent unique ID for this triangle
 					tri_perm_id = "triangle_" + str(uuid.uuid4())
 
-					triangles_tess[tri_perm_id] = Array()
+#					triangles_tess[tri_perm_id] = Array()
 
 					cur_triangle = Dictionary()
 
+					# Collect all the vertices into arrays
+					first_vert = Array()
+					first_vert.append(vertices[0].x)
+					first_vert.append(vertices[0].y)
+					first_vert.append(vertices[0].z)
+					second_vert = Array()
+					second_vert.append(vertices[1].x)
+					second_vert.append(vertices[1].y)
+					second_vert.append(vertices[1].z)
+					third_vert = Array()
+					third_vert.append(vertices[2].x)
+					third_vert.append(vertices[2].y)
+					third_vert.append(vertices[2].z)
+
 					if reverse:
-						cur_triangle["X"] = triangle.Value(1) + offset - 1
-						cur_triangle["Y"] = triangle.Value(3) + offset - 1
-						cur_triangle["Z"] = triangle.Value(2) + offset - 1
+						cur_triangle["vertex_1"] = first_vert
+						cur_triangle["vertex_2"] = third_vert
+						cur_triangle["vertex_3"] = second_vert
 					else:
-						cur_triangle["X"] = triangle.Value(1) + offset - 1
-						cur_triangle["Y"] = triangle.Value(2) + offset - 1
-						cur_triangle["Z"] = triangle.Value(3) + offset - 1
+						cur_triangle["vertex_1"] = first_vert
+						cur_triangle["vertex_2"] = second_vert
+						cur_triangle["vertex_3"] = third_vert
 
 					# Save the current triangle and make sure it is associated with its parent face
 					cur_triangle["parent"] = perm_id
-					triangles_tess[tri_perm_id].append(cur_triangle)
+					triangles_tess[tri_perm_id] = cur_triangle
 
 					# Keep track of the child triangles for the current face
-					cur_face["triangles"].append(tri_perm_id)
+					cur_face["triangles"].append(cur_triangle)
 
 					offset += face_mesh.NbNodes()
 
 		shape_tess["faces"] = faces_tess
 		shape_tess["triangles"] = triangles_tess
 
-#		print(shape_tess)
+		return shape_tess
 
-				#print(face_mesh.Nodes())
 
 	"""
 	Turns a shape into faces, edges and vertices.

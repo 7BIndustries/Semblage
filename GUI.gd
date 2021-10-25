@@ -440,10 +440,13 @@ func render_component_tree(component):
 
 	# Get the new safe/sane camera distance
 	new_safe_dist = get_safe_camera_distance(max_dim)
-	Meshes.gen_component_mesh_data(component)
+	var meshes = Meshes.gen_component_meshes(component)
+	for mesh in meshes:
+		vp.add_child(mesh)
+
 	# Get the mesh instance and the maximum distance
-	var mesh_data = Meshes.gen_component_mesh(component)
-	vp.add_child(mesh_data)
+#	var mesh_data = Meshes.gen_component_mesh(component)
+#	vp.add_child(mesh_data)
 
 	# Add the edge representations
 	for edge in component["edges"]:

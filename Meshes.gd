@@ -75,14 +75,52 @@ static func gen_workplane_meshes(origin, normal, size):
 	return meshes
 
 
-static func gen_component_mesh_data(component):
-	var mesh = gen_component_mesh(component)
+static func gen_component_meshes(component):
+	var meshes = []
 
-	var mdt = MeshDataTool.new()
+	# Get the new material color
+	var new_color = [1.0, 0.36, 0.05, 1.0] # component["color"]
+	var material = SpatialMaterial.new()
 
-	mdt.create_from_surface(mesh, 0)
+	# The alpha is passed here, but alpha/transparency has to be enabled on the material too.
+	# However, there are other things that need to be done to make sure transparency does
+	# not cause artifacts
+	material.albedo_color = Color(new_color[0], new_color[1], new_color[2], new_color[3])
 
-#	print(mdt.get_face_count())
+	# Enable/disable transparency based on the alpha set by the user
+	if new_color[3] == 1.0:
+		material.flags_transparent = false
+	else:
+		material.flags_transparent = true
+
+	for face in component["faces"]:
+		# Set the SurfaceTool up to build a new mesh
+		var st = SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		st.set_material(material)
+
+		# Step through the triangles and add them to the mesh
+		for tri in component["faces"][face]["triangles"]:
+			print(tri)
+#			st.add_vertex()
+			# Wind the triangles in the opposite direction so that they are visible
+			#st.add_vertex(component["faces"][face]["triangles"][tri])
+#			st.add_vertex(Vector3(verts3[0], verts3[1], verts3[2]))
+#			st.add_vertex(Vector3(verts2[0], verts2[1], verts2[2]))
+#			st.add_vertex(Vector3(verts1[0], verts1[1], verts1[2]))
+			st.add_vertex(Vector3(tri["vertex_3"][0], tri["vertex_3"][1], tri["vertex_3"][2]))
+			st.add_vertex(Vector3(tri["vertex_2"][0], tri["vertex_2"][1], tri["vertex_2"][2]))
+			st.add_vertex(Vector3(tri["vertex_1"][0], tri["vertex_1"][1], tri["vertex_1"][2]))
+
+		# Finish the mesh and attach it to a MeshInstance
+		st.generate_normals()
+		var mesh = st.commit()
+		var mesh_inst = MeshInstance.new()
+		mesh_inst.mesh = mesh
+
+		meshes.append(mesh_inst)
+
+	return meshes
 
 """
 Newer method of component mesh generation.
