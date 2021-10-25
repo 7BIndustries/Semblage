@@ -440,7 +440,7 @@ func render_component_tree(component):
 
 	# Get the new safe/sane camera distance
 	new_safe_dist = get_safe_camera_distance(max_dim)
-
+	Meshes.gen_component_mesh_data(component)
 	# Get the mesh instance and the maximum distance
 	var mesh_data = Meshes.gen_component_mesh(component)
 	vp.add_child(mesh_data)
@@ -692,6 +692,15 @@ func _on_ActionPopupPanel_ok_signal(new_template, combine_map):
 	# If this is the first item being added, set the default view
 	if is_first:
 		_home_view()
+
+
+"""
+Called when the user decides they do not want to use the Operations dialog.
+"""
+func _on_ActionPopupPanel_cancel():
+	edit_mode = false
+	insert_mode = false
+
 
 """
 Fired when the Action popup needs to be displayed.

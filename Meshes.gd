@@ -75,6 +75,15 @@ static func gen_workplane_meshes(origin, normal, size):
 	return meshes
 
 
+static func gen_component_mesh_data(component):
+	var mesh = gen_component_mesh(component)
+
+	var mdt = MeshDataTool.new()
+
+	mdt.create_from_surface(mesh, 0)
+
+#	print(mdt.get_face_count())
+
 """
 Newer method of component mesh generation.
 """

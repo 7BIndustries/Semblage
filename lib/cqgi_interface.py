@@ -190,9 +190,9 @@ class cqgi_interface(Node):
 				perm_id = "face_" + str(uuid.uuid4())
 
 				# Construct the unique ID of the face based on its attributes
-				area = face.Area()
-				attrib_id = "face_area_" + str(area)
-				cur_face["attrib_id"] = attrib_id
+#				area = face.Area()
+#				attrib_id = "face_area_" + str(area)
+#				cur_face["attrib_id"] = attrib_id
 
 				# Location information of the face to place the vertices and edges correctly
 				loc = TopLoc_Location()
@@ -208,13 +208,12 @@ class cqgi_interface(Node):
 					else False
 				)
 
+				cur_face["triangles"] = Array()
 				faces_tess[perm_id] = cur_face
 
 				# Step through all the triangles and add associate them with the face
 				for triangle in face_mesh.Triangles():
 					# Construct a permanent unique ID for this triangle
-
-					# Construct a unique ID for this triangle based on its properties
 					tri_perm_id = "triangle_" + str(uuid.uuid4())
 
 					triangles_tess[tri_perm_id] = Array()
@@ -234,12 +233,15 @@ class cqgi_interface(Node):
 					cur_triangle["parent"] = perm_id
 					triangles_tess[tri_perm_id].append(cur_triangle)
 
+					# Keep track of the child triangles for the current face
+					cur_face["triangles"].append(tri_perm_id)
+
 					offset += face_mesh.NbNodes()
 
 		shape_tess["faces"] = faces_tess
 		shape_tess["triangles"] = triangles_tess
 
-		print(shape_tess)
+#		print(shape_tess)
 
 				#print(face_mesh.Nodes())
 
