@@ -75,6 +75,10 @@ static func gen_workplane_meshes(origin, normal, size):
 	return meshes
 
 
+"""
+Generates each face of an object as a separate mesh so that they can be selected
+separately.
+"""
 static func gen_component_meshes(component):
 	var meshes = []
 
@@ -101,13 +105,7 @@ static func gen_component_meshes(component):
 
 		# Step through the triangles and add them to the mesh
 		for tri in component["faces"][face]["triangles"]:
-			print(tri)
-#			st.add_vertex()
 			# Wind the triangles in the opposite direction so that they are visible
-			#st.add_vertex(component["faces"][face]["triangles"][tri])
-#			st.add_vertex(Vector3(verts3[0], verts3[1], verts3[2]))
-#			st.add_vertex(Vector3(verts2[0], verts2[1], verts2[2]))
-#			st.add_vertex(Vector3(verts1[0], verts1[1], verts1[2]))
 			st.add_vertex(Vector3(tri["vertex_3"][0], tri["vertex_3"][1], tri["vertex_3"][2]))
 			st.add_vertex(Vector3(tri["vertex_2"][0], tri["vertex_2"][1], tri["vertex_2"][2]))
 			st.add_vertex(Vector3(tri["vertex_1"][0], tri["vertex_1"][1], tri["vertex_1"][2]))
@@ -182,8 +180,8 @@ static func gen_line_mesh(thickness, edge):
 	material.albedo_color = Color(255, 255, 255, 255)
 
 	# Extract the start and endpoint vectors from the edge
-	var v1 = edge[0] # Vector3(edge[0], edge[1], edge[2])
-	var v2 = edge[1] # Vector3(edge[3], edge[4], edge[5])
+	var v1 = edge["vertex_1"]
+	var v2 = edge["vertex_2"]
 
 	# Calculate the length of the edge
 	var dist = LinAlg.dist_between_vecs(v1, v2)
