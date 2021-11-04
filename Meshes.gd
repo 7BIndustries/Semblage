@@ -114,68 +114,18 @@ static func gen_component_meshes(component):
 		st.generate_normals()
 		var mesh = st.commit()
 		var mesh_inst = MeshInstance.new()
+		mesh_inst.set_meta("parent_perm_id", face)
 		mesh_inst.mesh = mesh
 
 		meshes.append(mesh_inst)
 
 	return meshes
 
-"""
-Newer method of component mesh generation.
-"""
-static func gen_component_mesh(component):
-	# Get the new material color
-	var new_color = [1.0, 0.36, 0.05, 1.0] # component["color"]
-	var material = SpatialMaterial.new()
-
-	# The alpha is passed here, but alpha/transparency has to be enabled on the material too.
-	# However, there are other things that need to be done to make sure transparency does
-	# not cause artifacts
-	material.albedo_color = Color(new_color[0], new_color[1], new_color[2], new_color[3])
-
-	# Enable/disable transparency based on the alpha set by the user
-	if new_color[3] == 1.0:
-		material.flags_transparent = false
-	else:
-		material.flags_transparent = true
-
-	# Set the SurfaceTool up to build a new mesh
-	var st = SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	st.set_material(material)
-
-	# Loop through the triangles and add them all to the mesh
-	for n in range(0, component["num_of_triangles"] * 3, 3):
-		# Extract the triangle index values
-		var t1 = component["triangles"][n]
-		var t2 = component["triangles"][n + 1]
-		var t3 = component["triangles"][n + 2]
-
-		# Extract the verices in order from the vert collection
-		var verts = component["vertices"]
-		var verts1 = [verts[t1 * 3], verts[t1 * 3 + 1], verts[t1 * 3 + 2]]
-		var verts2 = [verts[t2 * 3], verts[t2 * 3 + 1], verts[t2 * 3 + 2]]
-		var verts3 = [verts[t3 * 3], verts[t3 * 3 + 1], verts[t3 * 3 + 2]]
-
-		# Wind the triangles in the opposite direction so that they are visible
-		st.add_vertex(Vector3(verts3[0], verts3[1], verts3[2]))
-		st.add_vertex(Vector3(verts2[0], verts2[1], verts2[2]))
-		st.add_vertex(Vector3(verts1[0], verts1[1], verts1[2]))
-
-	# Finish the mesh and attach it to a MeshInstance
-	st.generate_normals()
-	var mesh = st.commit()
-	var mesh_inst = MeshInstance.new()
-	mesh_inst.mesh = mesh
-
-	# Return the finished mesh instance to the caller
-	return mesh_inst
-
 
 """
 Generates a cube mesh that represents a line/edge/wire in the 3D view.
 """
-static func gen_line_mesh(thickness, edge):
+static func gen_line_mesh(thickness, edge, edge_perm_id):
 	var material = SpatialMaterial.new()
 	material.albedo_color = Color(255, 255, 255, 255)
 
@@ -190,12 +140,13 @@ static func gen_line_mesh(thickness, edge):
 	var v_mid = Vector3((v1[0] + v2[0]) / 2.0, (v1[1] + v2[1]) / 2.0, (v1[2] + v2[2]) / 2.0)
 
 	# Generate the mesh instance representing the line
-	var wp_mesh = MeshInstance.new()
+	var mesh_inst = MeshInstance.new()
+	mesh_inst.set_meta("parent_perm_id", edge_perm_id)
 	var raw_cube_mesh = CubeMesh.new()
 	raw_cube_mesh.size = Vector3(thickness, thickness, dist)
-	wp_mesh.material_override = material
-	wp_mesh.mesh = raw_cube_mesh
-	wp_mesh.transform.origin = v_mid
+	mesh_inst.material_override = material
+	mesh_inst.mesh = raw_cube_mesh
+	mesh_inst.transform.origin = v_mid
 
 	# For edges centered at the origin in two axes, the cross product will be
 	# (0, 0, 0), so we need to correct for that or an edge will be oriented wrong.
@@ -203,6 +154,6 @@ static func gen_line_mesh(thickness, edge):
 	if v_cross == Vector3(0, 0, 0):
 		v_cross = Vector3(0, 0, 1)
 
-	wp_mesh.transform = wp_mesh.transform.looking_at(v2, v_cross)
+	mesh_inst.transform = mesh_inst.transform.looking_at(v2, v_cross)
 
-	return wp_mesh
+	return mesh_inst

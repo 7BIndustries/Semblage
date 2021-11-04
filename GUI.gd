@@ -447,7 +447,7 @@ func render_component_tree(component):
 	# Add the edge representations
 	for edge in component["edges"]:
 		for seg in component["edges"][edge]["segments"]:
-			var line = Meshes.gen_line_mesh(0.010 * min_dim, seg)
+			var line = Meshes.gen_line_mesh(0.010 * min_dim, seg, edge)
 			vp.add_child(line)
 
 	# Only reset the view if the same distance changed
