@@ -641,7 +641,7 @@ func _on_ActionPopupPanel_ok_signal(new_template, combine_map):
 
 		# Update the component parent treeitem text
 		if new_component:
-			sel.set_text(0, new_component)
+			Common.update_component_tree_item(component_tree, old_component, new_component)
 
 			# Make sure that the parent that was edited is selected for future operations
 			Common.select_tree_item_by_text(component_tree, new_component)
