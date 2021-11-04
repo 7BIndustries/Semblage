@@ -440,15 +440,15 @@ func render_component_tree(component):
 
 	# Get the new safe/sane camera distance
 	new_safe_dist = get_safe_camera_distance(max_dim)
-	Meshes.gen_component_mesh_data(component)
-	# Get the mesh instance and the maximum distance
-	var mesh_data = Meshes.gen_component_mesh(component)
-	vp.add_child(mesh_data)
+	var meshes = Meshes.gen_component_meshes(component)
+	for mesh in meshes:
+		vp.add_child(mesh)
 
 	# Add the edge representations
 	for edge in component["edges"]:
-		var line = Meshes.gen_line_mesh(0.010 * min_dim, edge)
-		vp.add_child(line)
+		for seg in component["edges"][edge]["segments"]:
+			var line = Meshes.gen_line_mesh(0.010 * min_dim, seg, edge)
+			vp.add_child(line)
 
 	# Only reset the view if the same distance changed
 	if new_safe_dist != safe_distance:

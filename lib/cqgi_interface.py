@@ -37,28 +37,23 @@ class cqgi_interface(Node):
 			# All of the components and workplanes that the user has requested be rendered
 			render_tree["components"] = Array()
 
-			# For reference as the ability to select entities is implemented
-	#		# Tessellate and store the object
-	#		cur_comp["faces"] = Array() # Each face has references to the triangles that make it up
-	#		cur_comp["wires"] = Array() # Each wire has references to the edges that make it up
-	#		cur_comp["triangles"] = Array() # Each triangle has a reference to the face it belongs to
-	#		cur_comp["edges"] = Array() # Each edge has a reference to the wire and/or triangle it belongs to
-	#		cur_comp["edge_segments"] = Array() # Each edge segment has a reference to the edge(s) it belongs to
-	#		cur_comp["vertices"] = Array() # Each vertex has a reference to the edge(s) or edge_segment(s) it belongs to
-
+			# Step through each of the objects returned from script execution
 			for result in build_result.results:
 				component_id = list(result.shape.ctx.tags)[0]
 
 				cur_comp = Dictionary()
 				cur_comp["id"] = component_id
 				cur_comp["workplanes"] = Array()
-				cur_comp["largest_dimension"] = 0
+				cur_comp["largest_dimension"] = result.shape.largestDimension()
 
 				# Figure out if we need to step back one step to get a non-workplane object
 				tess_shape = result.shape.val()
 				tess_edges = result.shape.edges()
 				if len(result.shape.all()) == 0:
 					is_base_wp = False
+
+					# There is no object to base the largest dimension off of, so set a default
+					cur_comp["largest_dimension"] = 5
 
 					# Work-around to find out if this is a base workplane
 					try:
@@ -138,26 +133,16 @@ class cqgi_interface(Node):
 							# Add the current workplane to the array
 							cur_comp["workplanes"].append(cur_wp)
 
-				obj = self.tess(tess_shape)
-
 				# Tessellate the enclosed shape object
-				smallest_dimension, largest_dimension,\
-					vertices, edges, triangles, num_of_vertices,\
-					num_of_edges, num_of_triangles = \
-					self.tessellate(tess_shape, tess_edges)
+				obj = self.tess(tess_shape, tess_edges)
 
 				# Save the tessellation information
-				cur_comp["smallest_dimension"] = smallest_dimension
+				cur_comp["smallest_dimension"] = obj["smallest_dimension"]
 				if cur_comp["smallest_dimension"] == 0:
 					cur_comp["smallest_dimension"] = cur_comp["largest_dimension"]
-				if largest_dimension > cur_comp["largest_dimension"]:
-					cur_comp["largest_dimension"] = largest_dimension
-				cur_comp["vertices"] = vertices
-				cur_comp["edges"] = edges
-				cur_comp["triangles"] = triangles
-				cur_comp["num_of_vertices"] = num_of_vertices
-				cur_comp["num_of_edges"] = num_of_edges
-				cur_comp["num_of_triangles"] = num_of_triangles
+				cur_comp["faces"] = obj["faces"]
+				cur_comp["edges"] = obj["edges"]
+				cur_comp["vertices"] = obj["vertices"]
 
 				# Add the current component
 				render_tree["components"].append(cur_comp)
@@ -168,26 +153,33 @@ class cqgi_interface(Node):
 		return render_tree
 
 
-	def tess(self, shape):
+	def tess(self, shape, cq_shape):
+		"""
+		Handles converting a CadQuery object to a tessellated/mesh version.
+		"""
+		smallest_dimension = 999999999
 		shape_tess = Dictionary()
 		faces_tess = Dictionary()
 		triangles_tess = Dictionary()
 		wires_tess = Dictionary()
 		edges_tess = Dictionary()
-		vertices_tess = Dictionary()
+		edge_segment_tess = Array()
+		vertices_tess = Array()
 		tolerance = 0.1
 		angular_tolerance = 0.1
+		vertices = []
 
 		offset = 0
 
 		# Protect against this being called with just a blank workplane object in the stack
 		if hasattr(shape, "ShapeType"):
 			for face in shape.Faces():
-				cur_face = Dictionary()
+				# cur_face = Dictionary()
 
 				# Construct a unique permanent ID so that the vertices, edges
 				# and triangles can be associated with this face
 				perm_id = "face_" + str(uuid.uuid4())
+				faces_tess[perm_id] = Dictionary()
 
 				# Construct the unique ID of the face based on its attributes
 #				area = face.Area()
@@ -196,11 +188,13 @@ class cqgi_interface(Node):
 
 				# Location information of the face to place the vertices and edges correctly
 				loc = TopLoc_Location()
-				Trsf = loc.Transformation()
 
 				# Perform the triangulation
 				BRepMesh_IncrementalMesh(shape.wrapped, tolerance, True, angular_tolerance)
 				face_mesh = BRep_Tool.Triangulation_s(face.wrapped, loc)
+
+				# Save the transformation so that we can place vertices in the correct locations later
+				Trsf = loc.Transformation()
 
 				reverse = (
 					True
@@ -208,115 +202,75 @@ class cqgi_interface(Node):
 					else False
 				)
 
-				cur_face["triangles"] = Array()
-				faces_tess[perm_id] = cur_face
+				vertices = face_mesh.Nodes()
+
+				i = 1
+				for v in vertices:
+					v_new = v.Transformed(Trsf)
+					vertices.SetValue(i, v_new)
+					i += 1
+
+				faces_tess[perm_id]["triangles"] = Array()
 
 				# Step through all the triangles and add associate them with the face
 				for triangle in face_mesh.Triangles():
 					# Construct a permanent unique ID for this triangle
 					tri_perm_id = "triangle_" + str(uuid.uuid4())
 
-					triangles_tess[tri_perm_id] = Array()
+					# Get the vertices of the current triangle
+					nodes = triangle.Get()
 
 					cur_triangle = Dictionary()
 
+					# Collect all the vertices into arrays
+					first_vert = Array()
+					first_vert.append(vertices.Value(nodes[0]).X())
+					first_vert.append(vertices.Value(nodes[0]).Y())
+					first_vert.append(vertices.Value(nodes[0]).Z())
+					second_vert = Array()
+					second_vert.append(vertices.Value(nodes[1]).X())
+					second_vert.append(vertices.Value(nodes[1]).Y())
+					second_vert.append(vertices.Value(nodes[1]).Z())
+					third_vert = Array()
+					third_vert.append(vertices.Value(nodes[2]).X())
+					third_vert.append(vertices.Value(nodes[2]).Y())
+					third_vert.append(vertices.Value(nodes[2]).Z())
+
 					if reverse:
-						cur_triangle["X"] = triangle.Value(1) + offset - 1
-						cur_triangle["Y"] = triangle.Value(3) + offset - 1
-						cur_triangle["Z"] = triangle.Value(2) + offset - 1
+						cur_triangle["vertex_1"] = first_vert
+						cur_triangle["vertex_2"] = third_vert
+						cur_triangle["vertex_3"] = second_vert
 					else:
-						cur_triangle["X"] = triangle.Value(1) + offset - 1
-						cur_triangle["Y"] = triangle.Value(2) + offset - 1
-						cur_triangle["Z"] = triangle.Value(3) + offset - 1
+						cur_triangle["vertex_1"] = first_vert
+						cur_triangle["vertex_2"] = second_vert
+						cur_triangle["vertex_3"] = third_vert
 
 					# Save the current triangle and make sure it is associated with its parent face
 					cur_triangle["parent"] = perm_id
-					triangles_tess[tri_perm_id].append(cur_triangle)
+					triangles_tess[tri_perm_id] = cur_triangle
 
 					# Keep track of the child triangles for the current face
-					cur_face["triangles"].append(tri_perm_id)
+					faces_tess[perm_id]["triangles"].append(cur_triangle)
 
 					offset += face_mesh.NbNodes()
 
-		shape_tess["faces"] = faces_tess
-		shape_tess["triangles"] = triangles_tess
-
-#		print(shape_tess)
-
-				#print(face_mesh.Nodes())
-
-	"""
-	Turns a shape into faces, edges and vertices.
-	"""
-	def tessellate(self, shape, shape_edges):
-		loc = None
-		largest_dimension = 0
-		smallest_dimension = 999999999
-		vertices = Array()
-		triangles = Array()
-		edges = Array()
-		num_of_vertices = 0
-		num_of_edges = 0
-		num_of_triangles = 0
-
-		# Protect against this being called with just a blank workplane object in the stack
-		if hasattr(shape, "ShapeType"):
-			tess = shape.tessellate(0.001)
-
-			# Use the location, if there is one
-			if loc is not None:
-				loc_x = loc.X()
-				loc_y = loc.Y()
-				loc_z = loc.Z()
-			else:
-				loc_x = 0.0
-				loc_y = 0.0
-				loc_z = 0.0
-
-			# Add vertices
-			for v in tess[0]:
-				vertices.append(v.x + loc_x)
-				vertices.append(v.y + loc_y)
-				vertices.append(v.z + loc_z)
-				#vertices.append(Vector3(v.x + loc_x, v.y + loc_y, v.z + loc_z))
-				num_of_vertices += 1
-
-			# Add triangles
-			for ixs in tess[1]:
-				triangles.append(ixs[0])
-				triangles.append(ixs[1])
-				triangles.append(ixs[2])
-				#triangles.append(Vector3(*ixs))
-				num_of_triangles += 1
-
-			# Add CadQuery-reported vertices
-#			for vert in shape.Vertices():
-#				mesher.addCQVertex(vert.X, vert.Y, vert.Z)
-
 			# Add CadQuery-reported edges
-			for edge in shape_edges.edges().all():#shape.Edges():
-				edge = edge.val()
-				gt = edge.geomType()
-
-				# Find out if the shape is larger than the largest bounding box we have recorded so far
-				if shape.BoundingBox().DiagonalLength > largest_dimension:
-					largest_dimension = shape.BoundingBox().DiagonalLength
-
-				# Handle objects that may not be at the origin
-				if shape.BoundingBox().xmax > largest_dimension:
-					largest_dimension = shape.BoundingBox().xmax
-				if shape.BoundingBox().ymax > largest_dimension:
-					largest_dimension = shape.BoundingBox().ymax
-				if shape.BoundingBox().zmax > largest_dimension:
-					largest_dimension = shape.BoundingBox().zmax
-
-				# Find the smallest dimension so that we can use that for the line width
+			for edge in cq_shape.edges().all():
+				# Find the smallest edge dimension so that we can use that for the line width
 				if shape.BoundingBox().xlen > 0.01 and shape.BoundingBox().xlen < smallest_dimension:
 					smallest_dimension = shape.BoundingBox().xlen
 				if shape.BoundingBox().ylen > 0.01 and shape.BoundingBox().ylen < smallest_dimension:
 					smallest_dimension = shape.BoundingBox().ylen
 				if shape.BoundingBox().zlen > 0.01 and shape.BoundingBox().zlen < smallest_dimension:
 					smallest_dimension = shape.BoundingBox().zlen
+
+				# Construct a permanent unique ID for this triangle
+				edge_perm_id = "edge_" + str(uuid.uuid4())
+				edges_tess[edge_perm_id] = Dictionary()
+				edges_tess[edge_perm_id]["segments"] = Array()
+
+				edge = edge.val()
+				gt = edge.geomType()
 
 				# If dealing with some sort of arc, discretize it into individual lines
 				if gt == "CIRCLE" or gt == "ARC" or gt == "SPLINE" or gt == "BSPLINE" or gt == "ELLIPSE":
@@ -328,16 +282,19 @@ class cqgi_interface(Node):
 					# Add each of the discretized sections to the edge list
 					if disc.NbPoints() > 1:
 						for i in range(2, disc.NbPoints() + 1):
+							cur_edge_segment = Dictionary()
+							cur_edge_segment["parent"] = edge_perm_id
+
 							p_0 = disc.Value(i - 1)
 							p_1 = disc.Value(i)
 
 							# Add the start and end vertices for this edge
-							# mesher.addCQEdge
-							edge = Array()
-							edge.append(Vector3(p_0.X(), p_0.Y(), p_0.Z()))
-							edge.append(Vector3(p_1.X(), p_1.Y(), p_1.Z()))
-							edges.append(edge)
-							num_of_edges += 1
+							cur_edge_segment["vertex_1"] = Vector3(p_0.X(), p_0.Y(), p_0.Z())
+							cur_edge_segment["vertex_2"] = Vector3(p_1.X(), p_1.Y(), p_1.Z())
+
+							# Save the current edge segment
+							edges_tess[edge_perm_id]["segments"].append(cur_edge_segment)
+							edge_segment_tess.append(cur_edge_segment)
 				else:
 					# Handle simple lines by collecting their beginning and end points
 					i = 0
@@ -359,14 +316,43 @@ class cqgi_interface(Node):
 
 						i += 1
 
-					# mesher.addCQEdge
-					edge = Array()
-					edge.append(Vector3(x1, y1, z1))
-					edge.append(Vector3(x2, y2, z2))
-					edges.append(edge)
-					num_of_edges += 1
+					# Dictionary holding the information for the current edge segment
+					cur_edge_segment = Dictionary()
+					cur_edge_segment["parent"] = edge_perm_id
 
-		return (smallest_dimension, largest_dimension, vertices, edges, triangles, num_of_vertices, num_of_edges, num_of_triangles)
+					# Add the start and end vertices for this edge
+					cur_edge_segment["vertex_1"] = Vector3(x1, y1, z1)
+					cur_edge_segment["vertex_2"] = Vector3(x2, y2, z2)
+
+					# Save the current edge segment
+					edges_tess[edge_perm_id]["segments"].append(cur_edge_segment)
+					edge_segment_tess.append(cur_edge_segment)
+
+			# Add CadQuery-reported vertices
+			for vertex in cq_shape.vertices().all():
+				vertex = vertex.val()
+
+				vertex_perm_id = "vertex_" + str(uuid.uuid4())
+
+				# Collect the vertex values into a dictionary we can save
+				cur_vertex = Dictionary()
+				cur_vertex["perm_id"] = vertex_perm_id
+				cur_vertex["X"] = vertex.X
+				cur_vertex["Y"] = vertex.Y
+				cur_vertex["Z"] = vertex.Z
+
+				vertices_tess.append(cur_vertex)
+
+
+		shape_tess["faces"] = faces_tess
+		shape_tess["triangles"] = triangles_tess
+		shape_tess["edges"] = edges_tess
+		shape_tess["edge_segments"] = edge_segment_tess
+		shape_tess["vertices"] = vertices_tess
+		shape_tess["smallest_dimension"] = smallest_dimension
+
+		return shape_tess
+
 
 	def execute(self, script_text):
 		"""

@@ -834,7 +834,7 @@ func test_close_button():
 
 	# Get the viewport so we can make sure it has contents
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	assert_eq(vp.get_child_count(), 17)
+	assert_eq(vp.get_child_count(), 22)
 
 	# Make sure the components tree has items in it
 	var components_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
@@ -883,7 +883,7 @@ func test_home_button():
 
 	# Get the viewport so we can make sure it has contents
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	assert_eq(vp.get_child_count(), 17)
+	assert_eq(vp.get_child_count(), 22)
 
 	# Get a reference to the home button so we can simulate it being clicked
 	var home_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton")
@@ -895,7 +895,7 @@ func test_home_button():
 	var cam = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera")
 	assert_not_null(cam)
 
-	assert_eq(str(cam.transform), "-0.707107, -0.408248, 0.57735, 0.707107, -0.408248, 0.57735, 0, 0.816497, 0.57735 - 22.670687, 22.670687, 22.670687", "Make sure the camera is in the right position with the correct rotation.")
+	assert_eq(str(cam.transform), "-0.707107, -0.408248, 0.57735, 0.707107, -0.408248, 0.57735, 0, 0.816497, 0.57735 - 22.648039, 22.648039, 22.648039", "Make sure the camera is in the right position with the correct rotation.")
 
 
 """
