@@ -637,11 +637,11 @@ func _on_ActionPopupPanel_ok_signal(new_template, combine_map):
 			prev_template = sel.get_text(0)
 
 		# Update the item text in the component tree
-		Common.update_component_tree_item(component_tree, prev_template, new_template)
+		sel.set_text(0, new_template)
 
 		# Update the component parent treeitem text
 		if new_component:
-			Common.update_component_tree_item(component_tree, old_component, new_component)
+			sel.set_text(0, new_component)
 
 			# Make sure that the parent that was edited is selected for future operations
 			Common.select_tree_item_by_text(component_tree, new_component)
@@ -1254,8 +1254,9 @@ func _edit_tree_item():
 	# Get the selected item
 	var ct = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree
 	var sel = ct.get_selected()
+	var sel_text = ""
 	if sel:
-		sel = sel.get_text(0)
+		sel_text = sel.get_text(0)
 	else:
 		return
 
@@ -1275,9 +1276,10 @@ func _edit_tree_item():
 	var op_panel = $ActionPopupPanel
 
 	# If the selected item starts with a period, it is an operation item
-	if sel.begins_with("."):
+	if sel_text.begins_with("."):
 		edit_mode = true
-		op_panel.activate_edit_mode(prev_text, sel, comp_names, params)
+
+		op_panel.activate_edit_mode(prev_text, sel_text, comp_names, params)
 	else:
 		var edit_child = ct.get_selected().get_children()
 

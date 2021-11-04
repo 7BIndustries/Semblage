@@ -43,6 +43,10 @@ func _input(event):
 					var pos = get_local_mouse_position()
 					var drop_item = get_item_at_position(pos)
 
+					# Protect against weird drag and drop interactions
+					if drag_item == null or drop_item == null:
+						return
+
 					# If the items are different, start a drop operation
 					if drag_item != drop_item:
 						# Protect against the user dropping a component onto an operation
