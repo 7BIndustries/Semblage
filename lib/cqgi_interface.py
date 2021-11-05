@@ -88,6 +88,7 @@ class cqgi_interface(Node):
 						tess_shape = result.shape.end().end().val()
 					except:
 						tess_shape = result.shape.val()
+
 				# We have an object and we want to see if there is a previous workplane to display
 				else:
 					# See if we can grab the previous workplane
@@ -174,8 +175,6 @@ class cqgi_interface(Node):
 		# Protect against this being called with just a blank workplane object in the stack
 		if hasattr(shape, "ShapeType"):
 			for face in shape.Faces():
-				# cur_face = Dictionary()
-
 				# Construct a unique permanent ID so that the vertices, edges
 				# and triangles can be associated with this face
 				perm_id = "face_" + str(uuid.uuid4())

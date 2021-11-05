@@ -397,6 +397,7 @@ script = ExtResource( 11 )
 [node name="MainOrbitCamera" type="Camera" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3 )
 projection = 1
+near = 0.01
 far = 8192.0
 script = ExtResource( 9 )
 
