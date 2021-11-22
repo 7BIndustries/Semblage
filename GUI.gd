@@ -10,6 +10,7 @@ var safe_distance = 0 # The distance away the camera should be placed to be able
 var combined = {}
 var insert_mode = false # The user wants to insert an operation in the components tree
 var edit_mode = false # The user wants to edit an entry in the components tree
+var face_select_mode = false # Tracks whether the user wants to select a face
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -52,8 +53,87 @@ func _ready():
 Handles shortcut keys.
 """
 func _input(event):
+	var ray_length = 1000
+
+	var vp = get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
+
 	if event.is_action_pressed("SaveComponent"):
 		_save_component()
+
+	# Check if the face selection key has been pressed
+	if event.is_action_pressed("mouse_select"):
+		face_select_mode = true
+
+		# The user wants to use mouse selection and so we need to set up the collision objects
+		for child in vp.get_children():
+			if child.get_class() == "MeshInstance":
+				child.create_trimesh_collision()
+	elif event.is_action_released("mouse_select"):
+		face_select_mode = false
+
+		# Step through every mesh, set their materials back to their default and remove the StaticBody colliders
+		for child in vp.get_children():
+			# Make sure we are working with a mesh
+			if child.get_class() == "MeshInstance":
+				for mesh_child in child.get_children():
+					if mesh_child.get_class() == "StaticBody":
+						child.remove_child(mesh_child)
+
+	if event is InputEventMouseButton and event.pressed and event.button_index == 1:
+		if face_select_mode == true:
+			var camera = get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport/MainOrbitCamera")
+
+			# Mouse position to construct ray
+			var mouse_pos = vp.get_mouse_position()
+			var ray_from = camera.project_ray_origin(mouse_pos)
+			var ray_to = ray_from + camera.project_ray_normal(mouse_pos) * ray_length
+
+			# Cast the ray and see what it intersects with
+			var space_state = vp.get_world().direct_space_state
+			var selection = space_state.intersect_ray(ray_from, ray_to)
+
+			# If a surface was clicked on highlight it, otherwise unhighlight it
+			if selection.size() > 0:
+				# Get the mesh that this is attached to
+				var mesh = selection.collider.get_parent()
+
+				# Check to see if this surface is already selected
+				if mesh.get_surface_material(0) != null and mesh.get_surface_material(0).albedo_color == Color(0.5, 0.5, 0.05, 1.0):
+					_deselect_mesh(mesh)
+				else:
+					_select_mesh(mesh)
+			else:
+				# Step through every mesh, set their materials back to their default and remove the StaticBody colliders
+				for child in vp.get_children():
+					# Make sure we are working with a mesh
+					if child.get_class() == "MeshInstance":
+						for mesh_child in child.get_children():
+							if mesh_child.get_class() == "StaticBody":
+								_deselect_mesh(child)
+
+
+"""
+Highlights a mesh so that it is obvious that it is selected.
+"""
+func _select_mesh(mesh):
+	# Set this surface's material so that it stands out from the rest of the surfaces
+	var new_color = [0.5, 0.5, 0.05, 1.0]
+	var material = SpatialMaterial.new()
+	material.albedo_color = Color(new_color[0], new_color[1], new_color[2], new_color[3])
+
+	mesh.set_surface_material(0, material)
+
+
+"""
+Removes the highlight from a mesh so that it no longer looks selected.
+"""
+func _deselect_mesh(mesh):
+	# The default material color
+	var default_color = [1.0, 0.36, 0.05, 1.0]
+	var material = SpatialMaterial.new()
+	material.albedo_color = Color(default_color[0], default_color[1], default_color[2], default_color[3])
+
+	mesh.set_surface_material(0, material)
 
 
 """
