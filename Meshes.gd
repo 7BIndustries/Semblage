@@ -126,8 +126,16 @@ static func gen_component_meshes(component):
 Generates a cube mesh that represents a line/edge/wire in the 3D view.
 """
 static func gen_line_mesh(thickness, edge, edge_perm_id):
+	var new_color = [1.0, 1.0, 1.0, 1.0]
+
 	var material = SpatialMaterial.new()
-	material.albedo_color = Color(255, 255, 255, 255)
+	material.albedo_color = Color(new_color[0], new_color[1], new_color[2], new_color[3])
+
+	# Enable/disable transparency based on the alpha set by the user
+	if new_color[3] == 1.0:
+		material.flags_transparent = false
+	else:
+		material.flags_transparent = true
 
 	# Extract the start and endpoint vectors from the edge
 	var v1 = edge["vertex_1"]
