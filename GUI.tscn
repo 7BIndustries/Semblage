@@ -643,6 +643,16 @@ access = 2
 current_dir = "/home/jwright/Downloads/repos/Semblage"
 current_path = "/home/jwright/Downloads/repos/Semblage/"
 
+[node name="ImportFileDialog" type="FileDialog" parent="."]
+margin_right = 315.0
+margin_bottom = 130.0
+window_title = "Open a File"
+resizable = true
+mode = 0
+access = 2
+current_dir = "/home/jwright/Downloads/repos/Semblage"
+current_path = "/home/jwright/Downloads/repos/Semblage/"
+
 [node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
 margin_right = 200.0
 margin_bottom = 70.0

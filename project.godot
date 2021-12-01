@@ -110,6 +110,11 @@ _global_script_classes=[ {
 "path": "res://controls/HoleControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "ImportComponentControl",
+"language": "GDScript",
+"path": "res://controls/ImportComponentControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "InlineWorkplaneControl",
 "language": "GDScript",
 "path": "res://controls/InlineWorkplaneControl.gd"
@@ -375,6 +380,7 @@ _global_script_class_icons={
 "HLineControl": "",
 "HLineToControl": "",
 "HoleControl": "",
+"ImportComponentControl": "",
 "InlineWorkplaneControl": "",
 "IntersectControl": "",
 "LinAlg": "",
@@ -444,6 +450,7 @@ gdscript/warnings/unsafe_property_access=true
 gdscript/warnings/unsafe_method_access=true
 gdscript/warnings/unsafe_cast=true
 gdscript/warnings/unsafe_call_argument=true
+shapes/collision/shape_color=Color( 0, 0.6, 0.701961, 0 )
 
 [editor_plugins]
 

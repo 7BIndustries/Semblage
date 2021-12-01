@@ -547,6 +547,15 @@ static func get_triggers():
 				"group": "WP",
 				"control": "res://controls/TranslateControl.gd"
 			}
+		},
+		"import": {
+			"trigger": "cq$",
+			"edit_trigger": "^\\cq.importers.*\\(.*\\).*",
+			"action": {
+				"name": "Import (import)",
+				"group": "WP",
+				"control": "res://controls/ImportComponentControl.gd"
+			}
 		}
 	}
 	return triggers

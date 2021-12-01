@@ -4,7 +4,7 @@ extends AcceptDialog
 var semblage_version = "0.1.0-alpha"
 
 var contribs = ["jmwright (GitHub)"]
-var sponsors = ["Ferdinand (Patreon)", "adam-james (Patreon)", "IrevDev (Patreon/Twitter)", "Anonymous", "7B Industries"]
+var sponsors = ["Ferdinand (Patreon)", "adam-james (Patreon)", "IrevDev (Patreon/Twitter)", "Anonymous", "7B Industries", "marked23 (Patreon)"]
 
 var tab_head = "[center][b]Semblage v{semblage_version}[/b]\nOpen Source CAD[/center]"
 var docs = "[center][b]DOCUMENTATION[/b]\n[url=https://semblage.7bindustries.com/en/latest/]Semblage[/url]\n[url=https://cadquery.readthedocs.io/en/latest/]CadQuery[/url]\n[url=https://dev.opencascade.org/doc/overview/html/]OCCT Kernel[/url]"
