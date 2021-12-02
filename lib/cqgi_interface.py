@@ -2,6 +2,7 @@ import os
 import sys
 import re
 import uuid
+import json
 from godot import exposed, export, signal, Node, ResourceLoader, Dictionary, Array, Vector3
 from cadquery import cqgi
 from cadquery import Vector, Color, exporters
@@ -45,6 +46,24 @@ class cqgi_interface(Node):
 				cur_comp["id"] = component_id
 				cur_comp["workplanes"] = Array()
 				cur_comp["largest_dimension"] = result.shape.largestDimension()
+
+				# Break out the metadata line
+				meta_line = re.search(component_id + '=cq.*', str(script_text))
+				meta_data = meta_line.group().split("#")
+
+				# Break out the color data from the metadata
+				if len(meta_data) > 1:
+					# Clean up and parse the metadata JSON string
+					meta_data = meta_data[1].replace(" ", "")
+					rgba = json.loads(meta_data)
+
+					# Make sure the component carries the color metadata
+					if "color_r" in meta_data:
+						cur_comp["rgba"] = Array()
+						cur_comp["rgba"].append(rgba["color_r"])
+						cur_comp["rgba"].append(rgba["color_g"])
+						cur_comp["rgba"].append(rgba["color_b"])
+						cur_comp["rgba"].append(rgba["color_a"])
 
 				# Figure out if we need to step back one step to get a non-workplane object
 				tess_shape = result.shape.val()

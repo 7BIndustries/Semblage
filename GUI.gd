@@ -1431,7 +1431,7 @@ func _on_ComponentTree_activate_data_popup():
 
 	# If we are selecting a Component, there are some different options
 	if is_component:
-		popup_height = 125
+		popup_height = 150
 
 	# Clear any previous items
 	_clear_data_popup()
@@ -1470,6 +1470,12 @@ func _on_ComponentTree_activate_data_popup():
 		show_hide_item.set_text("Show/Hide")
 		show_hide_item.connect("button_down", self, "_show_hide_tree_item")
 		$DataPopupPanel/DataPopupVBox.add_child(show_hide_item)
+
+		# Add the Color/Alpha button
+		var color_alpha_item = Button.new()
+		color_alpha_item.set_text("Color/Alpha")
+		color_alpha_item.connect("button_down", self, "_set_component_color_alpha")
+		$DataPopupPanel/DataPopupVBox.add_child(color_alpha_item)
 	else:
 		# Add the Insert Above item to insert an operation entry before the selected one
 		var insert_item = Button.new()
@@ -1482,6 +1488,35 @@ func _on_ComponentTree_activate_data_popup():
 	cancel_item.set_text("Cancel")
 	cancel_item.connect("button_down", self, "_cancel_data_popup")
 	$DataPopupPanel/DataPopupVBox.add_child(cancel_item)
+
+
+"""
+Displays a color/alpha picker for a component.
+"""
+func _set_component_color_alpha():
+	# Show the color picker dialog
+	var cp = get_node("ColorPickerDialog")
+	var ct = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+
+	# Get the selected item and make sure it is valid
+	var sel = ct.get_selected()
+	if not sel:
+		return
+
+	# Get the metadata from the selected component
+	var meta = sel.get_metadata(0)
+
+	# If the color metadata exists, set it for the component
+	if meta and meta.has("color_r"):
+		cp.set_color_rgba(meta["color_r"], meta["color_g"], meta["color_b"], meta["color_a"])
+	else:
+		cp.set_color_rgba(1.0, 0.36, 0.05, 1.0)
+
+	cp.popup_centered()
+
+	# There is no need to display the data popup panel right now
+	var data_popup = $DataPopupPanel
+	data_popup.hide()
 
 
 """
@@ -1583,4 +1618,36 @@ func _on_ParametersTree_activate_data_popup():
 Event that can be fired by nodes to request a new render.
 """
 func _on_requesting_render():
+	self._execute_and_render()
+
+
+"""
+Signal fired when the user has chosen a color from the color
+picker dialog and clicked OK.
+"""
+func _on_ColorPickerDialog_ok_pressed(picked_color):
+	var ct = get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
+
+	# Get the selected item and make sure it is valid
+	var sel = ct.get_selected()
+	if not sel:
+		return
+
+	# Get the metadata from the selected component
+	var meta = sel.get_metadata(0)
+	var meta_dict = Dictionary()
+
+	# Use the dictionary that is already there, if it exists
+	if meta:
+		meta_dict = meta
+
+	# Save the picked color components
+	meta_dict["color_r"] = picked_color.r
+	meta_dict["color_g"] = picked_color.g
+	meta_dict["color_b"] = picked_color.b
+	meta_dict["color_a"] = picked_color.a
+
+	# Reset the metadata for the component
+	sel.set_metadata(0, meta_dict)
+
 	self._execute_and_render()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=71 format=2]
+[gd_scene load_steps=72 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -34,6 +34,7 @@
 [ext_resource path="res://TupleList.gd" type="Script" id=32]
 [ext_resource path="res://ComponentTree.gd" type="Script" id=33]
 [ext_resource path="res://ParametersTree.gd" type="Script" id=34]
+[ext_resource path="res://ColorPickerDialog.gd" type="Script" id=35]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
@@ -1420,6 +1421,37 @@ margin_right = 343.0
 margin_bottom = 200.0
 text = "Cancel"
 
+[node name="ColorPickerDialog" type="WindowDialog" parent="."]
+margin_right = 320.0
+margin_bottom = 525.0
+rect_min_size = Vector2( 320, 525 )
+window_title = "Color and Alpha Selection"
+script = ExtResource( 35 )
+
+[node name="PanelContainer" type="PanelContainer" parent="ColorPickerDialog"]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ColorPickerDialog/PanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 315.0
+margin_bottom = 517.0
+
+[node name="ColorPicker" type="ColorPicker" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
+margin_right = 308.0
+margin_bottom = 462.0
+
+[node name="OkButton" type="Button" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
+margin_top = 466.0
+margin_right = 308.0
+margin_bottom = 486.0
+text = "OK"
+
+[node name="CancelButton" type="Button" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
+margin_top = 490.0
+margin_right = 308.0
+margin_bottom = 510.0
+text = "Cancel"
+
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton" to="." method="_on_OpenButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton" to="." method="_on_SaveButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton" to="." method="_on_MakeButton_button_down"]
@@ -1508,3 +1540,8 @@ text = "Cancel"
 [connection signal="toggled" from="ExportDXFDialog/MainVBoxContainer/CheckContainer/CheckButton" to="ExportDXFDialog" method="_on_CheckButton_toggled"]
 [connection signal="button_down" from="ExportDXFDialog/MainVBoxContainer/OkButton" to="ExportDXFDialog" method="_on_OkButton_button_down"]
 [connection signal="button_down" from="ExportDXFDialog/MainVBoxContainer/CancelButton" to="ExportDXFDialog" method="_on_CancelButton_button_down"]
+[connection signal="ok_pressed" from="ColorPickerDialog" to="." method="_on_ColorPickerDialog_ok_pressed"]
+[connection signal="resized" from="ColorPickerDialog" to="ColorPickerDialog" method="_on_ColorPickerDialog_resized"]
+[connection signal="resized" from="ColorPickerDialog/PanelContainer" to="ColorPickerDialog" method="_on_PanelContainer_resized"]
+[connection signal="button_down" from="ColorPickerDialog/PanelContainer/VBoxContainer/OkButton" to="ColorPickerDialog" method="_on_OkButton_button_down"]
+[connection signal="button_down" from="ColorPickerDialog/PanelContainer/VBoxContainer/CancelButton" to="ColorPickerDialog" method="_on_CancelButton_button_down"]

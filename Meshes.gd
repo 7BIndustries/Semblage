@@ -82,8 +82,12 @@ separately.
 static func gen_component_meshes(component):
 	var meshes = []
 
+	var new_color = [1.0, 0.36, 0.05, 1.0]
+
 	# Get the new material color
-	var new_color = [1.0, 0.36, 0.05, 1.0] # component["color"]
+	if component.has("rgba"):
+		new_color = component["rgba"]
+
 	var material = SpatialMaterial.new()
 
 	# The alpha is passed here, but alpha/transparency has to be enabled on the material too.

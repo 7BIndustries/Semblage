@@ -48,6 +48,9 @@ func _input(event):
 	var export_dxf_dlg = find_parent('Control').get_node("ExportDXFDialog")
 	if export_dxf_dlg.visible:
 		return
+	var color_dlg = find_parent('Control').get_node("ColorPickerDialog")
+	if color_dlg.visible:
+		return
 
 	act_pos2d = get_viewport().get_mouse_position()
 
