@@ -68,6 +68,7 @@ func _input(event):
 		for child in vp.get_children():
 			if child.get_class() == "MeshInstance":
 				child.create_trimesh_collision()
+
 	elif event.is_action_released("mouse_select"):
 		face_select_mode = false
 
@@ -130,9 +131,14 @@ Removes the highlight from a mesh so that it no longer looks selected.
 func _deselect_mesh(mesh):
 	# The default material color
 	var default_color = [1.0, 0.36, 0.05, 1.0]
+
+	# If we have an edge mesh or a vertex, set it back to white
+	if mesh.mesh.get_class() == "CubeMesh":
+		default_color = [1.0, 1.0, 1.0, 1.0]
+
+	# Swap the material color back to the original
 	var material = SpatialMaterial.new()
 	material.albedo_color = Color(default_color[0], default_color[1], default_color[2], default_color[3])
-
 	mesh.set_surface_material(0, material)
 
 

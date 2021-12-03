@@ -156,7 +156,7 @@ static func gen_line_mesh(thickness, edge, edge_perm_id):
 	mesh_inst.set_meta("parent_perm_id", edge_perm_id)
 	var raw_cube_mesh = CubeMesh.new()
 	raw_cube_mesh.size = Vector3(thickness, thickness, dist)
-	mesh_inst.material_override = material
+	mesh_inst.set_surface_material(0, material)
 	mesh_inst.mesh = raw_cube_mesh
 	mesh_inst.transform.origin = v_mid
 
