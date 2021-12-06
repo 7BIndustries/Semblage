@@ -11,6 +11,7 @@ var combined = {}
 var insert_mode = false # The user wants to insert an operation in the components tree
 var edit_mode = false # The user wants to edit an entry in the components tree
 var face_select_mode = false # Tracks whether the user wants to select a face
+var render_tree = null # Keeps track of all the data tree returned by the last execution
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -122,6 +123,22 @@ func _select_mesh(mesh):
 	var material = SpatialMaterial.new()
 	material.albedo_color = Color(new_color[0], new_color[1], new_color[2], new_color[3])
 
+	# We are dealing with an edge or vertex
+	if mesh.mesh.get_class() == "CubeMesh":
+		# We will use the viewport to search all edge or vertex meshes
+		var vp = get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
+
+		# Find out what the ID of the parent of this segment is, so that we can also select any siblings
+		var parent_id = mesh.get_meta("parent_perm_id")
+
+		# Step through all the meshses in the 3D viewport
+		for child in vp.get_children():
+			# Make sure that we have an edge or vertex mesh
+			if child.get_class() == "MeshInstance" and child.mesh.get_class() == "CubeMesh":
+				# See if the parent matches this other edge segment and highlight it too if it does
+				if mesh != child and child.get_meta("parent_perm_id") != null and child.get_meta("parent_perm_id") == parent_id:
+					child.set_surface_material(0, material)
+
 	mesh.set_surface_material(0, material)
 
 
@@ -136,9 +153,27 @@ func _deselect_mesh(mesh):
 	if mesh.mesh.get_class() == "CubeMesh":
 		default_color = [1.0, 1.0, 1.0, 1.0]
 
-	# Swap the material color back to the original
+	# Create a material with the currect default color
 	var material = SpatialMaterial.new()
 	material.albedo_color = Color(default_color[0], default_color[1], default_color[2], default_color[3])
+
+	# Find out what the ID of the parent of this segment is, so that we can also select any siblings
+	var parent_id = mesh.get_meta("parent_perm_id")
+
+	# Make sure that we have an edge or vertex mesh
+	if mesh.mesh.get_class() == "CubeMesh":
+		# We will use the viewport to search all edge or vertex meshes
+		var vp = get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
+
+		# Step through all the meshses in the 3D viewport
+		for child in vp.get_children():
+			# Make sure that we have an edge or vertex mesh
+			if child.get_class() == "MeshInstance" and child.mesh.get_class() == "CubeMesh":
+				# See if the parent matches this other edge segment and highlight it too if it does
+				if mesh != child and child.get_meta("parent_perm_id") != null and child.get_meta("parent_perm_id") == parent_id:
+					child.set_surface_material(0, material)
+
+	# Swap the material color back to the original
 	mesh.set_surface_material(0, material)
 
 
@@ -470,7 +505,7 @@ func _render_component_text(component_text):
 				$GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport.add_child(mesh)
 
 	# Method that post-processes the results of the script to pull out renderables
-	var render_tree = cqgipy
+	render_tree = cqgipy
 	if cqgipy.has_method('get_render_tree'):
 		render_tree = render_tree.get_render_tree(component_text)
 	else:
