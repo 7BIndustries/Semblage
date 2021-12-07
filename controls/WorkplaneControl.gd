@@ -368,7 +368,6 @@ func set_values_from_string(text_line):
 	rgx.compile(offset_edit_rgx)
 	res = rgx.search(text_line)
 	if res:
-		print(res.get_string())
 		# Fill in the offset text
 		offset_ctrl.set_text(res.get_string())
 

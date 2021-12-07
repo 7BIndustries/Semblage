@@ -51,6 +51,9 @@ func _input(event):
 	var color_dlg = find_parent('Control').get_node("ColorPickerDialog")
 	if color_dlg.visible:
 		return
+	var save_before_close_dlg = find_parent('Control').get_node("SaveBeforeCloseDialog")
+	if save_before_close_dlg.visible:
+		return
 
 	act_pos2d = get_viewport().get_mouse_position()
 
