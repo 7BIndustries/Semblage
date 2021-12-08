@@ -12,13 +12,13 @@ var insert_mode = false # The user wants to insert an operation in the component
 var edit_mode = false # The user wants to edit an entry in the components tree
 var face_select_mode = false # Tracks whether the user wants to select a face
 var render_tree = null # Keeps track of all the data tree returned by the last execution
-var close_after_save = false # Lets the component be closed after saving
+var quit_after_save = false # Lets the component be closed after saving
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Set the default tab to let the user know where to start
 	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
-	tabs.set_tab_title(0, "Start *")
+	tabs.set_tab_title(0, "Start")
 
 	# Get the component and param trees ready to use
 	_init_component_tree()
@@ -26,6 +26,7 @@ func _ready():
 
 	# Make sure the window is maximized on start
 	OS.set_window_maximized(true)
+	get_tree().set_auto_accept_quit(false)
 
 	# Set the tooltips of the main controls
 	var open_button = $GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton
@@ -823,12 +824,10 @@ func _on_ActionPopupPanel_ok_signal(new_template, combine_map):
 	if is_first:
 		_home_view()
 
-	# Make sure that the component is marked as dirty
-	if open_file_path:
-		var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
-
-		# Let the user know the name of the file they are trying to open
-		tabs.set_tab_title(0, open_file_path + " *")
+	# Let the user know the name of the file they are trying to open
+	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
+	if tabs.get_tab_title(0).find("*") <= 0:
+		tabs.set_tab_title(0, tabs.get_tab_title(0) + " *")
 
 
 """
@@ -1727,15 +1726,36 @@ func _on_SaveBeforeCloseDialog_no_save_before_close():
 	# Re-call the close code
 	_on_CloseButton_button_down()
 
+	# See if we should exit the entire app
+	if quit_after_save:
+		get_tree().quit()
+
 
 """
 Called when the user says they want to save the changes to the current component.
 """
 func _on_SaveBeforeCloseDialog_yes_save_before_close():
-	close_after_save = true
-
 	# Go ahead and save the component
 	_save_component()
 
 	# Re-call the close code
 	_on_CloseButton_button_down()
+
+
+"""
+Handle application quit requests to make sure dirty components get saved.
+"""
+func _notification(what):
+	if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
+		var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
+
+		# See if there is a need to save the current component first
+		if tabs.get_tab_title(0).find("*") > 0:
+			var cd = get_node("SaveBeforeCloseDialog")
+			cd.popup_centered()
+
+			quit_after_save = true
+
+			return
+		else:
+			get_tree().quit() # default behavior
