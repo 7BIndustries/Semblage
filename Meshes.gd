@@ -11,7 +11,7 @@ static func gen_workplane_meshes(origin, normal, size):
 	var meshes = []
 
 	# Get the new material color
-	var new_color = Color(0.6, 0.6, 0.6, 0.01)
+	var new_color = Color(0.6, 0.6, 0.6, 0.1)
 	var material = SpatialMaterial.new()
 	material.albedo_color = Color(new_color[0], new_color[1], new_color[2], new_color[3])
 	material.flags_transparent = true
