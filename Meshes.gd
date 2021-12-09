@@ -169,3 +169,30 @@ static func gen_line_mesh(thickness, edge, edge_perm_id):
 	mesh_inst.transform = mesh_inst.transform.looking_at(v2, v_cross)
 
 	return mesh_inst
+
+
+"""
+Generates meshes that represent vertices.
+"""
+static func gen_vertex_mesh(size, vertex, vertex_perm_id):
+	var new_color = [1.0, 1.0, 1.0, 1.0]
+
+	var material = SpatialMaterial.new()
+	material.albedo_color = Color(new_color[0], new_color[1], new_color[2], new_color[3])
+
+	# Enable/disable transparency based on the alpha set by the user
+	if new_color[3] == 1.0:
+		material.flags_transparent = false
+	else:
+		material.flags_transparent = true
+
+	# Generate the mesh instance representing the line
+	var mesh_inst = MeshInstance.new()
+	mesh_inst.set_meta("parent_perm_id", vertex_perm_id)
+	var raw_cube_mesh = CubeMesh.new()
+	raw_cube_mesh.size = Vector3(size, size, size)
+	mesh_inst.set_surface_material(0, material)
+	mesh_inst.mesh = raw_cube_mesh
+	mesh_inst.transform.origin = Vector3(vertex["X"], vertex["Y"], vertex["Z"])
+
+	return mesh_inst

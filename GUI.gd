@@ -72,6 +72,14 @@ func _input(event):
 			if child.get_class() == "MeshInstance":
 				child.create_trimesh_collision()
 
+		# The user wants to use mouse selection, so we need to add vertex meshes and collision objects
+		# Add the vertex representations
+		for comp_tree in render_tree["components"]:
+			for vertex in comp_tree["vertices"]:
+				var vert = Meshes.gen_vertex_mesh(0.05 * comp_tree["smallest_dimension"], vertex, vertex["perm_id"])
+				vert.create_trimesh_collision()
+				vp.add_child(vert)
+
 	elif event.is_action_released("mouse_select"):
 		face_select_mode = false
 
@@ -79,6 +87,10 @@ func _input(event):
 		for child in vp.get_children():
 			# Make sure we are working with a mesh
 			if child.get_class() == "MeshInstance":
+				# Remove the vertex meshes
+				if child.get_meta("parent_perm_id") and child.get_meta("parent_perm_id").begins_with("vertex"):
+					vp.remove_child(child)
+
 				for mesh_child in child.get_children():
 					if mesh_child.get_class() == "StaticBody":
 						child.remove_child(mesh_child)
