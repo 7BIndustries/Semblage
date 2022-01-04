@@ -68,18 +68,11 @@ class cqgi_interface(Node):
 				# Figure out if we need to step back one step to get a non-workplane object
 				tess_shape = result.shape.val()
 				tess_edges = result.shape.edges()
-				if len(result.shape.all()) == 0:
-					is_base_wp = False
 
-					# There is no object to base the largest dimension off of, so set a default
-					cur_comp["largest_dimension"] = 5
+				obj = None
 
-					# Work-around to find out if this is a base workplane
-					try:
-						 result.shape.end().end()
-					except ValueError:
-						is_base_wp = True
-
+				# See if we have a workplane, which is represented by a Vector type
+				if type(result.shape.val()).__name__ == "Vector":
 					# Get the origin, normal and center from the workplane
 					origin_vec = Vector3(result.shape.val().x, result.shape.val().y, result.shape.val().z)
 					normal_vec = Vector3(result.shape.plane.zDir.x, result.shape.plane.zDir.y, result.shape.plane.zDir.z)
@@ -87,13 +80,12 @@ class cqgi_interface(Node):
 
 					# Get the appropriate size of the workplane, which is just a little larger than the underlying object
 					try:
-						wp_size = result.shape.end().largestDimension() + result.shape.end().largestDimension() * 0.1
+						wp_size = result.shape.end().end().largestDimension() + result.shape.end().largestDimension() * 0.1
 					except:
-						wp_size = 5
+						wp_size = 5.0
 
 					# Start collecting the workplane info into a dictionary
 					cur_wp = Dictionary()
-					cur_wp["is_base"] = is_base_wp
 					cur_wp["origin"] = origin_vec
 					cur_wp["normal"] = normal_vec
 					cur_wp["center"] = center_vec
@@ -102,67 +94,107 @@ class cqgi_interface(Node):
 					# Add the current workplane to the array
 					cur_comp["workplanes"].append(cur_wp)
 
-					# See if we can grab the previous shape
+#					# Grab the previous solid, if there is one
 					try:
 						tess_shape = result.shape.end().end().val()
-					except:
-						tess_shape = result.shape.val()
+						tess_edges = result.shape.end().end().edges()
 
-				# We have an object and we want to see if there is a previous workplane to display
-				else:
-					# See if we can grab the previous workplane
+						# Tessellate the enclosed shape object
+						obj = self.tess(tess_shape, tess_edges)
+					except:
+						pass
+
+					# Add the current component, even if it only contains a workplane
+					render_tree["components"].append(cur_comp)
+				elif type(result.shape.val()).__name__ == "Face":
+					# Grab the previous solid
+					tess_shape = result.shape.end().val()
+					tess_edges = result.shape.end().edges()
+
+					# Tessellate the enclosed shape object
+					obj = self.tess(tess_shape, tess_edges)
+				elif type(result.shape.val()).__name__ == "Wire" or type(result.shape.val()).__name__ == "Edge":
+					# Grab the current wire
+					tess_shape = result.shape.val()
+					tess_edges = result.shape.edges()
+					obj = self.tess(tess_shape, tess_edges)
+
 					try:
-						prev_wp = result.shape.end()
-					except:
-						prev_wp = result.shape
+						# Get the workplane that the wire should be sitting on
+						wp_obj = result.shape.end()
 
-					is_base_wp = False
+						# Get the origin, normal and center from the workplane
+						origin_vec = Vector3(wp_obj.val().x, wp_obj.val().y, wp_obj.val().z)
+						normal_vec = Vector3(wp_obj.plane.zDir.x, wp_obj.plane.zDir.y, wp_obj.plane.zDir.z)
+						center_vec = Vector3(wp_obj.plane.origin.x, wp_obj.plane.origin.y, wp_obj.plane.origin.z)
 
-					# See if we have a workplane
-					if type(prev_wp.val()) is Vector:
-						# Work-around to find out if this is a base workplane
+						# Get the appropriate size of the workplane, which is just a little larger than the underlying object
 						try:
-							 prev_wp.end().end()
-						except ValueError:
-							is_base_wp = True
+							wp_size = result.shape.end().end().largestDimension() + result.shape.end().largestDimension() * 0.1
 
-						# If it is not a base workplane we can set it up to be displayed
-						if not is_base_wp:
-							# Get the origin, normal and center from the workplane
-							origin_vec = Vector3(prev_wp.val().x, prev_wp.val().y, prev_wp.val().z)
-							normal_vec = Vector3(prev_wp.plane.zDir.x, prev_wp.plane.zDir.y, prev_wp.plane.zDir.z)
-							center_vec = Vector3(prev_wp.plane.origin.x, prev_wp.plane.origin.y, prev_wp.plane.origin.z)
-							wp_size = result.shape.largestDimension() + prev_wp.largestDimension() * 0.1
+							# Make sure that we are not dealing with a 2D system instead of 3D
+							if wp_size <= 0.0:
+								wp_size = 5.0
+						except:
+							wp_size = 5.0
 
-							# Compensate for offset workplanes not fitting into the view
-							if origin_vec.x > cur_comp["largest_dimension"]:
-								cur_comp["largest_dimension"] = origin_vec.x * 2
-							if origin_vec.y > cur_comp["largest_dimension"]:
-								cur_comp["largest_dimension"] = origin_vec.y * 2
-							if origin_vec.z > cur_comp["largest_dimension"]:
-								cur_comp["largest_dimension"] = origin_vec.z * 2
+						# Start collecting the workplane info into a dictionary
+						cur_wp = Dictionary()
+						cur_wp["origin"] = origin_vec
+						cur_wp["normal"] = normal_vec
+						cur_wp["center"] = center_vec
+						cur_wp["size"] = wp_size
 
-							# Start collecting the workplane info into a dictionary
-							cur_wp = Dictionary()
-							cur_wp["is_base"] = is_base_wp
-							cur_wp["origin"] = origin_vec
-							cur_wp["normal"] = normal_vec
-							cur_wp["center"] = center_vec
-							cur_wp["size"] = wp_size
+						# Add the current workplane to the array
+						cur_comp["workplanes"].append(cur_wp)
+					except:
+						pass
 
-							# Add the current workplane to the array
-							cur_comp["workplanes"].append(cur_wp)
+					try:
+						# Grab the previous solid for context
+						tess_shape = result.shape.end().end().end().val()
+						tess_edges = result.shape.end().end().end().edges()
 
-				# Tessellate the enclosed shape object
-				obj = self.tess(tess_shape, tess_edges)
+						# Tessellate the enclosed shape object
+						obj_extra = self.tess(tess_shape, tess_edges)
 
-				# Save the tessellation information
-				cur_comp["smallest_dimension"] = obj["smallest_dimension"]
-				if cur_comp["smallest_dimension"] == 0:
-					cur_comp["smallest_dimension"] = cur_comp["largest_dimension"]
-				cur_comp["faces"] = obj["faces"]
-				cur_comp["edges"] = obj["edges"]
-				cur_comp["vertices"] = obj["vertices"]
+						# Get the ID of the previous solid
+						component_id_extra = list(result.shape.end().end().end().ctx.tags)[0]
+
+						# Set up the previous solid component so that it can be displayed
+						cur_comp_extra = Dictionary()
+						cur_comp_extra["id"] = component_id_extra
+						cur_comp_extra["workplanes"] = Array()
+						cur_comp_extra["largest_dimension"] = result.shape.end().end().end().largestDimension()
+						cur_comp_extra["smallest_dimension"] = obj_extra["smallest_dimension"]
+						if cur_comp_extra["smallest_dimension"] == 0:
+							cur_comp_extra["smallest_dimension"] = cur_comp_extra["largest_dimension"]
+						cur_comp_extra["faces"] = obj_extra["faces"]
+						cur_comp_extra["edges"] = obj_extra["edges"]
+						cur_comp_extra["vertices"] = obj_extra["vertices"]
+
+						# Add the current component
+						render_tree["components"].append(cur_comp_extra)
+					except:
+						pass
+				else:
+					# Tessellate the enclosed shape object
+					obj = self.tess(tess_shape, tess_edges)
+
+				# Save the tessellation information, if there was a tessellatable object
+				if obj != None:
+					cur_comp["smallest_dimension"] = obj["smallest_dimension"]
+					if cur_comp["smallest_dimension"] == 0:
+						cur_comp["smallest_dimension"] = cur_comp["largest_dimension"]
+					cur_comp["faces"] = obj["faces"]
+					cur_comp["edges"] = obj["edges"]
+					cur_comp["vertices"] = obj["vertices"]
+				else:
+					cur_comp["smallest_dimension"] = 1.0
+					cur_comp["largest_dimension"] = 5.0
+					cur_comp["faces"] = Array()
+					cur_comp["edges"] = Array()
+					cur_comp["vertices"] = Array()
 
 				# Add the current component
 				render_tree["components"].append(cur_comp)
@@ -178,6 +210,7 @@ class cqgi_interface(Node):
 		Handles converting a CadQuery object to a tessellated/mesh version.
 		"""
 		smallest_dimension = 999999999
+		workplanes = Array()
 		shape_tess = Dictionary()
 		faces_tess = Dictionary()
 		triangles_tess = Dictionary()
@@ -361,12 +394,29 @@ class cqgi_interface(Node):
 
 				vertices_tess.append(cur_vertex)
 
+		# Find all the workplanes
+		cur_wp = Dictionary()
+		cur_wp["id"] = "test"
+		cur_wp["normal"] = Array()
+		cur_wp["normal"].append(cq_shape.plane.zDir.x)
+		cur_wp["normal"].append(cq_shape.plane.zDir.y)
+		cur_wp["normal"].append(cq_shape.plane.zDir.z)
+		cur_wp["origin"] = Array()
+		cur_wp["origin"].append(cq_shape.plane.origin.x)
+		cur_wp["origin"].append(cq_shape.plane.origin.y)
+		cur_wp["origin"].append(cq_shape.plane.origin.z)
+		if cur_wp.size() == 0:
+			cur_wp["is_base"] = True
+		else:
+			cur_wp["is_base"] = False
+		workplanes.append(cur_wp)
 
 		shape_tess["faces"] = faces_tess
 		shape_tess["triangles"] = triangles_tess
 		shape_tess["edges"] = edges_tess
 		shape_tess["edge_segments"] = edge_segment_tess
 		shape_tess["vertices"] = vertices_tess
+		shape_tess["workplanes"] = workplanes
 		shape_tess["smallest_dimension"] = smallest_dimension
 
 		return shape_tess

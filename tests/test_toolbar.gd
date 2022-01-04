@@ -834,7 +834,7 @@ func test_close_button():
 
 	# Get the viewport so we can make sure it has contents
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	assert_eq(vp.get_child_count(), 22)
+	assert_eq(vp.get_child_count(), 20)
 
 	# Make sure the components tree has items in it
 	var components_tree = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
@@ -883,7 +883,7 @@ func test_home_button():
 
 	# Get the viewport so we can make sure it has contents
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	assert_eq(vp.get_child_count(), 22)
+	assert_eq(vp.get_child_count(), 20)
 
 	# Get a reference to the home button so we can simulate it being clicked
 	var home_btn = gui.get_node("GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton")

@@ -510,14 +510,6 @@ func _render_component_text(component_text):
 	# Clear the 3D viewport
 	self._clear_viewport()
 
-	# If we have untessellated objects (i.e. workplanes), display placeholders for them
-	var untesses = ContextHandler.get_untessellateds(component_text)
-	if len(untesses) > 0:
-		for untess in untesses:
-			var meshes = Meshes.gen_workplane_meshes(untess["origin"], untess["normal"], 5)
-			for mesh in meshes:
-				$GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport.add_child(mesh)
-
 	# Method that post-processes the results of the script to pull out renderables
 	render_tree = cqgipy
 	if cqgipy.has_method('get_render_tree'):
@@ -538,13 +530,13 @@ func _render_component_text(component_text):
 
 	# Render any workplanes that need to be rendered
 	for comp_tree in render_tree["components"]:
-		if comp_tree["workplanes"].size() > 0 and not comp_tree["workplanes"][-1]["is_base"]:
-			var cur_wp = comp_tree["workplanes"][-1]
-
-			# Create workplane meshes
-			var meshes = Meshes.gen_workplane_meshes(cur_wp["origin"], cur_wp["normal"], cur_wp["size"])
-			for mesh in meshes:
-				$GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport.add_child(mesh)
+		# If there are workplanes, add them as their own meshes
+		if comp_tree["workplanes"].size() > 0:
+			for cur_wp in comp_tree["workplanes"]:
+				# Do the work of creating the workplane meshes
+				var meshes = Meshes.gen_workplane_meshes(cur_wp["origin"], cur_wp["normal"], cur_wp["size"])
+				for mesh in meshes:
+					$GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport.add_child(mesh)
 
 		# Make all of the component meshes visible
 		render_component_tree(comp_tree)
@@ -566,8 +558,12 @@ func render_component_tree(component):
 	var max_dim = component["largest_dimension"]
 	var min_dim = component["smallest_dimension"]
 
+	# Make sure there is a max dimension or things like zooming will become weird
+	if max_dim <= 0:
+		max_dim = 5.0
+
 	# Make sure the line width will be appropriate, even if this is a 2D object
-	if min_dim == 0:
+	if min_dim <= 0:
 		min_dim = max_dim
 
 	# Make sure the zoom speed works with the size of the model

@@ -58,7 +58,7 @@ func test_union_control():
 
 	# Get the viewport so we can make sure it has contents
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	assert_eq(vp.get_child_count(), 40)
+	assert_eq(vp.get_child_count(), 38)
 
 	# Get references to the controls on the form
 	var first_object_opt = union_control.get_node("first_obj_group/first_object_opt")
@@ -89,7 +89,7 @@ func test_union_control():
 	ok_btn.emit_signal("button_down")
 
 	# See if the results in the 3D viewport have changed appropriately
-	assert_eq(vp.get_child_count(), 38)
+	assert_eq(vp.get_child_count(), 36)
 
 	union_control.free()
 	threed_btn.free()
@@ -152,7 +152,7 @@ func test_cut_control():
 
 	# Get the viewport so we can make sure it has contents
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	assert_eq(vp.get_child_count(), 40)
+	assert_eq(vp.get_child_count(), 38)
 
 	# Get references to the controls on the form
 	var first_object_opt = cut_control.get_node("first_obj_group/first_object_opt")
@@ -183,7 +183,7 @@ func test_cut_control():
 	ok_btn.emit_signal("button_down")
 
 	# See if the results in the 3D viewport have changed appropriately
-	assert_eq(vp.get_child_count(), 30, "Make sure there are the correct number of items in the 3D viewport.")
+	assert_eq(vp.get_child_count(), 28, "Make sure there are the correct number of items in the 3D viewport.")
 
 	cut_control.free()
 	threed_btn.free()
@@ -246,7 +246,7 @@ func test_intersect_control():
 
 	# Get the viewport so we can make sure it has contents
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	assert_eq(vp.get_child_count(), 40)
+	assert_eq(vp.get_child_count(), 38)
 
 	# Get references to the controls on the form
 	var first_object_opt = intersect_control.get_node("first_obj_group/first_object_opt")
@@ -280,7 +280,7 @@ func test_intersect_control():
 	ok_btn.emit_signal("button_down")
 
 	# See if the results in the 3D viewport have changed appropriately
-	assert_eq(vp.get_child_count(), 22)
+	assert_eq(vp.get_child_count(), 20)
 
 	intersect_control.free()
 	threed_btn.free()
@@ -341,14 +341,14 @@ func test_loft_control():
 
 	# Get the viewport so we can make sure it has contents
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	assert_eq(vp.get_child_count(), 10)
+	assert_eq(vp.get_child_count(), 8)
 
 	# Simulate a click of the OK button on the Operations dialog
 	var ok_btn = popup.get_node("VBoxContainer/OkButton")
 	ok_btn.emit_signal("button_down")
 
 	# See if the results in the 3D viewport have changed appropriately
-	assert_eq(vp.get_child_count(), 57)
+	assert_eq(vp.get_child_count(), 55)
 
 
 """
@@ -377,7 +377,7 @@ func test_sweep_control():
 
 	# Get the viewport so we can make sure it has contents
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	assert_eq(vp.get_child_count(), 33, "Make sure the viewport has the correct number of objects in it.")
+	assert_eq(vp.get_child_count(), 35, "Make sure the viewport has the correct number of objects in it.")
 
 	# Make sure the component tree is converted into the script for the operations dialog
 	var component_text = gui._convert_component_tree_to_script(false)
@@ -437,4 +437,4 @@ func test_sweep_control():
 	ok_btn.emit_signal("button_down")
 
 	# See if the results in the 3D viewport have changed appropriately
-	assert_eq(vp.get_child_count(), 33, "Make sure the viewport has the correct number of objects in it.")
+	assert_eq(vp.get_child_count(), 35, "Make sure the viewport has the correct number of objects in it.")
