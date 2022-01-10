@@ -2,6 +2,13 @@ extends Reference
 
 class_name LinAlg
 
+const FLOAT_EPSILON = 0.00001
+
+"""
+Compares two floats, compensating for floating point error.
+"""
+static func compare_floats(a, b, epsilon = FLOAT_EPSILON):
+	return abs(a - b) <= epsilon
 
 """
 Finds the distance between two vectors.

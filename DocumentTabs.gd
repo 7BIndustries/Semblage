@@ -66,7 +66,6 @@ func _input(event):
 
 			# See if the user requested the action menu
 			if Input.is_action_just_pressed("Action"):
-
 				emit_signal("activate_action_popup")
 			elif Input.is_action_just_pressed("Rotating"):
 				rotating = true

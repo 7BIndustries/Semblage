@@ -74,11 +74,12 @@ func _input(event):
 
 		# The user wants to use mouse selection, so we need to add vertex meshes and collision objects
 		# Add the vertex representations
-		for comp_tree in render_tree["components"]:
-			for vertex in comp_tree["vertices"]:
-				var vert = Meshes.gen_vertex_mesh(0.05 * comp_tree["smallest_dimension"], vertex, vertex["perm_id"])
-				vert.create_trimesh_collision()
-				vp.add_child(vert)
+		if render_tree and render_tree["components"]:
+			for comp_tree in render_tree["components"]:
+				for vertex in comp_tree["vertices"]:
+					var vert = Meshes.gen_vertex_mesh(0.05 * comp_tree["smallest_dimension"], vertex, vertex["perm_id"])
+					vert.create_trimesh_collision()
+					vp.add_child(vert)
 
 	elif event.is_action_released("mouse_select"):
 		face_select_mode = false
@@ -856,6 +857,13 @@ func _on_DocumentTabs_activate_action_popup():
 	if component_tree.get_selected() != null and component_tree.get_selected().get_text(0).begins_with("."):
 		component_tree.get_selected().get_parent().select(0)
 
+	var selector_str = null
+
+	# See if the user is wanting to trigger selector synthesis
+	if Input.is_action_pressed("mouse_select"):
+		selector_str = _synthesize_selector()
+		print(selector_str)
+
 	# Get the info that the operations dialog uses to set up the next operation
 	var op_text = Common.get_last_op(component_tree)
 	var comps = Common.get_all_components(component_tree)
@@ -863,6 +871,102 @@ func _on_DocumentTabs_activate_action_popup():
 
 	var op_panel = $ActionPopupPanel
 	op_panel.activate_popup(op_text, false, comps, params)
+
+
+"""
+Using what is selected in the 3D view, determines a valid selector string that
+will produce the selection.
+"""
+func _synthesize_selector():
+	var vp = get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
+
+	var selector_str = null
+
+	# The selected geometry color
+	var selected_color = [0.5, 0.5, 0.05, 1.0]
+
+	# Keep track of how many faces have been selected
+	var num_sels = 0
+
+	# Keep track of the furthest face from the origin
+	var furthest = Vector3(-999999, -999999, -999999)
+	var closest = Vector3(999999, 999999, 999999)
+	var furthest_face = null
+	var closest_face = null
+
+	# Step through all the meshes and see which one is selected
+	for child in vp.get_children():
+		# Make sure we are working with a mesh
+		if child.get_class() == "MeshInstance":
+			var material = child.get_surface_material(0)
+			if material:
+				var ac = material.albedo_color
+
+				# See if the mesh is selected (highlighted color)
+				if LinAlg.compare_floats(ac.r, selected_color[0]) and\
+				   LinAlg.compare_floats(ac.g, selected_color[1]) and\
+				   LinAlg.compare_floats(ac.b, selected_color[2]):
+					# Keep track of the number of selected faces
+					num_sels += 1
+
+					print(child.get_meta("normal"))
+					print(child.get_meta("origin"))
+
+					var norm = child.get_meta("normal")
+					var orig = child.get_meta("origin")
+
+					# Check if the face is aligned with the X axis
+					var par = Synthesis.is_parallel_to_x(norm)
+					if par:
+						selector_str = "~X"
+
+						# See if we might have a max dir selector
+						if orig.x > furthest.x:
+							furthest.x = orig.x
+							furthest_face = child.get_meta("parent_perm_id")
+
+						# See if we might have a min dir selector
+						if orig.x < closest.x:
+							closest.x = orig.x
+							closest_face = child.get_meta("parent_perm_id")
+
+					# Check if the face is aligned with the Y axis
+					par = Synthesis.is_parallel_to_y(norm)
+					if par:
+						selector_str = "~Y"
+
+						# See if we might have a max dir selector
+						if orig.y > furthest.y:
+							furthest.y = orig.y
+							furthest_face = child.get_meta("parent_perm_id")
+
+						# See if we might have a min dir selector
+						if orig.y < closest.y:
+							closest.y = orig.y
+							closest_face = child.get_meta("parent_perm_id")
+
+					# Check if the face is aligned with the Z axis
+					par = Synthesis.is_parallel_to_z(norm)
+					if par:
+						selector_str = "~Z"
+
+						# See if we might have a max dir selector
+						if orig.z > furthest.z:
+							furthest.z = orig.z
+							furthest_face = child.get_meta("parent_perm_id")
+
+						# See if we might have a min dir selector
+						if orig.z < closest.z:
+							closest.z = orig.z
+							closest_face = child.get_meta("parent_perm_id")
+
+	# See if we had a min max dir selector
+	if num_sels == 1 and furthest_face:
+		selector_str = selector_str.replace("~", ">")
+	elif num_sels == 1 and closest_face:
+		selector_str = selector_str.replace("~", "<")
+
+	return selector_str
 
 
 """

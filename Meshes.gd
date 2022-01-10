@@ -119,6 +119,10 @@ static func gen_component_meshes(component):
 		var mesh = st.commit()
 		var mesh_inst = MeshInstance.new()
 		mesh_inst.set_meta("parent_perm_id", face)
+		var norm = component["faces"][face]["normal"]
+		var orig = component["faces"][face]["origin"]
+		mesh_inst.set_meta("normal", Vector3(norm[0], norm[1], norm[2]))
+		mesh_inst.set_meta("origin", Vector3(orig[0], orig[1], orig[2]))
 		mesh_inst.mesh = mesh
 
 		meshes.append(mesh_inst)

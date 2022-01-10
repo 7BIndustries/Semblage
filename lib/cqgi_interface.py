@@ -10,6 +10,7 @@ from OCP.TopLoc import TopLoc_Location
 from OCP.BRep import BRep_Tool
 from OCP.BRepMesh import BRepMesh_IncrementalMesh
 from OCP.TopAbs import TopAbs_Orientation
+from OCP.BRepAdaptor import BRepAdaptor_Surface
 
 
 @exposed
@@ -246,6 +247,26 @@ class cqgi_interface(Node):
 
 				# Save the transformation so that we can place vertices in the correct locations later
 				Trsf = loc.Transformation()
+
+				# Use the surface information to get the origin in global coordinates
+				# Sometimes this fails with a generic kernel error, thus the try/except
+				pln = None
+				try:
+					adaptor = BRepAdaptor_Surface(face.wrapped)
+					plane = adaptor.Plane().Location()
+					pln = [pln.X(), pln.Y(), pln.Z()]
+				except:
+					pln = [0.0, 0.0, 0.0]
+
+				# Save data about the face for selector synthesis
+				faces_tess[perm_id]["normal"] = Array()
+				faces_tess[perm_id]["normal"].append(face.normalAt().x)
+				faces_tess[perm_id]["normal"].append(face.normalAt().y)
+				faces_tess[perm_id]["normal"].append(face.normalAt().z)
+				faces_tess[perm_id]["origin"] = Array()
+				faces_tess[perm_id]["origin"].append(pln[0])
+				faces_tess[perm_id]["origin"].append(pln[1])
+				faces_tess[perm_id]["origin"].append(pln[2])
 
 				reverse = (
 					True

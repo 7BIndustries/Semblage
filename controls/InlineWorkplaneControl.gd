@@ -2,7 +2,7 @@ extends VBoxContainer
 
 class_name InlineWorkplaneControl
 
-var template = '.workplane(offset={offset},invert={invert},centerOption="{center_option}",origin=({origin_x},{origin_y},{origin_z}))'
+var template = '.workplane(offset={offset},invert={invert},centerOption="{center_option}",origin=({origin_x},{origin_y},{origin_z})).transformed(rotate=({rotate_x},{rotate_y},{rotate_z}))'
 
 var prev_template = null
 
@@ -12,6 +12,7 @@ const offset_edit_rgx = "(?<=offset\\=)(.*?)(?=,invert)"
 const invert_edit_rgx = "(?<=invert\\=)(.*?)(?=,centerOption)"
 const wp_cen_edit_rgx = "(?<=centerOption\\=\")(.*?)(?=\",origin)"
 const origin_edit_rgx = "(?<=origin\\=\\()(.*?)(?=\\))"
+const rotate_edit_rgx = "(?<=\\.transformed\\(rotate\\=\\()(.*?)(?=\\)\\))"
 
 
 """
@@ -69,6 +70,7 @@ func _ready():
 	x_lbl.set_text("X: ")
 	origin_group.add_child(x_lbl)
 	var origin_x_ctrl = NumberEdit.new()
+	origin_x_ctrl.CanBeNegative = true
 	origin_x_ctrl.size_flags_horizontal = 3
 	origin_x_ctrl.name = "origin_x_ctrl"
 	origin_x_ctrl.set_text("0")
@@ -79,6 +81,7 @@ func _ready():
 	y_lbl.set_text("Y: ")
 	origin_group.add_child(y_lbl)
 	var origin_y_ctrl = NumberEdit.new()
+	origin_y_ctrl.CanBeNegative = true
 	origin_y_ctrl.size_flags_horizontal = 3
 	origin_y_ctrl.name = "origin_y_ctrl"
 	origin_y_ctrl.set_text("0")
@@ -89,6 +92,7 @@ func _ready():
 	z_lbl.set_text("Z: ")
 	origin_group.add_child(z_lbl)
 	var origin_z_ctrl = NumberEdit.new()
+	origin_z_ctrl.CanBeNegative = true
 	origin_z_ctrl.size_flags_horizontal = 3
 	origin_z_ctrl.name = "origin_z_ctrl"
 	origin_z_ctrl.set_text("0")
@@ -97,10 +101,54 @@ func _ready():
 
 	origin_xyz_group.add_child(origin_group)
 
+	var rotate_xyz_group = VBoxContainer.new()
+	rotate_xyz_group.name = "rotate_xyz_group"
+	var rotate_lbl = Label.new()
+	rotate_lbl.set_text("Rotation")
+	rotate_xyz_group.add_child(rotate_lbl)
+	var rotate_group = HBoxContainer.new()
+	rotate_group.name = "rotate_group"
+	rotate_xyz_group.add_child(rotate_group)
+
+	# Rotate X
+	var rot_x_lbl = Label.new()
+	rot_x_lbl.set_text("X: ")
+	rotate_group.add_child(rot_x_lbl)
+	var rotate_x_ctrl = NumberEdit.new()
+	rotate_x_ctrl.CanBeNegative = true
+	rotate_x_ctrl.size_flags_horizontal = 3
+	rotate_x_ctrl.name = "rotate_x_ctrl"
+	rotate_x_ctrl.set_text("0")
+	rotate_x_ctrl.hint_tooltip = tr("WP_ROTATE_X_CTRL_HINT_TOOLTIP")
+	rotate_group.add_child(rotate_x_ctrl)
+	# Rotate Y
+	var rot_y_lbl = Label.new()
+	rot_y_lbl.set_text("Y: ")
+	rotate_group.add_child(rot_y_lbl)
+	var rotate_y_ctrl = NumberEdit.new()
+	rotate_y_ctrl.CanBeNegative = true
+	rotate_y_ctrl.size_flags_horizontal = 3
+	rotate_y_ctrl.name = "rotate_y_ctrl"
+	rotate_y_ctrl.set_text("0")
+	rotate_y_ctrl.hint_tooltip = tr("WP_ROTATE_Y_CTRL_HINT_TOOLTIP")
+	rotate_group.add_child(rotate_y_ctrl)
+	# Rotate Z
+	var rotate_z_lbl = Label.new()
+	rotate_z_lbl.set_text("Z: ")
+	rotate_group.add_child(rotate_z_lbl)
+	var rotate_z_ctrl = NumberEdit.new()
+	rotate_z_ctrl.CanBeNegative = true
+	rotate_z_ctrl.size_flags_horizontal = 3
+	rotate_z_ctrl.name = "rotate_z_ctrl"
+	rotate_z_ctrl.set_text("0")
+	rotate_z_ctrl.hint_tooltip = tr("WP_ROTATE_Z_CTRL_HINT_TOOLTIP")
+	rotate_group.add_child(rotate_z_ctrl)
+
 	add_child(offset_group)
 	add_child(invert_group)
 	add_child(wp_cen_group)
 	add_child(origin_xyz_group)
+	add_child(rotate_xyz_group)
 
 
 """
@@ -118,6 +166,9 @@ func is_valid():
 	var origin_x_ctrl = get_node("origin_xyz_group/origin_group/origin_x_ctrl")
 	var origin_y_ctrl = get_node("origin_xyz_group/origin_group/origin_y_ctrl")
 	var origin_z_ctrl = get_node("origin_xyz_group/origin_group/origin_z_ctrl")
+	var rotate_x_ctrl = get_node("rotate_xyz_group/rotate_group/rotate_x_ctrl")
+	var rotate_y_ctrl = get_node("rotate_xyz_group/rotate_group/rotate_y_ctrl")
+	var rotate_z_ctrl = get_node("rotate_xyz_group/rotate_group/rotate_z_ctrl")
 
 	# Make sure all of the numeric controls have valid values
 	if not offset_ctrl.is_valid:
@@ -127,6 +178,12 @@ func is_valid():
 	if not origin_y_ctrl.is_valid:
 		return false
 	if not origin_z_ctrl.is_valid:
+		return false
+	if not rotate_x_ctrl.is_valid:
+		return false
+	if not rotate_y_ctrl.is_valid:
+		return false
+	if not rotate_z_ctrl.is_valid:
 		return false
 
 	return true
@@ -144,6 +201,9 @@ func get_completed_template():
 	var origin_x_ctrl = get_node("origin_xyz_group/origin_group/origin_x_ctrl")
 	var origin_y_ctrl = get_node("origin_xyz_group/origin_group/origin_y_ctrl")
 	var origin_z_ctrl = get_node("origin_xyz_group/origin_group/origin_z_ctrl")
+	var rotate_x_ctrl = get_node("rotate_xyz_group/rotate_group/rotate_x_ctrl")
+	var rotate_y_ctrl = get_node("rotate_xyz_group/rotate_group/rotate_y_ctrl")
+	var rotate_z_ctrl = get_node("rotate_xyz_group/rotate_group/rotate_z_ctrl")
 
 	complete = template.format({
 			"offset": offset_ctrl.get_text(),
@@ -151,7 +211,10 @@ func get_completed_template():
 			"center_option": wp_cen_ctrl.get_item_text(wp_cen_ctrl.get_selected_id()),
 			"origin_x": origin_x_ctrl.get_text(),
 			"origin_y": origin_y_ctrl.get_text(),
-			"origin_z": origin_z_ctrl.get_text()
+			"origin_z": origin_z_ctrl.get_text(),
+			"rotate_x": rotate_x_ctrl.get_text(),
+			"rotate_y": rotate_y_ctrl.get_text(),
+			"rotate_z": rotate_z_ctrl.get_text()
 			})
 
 	return complete
@@ -177,6 +240,9 @@ func set_values_from_string(text_line):
 	var origin_x_ctrl = get_node("origin_xyz_group/origin_group/origin_x_ctrl")
 	var origin_y_ctrl = get_node("origin_xyz_group/origin_group/origin_y_ctrl")
 	var origin_z_ctrl = get_node("origin_xyz_group/origin_group/origin_z_ctrl")
+	var rotate_x_ctrl = get_node("rotate_xyz_group/rotate_group/rotate_x_ctrl")
+	var rotate_y_ctrl = get_node("rotate_xyz_group/rotate_group/rotate_y_ctrl")
+	var rotate_z_ctrl = get_node("rotate_xyz_group/rotate_group/rotate_z_ctrl")
 
 	# The offset
 	rgx.compile(offset_edit_rgx)
@@ -207,3 +273,13 @@ func set_values_from_string(text_line):
 		origin_x_ctrl.set_text(xyz[0])
 		origin_y_ctrl.set_text(xyz[1])
 		origin_z_ctrl.set_text(xyz[2])
+
+	# The rotation text fields
+	rgx.compile(rotate_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		# Fill in the rotate X, Y and Z controls
+		var xyz = res.get_string().split(",")
+		rotate_x_ctrl.set_text(xyz[0])
+		rotate_y_ctrl.set_text(xyz[1])
+		rotate_z_ctrl.set_text(xyz[2])
