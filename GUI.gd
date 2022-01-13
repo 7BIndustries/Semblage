@@ -886,18 +886,25 @@ func _synthesize_selector():
 	var selected_color = [0.5, 0.5, 0.05, 1.0]
 
 	# Keep track of how many faces have been selected
-	var num_sels = 0
+	var num_selected = 0
 
-	# Keep track of the furthest face from the origin
-	var furthest = Vector3(-999999, -999999, -999999)
-	var closest = Vector3(999999, 999999, 999999)
-	var furthest_face = null
-	var closest_face = null
+	# Tracked information about the selected faces
+	var selected_origins = []
+	var selected_normals = []
+	var selected_faces = []
+
+	# Tracked information about the other faces
+	var other_origins = []
+	var other_normals = []
+	var other_faces = []
 
 	# Step through all the meshes and see which one is selected
 	for child in vp.get_children():
 		# Make sure we are working with a mesh
 		if child.get_class() == "MeshInstance":
+			var norm = child.get_meta("normal")
+			var orig = child.get_meta("origin")
+
 			var material = child.get_surface_material(0)
 			if material:
 				var ac = material.albedo_color
@@ -907,64 +914,36 @@ func _synthesize_selector():
 				   LinAlg.compare_floats(ac.g, selected_color[1]) and\
 				   LinAlg.compare_floats(ac.b, selected_color[2]):
 					# Keep track of the number of selected faces
-					num_sels += 1
+					num_selected += 1
 
-					print(child.get_meta("normal"))
-					print(child.get_meta("origin"))
+					# Save the information for this selected face
+					selected_origins.append(orig)
+					selected_normals.append(norm)
+					selected_faces.append(child.get_meta("parent_perm_id"))
+				else:
+					# Save the information for this non-selected face
+					if orig != null:
+						other_origins.append(orig)
+						other_normals.append(norm)
+						other_faces.append(child.get_meta("parent_perm_id"))
+			else:
+				# Save the information for this non-selected face
+				if orig != null:
+					other_origins.append(orig)
+					other_normals.append(norm)
+					other_faces.append(child.get_meta("parent_perm_id"))
 
-					var norm = child.get_meta("normal")
-					var orig = child.get_meta("origin")
+	# Bundle all the information about the selected and non-selected faces
+	var faces = Dictionary()
+	faces["selected_origins"] = selected_origins
+	faces["selected_normals"] = selected_normals
+	faces["selected_faces"] = selected_faces
+	faces["other_origins"] = other_origins
+	faces["other_normals"] = other_normals
+	faces["other_faces"] = other_faces
 
-					# Check if the face is aligned with the X axis
-					var par = Synthesis.is_parallel_to_x(norm)
-					if par:
-						selector_str = "~X"
-
-						# See if we might have a max dir selector
-						if orig.x > furthest.x:
-							furthest.x = orig.x
-							furthest_face = child.get_meta("parent_perm_id")
-
-						# See if we might have a min dir selector
-						if orig.x < closest.x:
-							closest.x = orig.x
-							closest_face = child.get_meta("parent_perm_id")
-
-					# Check if the face is aligned with the Y axis
-					par = Synthesis.is_parallel_to_y(norm)
-					if par:
-						selector_str = "~Y"
-
-						# See if we might have a max dir selector
-						if orig.y > furthest.y:
-							furthest.y = orig.y
-							furthest_face = child.get_meta("parent_perm_id")
-
-						# See if we might have a min dir selector
-						if orig.y < closest.y:
-							closest.y = orig.y
-							closest_face = child.get_meta("parent_perm_id")
-
-					# Check if the face is aligned with the Z axis
-					par = Synthesis.is_parallel_to_z(norm)
-					if par:
-						selector_str = "~Z"
-
-						# See if we might have a max dir selector
-						if orig.z > furthest.z:
-							furthest.z = orig.z
-							furthest_face = child.get_meta("parent_perm_id")
-
-						# See if we might have a min dir selector
-						if orig.z < closest.z:
-							closest.z = orig.z
-							closest_face = child.get_meta("parent_perm_id")
-
-	# See if we had a min max dir selector
-	if num_sels == 1 and furthest_face:
-		selector_str = selector_str.replace("~", ">")
-	elif num_sels == 1 and closest_face:
-		selector_str = selector_str.replace("~", "<")
+	# Attempt to synthesize a selector based on what is selected and what is not
+	selector_str = Synthesis.synthesize(faces)
 
 	return selector_str
 

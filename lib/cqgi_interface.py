@@ -254,8 +254,8 @@ class cqgi_interface(Node):
 				try:
 					adaptor = BRepAdaptor_Surface(face.wrapped)
 					plane = adaptor.Plane().Location()
-					pln = [pln.X(), pln.Y(), pln.Z()]
-				except:
+					pln = [plane.X(), plane.Y(), plane.Z()]
+				except Exception as e:
 					pln = [0.0, 0.0, 0.0]
 
 				# Save data about the face for selector synthesis
