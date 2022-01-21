@@ -32,7 +32,7 @@ func test_union_control():
 	var params = gui._get_parameter_items()
 
 	# Simulate a right click on the document tags control to bring up the operations dialog
-	popup.activate_popup(component_text, false, comp_names, params)
+	popup.activate_popup(component_text, false, comp_names, params, null)
 
 	# Simulate a click of the 3D button
 	var threed_btn = popup.get_node("VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton")
@@ -127,7 +127,7 @@ func test_cut_control():
 	var params = gui._get_parameter_items()
 
 	# Simulate a right click on the document tags control to bring up the operations dialog
-	popup.activate_popup(component_text, false, comp_names, params)
+	popup.activate_popup(component_text, false, comp_names, params, null)
 
 	# Simulate a click of the workplane button
 	var threed_btn = popup.get_node("VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton")
@@ -221,7 +221,7 @@ func test_intersect_control():
 	var params = gui._get_parameter_items()
 
 	# Simulate a right click on the document tags control to bring up the operations dialog
-	popup.activate_popup(component_text, false, comp_names, params)
+	popup.activate_popup(component_text, false, comp_names, params, null)
 
 	# Simulate a click of the workplane button
 	var threed_btn = popup.get_node("VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton")
@@ -316,7 +316,7 @@ func test_loft_control():
 	var params = gui._get_parameter_items()
 
 	# Simulate a right click on the document tags control to bring up the operations dialog
-	popup.activate_popup(component_text, false, comp_names, params)
+	popup.activate_popup(component_text, false, comp_names, params, null)
 
 	# Simulate a click of the workplane button
 	var threed_btn = popup.get_node("VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton")
@@ -387,7 +387,7 @@ func test_sweep_control():
 	var params = gui._get_parameter_items()
 
 	# Simulate a right click on the document tags control to bring up the operations dialog
-	popup.activate_popup(component_text, false, comp_names, params)
+	popup.activate_popup(component_text, false, comp_names, params, null)
 
 	# Simulate a click of the workplane button
 	var threed_btn = popup.get_node("VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton")

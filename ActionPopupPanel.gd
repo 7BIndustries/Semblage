@@ -119,7 +119,7 @@ func activate_edit_mode(component_text, item_text, new_components, new_parameter
 		return
 
 	# Show the popup
-	activate_popup(component_text, true, components, parameters)
+	activate_popup(component_text, true, components, parameters, null)
 
 	# Select the correct group button based on the next action
 	_select_group_button(popup_action.values()[0].group)
@@ -171,7 +171,7 @@ func activate_edit_mode(component_text, item_text, new_components, new_parameter
 """
 Attempt to contain popup actions in one place.
 """
-func activate_popup(component_text, edit_mode_new, new_components, new_parameters):
+func activate_popup(component_text, edit_mode_new, new_components, new_parameters, selector_str):
 	# Save the incoming components for binary operations and duplicate checks
 	components = new_components
 	parameters = new_parameters
@@ -190,11 +190,15 @@ func activate_popup(component_text, edit_mode_new, new_components, new_parameter
 
 	var next_action = null
 
-	# Get the next action based on whether edit mode is engaged
-	if edit_mode:
-		next_action = ContextHandler.find_matching_edit_trigger(prev_template)
+	# If there is a selector string, short circuit and open the selection dialog for that
+	if selector_str:
+		next_action = ContextHandler.find_matching_edit_trigger(selector_str)
 	else:
-		next_action = ContextHandler.get_next_action(component_text)
+		# Get the next action based on whether edit mode is engaged
+		if edit_mode:
+			next_action = ContextHandler.find_matching_edit_trigger(prev_template)
+		else:
+			next_action = ContextHandler.get_next_action(component_text)
 
 	# If we did not get a matching action, the user might be doing something like defining parameters
 	if next_action.empty():
@@ -202,6 +206,11 @@ func activate_popup(component_text, edit_mode_new, new_components, new_parameter
 
 	# Select the correct group button based on the next action
 	_select_group_button(next_action[next_action.keys()[0]].group)
+
+	# Set the selector string within the control, if present
+	if selector_str:
+		var cont = $VBoxContainer/ActionContainer/DynamicContainer.get_children()[0]
+		cont.set_values_from_string(selector_str)
 
 	var action_tree = $VBoxContainer/ActionContainer/ActionTree
 	var action_tree_root = action_tree.get_root()

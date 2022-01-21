@@ -873,7 +873,7 @@ func _on_DocumentTabs_activate_action_popup():
 	var params = _get_parameter_items()
 
 	var op_panel = $ActionPopupPanel
-	op_panel.activate_popup(op_text, false, comps, params)
+	op_panel.activate_popup(op_text, false, comps, params, selector_str)
 
 
 """
@@ -1449,7 +1449,7 @@ func _insert_tree_item():
 
 		# Keep track of the fact that we want to insert an operation, and not edit or append
 		insert_mode = true
-		op_panel.activate_popup(component_text, null, comp_names, params)
+		op_panel.activate_popup(component_text, null, comp_names, params, null)
 
 
 """
