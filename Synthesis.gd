@@ -57,7 +57,7 @@ static func synthesize(faces):
 
 	# We handle a single selected face a certain way
 	if faces["selected_faces"].size() == 1:
-		selector_str = synthesize_max_min(faces)
+		selector_str = synthesize_max_min_face(faces)
 
 	return selector_str
 
@@ -65,7 +65,7 @@ static func synthesize(faces):
 """
 Attempts to synthesize a maximum/minimum selelector string.
 """
-static func synthesize_max_min(faces):
+static func synthesize_max_min_face(faces):
 	var selector_str = null
 
 	var selected_origin = faces["selected_origins"][0]
@@ -75,21 +75,21 @@ static func synthesize_max_min(faces):
 	if is_parallel_to_x(selected_normal):
 		# See if the given face is the maximum in the X direction
 		if is_maximum_in_axis(faces, selected_origin, selected_normal, 0):
-			selector_str = ">X"
+			selector_str = '.faces(">X")'
 		elif is_minimum_in_axis(faces, selected_origin, selected_normal, 0):
-			selector_str = "<X"
+			selector_str = '.faces("<X")'
 	elif is_parallel_to_y(selected_normal):
 		# See if the given face is the maximum in the X direction
 		if is_maximum_in_axis(faces, selected_origin, selected_normal, 1):
-			selector_str = ">Y"
+			selector_str = '.faces(">Y")'
 		elif is_minimum_in_axis(faces, selected_origin, selected_normal, 1):
-			selector_str = "<Y"
+			selector_str = '.faces("<Y")'
 	elif is_parallel_to_z(selected_normal):
 		# See if the given face is the maximum in the X direction
 		if is_maximum_in_axis(faces, selected_origin, selected_normal, 2):
-			selector_str = ">Z"
+			selector_str = '.faces(">Z")'
 		elif is_minimum_in_axis(faces, selected_origin, selected_normal, 2):
-			selector_str = "<Z"
+			selector_str = '.faces("<Z")'
 
 	return selector_str
 
@@ -99,18 +99,24 @@ Searches a list of faces to see if the given face is the maximum in a given
 axis. axis_index 0 = X, 1 = Y, 2 = Z
 """
 static func is_maximum_in_axis(faces, selected_origin, selected_normal, axis_index):
-	var is_max = false
+	var is_max = null
 
 	var i = 0
 	for face in faces["other_faces"]:
 		# Check if the face normals are aligned
 		if is_parallel(selected_normal, faces["other_normals"][i]):
 			if selected_origin[axis_index] > faces["other_origins"][i][axis_index]:
-				is_max = true
+				# Keep from overriding other faces that were already more maximal
+				if is_max == null:
+					is_max = true
 			else:
 				is_max = false
 
 		i += 1
+
+	# If this is still null, then the face is not maximum
+	if is_max == null:
+		is_max = false
 
 	return is_max
 
@@ -120,17 +126,23 @@ Searches a list of faces to see if the given face is the minimum in a given
 axis. axis_index 0 = X, 1 = Y, 2 = Z
 """
 static func is_minimum_in_axis(faces, selected_origin, selected_normal, axis_index):
-	var is_min = false
+	var is_min = null
 
 	var i = 0
 	for face in faces["other_faces"]:
 		# Check if the face normals are aligned
 		if is_parallel(selected_normal, faces["other_normals"][i]):
 			if selected_origin[axis_index] < faces["other_origins"][i][axis_index]:
-				is_min = true
+				# Keep from overriding other faces that were already more minimal
+				if is_min == null:
+					is_min = true
 			else:
 				is_min = false
 
 		i += 1
+
+	# If this is still null, then the face is not minimum
+	if is_min == null:
+		is_min = false
 
 	return is_min

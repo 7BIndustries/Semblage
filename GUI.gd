@@ -72,6 +72,10 @@ func _input(event):
 			if child.get_class() == "MeshInstance":
 				child.create_trimesh_collision()
 
+		# Keep the app from crashing if there was an error and we try to save
+		if render_tree == null or typeof(render_tree) == 4:
+			return
+
 		# The user wants to use mouse selection, so we need to add vertex meshes and collision objects
 		# Add the vertex representations
 		if render_tree and render_tree["components"]:
@@ -862,7 +866,6 @@ func _on_DocumentTabs_activate_action_popup():
 	# See if the user is wanting to trigger selector synthesis
 	if Input.is_action_pressed("mouse_select"):
 		selector_str = _synthesize_selector()
-		print(selector_str)
 
 	# Get the info that the operations dialog uses to set up the next operation
 	var op_text = Common.get_last_op(component_tree)
