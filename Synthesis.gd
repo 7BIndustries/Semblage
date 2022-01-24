@@ -66,8 +66,6 @@ static func synthesize(faces):
 Attempts to synthesize a maximum/minimum selelector string.
 """
 static func synthesize_max_min_face(faces):
-	#var selector_str = null
-
 	var selected_origin = faces["selected_origins"][0]
 	var selected_normal = faces["selected_normals"][0]
 
@@ -100,7 +98,7 @@ static func synthesize_max_min_face(faces):
 
 		# Find out if we have an indexed max or min
 		if min_max[2] != -1:
-			index_str = str(min_max[2])
+			index_str = "[" + str(min_max[2]) + "]"
 
 		# If we did not find the axis and modifier, the selector string should be null
 		if axis_str != "" and modifier_str != "":
@@ -121,11 +119,19 @@ what the index is, if any.
 static func find_min_max_in_axis(faces, selected_origin, selected_normal, axis_index):
 	var is_max = null
 	var is_min = null
+	var distances = []
+	var dist_face_map = {}
+
+	# Save the distance for the selected face
+	distances.append(selected_origin[axis_index])
 
 	var i = 0
 	for face in faces["other_faces"]:
 		# Check if the face normals are aligned
 		if is_parallel(selected_normal, faces["other_normals"][i]):
+			# Save the distance for the current face away from the origin
+			distances.append(faces["other_origins"][i][axis_index])
+
 			# Check to see if the face is the maximum along the axis
 			if selected_origin[axis_index] > faces["other_origins"][i][axis_index]:
 				# Keep from overriding other faces that were already more maximal
@@ -151,8 +157,24 @@ static func find_min_max_in_axis(faces, selected_origin, selected_normal, axis_i
 	if is_min == null:
 		is_min = false
 
-	# TODO: Determine if the face is indexed min or max here
+	# Make sure tha the distances are sorted in order
+	distances.sort()
+
+	# Determine if the face is indexed min or max here
 	var index = -1
+	var idx = 0
+	for dist in distances:
+		# Skip the maximum and minimum faces since we do not need to add an index to them
+		if idx == 0 or idx == distances.size() - 1:
+			idx += 1
+			continue
+
+		# We have a matching index in the context of the other faces
+		if selected_origin[axis_index] == dist:
+			index = idx
+			is_max = true
+
+		idx += 1
 
 	return [is_min, is_max, index]
 
