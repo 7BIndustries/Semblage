@@ -26,7 +26,7 @@ static func gen_workplane_meshes(origin, normal, size):
 	wp_mesh.transform.basis = LinAlg.find_basis(normal)
 
 	# Get the new material color
-	var norm_color = Color(1.0, 1.0, 1.0, 0.01)
+	var norm_color = Color(0.6, 0.7, 0.8, 0.1)
 	var norm_mat = SpatialMaterial.new()
 	norm_mat.albedo_color = Color(norm_color[0], norm_color[1], norm_color[2], norm_color[3])
 	norm_mat.flags_transparent = true
@@ -39,26 +39,30 @@ static func gen_workplane_meshes(origin, normal, size):
 	var st = SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	st.set_material(norm_mat)
+
+	# Scale the workplane normal mesh correctly
+	var norm_len = size / 2.5
+	var norm_base = size * 0.05
 	
 	# Add norm triangle
-	st.add_vertex(Vector3(0.0, 0.0, 1.0))
-	st.add_vertex(Vector3(-0.1, 0.1, 0.0))
-	st.add_vertex(Vector3(0.1, 0.1, 0.0))
+	st.add_vertex(Vector3(0.0, 0.0, norm_len))
+	st.add_vertex(Vector3(-norm_base, norm_base, 0.0))
+	st.add_vertex(Vector3(norm_base, norm_base, 0.0))
 
 	# Add norm triangle
-	st.add_vertex(Vector3(0.0, 0.0, 1.0))
-	st.add_vertex(Vector3(0.1, 0.1, 0.0))
-	st.add_vertex(Vector3(0.1, -0.1, 0.0))
+	st.add_vertex(Vector3(0.0, 0.0, norm_len))
+	st.add_vertex(Vector3(norm_base, norm_base, 0.0))
+	st.add_vertex(Vector3(norm_base, -norm_base, 0.0))
 
 	# Add norm triangle
-	st.add_vertex(Vector3(0.0, 0.0, 1.0))
-	st.add_vertex(Vector3(0.1, -0.1, 0.0))
-	st.add_vertex(Vector3(-0.1, -0.1, 0.0))
+	st.add_vertex(Vector3(0.0, 0.0, norm_len))
+	st.add_vertex(Vector3(norm_base, -norm_base, 0.0))
+	st.add_vertex(Vector3(-norm_base, -norm_base, 0.0))
 
 	# Add norm triangle
-	st.add_vertex(Vector3(0.0, 0.0, 1.0))
-	st.add_vertex(Vector3(-0.1, -0.1, 0.0))
-	st.add_vertex(Vector3(-0.1, 0.1, 0.0))
+	st.add_vertex(Vector3(0.0, 0.0, norm_len))
+	st.add_vertex(Vector3(-norm_base, -norm_base, 0.0))
+	st.add_vertex(Vector3(-norm_base, norm_base, 0.0))
 
 	# Finish the mesh and attach it to a MeshInstance
 	st.generate_normals()

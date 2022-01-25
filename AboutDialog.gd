@@ -9,6 +9,7 @@ var sponsors = ["Ferdinand (Patreon)", "adam-james (Patreon)", "IrevDev (Patreon
 var tab_head = "[center][b]Semblage v{semblage_version}[/b]\nOpen Source CAD[/center]"
 var docs = "[center][b]DOCUMENTATION[/b]\n[url=https://semblage.7bindustries.com/en/latest/]Semblage[/url]\n[url=https://cadquery.readthedocs.io/en/latest/]CadQuery[/url]\n[url=https://dev.opencascade.org/doc/overview/html/]OCCT Kernel[/url]"
 var info = "[center][b]INFORMATION[/b]\nSemblage Version: {semblage_version}\nGodot Version: 3.2.2.stable\nGodot-Python Version: 0.50.0\nCadQuery Version: 2.1\nOCP Version: 7.4.0\nOCCT Version: 7.4.0[/center]"
+var controls = "[center][b]CONTROLS[/b]\nCtrl + Left Click = Select Face or Edge\nShift + Left Click = Select Vertex[/center]"
 
 
 func _randomize(names):

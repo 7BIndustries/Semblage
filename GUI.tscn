@@ -1157,6 +1157,19 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Controls" type="MarginContainer" parent="AboutDialog/AboutTabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -420.0
+margin_bottom = -204.0
+
+[node name="ControlsLabel" type="RichTextLabel" parent="AboutDialog/AboutTabContainer/Controls"]
+margin_right = 40.0
+margin_bottom = 40.0
+
 [node name="AddParameterDialog" type="WindowDialog" parent="."]
 margin_right = 250.0
 margin_bottom = 293.0
@@ -1438,10 +1451,10 @@ margin_right = 315.0
 margin_bottom = 517.0
 
 [node name="ColorPicker" type="ColorPicker" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
-margin_left = 32.0
-margin_top = 32.0
-margin_right = 340.0
-margin_bottom = 494.0
+margin_left = 36.0
+margin_top = 36.0
+margin_right = 344.0
+margin_bottom = 498.0
 
 [node name="OkButton" type="Button" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
 margin_top = 466.0
