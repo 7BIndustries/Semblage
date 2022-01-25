@@ -1168,7 +1168,23 @@ margin_bottom = -204.0
 
 [node name="ControlsLabel" type="RichTextLabel" parent="AboutDialog/AboutTabContainer/Controls"]
 margin_right = 40.0
-margin_bottom = 40.0
+margin_bottom = 60.0
+size_flags_horizontal = 3
+custom_fonts/bold_italics_font = SubResource( 30 )
+custom_fonts/italics_font = SubResource( 31 )
+custom_fonts/bold_font = SubResource( 32 )
+custom_fonts/normal_font = SubResource( 33 )
+bbcode_enabled = true
+bbcode_text = "[center][b]Semblage v0.1.0-alpha[/b]
+Open Source CAD
+[/center]"
+text = "Semblage v0.1.0-alpha
+Open Source CAD
+"
+fit_content_height = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="AddParameterDialog" type="WindowDialog" parent="."]
 margin_right = 250.0
