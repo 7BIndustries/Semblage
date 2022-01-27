@@ -30,7 +30,8 @@ README.txt
 lib/*
 !lib/README.md
 !lib/cqgi_interface.py
-!lib/selector-synthesis
+!lib/selector_synthesis
+!lib/synthesis.py
 addons/pythonscript/venv
 addons/pythonscript/x11-64
 addons/pythonscript/osx-64

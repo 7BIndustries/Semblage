@@ -448,6 +448,7 @@ config/icon="res://icon.png"
 [autoload]
 
 cqgipy="*res://lib/cqgi_interface.py"
+synth="*res://lib/synthesis.py"
 
 [debug]
 

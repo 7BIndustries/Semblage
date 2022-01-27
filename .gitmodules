@@ -1,0 +1,3 @@
+[submodule "lib/selector_synthesis"]
+	path = lib/selector_synthesis
+	url = https://github.com/jmwright/selector_synthesis.git
