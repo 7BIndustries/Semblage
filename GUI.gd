@@ -946,7 +946,7 @@ func _synthesize_selector():
 	faces["other_faces"] = other_faces
 
 	# Attempt to synthesize a selector based on what is selected and what is not
-	selector_str = Synthesis.synthesize(faces)
+	selector_str = synth.synthesize(selected_origins, selected_normals, other_origins, other_normals)
 
 	return selector_str
 

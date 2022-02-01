@@ -1163,12 +1163,12 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 32.0
-margin_right = -420.0
-margin_bottom = -204.0
+margin_right = -4.0
+margin_bottom = -4.0
 
 [node name="ControlsLabel" type="RichTextLabel" parent="AboutDialog/AboutTabContainer/Controls"]
-margin_right = 40.0
-margin_bottom = 60.0
+margin_right = 456.0
+margin_bottom = 240.0
 size_flags_horizontal = 3
 custom_fonts/bold_italics_font = SubResource( 30 )
 custom_fonts/italics_font = SubResource( 31 )
@@ -1467,10 +1467,10 @@ margin_right = 315.0
 margin_bottom = 517.0
 
 [node name="ColorPicker" type="ColorPicker" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
-margin_left = 36.0
-margin_top = 36.0
-margin_right = 344.0
-margin_bottom = 498.0
+margin_left = 40.0
+margin_top = 40.0
+margin_right = 348.0
+margin_bottom = 502.0
 
 [node name="OkButton" type="Button" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
 margin_top = 466.0

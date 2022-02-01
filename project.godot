@@ -294,11 +294,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/SweepControl.gd"
 }, {
-"base": "Reference",
-"class": "Synthesis",
-"language": "GDScript",
-"path": "res://Synthesis.gd"
-}, {
 "base": "VBoxContainer",
 "class": "TangentArcPointControl",
 "language": "GDScript",
@@ -422,7 +417,6 @@ _global_script_class_icons={
 "SplineControl": "",
 "SplitControl": "",
 "SweepControl": "",
-"Synthesis": "",
 "TangentArcPointControl": "",
 "TextControl": "",
 "ThreePointArcControl": "",
