@@ -75,6 +75,22 @@ func _input(event):
 		# Keep the app from crashing if there was an error and we try to save
 		if render_tree == null or typeof(render_tree) == 4:
 			return
+	elif event.is_action_released("mouse_select"):
+		face_select_mode = false
+
+		# Step through every mesh, set their materials back to their default and remove the StaticBody colliders
+		for child in vp.get_children():
+			# Make sure we are working with a mesh
+			if child.get_class() == "MeshInstance":
+				# Remove the vertex meshes
+				if child.get_meta("parent_perm_id") and child.get_meta("parent_perm_id").begins_with("face"):
+					_deselect_mesh(child)
+
+				for mesh_child in child.get_children():
+					if mesh_child.get_class() == "StaticBody":
+						child.remove_child(mesh_child)
+	elif event.is_action_pressed("vertex_select"):
+		face_select_mode = true
 
 		# The user wants to use mouse selection, so we need to add vertex meshes and collision objects
 		# Add the vertex representations
@@ -84,21 +100,11 @@ func _input(event):
 					var vert = Meshes.gen_vertex_mesh(0.05 * comp_tree["smallest_dimension"], vertex, vertex["perm_id"])
 					vert.create_trimesh_collision()
 					vp.add_child(vert)
-
-	elif event.is_action_released("mouse_select"):
+	elif event.is_action_released("vertex_select"):
 		face_select_mode = false
 
-		# Step through every mesh, set their materials back to their default and remove the StaticBody colliders
-		for child in vp.get_children():
-			# Make sure we are working with a mesh
-			if child.get_class() == "MeshInstance":
-				# Remove the vertex meshes
-				if child.get_meta("parent_perm_id") and child.get_meta("parent_perm_id").begins_with("vertex"):
-					vp.remove_child(child)
-
-				for mesh_child in child.get_children():
-					if mesh_child.get_class() == "StaticBody":
-						child.remove_child(mesh_child)
+		# Deselect all meshes that the user might have clicked on
+		_remove_vertices()
 
 	if event is InputEventMouseButton and event.pressed and event.button_index == 1:
 		if face_select_mode == true:
@@ -132,6 +138,25 @@ func _input(event):
 							if mesh_child.get_class() == "StaticBody":
 								_deselect_mesh(child)
 
+
+"""
+Removes all of the vertex meshes that were added for the user to select them
+with the mouse pointer.
+"""
+func _remove_vertices():
+	var vp = get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
+
+	# Step through every mesh, set their materials back to their default and remove the StaticBody colliders
+	for child in vp.get_children():
+		# Make sure we are working with a mesh
+		if child.get_class() == "MeshInstance":
+			# Remove the vertex meshes
+			if child.get_meta("parent_perm_id") and child.get_meta("parent_perm_id").begins_with("vertex"):
+				vp.remove_child(child)
+
+			for mesh_child in child.get_children():
+				if mesh_child.get_class() == "StaticBody":
+					child.remove_child(mesh_child)
 
 """
 Highlights a mesh so that it is obvious that it is selected.
