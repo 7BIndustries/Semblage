@@ -411,11 +411,13 @@ func _convert_component_tree_to_script(include_show):
 		if cur_comp == null:
 			break
 		else:
+			component_text += "def build_" + cur_comp.get_text(0) + "():\n"
 			# Start the component off
-			component_text += cur_comp.get_text(0) + "=cq  # " + JSON.print(cur_comp.get_metadata(0)) + "\n"
+			component_text += "    " + cur_comp.get_text(0) + "=cq  # " + JSON.print(cur_comp.get_metadata(0)) + "\n"
 
 			# See if we are supposed to skip rendering this component
 			if cur_comp.get_metadata(0) != null and cur_comp.get_metadata(0)["visible"]:
+				show_text += cur_comp.get_text(0) + "=build_" + cur_comp.get_text(0) + "()\n"
 				show_text += "show_object(" + cur_comp.get_text(0) + ")\n"
 
 			# Walk through any operations attached to this component
@@ -426,12 +428,14 @@ func _convert_component_tree_to_script(include_show):
 				else:
 					# Assemble the operation step for a non-binary operation
 					if cur_op.get_text(0).begins_with("."):
-						component_text += cur_comp.get_text(0)  + "=" + cur_comp.get_text(0) + cur_op.get_text(0) + "\n"
+						component_text += "    " + cur_comp.get_text(0)  + "=" + cur_comp.get_text(0) + cur_op.get_text(0) + "\n"
 					else:
-						component_text += cur_comp.get_text(0)  + "=" + cur_op.get_text(0) + "\n"
+						component_text += "    " + cur_comp.get_text(0)  + "=" + cur_op.get_text(0) + "\n"
 
 				# Move to the next child operation, if there is one
 				cur_op = cur_op.get_next()
+
+			component_text += "    return " + cur_comp.get_text(0) + "\n"
 
 			# Move to the next component, if there is one
 			cur_comp = cur_comp.get_next()
@@ -1454,8 +1458,32 @@ func _insert_tree_item():
 
 """
 The user wants to remove a tree item, like an operation or component.
+Make sure the user really wants to do it.
 """
 func _remove_tree_item():
+	# Dynamically create the user confirmation dialog
+	var confirm_dlg = ConfirmationDialog.new()
+	confirm_dlg.window_title = "Are You Sure?"
+	confirm_dlg.dialog_text = "Really remove this item?"
+	var ok_btn = confirm_dlg.get_ok()
+	ok_btn.text = "Yes"
+	var cancel_btn = confirm_dlg.get_cancel()
+	cancel_btn.text = "No"
+	confirm_dlg.connect("confirmed", self, "_remove_confirmed")
+	add_child(confirm_dlg)
+	confirm_dlg.show()
+	confirm_dlg.popup_centered()
+
+	# We do not need the popup menu anymore
+	var data_popup = $DataPopupPanel
+	data_popup.hide()
+
+
+"""
+Called when the user has confirmed that they really do want to remove an
+item from one of the trees.
+"""
+func _remove_confirmed():
 	var ct = $GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree
 	var sel = ct.get_selected()
 	if not sel:
@@ -1472,10 +1500,6 @@ func _remove_tree_item():
 	# Workaround to force the tree to update
 	ct.visible = false
 	ct.visible = true
-
-	# We do not need the popup menu anymore
-	var data_popup = $DataPopupPanel
-	data_popup.hide()
 
 	# Render any changes to the component tree
 	self._execute_and_render()

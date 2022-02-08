@@ -251,3 +251,4 @@ POINTS_LIST_PARAMETER_SELECTION_ERROR,A point list parameter must be selected fr
 WP_ROTATE_X_CTRL_HINT_TOOLTIP,Rotation angle around the X axis in degrees.
 WP_ROTATE_Y_CTRL_HINT_TOOLTIP,Rotation angle around the Y axis in degrees.
 WP_ROTATE_Z_CTRL_HINT_TOOLTIP,Rotation angle around the Z axis in degrees.
+DIAMETER_CTRL_HINT_TOOLTIP,Diameter of the circle.
