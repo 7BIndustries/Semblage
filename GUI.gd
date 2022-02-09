@@ -442,7 +442,7 @@ func _convert_component_tree_to_script(include_show):
 
 			# See if we are supposed to skip rendering this component
 			if cur_comp.get_metadata(0) != null and cur_comp.get_metadata(0)["visible"]:
-				show_text += cur_comp.get_text(0) + "=build_" + cur_comp.get_text(0) + "()\n"
+				#show_text += cur_comp.get_text(0) + "=build_" + cur_comp.get_text(0) + "()\n"
 				show_text += "show_object(" + cur_comp.get_text(0) + ")\n"
 
 			# Walk through any operations attached to this component
@@ -461,6 +461,9 @@ func _convert_component_tree_to_script(include_show):
 				cur_op = cur_op.get_next()
 
 			component_text += "    return " + cur_comp.get_text(0) + "\n"
+
+			# Make sure that this component is available for other components to use
+			component_text += cur_comp.get_text(0) + "=build_" + cur_comp.get_text(0) + "()\n\n"
 
 			# Move to the next component, if there is one
 			cur_comp = cur_comp.get_next()
@@ -1488,6 +1491,7 @@ Make sure the user really wants to do it.
 func _remove_tree_item():
 	# Dynamically create the user confirmation dialog
 	var confirm_dlg = ConfirmationDialog.new()
+	confirm_dlg.name = "remove_confirm_dialog"
 	confirm_dlg.window_title = "Are You Sure?"
 	confirm_dlg.dialog_text = "Really remove this item?"
 	var ok_btn = confirm_dlg.get_ok()

@@ -117,6 +117,12 @@ func test_component_remove_button():
 	# Trigger the Remove button
 	remove_btn.emit_signal("button_down")
 
+	# Handle the confirmation dialog that keeps the user from accidentally removing a component
+	var confirm_dlg = gui.get_node("remove_confirm_dialog")
+	var yes_btn = confirm_dlg.get_ok()
+	yes_btn.emit_signal("button_down")
+	confirm_dlg.emit_signal("confirmed")
+
 	# Get the box operation tree item
 	box_item = ct.get_root().get_children()
 	box_item = box_item.get_children()

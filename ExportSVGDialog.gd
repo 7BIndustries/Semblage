@@ -186,6 +186,7 @@ Called to export a single file to the local file system.
 func _export_to_file(svg_path, output_opts, section_height):
 	var script_text = get_parent()
 	script_text = script_text._convert_component_tree_to_script(false)
+
 	var ct = get_parent().get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
 
 	var comp_names = Common.get_all_components(ct)
@@ -193,7 +194,9 @@ func _export_to_file(svg_path, output_opts, section_height):
 	for comp_name in comp_names:
 		# If the caller provided a section height, use it
 		if section_height:
-			script_text += "\n" + comp_name + "=" + comp_name + ".section(" + str(section_height) + ")"
+			script_text += "\n" + comp_name + "=build_" + comp_name + "().section(" + str(section_height) + ")"
+		else:
+			script_text += "\n" + comp_name + "=build_" + comp_name + "()"
 
 		# Make sure something gets exported
 		script_text += "\nshow_object(" + comp_name + ")"
