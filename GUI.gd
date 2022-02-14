@@ -360,26 +360,31 @@ func load_semblage_component(text):
 	for line in lines:
 		var new_operation = null
 
+		# Remove leading (indentation) and trailing spaces from the line
+		line = line.strip_edges(true, true)
+
 		# Check to see if this is a component definition
-		if line.find("=") > 0 and line.split("=")[1].begins_with("cq"):
-			# Get the component name from the beginning
-			var new_component = line.split("=")[0]
+		if line.begins_with("def "):
+			var new_component = line.split(" ")[1].replace("():", "").replace("build_", "")
 
 			# Save this new component name as the current for use later
 			cur_component = new_component
 			Common.add_component(new_component, component_tree)
+		# The metadata attached to this component
+		elif line.find("=cq") > 0 and line.find("#") > 0:
+			# We want to attach the metadata to the last component added
+			var this_component = Common.get_last_component(component_tree)
 
-			# See if there is metadata attached to this component
-			if line.find("#") > 0:
-				# We want to attach the metadata to the last component added
-				var this_component = Common.get_last_component(component_tree)
+			# Parse and save the meta data from the component's file
+			var meta_str = line.split("# ")[1]
+			var meta = JSON.parse(meta_str)
+			meta = meta.result
 
-				# Parse and save the meta data from the component's file
-				var meta_str = line.split("# ")[1]
-				var meta = JSON.parse(meta_str)
-				meta = meta.result
+			this_component.set_metadata(0, meta)
 
-				this_component.set_metadata(0, meta)
+		# See if we have a component instantiation operation
+		elif cur_component != null and line == cur_component + "=build_" + cur_component + "()":
+			continue
 		# See if we have a binary operation
 		elif cur_component != null and line.find("=") > 0 and not line.split("=")[1].begins_with(cur_component):
 			new_operation = line.replace(cur_component + "=", "")
@@ -1132,7 +1137,7 @@ func _save_component_text():
 		return
 
 	# It is ok to write the contents to the file
-	file.store_string(_convert_component_tree_to_script(true))
+	file.store_string(_convert_component_tree_to_script(false))
 	file.close()
 
 	status_lbl.set_text("Component saved")

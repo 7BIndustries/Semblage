@@ -247,9 +247,9 @@ margin_bottom = 571.0
 size_flags_vertical = 3
 
 [node name="TreeViewTabs" type="TabContainer" parent="GUI/VBoxContainer/WorkArea"]
-margin_right = 150.0
+margin_right = 200.0
 margin_bottom = 519.0
-rect_min_size = Vector2( 150, 0 )
+rect_min_size = Vector2( 200, 0 )
 tab_align = 0
 
 [node name="Data" type="VBoxContainer" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs"]
@@ -261,13 +261,13 @@ margin_right = -4.0
 margin_bottom = -4.0
 
 [node name="ComponentTreeLabel" type="Label" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
-margin_right = 142.0
+margin_right = 192.0
 margin_bottom = 14.0
 text = "Components"
 
 [node name="ComponentTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
 margin_top = 18.0
-margin_right = 142.0
+margin_right = 192.0
 margin_bottom = 239.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -276,13 +276,13 @@ script = ExtResource( 33 )
 
 [node name="ParametersTreeLabel" type="Label" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
 margin_top = 243.0
-margin_right = 142.0
+margin_right = 192.0
 margin_bottom = 257.0
 text = "Parameters"
 
 [node name="ParametersTree" type="Tree" parent="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data"]
 margin_top = 261.0
-margin_right = 142.0
+margin_right = 192.0
 margin_bottom = 483.0
 size_flags_vertical = 3
 columns = 2
@@ -290,7 +290,7 @@ hide_root = true
 script = ExtResource( 34 )
 
 [node name="DocumentTabs" type="TabContainer" parent="GUI/VBoxContainer/WorkArea"]
-margin_left = 162.0
+margin_left = 212.0
 margin_right = 1024.0
 margin_bottom = 519.0
 size_flags_horizontal = 3
@@ -307,7 +307,7 @@ margin_right = -4.0
 margin_bottom = -4.0
 
 [node name="OriginViewportContainer" type="ViewportContainer" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer"]
-margin_right = 854.0
+margin_right = 804.0
 margin_bottom = 483.0
 
 [node name="OriginViewport" type="Viewport" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/OriginViewportContainer"]
@@ -378,14 +378,14 @@ material/0 = SubResource( 24 )
 
 [node name="ThreeDViewContainer" type="ViewportContainer" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer"]
 show_behind_parent = true
-margin_right = 854.0
+margin_right = 804.0
 margin_bottom = 483.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 stretch = true
 
 [node name="ThreeDViewport" type="Viewport" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer"]
-size = Vector2( 854, 483 )
+size = Vector2( 804, 483 )
 world = SubResource( 27 )
 handle_input_locally = false
 render_target_update_mode = 3
@@ -404,7 +404,7 @@ far = 8192.0
 script = ExtResource( 9 )
 
 [node name="CenterContainer" type="CenterContainer" parent="GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer"]
-margin_right = 854.0
+margin_right = 804.0
 margin_bottom = 483.0
 
 [node name="StatusBar" type="MarginContainer" parent="GUI/VBoxContainer"]
