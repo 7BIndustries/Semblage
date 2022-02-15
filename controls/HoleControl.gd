@@ -6,7 +6,7 @@ var prev_template = null
 
 var template = ".hole({diameter},depth={depth},clean={clean})"
 
-const dims_edit_rgx = "(?<=.cboreHole\\()(.*?)(?=,depth)"
+const dims_edit_rgx = "(?<=.hole\\()(.*?)(?=,depth)"
 const depth_edit_rgx = "(?<=depth\\=)(.*?)(?=\\,clean)"
 const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\))"
 
