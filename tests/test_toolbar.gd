@@ -73,7 +73,7 @@ func test_save_button():
 	file.open("/tmp/test.py", File.READ)
 	var content = file.get_as_text()
 	file.close()
-	assert_eq(content, gui._convert_component_tree_to_script(true), "Make sure that the saved file has the correct contents.")
+	assert_eq(content, gui._convert_component_tree_to_script(false), "Make sure that the saved file has the correct contents.")
 
 
 """
@@ -148,7 +148,7 @@ func test_save_multi_component():
 	file.open("/tmp/test.py", File.READ)
 	var content = file.get_as_text()
 	file.close()
-	assert_eq(content, gui._convert_component_tree_to_script(true), "Make sure that the saved file has the correct contents.")
+	assert_eq(content, gui._convert_component_tree_to_script(false), "Make sure that the saved file has the correct contents.")
 
 
 """
