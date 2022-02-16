@@ -932,11 +932,13 @@ func _synthesize_selector():
 	var selected_origins = []
 	var selected_normals = []
 	var selected_faces = []
+	var selected_meta = []
 
 	# Tracked information about the other faces
 	var other_origins = []
 	var other_normals = []
 	var other_faces = []
+	var other_meta = []
 
 	# Step through all the meshes and see which one is selected
 	for child in vp.get_children():
@@ -960,30 +962,30 @@ func _synthesize_selector():
 					selected_origins.append(orig)
 					selected_normals.append(norm)
 					selected_faces.append(child.get_meta("parent_perm_id"))
+					var meta = Dictionary()
+					meta['is_planar'] = child.get_meta("is_planar")
+					selected_meta.append(meta)
 				else:
 					# Save the information for this non-selected face
 					if orig != null:
 						other_origins.append(orig)
 						other_normals.append(norm)
 						other_faces.append(child.get_meta("parent_perm_id"))
+						var meta = Dictionary()
+						meta['is_planar'] = child.get_meta("is_planar")
+						other_meta.append(meta)
 			else:
 				# Save the information for this non-selected face
 				if orig != null:
 					other_origins.append(orig)
 					other_normals.append(norm)
 					other_faces.append(child.get_meta("parent_perm_id"))
-
-	# Bundle all the information about the selected and non-selected faces
-	var faces = Dictionary()
-	faces["selected_origins"] = selected_origins
-	faces["selected_normals"] = selected_normals
-	faces["selected_faces"] = selected_faces
-	faces["other_origins"] = other_origins
-	faces["other_normals"] = other_normals
-	faces["other_faces"] = other_faces
+					var meta = Dictionary()
+					meta['is_planar'] = child.get_meta("is_planar")
+					other_meta.append(meta)
 
 	# Attempt to synthesize a selector based on what is selected and what is not
-	selector_str = synth.synthesize(selected_origins, selected_normals, other_origins, other_normals)
+	selector_str = synth.synthesize(selected_origins, selected_normals, other_origins, other_normals, selected_meta, other_meta)
 
 	return selector_str
 

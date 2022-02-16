@@ -11,6 +11,7 @@ from OCP.BRep import BRep_Tool
 from OCP.BRepMesh import BRepMesh_IncrementalMesh
 from OCP.TopAbs import TopAbs_Orientation
 from OCP.BRepAdaptor import BRepAdaptor_Surface
+from OCP.BRep import BRep_Tool
 
 
 @exposed
@@ -232,6 +233,11 @@ class cqgi_interface(Node):
 				# and triangles can be associated with this face
 				perm_id = "face_" + str(uuid.uuid4())
 				faces_tess[perm_id] = Dictionary()
+				# Keep track of whether or not the current face is planar
+				if type(BRep_Tool().Surface_s(face.wrapped)).__name__ == "Geom_Plane":
+					faces_tess[perm_id]["is_planar"] = True
+				else:
+					faces_tess[perm_id]["is_planar"] = False
 
 				# Construct the unique ID of the face based on its attributes
 #				area = face.Area()
