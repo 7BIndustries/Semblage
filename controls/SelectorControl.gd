@@ -793,8 +793,8 @@ func _update_face_selector_string():
 	# If the selector string is None, blank out the selector string control
 	if first_face_filter == "None":
 		face_selector_txt.set_text("")
-		return 
-	
+		return
+
 	face_selector_txt.set_text(_get_filter_symbol(first_face_filter))
 
 	# Add the first axis part of the selector string
@@ -834,7 +834,7 @@ func _update_face_selector_string():
 		txt = face_index_2.get_text()
 		if txt != "" and txt != "0":
 			face_selector_string += "[" + txt + "]"
-		
+
 		face_selector_txt.set_text(face_selector_string)
 
 
@@ -970,10 +970,14 @@ func set_values_from_string(text_line):
 		var sel = res.get_string()
 		face_index_1.set_text(sel)
 		_update_face_selector_string()
+	else:
+		face_index_1.set_text("0")
+		_update_face_selector_string()
 
 	# Second face index
 	rgx.compile(second_idx_edit_rgx)
 	res = rgx.search(text_line)
+
 	if res:
 		# Set the face selector index value
 		var sel = res.get_string()
@@ -983,6 +987,9 @@ func set_values_from_string(text_line):
 			sel = sel.split("[")[1]
 
 		face_index_2.set_text(sel)
+		_update_face_selector_string()
+	else:
+		face_index_2.set_text("0")
 		_update_face_selector_string()
 
 	# Edge selector
