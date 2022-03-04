@@ -452,6 +452,9 @@ func _convert_component_tree_to_script(include_show):
 			component_text += "def build_" + cur_comp.get_text(0) + "():\n"
 			component_text += "    " + "# meta " + JSON.print(cur_comp.get_metadata(0)) + "\n"
 
+			if not cur_comp.get_text(0).ends_with("_ext"):
+				component_text += "    " + cur_comp.get_text(0) + "=cq\n"
+
 			# See if we are supposed to skip rendering this component
 			if cur_comp.get_metadata(0) != null and cur_comp.get_metadata(0)["visible"]:
 				#show_text += cur_comp.get_text(0) + "=build_" + cur_comp.get_text(0) + "()\n"
