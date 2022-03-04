@@ -19,6 +19,14 @@ class cqgi_interface(Node):
 	build_success = signal()
 	build_failure = signal()
 
+	def set_script_path(self, script_path):
+		"""
+		Allows a component's current directory to be added to the PYTHONPATH.
+		"""
+		script_path = str(script_path)
+		if script_path not in sys.path:
+			sys.path.append(script_path)
+
 
 	def get_render_tree(self, script_text):
 		"""
@@ -41,6 +49,7 @@ class cqgi_interface(Node):
 			render_tree["components"] = Array()
 
 			# Step through each of the objects returned from script execution
+			i = 0
 			for result in build_result.results:
 				component_id = list(result.shape.ctx.tags)[0]
 
@@ -50,22 +59,24 @@ class cqgi_interface(Node):
 				cur_comp["largest_dimension"] = result.shape.largestDimension()
 
 				# Break out the metadata line
-				meta_line = re.search(component_id + '=cq.*', str(script_text))
-				meta_data = meta_line.group().split("#")
+				meta_line = re.findall('.*# meta.*', str(script_text))
+				if meta_line:
+					meta_data = meta_line[i].split("meta ") # meta_line.group().split("meta ")
 
-				# Break out the color data from the metadata
-				if len(meta_data) > 1:
-					# Clean up and parse the metadata JSON string
-					meta_data = meta_data[1].replace(" ", "")
-					rgba = json.loads(meta_data)
+					# Break out the color data from the metadata
+					if len(meta_data) > 1:
+						# Clean up and parse the metadata JSON string
+						meta_data = meta_data[1].replace(" ", "")
 
-					# Make sure the component carries the color metadata
-					if "color_r" in meta_data:
-						cur_comp["rgba"] = Array()
-						cur_comp["rgba"].append(rgba["color_r"])
-						cur_comp["rgba"].append(rgba["color_g"])
-						cur_comp["rgba"].append(rgba["color_b"])
-						cur_comp["rgba"].append(rgba["color_a"])
+						rgba = json.loads(meta_data)
+
+						# Make sure the component carries the color metadata
+						if "color_r" in meta_data:
+							cur_comp["rgba"] = Array()
+							cur_comp["rgba"].append(rgba["color_r"])
+							cur_comp["rgba"].append(rgba["color_g"])
+							cur_comp["rgba"].append(rgba["color_b"])
+							cur_comp["rgba"].append(rgba["color_a"])
 
 				# Figure out if we need to step back one step to get a non-workplane object
 				tess_shape = result.shape.val()
@@ -200,6 +211,8 @@ class cqgi_interface(Node):
 
 				# Add the current component
 				render_tree["components"].append(cur_comp)
+
+				i += 1
 		except Exception as err:
 			ret = "error~" + str(err)
 			return ret

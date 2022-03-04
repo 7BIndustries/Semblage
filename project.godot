@@ -80,6 +80,11 @@ _global_script_classes=[ {
 "path": "res://controls/EllipseControl.gd"
 }, {
 "base": "VBoxContainer",
+"class": "ExistingComponentControl",
+"language": "GDScript",
+"path": "res://controls/ExistingComponentControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "ExtrudeControl",
 "language": "GDScript",
 "path": "res://controls/ExtrudeControl.gd"
@@ -374,6 +379,7 @@ _global_script_class_icons={
 "CutControl": "",
 "EllipseArcControl": "",
 "EllipseControl": "",
+"ExistingComponentControl": "",
 "ExtrudeControl": "",
 "FileSystem": "",
 "FilletControl": "",
@@ -443,6 +449,7 @@ config/icon="res://icon.png"
 
 cqgipy="*res://lib/cqgi_interface.py"
 synth="*res://lib/synthesis.py"
+discovery="*res://lib/module_discovery.py"
 
 [debug]
 

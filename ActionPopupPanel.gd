@@ -115,7 +115,8 @@ func activate_edit_mode(component_text, item_text, new_components, new_parameter
 	var popup_action = ContextHandler.find_matching_edit_trigger(item_text)
 
 	# If the returned control is null, there is not need continuing
-	if popup_action == null:
+	if popup_action == null or popup_action.size() == 0:
+		emit_signal("error", "You cannot edit this operation.")
 		return
 
 	# Show the popup

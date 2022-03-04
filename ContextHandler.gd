@@ -274,11 +274,18 @@ static func is_binary(item_text):
 	# See if this is a binary (i.e. boolean) item
 	var is_binary = false
 
+	# Regex to compensate for an external component
 	var rgx = RegEx.new()
-	rgx.compile("^[a-zA-Z0-9_]+")
-	var res = rgx.search(item_text)
-	if res:
-		is_binary = true
+	rgx.compile("build_.*()$")
+
+	if item_text.begins_with("from") or rgx.search(item_text):
+		is_binary = false
+	else:
+		rgx = RegEx.new()
+		rgx.compile("^[a-zA-Z0-9_]+")
+		var res = rgx.search(item_text)
+		if res:
+			is_binary = true
 
 	return is_binary
 

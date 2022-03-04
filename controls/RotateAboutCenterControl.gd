@@ -54,6 +54,7 @@ func _ready():
 
 	# Add control for angle to revolve through
 	var angle_group = HBoxContainer.new()
+	angle_group.name = "angle_group"
 	var angle_lbl = Label.new()
 	angle_lbl.set_text("Angle (Degrees): ")
 	angle_group.add_child(angle_lbl)

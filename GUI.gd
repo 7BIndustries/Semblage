@@ -278,7 +278,7 @@ func _load_component(component_text):
 	if Security.IsSemblageFile(component_text):
 		# Prevent the user from reloading the script manually
 		var reload_btn = $GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton
-		reload_btn.hide()
+#		reload_btn.hide()
 
 		# Load the component into the component tree and then render it
 		load_semblage_component(component_text)
@@ -371,12 +371,12 @@ func load_semblage_component(text):
 			cur_component = new_component
 			Common.add_component(new_component, component_tree)
 		# The metadata attached to this component
-		elif line.find("=cq") > 0 and line.find("#") > 0:
+		elif line.find("# meta") >= 0:
 			# We want to attach the metadata to the last component added
 			var this_component = Common.get_last_component(component_tree)
 
 			# Parse and save the meta data from the component's file
-			var meta_str = line.split("# ")[1]
+			var meta_str = line.split("meta ")[1]
 			var meta = JSON.parse(meta_str)
 			meta = meta.result
 
@@ -385,13 +385,20 @@ func load_semblage_component(text):
 		# See if we have a component instantiation operation
 		elif cur_component != null and line == cur_component + "=build_" + cur_component + "()":
 			continue
+		# See if we have a normal operation
+		elif cur_component != null and line.begins_with(cur_component.replace("_ext", "") + "=" + cur_component.replace("_ext", "")):
+			# Update the context string in the ContextHandler
+			new_operation = line.replace(cur_component.replace("_ext", "") + "=" + cur_component.replace("_ext", ""), "")
 		# See if we have a binary operation
 		elif cur_component != null and line.find("=") > 0 and not line.split("=")[1].begins_with(cur_component):
 			new_operation = line.replace(cur_component + "=", "")
-		# See if we have a normal operation
-		elif cur_component != null and line.begins_with(cur_component + "=" + cur_component):
-			# Update the context string in the ContextHandler
-			new_operation = line.replace(cur_component + "=" + cur_component, "")
+		else:
+			# Handle the case of the current operation being an import statement
+			rgx = RegEx.new()
+			rgx.compile("from.*import.*")
+			res = rgx.search(line)
+			if res:
+				new_operation = line
 
 		# Only add the new operation if there is something to add
 		if new_operation != null:
@@ -441,31 +448,47 @@ func _convert_component_tree_to_script(include_show):
 		if cur_comp == null:
 			break
 		else:
-			component_text += "def build_" + cur_comp.get_text(0) + "():\n"
 			# Start the component off
-			component_text += "    " + cur_comp.get_text(0) + "=cq  # " + JSON.print(cur_comp.get_metadata(0)) + "\n"
+			component_text += "def build_" + cur_comp.get_text(0) + "():\n"
+			component_text += "    " + "# meta " + JSON.print(cur_comp.get_metadata(0)) + "\n"
 
 			# See if we are supposed to skip rendering this component
 			if cur_comp.get_metadata(0) != null and cur_comp.get_metadata(0)["visible"]:
 				#show_text += cur_comp.get_text(0) + "=build_" + cur_comp.get_text(0) + "()\n"
 				show_text += "show_object(" + cur_comp.get_text(0) + ")\n"
 
-			# Walk through any operations attached to this component
-			var cur_op = cur_comp.get_children()
-			while true:
-				if cur_op == null:
-					break
-				else:
-					# Assemble the operation step for a non-binary operation
-					if cur_op.get_text(0).begins_with("."):
-						component_text += "    " + cur_comp.get_text(0)  + "=" + cur_comp.get_text(0) + cur_op.get_text(0) + "\n"
+			# Handle external components separately
+			if cur_comp.get_text(0).ends_with("_ext"):
+				# Walk through any operations attached to this component
+				var cur_op = cur_comp.get_children()
+				while true:
+					if cur_op == null:
+						break
 					else:
-						component_text += "    " + cur_comp.get_text(0)  + "=" + cur_op.get_text(0) + "\n"
+						if cur_op.get_text(0).begins_with("."):
+							component_text += "    " + cur_comp.get_text(0).replace("_ext", "")  + "=" + cur_comp.get_text(0).replace("_ext", "") + cur_op.get_text(0) + "\n"
+						else:
+							component_text += "    " + cur_op.get_text(0) + "\n"
 
-				# Move to the next child operation, if there is one
-				cur_op = cur_op.get_next()
+					# Move to the next child operation, if there is one
+					cur_op = cur_op.get_next()
+			else:
+				# Walk through any operations attached to this component
+				var cur_op = cur_comp.get_children()
+				while true:
+					if cur_op == null:
+						break
+					else:
+						# Assemble the operation step for a non-binary operation
+						if cur_op.get_text(0).begins_with("."):
+							component_text += "    " + cur_comp.get_text(0)  + "=" + cur_comp.get_text(0) + cur_op.get_text(0) + "\n"
+						else:
+							component_text += "    " + cur_comp.get_text(0)  + "=" + cur_op.get_text(0) + "\n"
 
-			component_text += "    return " + cur_comp.get_text(0) + "\n"
+					# Move to the next child operation, if there is one
+					cur_op = cur_op.get_next()
+
+			component_text += "    return " + cur_comp.get_text(0).replace("_ext", "") + "\n"
 
 			# Make sure that this component is available for other components to use
 			component_text += cur_comp.get_text(0) + "=build_" + cur_comp.get_text(0) + "()\n\n"
@@ -551,6 +574,7 @@ func _render_component_text(component_text):
 
 	# Clear the 3D viewport
 	self._clear_viewport()
+	cqgipy.set_script_path("/home/jwright/Downloads/repos/push-button-switch")
 
 	# Method that post-processes the results of the script to pull out renderables
 	render_tree = cqgipy
@@ -628,7 +652,7 @@ func render_component_tree(component):
 		# Find the safe distance for the camera based on the maximum distance of any vertex from the origin
 		safe_distance = new_safe_dist # get_safe_camera_distance(max_dist)
 
-		_home_view()
+#		_home_view()
 
 	var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
 	status_lbl.set_text("Redering component...done.")
@@ -727,8 +751,8 @@ func _on_CloseButton_button_down():
 	self._reset_trees()
 
 	# Prevent the user from reloading the script manually
-	var reload_btn = $GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton
-	reload_btn.hide()
+#	var reload_btn = $GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton
+#	reload_btn.hide()
 
 	# Make sure the user cannot save a blank component over the previously opened one
 	open_file_path = null
@@ -765,10 +789,8 @@ Handles the event of the user pressing the Reload button to reload a component
 from file.
 """
 func _on_ReloadButton_button_down():
-	pass
-#	self._clear_viewport()
-
-#	_render_non_semblage(open_file_path)
+	# Render the component
+	_execute_and_render()
 
 """
 Removes all MeshInstances from a viewport to prepare for something new to be loaded.
@@ -794,13 +816,18 @@ func _on_ActionPopupPanel_ok_signal(new_template, combine_map):
 	var component_tree_root = _get_component_tree_root(component_tree)
 
 	var old_component = null
+	var new_component = null
 
 	# If a component is selected, save the old component name
 	if component_tree.get_selected():
 		old_component = ContextHandler.get_component_from_template(component_tree.get_selected().get_text(0))
 
-	# Find any component name (if present) that needs to be displayed in the list
-	var new_component = ContextHandler.get_component_from_template(new_template)
+	if new_template.begins_with("(ext)"):
+		new_component = new_template.split("import ")[1].split("\n")[0].replace("build_", "")
+		new_component += "_ext"
+	else:
+		# Find any component name (if present) that needs to be displayed in the list
+		new_component = ContextHandler.get_component_from_template(new_template)
 
 	# Check to see if this is the first item that is being added to the component tree
 	var is_first = component_tree_root.get_children() == null
@@ -846,7 +873,13 @@ func _on_ActionPopupPanel_ok_signal(new_template, combine_map):
 		if new_component:
 			# Add the component
 			Common.add_component(new_component, component_tree)
-			Common.add_operation(new_component, new_template, component_tree)
+
+			# See if we have an external component loaded
+			if new_template.begins_with("(ext)"):
+				for op in new_template.split("\n"):
+					Common.add_operation(new_component, op.replace("(ext) ", ""), component_tree)
+			else:
+				Common.add_operation(new_component, new_template, component_tree)
 
 			# If there was a binary (i.e. boolean) operation, nest components as appropriate
 			if combine_map != null:

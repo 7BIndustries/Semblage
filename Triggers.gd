@@ -512,6 +512,15 @@ static func get_triggers():
 				"control": "res://controls/InlineWorkplaneControl.gd"
 			}
 		},
+		"ExistingCompoent": {
+			"trigger": "cq$",
+			"edit_trigger": "^~$",  # Will not match anything on purpose
+			"action": {
+				"name": "Existing Component",
+				"group": "WP",
+				"control": "res://controls/ExistingComponentControl.gd"
+			}
+		},
 		"center": {
 			"trigger": "cq$",
 			"edit_trigger": "^\\.center\\(.*\\).*",
