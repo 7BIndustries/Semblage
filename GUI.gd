@@ -381,7 +381,9 @@ func load_semblage_component(text):
 			meta = meta.result
 
 			this_component.set_metadata(0, meta)
-
+		# We have a starter line for the component
+		elif line.ends_with("=cq"):
+			continue
 		# See if we have a component instantiation operation
 		elif cur_component != null and line == cur_component + "=build_" + cur_component + "()":
 			continue
