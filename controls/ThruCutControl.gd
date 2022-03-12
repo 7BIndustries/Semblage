@@ -5,11 +5,11 @@ class_name ThruCutControl
 var prev_template = null
 
 var template = ".cutThruAll(clean={clean},taper={taper})"
-var wp_template = ".workplane(invert={invert})"
+#var wp_template = ".workplane(invert={invert})"
 
 const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\,)"
 const taper_edit_rgx = "(?<=taper\\=)(.*?)(?=\\))"
-const wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
+#const wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
 
 
 # Called when the node enters the scene tree for the first time.
@@ -41,16 +41,16 @@ func _ready():
 	add_child(taper_group)
 
 	# Allow the user to flip the direction of the operation
-	var invert_group = HBoxContainer.new()
-	var invert_lbl = Label.new()
-	invert_lbl.set_text("Invert: ")
-	invert_group.add_child(invert_lbl)
-	var invert_ctrl = CheckBox.new()
-	invert_ctrl.name = "invert_ctrl"
-	invert_ctrl.pressed = false
-	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
-	invert_group.add_child(invert_ctrl)
-	add_child(invert_group)
+#	var invert_group = HBoxContainer.new()
+#	var invert_lbl = Label.new()
+#	invert_lbl.set_text("Invert: ")
+#	invert_group.add_child(invert_lbl)
+#	var invert_ctrl = CheckBox.new()
+#	invert_ctrl.name = "invert_ctrl"
+#	invert_ctrl.pressed = false
+#	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
+#	invert_group.add_child(invert_ctrl)
+#	add_child(invert_group)
 
 
 """
@@ -79,15 +79,15 @@ Fills out the template and returns it.
 func get_completed_template():
 	var clean_ctrl = find_node("clean_ctrl", true, false)
 	var taper_ctrl = find_node("taper_ctrl", true, false)
-	var invert_ctrl = find_node("invert_ctrl", true, false)
+#	var invert_ctrl = find_node("invert_ctrl", true, false)
 
 	var complete = ""
 
 	# Allow flipping the direction of the operation
-	if invert_ctrl.pressed:
-		complete += wp_template.format({
-			"invert": invert_ctrl.pressed
-		})
+#	if invert_ctrl.pressed:
+#		complete += wp_template.format({
+#			"invert": invert_ctrl.pressed
+#		})
 
 	complete += template.format({
 		"clean": clean_ctrl.pressed,
@@ -111,7 +111,7 @@ Loads values into the control's sub-controls based on a code string.
 func set_values_from_string(text_line):
 	var clean_ctrl = find_node("clean_ctrl", true, false)
 	var taper_ctrl = find_node("taper_ctrl", true, false)
-	var invert_ctrl = find_node("invert_ctrl", true, false)
+#	var invert_ctrl = find_node("invert_ctrl", true, false)
 
 	prev_template = text_line
 
@@ -131,8 +131,8 @@ func set_values_from_string(text_line):
 		taper_ctrl.set_text(res.get_string())
 
 	# Workplane (invert) edit
-	rgx.compile(wp_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		var invert = res.get_string()
-		invert_ctrl.pressed = true if invert == "True" else false
+#	rgx.compile(wp_edit_rgx)
+#	res = rgx.search(text_line)
+#	if res:
+#		var invert = res.get_string()
+#		invert_ctrl.pressed = true if invert == "True" else false

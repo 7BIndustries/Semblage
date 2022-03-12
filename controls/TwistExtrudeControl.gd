@@ -5,13 +5,13 @@ class_name TwistExtrudeControl
 var prev_template = null
 
 var template = ".twistExtrude({distance},angleDegrees={angle_degrees},combine={combine},clean={clean})"
-var wp_template = ".workplane(invert={invert})"
+#var wp_template = ".workplane(invert={invert})"
 
 const dist_edit_rgx = "(?<=.twistExtrude\\()(.*?)(?=,angleDegrees)"
 const angle_edit_rgx = "(?<=angleDegrees\\=)(.*?)(?=\\,)"
 const combine_edit_rgx = "(?<=combine\\=)(.*?)(?=\\,)"
 const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\))"
-const wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
+#const wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
 
 
 # Called when the node enters the scene tree for the first time.
@@ -68,16 +68,16 @@ func _ready():
 	add_child(clean_group)
 
 	# Allow the user to flip the direction of the operation
-	var invert_group = HBoxContainer.new()
-	var invert_lbl = Label.new()
-	invert_lbl.set_text("Invert: ")
-	invert_group.add_child(invert_lbl)
-	var invert_ctrl = CheckBox.new()
-	invert_ctrl.name = "invert_ctrl"
-	invert_ctrl.pressed = false
-	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
-	invert_group.add_child(invert_ctrl)
-	add_child(invert_group)
+#	var invert_group = HBoxContainer.new()
+#	var invert_lbl = Label.new()
+#	invert_lbl.set_text("Invert: ")
+#	invert_group.add_child(invert_lbl)
+#	var invert_ctrl = CheckBox.new()
+#	invert_ctrl.name = "invert_ctrl"
+#	invert_ctrl.pressed = false
+#	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
+#	invert_group.add_child(invert_ctrl)
+#	add_child(invert_group)
 
 
 """
@@ -111,15 +111,15 @@ func get_completed_template():
 	var angle_ctrl = find_node("angle_ctrl", true, false)
 	var combine_ctrl = find_node("combine_ctrl", true, false)
 	var clean_ctrl = find_node("clean_ctrl", true, false)
-	var invert_ctrl = find_node("invert_ctrl", true, false)
+#	var invert_ctrl = find_node("invert_ctrl", true, false)
 
 	var complete = ""
 
 	# Allow flipping the direction of the operation
-	if invert_ctrl.pressed:
-		complete += wp_template.format({
-			"invert": invert_ctrl.pressed
-		})
+#	if invert_ctrl.pressed:
+#		complete += wp_template.format({
+#			"invert": invert_ctrl.pressed
+#		})
 
 	complete += template.format({
 		"distance": distance_ctrl.get_text(),
@@ -147,7 +147,7 @@ func set_values_from_string(text_line):
 	var angle_ctrl = find_node("angle_ctrl", true, false)
 	var combine_ctrl = find_node("combine_ctrl", true, false)
 	var clean_ctrl = find_node("clean_ctrl", true, false)
-	var invert_ctrl = find_node("invert_ctrl", true, false)
+#	var invert_ctrl = find_node("invert_ctrl", true, false)
 
 	prev_template = text_line
 
@@ -180,8 +180,8 @@ func set_values_from_string(text_line):
 		clean_ctrl.pressed = true if clean == "True" else false
 
 	# Workplane (invert) edit
-	rgx.compile(wp_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		var invert = res.get_string()
-		invert_ctrl.pressed = true if invert == "True" else false
+#	rgx.compile(wp_edit_rgx)
+#	res = rgx.search(text_line)
+#	if res:
+#		var invert = res.get_string()
+#		invert_ctrl.pressed = true if invert == "True" else false

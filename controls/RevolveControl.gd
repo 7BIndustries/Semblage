@@ -5,14 +5,14 @@ class_name RevolveControl
 var prev_template = null
 
 var template = ".revolve(angleDegrees={angle_degrees},axisStart={axis_start},axisEnd={axis_end},combine={combine},clean={clean})"
-var wp_template = ".workplane(invert={invert})"
+#var wp_template = ".workplane(invert={invert})"
 
 const angle_edit_rgx = "(?<=angleDegrees\\=)(.*?)(?=\\,axisStart)"
 const start_edit_rgx = "(?<=axisStart\\=)(.*?)(?=\\,axisEnd)"
 const end_edit_rgx = "(?<=axisEnd\\=)(.*?)(?=\\,combine)"
 const combine_edit_rgx = "(?<=combine\\=)(.*?)(?=\\,clean)"
 const clean_edit_rgx = "(?<=clean\\=)(.*?)(?=\\))"
-const wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
+#const wp_edit_rgx = "(?<=.workplane\\(invert\\=)(.*?)(?=\\))"
 
 
 # Called when the node enters the scene tree for the first time.
@@ -136,16 +136,16 @@ func _ready():
 	add_child(clean_group)
 
 	# Allow the user to flip the direction of the operation
-	var invert_group = HBoxContainer.new()
-	var invert_lbl = Label.new()
-	invert_lbl.set_text("Invert: ")
-	invert_group.add_child(invert_lbl)
-	var invert_ctrl = CheckBox.new()
-	invert_ctrl.name = "invert_ctrl"
-	invert_ctrl.pressed = false
-	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
-	invert_group.add_child(invert_ctrl)
-	add_child(invert_group)
+#	var invert_group = HBoxContainer.new()
+#	var invert_lbl = Label.new()
+#	invert_lbl.set_text("Invert: ")
+#	invert_group.add_child(invert_lbl)
+#	var invert_ctrl = CheckBox.new()
+#	invert_ctrl.name = "invert_ctrl"
+#	invert_ctrl.pressed = false
+#	invert_ctrl.hint_tooltip = tr("INVERT_CTRL_HINT_TOOLTIP")
+#	invert_group.add_child(invert_ctrl)
+#	add_child(invert_group)
 
 
 """
@@ -199,15 +199,15 @@ func get_completed_template():
 	var axis_end_z_ctrl = find_node("axis_end_z_ctrl", true, false)
 	var combine_ctrl = find_node("combine_ctrl", true, false)
 	var clean_ctrl = find_node("clean_ctrl", true, false)
-	var invert_ctrl = find_node("invert_ctrl", true, false)
+#	var invert_ctrl = find_node("invert_ctrl", true, false)
 
 	var complete = ""
 
 	# Allow flipping the direction of the operation
-	if invert_ctrl.pressed:
-		complete += wp_template.format({
-			"invert": invert_ctrl.pressed
-		})
+#	if invert_ctrl.pressed:
+#		complete += wp_template.format({
+#			"invert": invert_ctrl.pressed
+#		})
 
 	# Build the axis start and end strings
 	var axis_start_str = "(" + axis_start_x_ctrl.get_text() + "," +\
@@ -249,7 +249,7 @@ func set_values_from_string(text_line):
 	var axis_end_z_ctrl = find_node("axis_end_z_ctrl", true, false)
 	var combine_ctrl = find_node("combine_ctrl", true, false)
 	var clean_ctrl = find_node("clean_ctrl", true, false)
-	var invert_ctrl = find_node("invert_ctrl", true, false)
+#	var invert_ctrl = find_node("invert_ctrl", true, false)
 
 	prev_template = text_line
 
@@ -294,8 +294,8 @@ func set_values_from_string(text_line):
 		clean_ctrl.pressed = true if clean == "True" else false
 
 	# Workplane (invert) edit
-	rgx.compile(wp_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		var invert = res.get_string()
-		invert_ctrl.pressed = true if invert == "True" else false
+#	rgx.compile(wp_edit_rgx)
+#	res = rgx.search(text_line)
+#	if res:
+#		var invert = res.get_string()
+#		invert_ctrl.pressed = true if invert == "True" else false
