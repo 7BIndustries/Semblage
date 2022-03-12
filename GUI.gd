@@ -64,7 +64,7 @@ func _input(event):
 		_save_component()
 
 	# Check if the face selection key has been pressed
-	if event.is_action_pressed("mouse_select"):
+	if event.is_action_pressed("select_face"):
 		face_select_mode = true
 
 		# The user wants to use mouse selection and so we need to set up the collision objects
@@ -75,7 +75,7 @@ func _input(event):
 		# Keep the app from crashing if there was an error and we try to save
 		if render_tree == null or typeof(render_tree) == 4:
 			return
-	elif event.is_action_released("mouse_select"):
+	elif event.is_action_released("select_face"):
 		face_select_mode = false
 
 		# Step through every mesh, set their materials back to their default and remove the StaticBody colliders
@@ -939,7 +939,7 @@ func _on_DocumentTabs_activate_action_popup():
 	var selector_str = null
 
 	# See if the user is wanting to trigger selector synthesis
-	if Input.is_action_pressed("mouse_select"):
+	if Input.is_action_pressed("select_face"):
 		selector_str = _synthesize_selector()
 
 	# Get the info that the operations dialog uses to set up the next operation
