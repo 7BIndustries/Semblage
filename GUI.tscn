@@ -1609,6 +1609,7 @@ text = "No"
 [connection signal="popup_hide" from="AboutDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_popup_hide"]
 [connection signal="meta_clicked" from="AboutDialog/AboutTabContainer/Docs/DocsLabel" to="AboutDialog" method="_on_DocsLabel_meta_clicked"]
 [connection signal="about_to_show" from="AddParameterDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]
+[connection signal="about_to_show" from="AddParameterDialog" to="AddParameterDialog" method="_on_AddParameterDialog_about_to_show"]
 [connection signal="add_parameter" from="AddParameterDialog" to="." method="_on_AddParameterDialog_add_parameter"]
 [connection signal="edit_parameter" from="AddParameterDialog" to="." method="_on_AddParameterDialog_edit_parameter"]
 [connection signal="error" from="AddParameterDialog" to="." method="_on_error"]

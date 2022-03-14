@@ -231,6 +231,9 @@ func activate_edit_mode(param_name, param_value, data_type, comment):
 
 	self.popup_centered()
 
+	# Reset the edit mode flag in case the next parameter request is a new one
+	edit_mode = false
+
 
 """
 Parses the string tuple list back into something that can
@@ -462,3 +465,33 @@ Close the popup without doing anything.
 func _cancel_tuple_popup():
 	var tuple_popup = get_node("TuplePopupPanel")
 	tuple_popup.hide()
+
+
+"""
+Called when this dialog is about to pop up.
+"""
+func _on_AddParameterDialog_about_to_show():
+	# Only reset the controls if we are not working with edit mode
+	if not edit_mode:
+		var param_name_txt = get_node("MarginContainer/VBoxContainer/ParamNameTextEdit")
+		var param_value_txt = get_node("MarginContainer/VBoxContainer/ParamValueTextEdit")
+		var param_value_num = get_node("MarginContainer/VBoxContainer/NumberEdit")
+
+		# Get the radio buttons to determine the data type
+		var string_radio = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/StringCheckBox")
+		var num_radio = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/NumCheckBox")
+		var tuple_radio = get_node("MarginContainer/VBoxContainer/ParamTypeContainer/TupleListCheckBox")
+
+		# The parameter comment text field
+		var comment_txt = get_node("MarginContainer/VBoxContainer/CommentLineEdit")
+
+		# Set the default values of the controls
+		param_name_txt.set_text('parameter_name')
+		param_value_txt.set_text('parameter_value')
+		param_value_num.set_text('0.0')
+		string_radio.pressed = true
+		num_radio.pressed = false
+		tuple_radio.pressed = false
+		_on_StringCheckBox_button_down()
+		comment_txt.set_text('')
+		_clear_tuple_popup()
