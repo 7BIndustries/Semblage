@@ -495,3 +495,6 @@ func _on_AddParameterDialog_about_to_show():
 		_on_StringCheckBox_button_down()
 		comment_txt.set_text('')
 		_clear_tuple_popup()
+
+		# Clear the tuple list
+		_reset_tuple_tree()
