@@ -1294,6 +1294,11 @@ func _on_AddParameterDialog_add_parameter(new_param, data_type, comment):
 	var last_item = Common.get_last_component(tree)
 	last_item.set_metadata(0, meta)
 
+	# Let the user know the name of the file they are trying to open
+	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
+	if tabs.get_tab_title(0).find("*") <= 0:
+		tabs.set_tab_title(0, tabs.get_tab_title(0) + " *")
+
 	self._execute_and_render()
 
 
@@ -1574,6 +1579,11 @@ func _remove_confirmed():
 	# Workaround to force the tree to update
 	ct.visible = false
 	ct.visible = true
+
+	# Let the user know the name of the file they are trying to open
+	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
+	if tabs.get_tab_title(0).find("*") <= 0:
+		tabs.set_tab_title(0, tabs.get_tab_title(0) + " *")
 
 	# Render any changes to the component tree
 	self._execute_and_render()
