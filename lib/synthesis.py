@@ -22,3 +22,31 @@ class synthesis(Node):
 		res = vector_based_synth.synthesize(sel_origs, sel_norms, face_origs, face_norms, selected_meta, face_meta)
 
 		return res
+
+	def synthesize_edge_sel(self, selected_edges, selected_edge_types, selected_edge_starts, selected_edge_ends, selected_normals):
+		"""
+		Takes a list of edges and tries to synthesize a selector that will work for all of them.
+		"""
+		# Convert the lists of Vector3 objects to lists of tuples
+		sel_edge_starts = []
+		sel_edge_ends = []
+		sel_normals = []
+		for ses in selected_edge_starts:
+			sel_edge_starts.append((ses.x, ses.y, ses.z))
+		for see in selected_edge_ends:
+			sel_edge_ends.append((see.x, see.y, see.z))
+		for sen in selected_normals:
+			sel_normals.append((sen.x, sen.y, sen.z))
+
+		# Convert the lists of GDString objects to lists of strs
+		sel_edges = []
+		sel_edge_types = []
+		for se in selected_edges:
+			sel_edges.append(str(se))
+		for set in selected_edge_types:
+			sel_edge_types.append(str(set))
+
+		# Synthesize the selector
+		res = vector_based_synth.synthesize_edge_selector(sel_edges, sel_edge_types, sel_edge_starts, sel_edge_ends, sel_normals)
+
+		return res

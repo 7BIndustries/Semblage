@@ -642,6 +642,8 @@ func render_component_tree(component):
 
 	# Get the new safe/sane camera distance
 	new_safe_dist = get_safe_camera_distance(max_dim)
+
+	# Generate the face representations
 	var meshes = Meshes.gen_component_meshes(component)
 	for mesh in meshes:
 		vp.add_child(mesh)
@@ -649,7 +651,7 @@ func render_component_tree(component):
 	# Add the edge representations
 	for edge in component["edges"]:
 		for seg in component["edges"][edge]["segments"]:
-			var line = Meshes.gen_line_mesh(0.010 * min_dim, seg, edge)
+			var line = Meshes.gen_line_mesh(0.010 * min_dim, seg, edge, component["edges"][edge]["type"], component["edges"][edge]["start_vertex"], component["edges"][edge]["end_vertex"])
 			vp.add_child(line)
 
 	# Only reset the view if the same distance changed
@@ -978,6 +980,12 @@ func _synthesize_selector():
 	var other_faces = []
 	var other_meta = []
 
+	# Tracked information about the selected edges
+	var selected_edges = []
+	var selected_edge_types = []
+	var selected_edge_starts = []
+	var selected_edge_ends = []
+
 	# Step through all the meshes and see which one is selected
 	for child in vp.get_children():
 		# Make sure we are working with a mesh
@@ -993,16 +1001,29 @@ func _synthesize_selector():
 				if LinAlg.compare_floats(ac.r, selected_color[0]) and\
 				   LinAlg.compare_floats(ac.g, selected_color[1]) and\
 				   LinAlg.compare_floats(ac.b, selected_color[2]):
-					# Keep track of the number of selected faces
-					num_selected += 1
+					# See if we have a selected face
+					if child.get_meta("parent_perm_id").begins_with("face"):
+						# Keep track of the number of selected faces
+						num_selected += 1
 
-					# Save the information for this selected face
-					selected_origins.append(orig)
-					selected_normals.append(norm)
-					selected_faces.append(child.get_meta("parent_perm_id"))
-					var meta = Dictionary()
-					meta['is_planar'] = child.get_meta("is_planar")
-					selected_meta.append(meta)
+						# Save the information for this selected face
+						selected_origins.append(orig)
+						selected_normals.append(norm)
+						selected_faces.append(child.get_meta("parent_perm_id"))
+						var meta = Dictionary()
+						meta['is_planar'] = child.get_meta("is_planar")
+						selected_meta.append(meta)
+					elif child.get_meta("parent_perm_id").begins_with("edge"):
+						var par_id = child.get_meta("parent_perm_id")
+						if not par_id in selected_edges:
+							selected_edges.append(par_id)
+							selected_edge_types.append(child.get_meta("edge_type"))
+							selected_edge_starts.append(child.get_meta("start_vertex"))
+							selected_edge_ends.append(child.get_meta("end_vertex"))
+#							for comp in render_tree["components"]:
+#								if par_id in comp["edges"]:
+#									selected_edge_types.append(comp["edges"][par_id]["type"])
+#									break
 				else:
 					# Save the information for this non-selected face
 					if orig != null:
@@ -1022,8 +1043,12 @@ func _synthesize_selector():
 					meta['is_planar'] = child.get_meta("is_planar")
 					other_meta.append(meta)
 
-	# Attempt to synthesize a selector based on what is selected and what is not
-	selector_str = synth.synthesize(selected_origins, selected_normals, other_origins, other_normals, selected_meta, other_meta)
+	# See if we have a selected face(s)
+	if selected_faces.size() > 0:
+		# Attempt to synthesize a selector based on what is selected and what is not
+		selector_str = synth.synthesize(selected_origins, selected_normals, other_origins, other_normals, selected_meta, other_meta)
+	elif selected_edges.size() > 0:
+		selector_str = synth.synthesize_edge_sel(selected_edges, selected_edge_types, selected_edge_starts, selected_edge_ends, selected_normals)
 
 	return selector_str
 

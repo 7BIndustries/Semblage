@@ -136,9 +136,9 @@ static func gen_component_meshes(component):
 
 
 """
-Generates a cube mesh that represents a line/edge/wire in the 3D view.
+Generates a cube mesh that represents a line/edge in the 3D view.
 """
-static func gen_line_mesh(thickness, edge, edge_perm_id):
+static func gen_line_mesh(thickness, segment, edge_perm_id, edge_type, start_vertex, end_vertex):
 	var new_color = [1.0, 1.0, 1.0, 1.0]
 
 	var material = SpatialMaterial.new()
@@ -150,11 +150,11 @@ static func gen_line_mesh(thickness, edge, edge_perm_id):
 	else:
 		material.flags_transparent = true
 
-	# Extract the start and endpoint vectors from the edge
-	var v1 = edge["vertex_1"]
-	var v2 = edge["vertex_2"]
+	# Extract the start and endpoint vectors from the segment
+	var v1 = segment["vertex_1"]
+	var v2 = segment["vertex_2"]
 
-	# Calculate the length of the edge
+	# Calculate the length of the segment
 	var dist = LinAlg.dist_between_vecs(v1, v2)
 
 	# The endpoints compensating for the fact the that center is in the middle of the bar, not the end
@@ -163,6 +163,10 @@ static func gen_line_mesh(thickness, edge, edge_perm_id):
 	# Generate the mesh instance representing the line
 	var mesh_inst = MeshInstance.new()
 	mesh_inst.set_meta("parent_perm_id", edge_perm_id)
+	mesh_inst.set_meta("edge_type", edge_type)
+	mesh_inst.set_meta("start_vertex", start_vertex)
+	mesh_inst.set_meta("end_vertex", end_vertex)
+
 	var raw_cube_mesh = CubeMesh.new()
 	raw_cube_mesh.size = Vector3(thickness, thickness, dist)
 	mesh_inst.set_surface_material(0, material)

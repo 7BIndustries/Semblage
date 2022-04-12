@@ -119,6 +119,9 @@ func _on_OKButton_button_down():
 	var text_edit = get_node("MarginContainer/VBoxContainer/ParamNameTextEdit")
 	text_edit.editable = true
 
+	# Reset the edit mode flag in case the next parameter request is a new one
+	edit_mode = false
+
 	self.hide()
 
 
@@ -131,6 +134,9 @@ func _on_CancelButton_button_down():
 
 	var text_edit = get_node("MarginContainer/VBoxContainer/ParamNameTextEdit")
 	text_edit.editable = true
+
+	# Reset the edit mode flag in case the next parameter request is a new one
+	edit_mode = false
 
 	self.hide()
 
@@ -230,9 +236,6 @@ func activate_edit_mode(param_name, param_value, data_type, comment):
 		_populate_tuple_list(param_value)
 
 	self.popup_centered()
-
-	# Reset the edit mode flag in case the next parameter request is a new one
-	edit_mode = false
 
 
 """

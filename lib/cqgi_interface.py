@@ -380,6 +380,13 @@ class cqgi_interface(Node):
 				edge = edge.val()
 				gt = edge.geomType()
 
+				# Save metadata about the edge that can be used for selector synthesis
+				edges_tess[edge_perm_id]["type"] = gt
+
+				if gt == "LINE":
+					edges_tess[edge_perm_id]["start_vertex"] = Vector3(edge.startPoint().x, edge.startPoint().y, edge.startPoint().z)
+					edges_tess[edge_perm_id]["end_vertex"] = Vector3(edge.endPoint().x, edge.endPoint().y, edge.endPoint().z)
+
 				# If dealing with some sort of arc, discretize it into individual lines
 				if gt == "CIRCLE" or gt == "ARC" or gt == "SPLINE" or gt == "BSPLINE" or gt == "ELLIPSE":
 					from OCP import GCPnts, BRepAdaptor
