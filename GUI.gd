@@ -277,7 +277,7 @@ func _load_component(component_text):
 	# If this is a Semblage component file, load it into the component tree
 	if Security.IsSemblageFile(component_text):
 		# Prevent the user from reloading the script manually
-		var reload_btn = $GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton
+#		var reload_btn = $GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton
 #		reload_btn.hide()
 
 		# Load the component into the component tree and then render it
@@ -971,9 +971,6 @@ func _synthesize_selector():
 	# The selected geometry color
 	var selected_color = [0.5, 0.5, 0.05, 1.0]
 
-	# Keep track of how many faces have been selected
-	var num_selected = 0
-
 	# Tracked information about the selected faces
 	var selected_origins = []
 	var selected_normals = []
@@ -1009,9 +1006,6 @@ func _synthesize_selector():
 				   LinAlg.compare_floats(ac.b, selected_color[2]):
 					# See if we have a selected face
 					if child.get_meta("parent_perm_id").begins_with("face"):
-						# Keep track of the number of selected faces
-						num_selected += 1
-
 						# Save the information for this selected face
 						selected_origins.append(orig)
 						selected_normals.append(norm)
