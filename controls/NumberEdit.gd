@@ -37,8 +37,18 @@ func _gui_input(event):
 		# Full text, including the new entry
 		var txt = self.get_text()
 
-		# Make sure an integer does not include aa decimal point
-		if not CanBeAVariable and not txt.is_valid_float():
+		# Allows us to check if we have a variable name
+		var rgx = RegEx.new()
+		rgx.compile("^[a-zA-Z]+")
+		var res = rgx.search(txt)
+
+		# Make sure an integer does not include a decimal point
+		if CanBeAVariable and res:
+			invalid_lbl.hide()
+			self.hint_tooltip = ""
+
+			is_valid = true
+		elif not txt.is_valid_float():
 			invalid_lbl.show()
 			self.hint_tooltip = "Enter a valid number"
 
