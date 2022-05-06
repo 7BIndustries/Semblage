@@ -169,8 +169,8 @@ static func gen_line_mesh(thickness, segment, edge_perm_id, edge_type, start_ver
 
 	var raw_cube_mesh = CubeMesh.new()
 	raw_cube_mesh.size = Vector3(thickness, thickness, dist)
-	mesh_inst.set_surface_material(0, material)
 	mesh_inst.mesh = raw_cube_mesh
+	mesh_inst.set_surface_material(0, material)
 	mesh_inst.transform.origin = v_mid
 
 	# For edges centered at the origin in two axes, the cross product will be
@@ -204,8 +204,8 @@ static func gen_vertex_mesh(size, vertex, vertex_perm_id):
 	mesh_inst.set_meta("parent_perm_id", vertex_perm_id)
 	var raw_cube_mesh = CubeMesh.new()
 	raw_cube_mesh.size = Vector3(size, size, size)
-	mesh_inst.set_surface_material(0, material)
 	mesh_inst.mesh = raw_cube_mesh
+	mesh_inst.set_surface_material(0, material)
 	mesh_inst.transform.origin = Vector3(vertex["X"], vertex["Y"], vertex["Z"])
 
 	return mesh_inst
