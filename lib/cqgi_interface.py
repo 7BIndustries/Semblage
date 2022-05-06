@@ -391,6 +391,10 @@ class cqgi_interface(Node):
 				if gt == "CIRCLE" or gt == "ARC" or gt == "SPLINE" or gt == "BSPLINE" or gt == "ELLIPSE":
 					from OCP import GCPnts, BRepAdaptor
 
+					# Save the start and end vertices for the circle (which should be the same)
+					edges_tess[edge_perm_id]["start_vertex"] = Vector3(edge.startPoint().x, edge.startPoint().y, edge.startPoint().z)
+					edges_tess[edge_perm_id]["end_vertex"] = Vector3(edge.endPoint().x, edge.endPoint().y, edge.endPoint().z)
+
 					# Discretize the curve
 					disc = GCPnts.GCPnts_TangentialDeflection(BRepAdaptor.BRepAdaptor_Curve(edge.wrapped), 0.5, 0.01)
 

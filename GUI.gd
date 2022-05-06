@@ -83,7 +83,7 @@ func _input(event):
 			# Make sure we are working with a mesh
 			if child.get_class() == "MeshInstance":
 				# Remove the vertex meshes
-				if child.get_meta("parent_perm_id") and child.get_meta("parent_perm_id").begins_with("face"):
+				if child.has_meta("parent_perm_id") and child.get_meta("parent_perm_id").begins_with("face"):
 					_deselect_mesh(child)
 
 				for mesh_child in child.get_children():
@@ -151,7 +151,7 @@ func _remove_vertices():
 		# Make sure we are working with a mesh
 		if child.get_class() == "MeshInstance":
 			# Remove the vertex meshes
-			if child.get_meta("parent_perm_id") and child.get_meta("parent_perm_id").begins_with("vertex"):
+			if child.has_meta("parent_perm_id") and child.get_meta("parent_perm_id").begins_with("vertex"):
 				vp.remove_child(child)
 
 			for mesh_child in child.get_children():
@@ -180,7 +180,7 @@ func _select_mesh(mesh):
 			# Make sure that we have an edge or vertex mesh
 			if child.get_class() == "MeshInstance" and child.mesh.get_class() == "CubeMesh":
 				# See if the parent matches this other edge segment and highlight it too if it does
-				if mesh != child and child.get_meta("parent_perm_id") != null and child.get_meta("parent_perm_id") == parent_id:
+				if mesh != child and child.has_meta("parent_perm_id") and child.get_meta("parent_perm_id") == parent_id:
 					child.set_surface_material(0, material)
 
 	mesh.set_surface_material(0, material)
@@ -214,7 +214,7 @@ func _deselect_mesh(mesh):
 			# Make sure that we have an edge or vertex mesh
 			if child.get_class() == "MeshInstance" and child.mesh.get_class() == "CubeMesh":
 				# See if the parent matches this other edge segment and highlight it too if it does
-				if mesh != child and child.get_meta("parent_perm_id") != null and child.get_meta("parent_perm_id") == parent_id:
+				if mesh != child and child.has_meta("parent_perm_id") and child.get_meta("parent_perm_id") == parent_id:
 					child.set_surface_material(0, material)
 
 	# Swap the material color back to the original
@@ -651,12 +651,8 @@ func render_component_tree(component):
 	# Add the edge representations
 	for edge in component["edges"]:
 		for seg in component["edges"][edge]["segments"]:
-			var start_vert = null
-			var end_vert = null
-			# Handle different types of edges
-			if component["edges"][edge]["type"] == "LINE":
-				start_vert = component["edges"][edge]["start_vertex"]
-				end_vert = component["edges"][edge]["end_vertex"]
+			var start_vert = component["edges"][edge]["start_vertex"]
+			var end_vert = component["edges"][edge]["end_vertex"]
 			var line = Meshes.gen_line_mesh(0.010 * min_dim, seg, edge, component["edges"][edge]["type"], start_vert, end_vert)
 			vp.add_child(line)
 
@@ -949,6 +945,8 @@ func _on_DocumentTabs_activate_action_popup():
 	# See if the user is wanting to trigger selector synthesis
 	if Input.is_action_pressed("select_face"):
 		selector_str = _synthesize_selector()
+		if selector_str == null:
+			selector_str = ".faces()"
 
 	# Get the info that the operations dialog uses to set up the next operation
 	var op_text = Common.get_last_op(component_tree)
