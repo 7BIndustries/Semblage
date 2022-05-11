@@ -234,6 +234,10 @@ class cqgi_interface(Node):
 			ret = "error~" + str(err)
 			return ret
 
+		# Handles the case of there being only adges in the component(s)
+		if render_tree["components"][0]["largest_dimension"] == -1:
+			render_tree["components"][0]["largest_dimension"] = render_tree["components"][0]["smallest_dimension"]
+
 		return render_tree
 
 
