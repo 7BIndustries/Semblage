@@ -2,7 +2,7 @@ extends Control
 
 signal error
 
-var VERSIONNUM = "0.4.0-alpha"
+var VERSIONNUM = "0.5.0-alpha"
 
 var open_file_path # The component/CQ file that the user opened
 var confirm_component_text = null
@@ -838,9 +838,6 @@ func _on_ActionPopupPanel_ok_signal(new_template, combine_map):
 		# Find any component name (if present) that needs to be displayed in the list
 		new_component = ContextHandler.get_component_from_template(new_template)
 
-	# Check to see if this is the first item that is being added to the component tree
-	var is_first = component_tree_root.get_children() == null
-
 	# We are in edit mode
 	if edit_mode:
 		edit_mode = false
@@ -912,9 +909,15 @@ func _on_ActionPopupPanel_ok_signal(new_template, combine_map):
 	# Render the component
 	_execute_and_render()
 
-	# If this is the first item being added, set the default view
-	if is_first:
+	# If this is the workplane or first non-workplane item being added, set the home view
+	var tv = component_tree_root.get_children().get_children()
+	tv = tv.get_next()
+	if tv == null:
 		_home_view()
+	else:
+		tv = tv.get_next()
+		if tv == null:
+			_home_view()
 
 	# Let the user know the name of the file they are trying to open
 	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs

@@ -924,7 +924,7 @@ func test_about_button():
 	# Make sure that the About dialog is showing correct information
 	var info_box = about_dlg.get_node("AboutTabContainer/Info/InfoLabel")
 	assert_not_null(info_box, "Make sure there is a valid reference to the info box.")
-	assert_eq(info_box.get_text().split("\n")[0], "[center][b]Semblage v0.4.0-alpha[/b]", "Make sure the info box has the correct info at the top.")
+	assert_eq(info_box.get_text().split("\n")[0], "[center][b]Semblage v0.5.0-alpha[/b]", "Make sure the info box has the correct info at the top.")
 
 	# Make sure that the Docs dialog is showing correct information
 	var docs_box = about_dlg.get_node("AboutTabContainer/Docs/DocsLabel")
