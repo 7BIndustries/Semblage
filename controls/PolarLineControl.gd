@@ -18,6 +18,7 @@ func _ready():
 	dist_lbl.set_text("Distance: ")
 	dist_group.add_child(dist_lbl)
 	var distance_ctrl = NumberEdit.new()
+	distance_ctrl.CanBeNegative = true
 	distance_ctrl.name = "distance_ctrl"
 	distance_ctrl.size_flags_horizontal = 3
 	distance_ctrl.set_text("1.0")
@@ -31,6 +32,7 @@ func _ready():
 	angle_lbl.set_text("Angle: ")
 	angle_group.add_child(angle_lbl)
 	var angle_ctrl = NumberEdit.new()
+	angle_ctrl.CanBeNegative = true
 	angle_ctrl.name = "angle_ctrl"
 	angle_ctrl.size_flags_horizontal = 3
 	angle_ctrl.MaxValue = 360.0

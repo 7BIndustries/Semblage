@@ -22,6 +22,7 @@ func _ready():
 	distance_lbl.set_text("Distance: ")
 	distance_group.add_child(distance_lbl)
 	var distance_ctrl = NumberEdit.new()
+	distance_ctrl.CanBeNegative = true
 	distance_ctrl.name = "distance_ctrl"
 	distance_ctrl.size_flags_horizontal = 3
 	distance_ctrl.set_text("1.0")
