@@ -994,8 +994,15 @@ func _synthesize_selector():
 	for child in vp.get_children():
 		# Make sure we are working with a mesh
 		if child.get_class() == "MeshInstance":
-			var norm = child.get_meta("normal")
-			var orig = child.get_meta("origin")
+			# Extract the normal if there is one
+			var norm = null
+			if child.has_meta("normal"):
+				norm = child.get_meta("normal")
+
+			# Extrac the origin if there is one
+			var orig = null
+			if child.has_meta("origin"):
+				orig = child.get_meta("origin")
 
 			var material = child.get_surface_material(0)
 			if material:
@@ -1006,7 +1013,7 @@ func _synthesize_selector():
 				   LinAlg.compare_floats(ac.g, selected_color[1]) and\
 				   LinAlg.compare_floats(ac.b, selected_color[2]):
 					# See if we have a selected face
-					if child.get_meta("parent_perm_id").begins_with("face"):
+					if child.has_meta("parent_perm_id") and child.get_meta("parent_perm_id").begins_with("face"):
 						# Save the information for this selected face
 						selected_origins.append(orig)
 						selected_normals.append(norm)
@@ -1014,7 +1021,7 @@ func _synthesize_selector():
 						var meta = Dictionary()
 						meta['is_planar'] = child.get_meta("is_planar")
 						selected_meta.append(meta)
-					elif child.get_meta("parent_perm_id").begins_with("edge"):
+					elif child.has_meta("parent_perm_id") and child.get_meta("parent_perm_id").begins_with("edge"):
 						var par_id = child.get_meta("parent_perm_id")
 						if not par_id in selected_edges:
 							selected_edges.append(par_id)
