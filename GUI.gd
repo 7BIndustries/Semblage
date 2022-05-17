@@ -1191,6 +1191,10 @@ func _on_SaveDialog_file_selected(path):
 		# Save the current component's text to the specified file
 		_save_component_text()
 
+		# Set the file tab to reflect the file path
+		var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
+		tabs.set_tab_title(0, open_file_path)
+
 
 """
 Handles the heavy lifting of saving the component text to file.
