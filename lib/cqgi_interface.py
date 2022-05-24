@@ -292,9 +292,10 @@ class cqgi_interface(Node):
 				# Sometimes this fails with a generic kernel error, thus the try/except
 				pln = None
 				try:
-					adaptor = BRepAdaptor_Surface(face.wrapped)
-					plane = adaptor.Plane().Location()
-					pln = [plane.X(), plane.Y(), plane.Z()]
+					#adaptor = BRepAdaptor_Surface(face.wrapped)
+					#plane = adaptor.Plane().Location()
+					#pln = [plane.X(), plane.Y(), plane.Z()]
+					pln = face.Center()
 				except Exception as e:
 					pln = [0.0, 0.0, 0.0]
 
@@ -304,9 +305,9 @@ class cqgi_interface(Node):
 				faces_tess[perm_id]["normal"].append(face.normalAt().y)
 				faces_tess[perm_id]["normal"].append(face.normalAt().z)
 				faces_tess[perm_id]["origin"] = Array()
-				faces_tess[perm_id]["origin"].append(pln[0])
-				faces_tess[perm_id]["origin"].append(pln[1])
-				faces_tess[perm_id]["origin"].append(pln[2])
+				faces_tess[perm_id]["origin"].append(pln.x)
+				faces_tess[perm_id]["origin"].append(pln.y)
+				faces_tess[perm_id]["origin"].append(pln.z)
 
 				reverse = (
 					True
