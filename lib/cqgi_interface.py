@@ -73,7 +73,12 @@ class cqgi_interface(Node):
 					cur_comp = Dictionary()
 					cur_comp["id"] = component_id
 					cur_comp["workplanes"] = Array()
-					cur_comp["largest_dimension"] = result.shape.largestDimension()
+
+					# We cannot get the largest dimension if there are no solids
+					if result.shape.solids().size() == 0:
+						cur_comp["largest_dimension"] = 5.0
+					else:
+						cur_comp["largest_dimension"] = result.shape.largestDimension()
 
 					# Break out the metadata line
 					meta_line = re.findall('.*# meta.*', script_text)
@@ -124,7 +129,7 @@ class cqgi_interface(Node):
 						# Add the current workplane to the array
 						cur_comp["workplanes"].append(cur_wp)
 
-	#					# Grab the previous solid, if there is one
+						# Grab the previous solid, if there is one
 						try:
 							tess_shape = result.shape.end().end().val()
 							tess_edges = result.shape.end().end().edges()
@@ -132,6 +137,7 @@ class cqgi_interface(Node):
 							# Tessellate the enclosed shape object
 							obj = self.tess(tess_shape, tess_edges)
 						except:
+							# We do not want to flood the user with unimportant messages
 							pass
 
 						# Add the current component, even if it only contains a workplane

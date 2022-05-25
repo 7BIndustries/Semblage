@@ -1,4 +1,4 @@
-[gd_scene load_steps=73 format=2]
+[gd_scene load_steps=74 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -36,6 +36,7 @@
 [ext_resource path="res://ParametersTree.gd" type="Script" id=34]
 [ext_resource path="res://ColorPickerDialog.gd" type="Script" id=35]
 [ext_resource path="res://SaveBeforeCloseDialog.gd" type="Script" id=36]
+[ext_resource path="res://assets/icons/show_code_button_flat_ready.svg" type="Texture" id=37]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
@@ -166,9 +167,6 @@ resource_name = "ParamType"
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 2 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="GUI" type="MarginContainer" parent="."]
 anchor_right = 1.0
@@ -233,9 +231,15 @@ margin_right = 331.0
 margin_bottom = 48.0
 icon = ExtResource( 4 )
 
-[node name="AboutButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
+[node name="ShowCodeButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
 margin_left = 335.0
 margin_right = 387.0
+margin_bottom = 48.0
+icon = ExtResource( 37 )
+
+[node name="AboutButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
+margin_left = 391.0
+margin_right = 443.0
 margin_bottom = 48.0
 icon = ExtResource( 28 )
 
@@ -1466,10 +1470,10 @@ margin_right = 315.0
 margin_bottom = 517.0
 
 [node name="ColorPicker" type="ColorPicker" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
-margin_left = 92.0
-margin_top = 92.0
-margin_right = 400.0
-margin_bottom = 554.0
+margin_left = 100.0
+margin_top = 100.0
+margin_right = 408.0
+margin_bottom = 562.0
 
 [node name="OkButton" type="Button" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
 margin_top = 466.0
@@ -1538,12 +1542,44 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "No"
 
+[node name="CodeViewerDialog" type="WindowDialog" parent="."]
+margin_right = 400.0
+margin_bottom = 500.0
+rect_min_size = Vector2( 400, 500 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+window_title = "Current Code"
+
+[node name="MarginContainer" type="MarginContainer" parent="CodeViewerDialog"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 390.0
+margin_bottom = 490.0
+rect_min_size = Vector2( 380, 480 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CodeScroller" type="ScrollContainer" parent="CodeViewerDialog/MarginContainer"]
+margin_right = 380.0
+margin_bottom = 480.0
+rect_min_size = Vector2( 380, 480 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CodeView" type="TextEdit" parent="CodeViewerDialog/MarginContainer/CodeScroller"]
+margin_right = 380.0
+margin_bottom = 480.0
+rect_min_size = Vector2( 380, 480 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton" to="." method="_on_OpenButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton" to="." method="_on_SaveButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton" to="." method="_on_MakeButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton" to="." method="_on_CloseButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton" to="." method="_on_ReloadButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton" to="." method="_on_HomeViewButton_button_down"]
+[connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/ShowCodeButton" to="." method="_on_ShowCodeButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton" to="." method="_on_AboutButton_button_down"]
 [connection signal="activate_data_popup" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree" to="." method="_on_ComponentTree_activate_data_popup"]
 [connection signal="error" from="GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree" to="." method="_on_error"]

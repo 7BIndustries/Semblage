@@ -318,7 +318,7 @@ func test_loft_control():
 	# Simulate a right click on the document tags control to bring up the operations dialog
 	popup.activate_popup(component_text, false, comp_names, params, null)
 
-	# Simulate a click of the workplane button
+	# Simulate a click of the 3D button
 	var threed_btn = popup.get_node("VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton")
 	threed_btn.pressed = true
 	threed_btn.emit_signal("toggled", threed_btn)

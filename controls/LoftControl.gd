@@ -6,10 +6,9 @@ class_name LoftControl
 
 var prev_template = null
 
-var template = "{wire_component}.loft(filled={filled},ruled={ruled},combine={combine}).tag(\"{comp_name}\")"
+var template = "{wire_component}.loft(ruled={ruled},combine={combine}).tag(\"{comp_name}\")"
 
 const wire_component_edit_rgx = "(?<=^)(.*?)(?=\\.loft)"
-const filled_edit_rgx = "(?<=filled\\=)(.*?)(?=\\,ruled)"
 const ruled_edit_rgx = "(?<=.ruled\\()(.*?)(?=,combine)"
 const combine_edit_rgx = "(?<=combine\\=)(.*?)(?=\\,)"
 const tag_edit_rgx = "(?<=.tag\\(\")(.*?)(?=\"\\))"
@@ -49,18 +48,6 @@ func _ready():
 	tag_name_txt.connect("text_changed", self, "_on_tag_text_changed")
 	tag_name_group.add_child(tag_name_txt)
 
-	# Add the filled checkbox
-	var filled_group = HBoxContainer.new()
-	filled_group.name = "filled_group"
-	var filled_lbl = Label.new()
-	filled_lbl.set_text("Filled: ")
-	filled_group.add_child(filled_lbl)
-	var filled_ctrl = CheckBox.new()
-	filled_ctrl.pressed = true
-	filled_ctrl.name = "filled_ctrl"
-	filled_ctrl.hint_tooltip = tr("FILLED_CTRL_HINT_TOOLTIP")
-	filled_group.add_child(filled_ctrl)
-
 	# Add the ruled checkbox
 	var ruled_group = HBoxContainer.new()
 	ruled_group.name = "ruled_group"
@@ -96,7 +83,6 @@ func _ready():
 
 	add_child(wire_wp_group)
 	add_child(tag_name_group)
-	add_child(filled_group)
 	add_child(ruled_group)
 	add_child(combine_group)
 	add_child(error_btn_group)
@@ -157,14 +143,12 @@ Fills out the template and returns it.
 func get_completed_template():
 	var wire_wp_opt = get_node("wire_wp_group/wire_wp_opt")
 	var tag_name_txt = get_node("tag_name_group/tag_name_txt")
-	var filled_ctrl = get_node("filled_group/filled_ctrl")
 	var ruled_ctrl = get_node("ruled_group/ruled_ctrl")
 	var combine_ctrl = get_node("combine_group/combine_ctrl")
 
 	var complete = template.format({
 		"wire_component": wire_wp_opt.get_item_text(wire_wp_opt.get_selected_id()),
 		"comp_name": tag_name_txt.get_text(),
-		"filled": filled_ctrl.pressed,
 		"ruled": ruled_ctrl.pressed,
 		"combine": combine_ctrl.pressed
 	})
@@ -186,7 +170,6 @@ Loads values into the control's sub-controls based on a code string.
 func set_values_from_string(text_line):
 	var wire_wp_opt = get_node("wire_wp_group/wire_wp_opt")
 	var tag_name_txt = get_node("tag_name_group/tag_name_txt")
-	var filled_ctrl = get_node("filled_group/filled_ctrl")
 	var ruled_ctrl = get_node("ruled_group/ruled_ctrl")
 	var combine_ctrl = get_node("combine_group/combine_ctrl")
 
@@ -205,13 +188,6 @@ func set_values_from_string(text_line):
 	res = rgx.search(text_line)
 	if res:
 		tag_name_txt.set_text(res.get_string())
-
-	# Filled boolean
-	rgx.compile(filled_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		var filled = res.get_string()
-		filled_ctrl.pressed = true if filled == "True" else false
 
 	# Ruled boolean
 	rgx.compile(ruled_edit_rgx)

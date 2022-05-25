@@ -35,6 +35,7 @@ func _ready():
 	var reload_button = $GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton
 	var close_button = $GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton
 	var home_button = $GUI/VBoxContainer/PanelContainer/Toolbar/HomeViewButton
+	var code_button = $GUI/VBoxContainer/PanelContainer/Toolbar/ShowCodeButton
 	var about_button = $GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton
 	open_button.hint_tooltip = tr("OPEN_BUTTON_HINT_TOOLTIP")
 	save_button.hint_tooltip = tr("SAVE_BUTTON_HINT_TOOLTIP")
@@ -42,6 +43,7 @@ func _ready():
 	reload_button.hint_tooltip = tr("RELOAD_BUTTON_HINT_TOOLTIP")
 	close_button.hint_tooltip = tr("CLOSE_BUTTON_HINT_TOOLTIP")
 	home_button.hint_tooltip = tr("HOME_VIEW_BUTTON_HINT_TOOLTIP")
+	code_button.hint_tooltip = tr("SHOW_CODE_BUTTON_HINT_TOOLTIP")
 	about_button.hint_tooltip = tr("ABOUT_BUTTON_HINT_TOOLTIP")
 
 	# Connect the error signal to the handler method for errors
@@ -1998,3 +2000,18 @@ func _notification(what):
 			return
 		else:
 			get_tree().quit() # default behavior
+
+
+"""
+Called when the user clicks the Show Code button in the main toolbar.
+"""
+func _on_ShowCodeButton_button_down():
+	var dlg = $CodeViewerDialog
+	var code_view = $CodeViewerDialog/MarginContainer/CodeScroller/CodeView
+
+	# Set the current rendered code to be the contents of the code view label
+	var component_text = self._convert_component_tree_to_script(true)
+	code_view.set_text(component_text)
+
+	# Show the dialog
+	dlg.popup_centered()

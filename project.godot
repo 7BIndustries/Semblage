@@ -99,6 +99,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://controls/FilletControl.gd"
 }, {
+"base": "Reference",
+"class": "GutHookScript",
+"language": "GDScript",
+"path": "res://addons/gut/hook_script.gd"
+}, {
+"base": "Node",
+"class": "GutTest",
+"language": "GDScript",
+"path": "res://addons/gut/test.gd"
+}, {
 "base": "VBoxContainer",
 "class": "HLineControl",
 "language": "GDScript",
@@ -383,6 +393,8 @@ _global_script_class_icons={
 "ExtrudeControl": "",
 "FileSystem": "",
 "FilletControl": "",
+"GutHookScript": "",
+"GutTest": "",
 "HLineControl": "",
 "HLineToControl": "",
 "HoleControl": "",
@@ -449,7 +461,6 @@ config/icon="res://icon.png"
 
 cqgipy="*res://lib/cqgi_interface.py"
 synth="*res://lib/synthesis.py"
-discovery="*res://lib/module_discovery.py"
 
 [debug]
 
@@ -459,10 +470,6 @@ gdscript/warnings/unsafe_method_access=true
 gdscript/warnings/unsafe_cast=true
 gdscript/warnings/unsafe_call_argument=true
 shapes/collision/shape_color=Color( 0, 0.6, 0.701961, 0 )
-
-[editor_plugins]
-
-enabled=PoolStringArray( "res://addons/cadquery_export/plugin.cfg" )
 
 [gdnative]
 
@@ -877,7 +884,7 @@ ZoomingOut={
 }
 mouse_select={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777238,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777238,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 Action={
@@ -887,17 +894,17 @@ Action={
 }
 SaveComponent={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":true,"pressed":false,"scancode":83,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":true,"pressed":false,"scancode":83,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 select_face={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777237,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777237,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 vertex_select={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777240,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777240,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 

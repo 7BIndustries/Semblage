@@ -416,7 +416,7 @@ func get_completed_template():
 		# Add the escaped quotes if needed
 		var face_selector = face_selector_txt.get_text()
 		if face_selector != "":
-			face_selector = "\"\"" + face_selector + "\"\""
+			face_selector = "\"" + face_selector + "\""
 		
 		completed += faces_template.format({"face_selector": face_selector});
 
@@ -424,7 +424,7 @@ func get_completed_template():
 	if show_edges and edge_comps_opt_1.get_item_text(edge_comps_opt_1.get_selected_id()) != "None":
 		var edge_selector = edge_selector_txt.get_text()
 		if edge_selector != "":
-			edge_selector = "\"\"" + edge_selector + "\"\""
+			edge_selector = "\"" + edge_selector + "\""
 
 		completed += edges_template.format({"edge_selector": edge_selector})
 
@@ -432,7 +432,7 @@ func get_completed_template():
 	if show_vertices and vertex_comps_opt_1.get_item_text(vertex_comps_opt_1.get_selected_id()) != "None":
 		var vertex_selector = vertex_selector_txt.get_text()
 		if vertex_selector != "":
-			vertex_selector = "\"\"" + vertex_selector + "\"\""
+			vertex_selector = "\"" + vertex_selector + "\""
 
 		completed += vertices_template.format({"vertex_selector": vertex_selector})
 
