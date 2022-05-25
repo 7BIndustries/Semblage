@@ -471,6 +471,10 @@ gdscript/warnings/unsafe_cast=true
 gdscript/warnings/unsafe_call_argument=true
 shapes/collision/shape_color=Color( 0, 0.6, 0.701961, 0 )
 
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/cadquery_export/plugin.cfg" )
+
 [gdnative]
 
 singletons=[ "res://pythonscript.gdnlib" ]
@@ -855,6 +859,10 @@ _global_script_class_icons={
 "WedgeControl": "",
 "WorkplaneControl": ""
 }
+
+[global]
+
+category=false
 
 [input]
 
