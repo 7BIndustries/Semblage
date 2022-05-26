@@ -1056,9 +1056,9 @@ func _synthesize_selector():
 	# See if we have a selected face(s)
 	if selected_faces.size() > 0:
 		# Attempt to synthesize a selector based on what is selected and what is not
-		selector_str = synth.synthesize(selected_origins, selected_normals, other_origins, other_normals, selected_meta, other_meta)
+		selector_str = synth.synthesize("Face", selected_origins, selected_normals, selected_meta, other_origins, other_normals, other_meta)
 	elif selected_edges.size() > 0:
-		selector_str = synth.synthesize_edge_sel(selected_edges, selected_edge_types, selected_edge_starts, selected_edge_ends, selected_normals)
+		selector_str = synth.synthesize_edge_sel("Edge", selected_edges, selected_edge_types, selected_edge_starts, selected_edge_ends, selected_normals)
 
 	return selector_str
 
