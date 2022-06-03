@@ -75,10 +75,10 @@ class cqgi_interface(Node):
 					cur_comp["workplanes"] = Array()
 
 					# We cannot get the largest dimension if there are no solids
-					if result.shape.solids().size() == 0:
-						cur_comp["largest_dimension"] = 5.0
+					if type(result.shape.val()).__name__ != "Vector":
+						cur_comp["largest_dimension"] = result.shape.val().BoundingBox().DiagonalLength
 					else:
-						cur_comp["largest_dimension"] = result.shape.largestDimension()
+						cur_comp["largest_dimension"] = 5.0
 
 					# Break out the metadata line
 					meta_line = re.findall('.*# meta.*', script_text)
