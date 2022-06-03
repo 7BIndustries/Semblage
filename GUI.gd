@@ -655,7 +655,10 @@ func render_component_tree(component):
 		for seg in component["edges"][edge]["segments"]:
 			var start_vert = component["edges"][edge]["start_vertex"]
 			var end_vert = component["edges"][edge]["end_vertex"]
-			var line = Meshes.gen_line_mesh(0.010 * min_dim, seg, edge, component["edges"][edge]["type"], start_vert, end_vert)
+			var normal = null
+			if component["edges"][edge].has("normal"):
+				normal = component["edges"][edge]["normal"]
+			var line = Meshes.gen_line_mesh(0.010 * min_dim, seg, edge, component["edges"][edge]["type"], start_vert, end_vert, normal)
 			vp.add_child(line)
 
 	# Only reset the view if the same distance changed
@@ -991,6 +994,8 @@ func _synthesize_selector():
 	var selected_edge_types = []
 	var selected_edge_starts = []
 	var selected_edge_ends = []
+	var other_edge_starts = []
+	var other_edge_ends = []
 
 	# Step through all the meshes and see which one is selected
 	for child in vp.get_children():
@@ -1026,6 +1031,7 @@ func _synthesize_selector():
 					elif child.has_meta("parent_perm_id") and child.get_meta("parent_perm_id").begins_with("edge"):
 						var par_id = child.get_meta("parent_perm_id")
 						if not par_id in selected_edges:
+							selected_normals.append(norm)
 							selected_edges.append(par_id)
 							selected_edge_types.append(child.get_meta("edge_type"))
 							selected_edge_starts.append(child.get_meta("start_vertex"))
@@ -1043,6 +1049,11 @@ func _synthesize_selector():
 						var meta = Dictionary()
 						meta['is_planar'] = child.get_meta("is_planar")
 						other_meta.append(meta)
+
+					# Save the extra edge data
+					if child.has_meta("parent_perm_id") and child.get_meta("parent_perm_id").begins_with("edge"):
+						other_edge_starts.append(child.get_meta("start_vertex"))
+						other_edge_ends.append(child.get_meta("end_vertex"))
 			else:
 				# Save the information for this non-selected face
 				if orig != null:
@@ -1058,7 +1069,7 @@ func _synthesize_selector():
 		# Attempt to synthesize a selector based on what is selected and what is not
 		selector_str = synth.synthesize("Face", selected_origins, selected_normals, selected_meta, other_origins, other_normals, other_meta)
 	elif selected_edges.size() > 0:
-		selector_str = synth.synthesize_edge_sel("Edge", selected_edges, selected_edge_types, selected_edge_starts, selected_edge_ends, selected_normals)
+		selector_str = synth.synthesize_edge_sel("Edge", selected_edges, selected_edge_types, selected_edge_starts, selected_edge_ends, selected_normals, other_edge_starts, other_edge_ends, other_normals, other_meta)
 
 	return selector_str
 

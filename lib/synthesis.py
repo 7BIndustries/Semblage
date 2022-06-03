@@ -36,7 +36,7 @@ class synthesis(Node):
 
 		return res
 
-	def synthesize_edge_sel(self, selector_type, selected_edges, selected_edge_types, selected_edge_starts, selected_edge_ends, selected_normals):
+	def synthesize_edge_sel(self, selector_type, selected_edges, selected_edge_types, selected_edge_starts, selected_edge_ends, selected_normals, other_edge_starts, other_edge_ends, other_normals, other_edge_meta):
 		"""
 		Takes a list of edges and tries to synthesize a selector that will work for all of them.
 		"""
@@ -44,16 +44,22 @@ class synthesis(Node):
 		sel_edge_starts = []
 		sel_edge_ends = []
 		sel_normals = []
-		other_edge_starts = [()]
-		other_edge_ends = [()]
-		other_edge_meta = [{}]
-		other_normals = [()]
+		other_starts = []
+		other_ends = []
+		other_meta = []
+		other_norms = []
 		for ses in selected_edge_starts:
 			sel_edge_starts.append((ses.x, ses.y, ses.z))
 		for see in selected_edge_ends:
 			sel_edge_ends.append((see.x, see.y, see.z))
 		for sen in selected_normals:
 			sel_normals.append((sen.x, sen.y, sen.z))
+		for os in other_edge_starts:
+			other_starts.append((os.x, os.y, os.z))
+		for oe in other_edge_ends:
+			other_ends.append((oe.x, oe.y, oe.z))
+		for on in other_normals:
+			other_norms.append((on.x, on.y, on.z))
 
 		# Convert the lists of GDString objects to lists of strs
 		sel_edges = []
@@ -63,7 +69,14 @@ class synthesis(Node):
 		for set in selected_edge_types:
 			sel_edge_types.append(str(set))
 
+		# Handle dicts of metadata
+		for om in other_edge_meta:
+			for om_inner in om.keys():
+				other_meta_temp = {}
+				other_meta_temp[str(om_inner)] = bool(om[om_inner])
+				other_meta.append(other_meta_temp)
+
 		# Synthesize the selector
-		res = vector_based_synth.synthesize(str(selector_type), selected_edges=sel_edges, selected_edge_types=sel_edge_types, selected_edge_starts=sel_edge_starts, selected_edge_ends=sel_edge_ends, selected_edge_normals=sel_normals, other_edge_starts=other_edge_starts, other_edge_ends=other_edge_ends, other_edge_meta=other_edge_meta, other_normals=other_normals)
+		res = vector_based_synth.synthesize(str(selector_type), selected_edges=sel_edges, selected_edge_types=sel_edge_types, selected_edge_starts=sel_edge_starts, selected_edge_ends=sel_edge_ends, selected_edge_normals=sel_normals, other_edge_starts=other_starts, other_edge_ends=other_ends, other_edge_meta=other_meta, other_normals=other_norms)
 
 		return res

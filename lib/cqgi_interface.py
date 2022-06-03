@@ -388,7 +388,10 @@ class cqgi_interface(Node):
 				edges_tess[edge_perm_id] = Dictionary()
 				edges_tess[edge_perm_id]["segments"] = Array()
 
+				# The edge type
 				edge = edge.val()
+
+				# We need to handle different kinds of edges differently
 				gt = edge.geomType()
 
 				# Save metadata about the edge that can be used for selector synthesis
@@ -405,6 +408,16 @@ class cqgi_interface(Node):
 					# Save the start and end vertices for the circle (which should be the same)
 					edges_tess[edge_perm_id]["start_vertex"] = Vector3(edge.startPoint().x, edge.startPoint().y, edge.startPoint().z)
 					edges_tess[edge_perm_id]["end_vertex"] = Vector3(edge.endPoint().x, edge.endPoint().y, edge.endPoint().z)
+
+					# Find the effective origin and normal of the circular edge
+					edges_tess[edge_perm_id]["normal"] = Array()
+					edges_tess[edge_perm_id]["normal"].append(cq_shape.plane.zDir.x)
+					edges_tess[edge_perm_id]["normal"].append(cq_shape.plane.zDir.y)
+					edges_tess[edge_perm_id]["normal"].append(cq_shape.plane.zDir.z)
+					edges_tess[edge_perm_id]["origin"] = Array()
+					edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().x)
+					edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().y)
+					edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().z)
 
 					# Discretize the curve
 					disc = GCPnts.GCPnts_TangentialDeflection(BRepAdaptor.BRepAdaptor_Curve(edge.wrapped), 0.5, 0.01)

@@ -138,7 +138,7 @@ static func gen_component_meshes(component):
 """
 Generates a cube mesh that represents a line/edge in the 3D view.
 """
-static func gen_line_mesh(thickness, segment, edge_perm_id, edge_type, start_vertex, end_vertex):
+static func gen_line_mesh(thickness, segment, edge_perm_id, edge_type, start_vertex, end_vertex, normal):
 	var new_color = [1.0, 1.0, 1.0, 1.0]
 
 	var material = SpatialMaterial.new()
@@ -166,6 +166,9 @@ static func gen_line_mesh(thickness, segment, edge_perm_id, edge_type, start_ver
 	mesh_inst.set_meta("edge_type", edge_type)
 	mesh_inst.set_meta("start_vertex", start_vertex)
 	mesh_inst.set_meta("end_vertex", end_vertex)
+	if edge_type != "LINE":
+		mesh_inst.set_meta("normal", Vector3(normal[0], normal[1], normal[2]))
+		mesh_inst.set_meta("origin", Vector3(start_vertex[0], start_vertex[1], start_vertex[2]))
 
 	var raw_cube_mesh = CubeMesh.new()
 	raw_cube_mesh.size = Vector3(thickness, thickness, dist)

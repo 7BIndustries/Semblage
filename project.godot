@@ -461,6 +461,7 @@ config/icon="res://icon.png"
 
 cqgipy="*res://lib/cqgi_interface.py"
 synth="*res://lib/synthesis.py"
+discovery="*res://lib/module_discovery.py"
 
 [debug]
 
