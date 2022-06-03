@@ -414,10 +414,12 @@ class cqgi_interface(Node):
 					edges_tess[edge_perm_id]["normal"].append(cq_shape.plane.zDir.x)
 					edges_tess[edge_perm_id]["normal"].append(cq_shape.plane.zDir.y)
 					edges_tess[edge_perm_id]["normal"].append(cq_shape.plane.zDir.z)
-					edges_tess[edge_perm_id]["origin"] = Array()
-					edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().x)
-					edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().y)
-					edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().z)
+					# Arc center does not apply for SPLINE and BSPLINE
+					if gt == "SPLINE" and gt == "BSPLINE":
+						edges_tess[edge_perm_id]["origin"] = Array()
+						edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().x)
+						edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().y)
+						edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().z)
 
 					# Discretize the curve
 					disc = GCPnts.GCPnts_TangentialDeflection(BRepAdaptor.BRepAdaptor_Curve(edge.wrapped), 0.5, 0.01)
