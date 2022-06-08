@@ -205,6 +205,7 @@ class cqgi_interface(Node):
 							cur_comp_extra["smallest_dimension"] = obj_extra["smallest_dimension"]
 							if cur_comp_extra["smallest_dimension"] == 0:
 								cur_comp_extra["smallest_dimension"] = cur_comp_extra["largest_dimension"]
+							cur_comp_extra["line_dimension"] = obj_extra["line_dimension"]
 							cur_comp_extra["faces"] = obj_extra["faces"]
 							cur_comp_extra["edges"] = obj_extra["edges"]
 							cur_comp_extra["vertices"] = obj_extra["vertices"]
@@ -220,6 +221,7 @@ class cqgi_interface(Node):
 					# Save the tessellation information, if there was a tessellatable object
 					if obj != None:
 						cur_comp["smallest_dimension"] = obj["smallest_dimension"]
+						cur_comp["line_dimension"] = obj["line_dimension"]
 						if cur_comp["smallest_dimension"] == 0:
 							cur_comp["smallest_dimension"] = cur_comp["largest_dimension"]
 						cur_comp["faces"] = obj["faces"]
@@ -251,6 +253,7 @@ class cqgi_interface(Node):
 		"""
 		Handles converting a CadQuery object to a tessellated/mesh version.
 		"""
+		line_dimension = 0
 		smallest_dimension = 999999999
 		workplanes = Array()
 		shape_tess = Dictionary()
@@ -268,6 +271,25 @@ class cqgi_interface(Node):
 
 		# Protect against this being called with just a blank workplane object in the stack
 		if hasattr(shape, "ShapeType"):
+			# Find the smallest dimension so that we can scale lines appropriately
+			if len(shape.Solids()) != 0:
+				max_temp = 0
+				min_temp = 999999999
+				diag_temp = 0
+				for sol in shape.Solids():
+					# Grab the max
+					if sol.BoundingBox().xlen > max_temp:
+						max_temp = sol.BoundingBox().xlen
+					if sol.BoundingBox().ylen > max_temp:
+						max_temp = sol.BoundingBox().ylen
+					if sol.BoundingBox().zlen > max_temp:
+						max_temp = sol.BoundingBox().zlen
+
+					diag_temp = sol.BoundingBox().DiagonalLength
+
+				# Use the ratio of the sizes to try to find a good medium for the line width
+				line_dimension = (max_temp / diag_temp) * 0.1
+
 			for face in shape.Faces():
 				# Construct a unique permanent ID so that the vertices, edges
 				# and triangles can be associated with this face
@@ -512,6 +534,7 @@ class cqgi_interface(Node):
 		shape_tess["vertices"] = vertices_tess
 		shape_tess["workplanes"] = workplanes
 		shape_tess["smallest_dimension"] = smallest_dimension
+		shape_tess["line_dimension"] = line_dimension
 
 		return shape_tess
 

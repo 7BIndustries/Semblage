@@ -658,7 +658,7 @@ func render_component_tree(component):
 			var normal = null
 			if component["edges"][edge].has("normal"):
 				normal = component["edges"][edge]["normal"]
-			var line = Meshes.gen_line_mesh(0.005 * max_dim, seg, edge, component["edges"][edge]["type"], start_vert, end_vert, normal)
+			var line = Meshes.gen_line_mesh(component["line_dimension"], seg, edge, component["edges"][edge]["type"], start_vert, end_vert, normal)
 			vp.add_child(line)
 
 	# Only reset the view if the same distance changed
