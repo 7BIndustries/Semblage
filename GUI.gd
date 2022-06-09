@@ -581,7 +581,7 @@ func _render_component_text(component_text):
 
 	# Clear the 3D viewport
 	self._clear_viewport()
-	cqgipy.set_script_path("/home/jwright/Downloads/repos/push-button-switch")
+	cqgipy.set_script_path(open_file_path)
 
 	# Method that post-processes the results of the script to pull out renderables
 	render_tree = cqgipy
@@ -657,6 +657,7 @@ func render_component_tree(component):
 			var end_vert = component["edges"][edge]["end_vertex"]
 			var normal = null
 			if component["edges"][edge].has("normal"):
+				normal = component["edges"][edge]["normal"]
 				normal = component["edges"][edge]["normal"]
 			var line = Meshes.gen_line_mesh(component["line_dimension"], seg, edge, component["edges"][edge]["type"], start_vert, end_vert, normal)
 			vp.add_child(line)
