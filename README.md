@@ -1,5 +1,7 @@
 # Semblage
 
+[![tests](https://github.com/7BIndustries/Semblage/actions/workflows/tests.yml/badge.svg)](https://github.com/7BIndustries/Semblage/actions/workflows/tests.yml)
+
 ***Please Note*** Semblage is in alpha, and so bugs and missing functionality should be expected.
 
 ## Introduction
