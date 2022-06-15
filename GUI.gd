@@ -658,16 +658,13 @@ func render_component_tree(component):
 			var normal = null
 			if component["edges"][edge].has("normal"):
 				normal = component["edges"][edge]["normal"]
-				normal = component["edges"][edge]["normal"]
 			var line = Meshes.gen_line_mesh(component["line_dimension"], seg, edge, component["edges"][edge]["type"], start_vert, end_vert, normal)
 			vp.add_child(line)
 
 	# Only reset the view if the same distance changed
 	if new_safe_dist != safe_distance:
 		# Find the safe distance for the camera based on the maximum distance of any vertex from the origin
-		safe_distance = new_safe_dist # get_safe_camera_distance(max_dist)
-
-#		_home_view()
+		safe_distance = new_safe_dist
 
 	var status_lbl = $GUI/VBoxContainer/StatusBar/Panel/HBoxContainer/StatusLabel
 	status_lbl.set_text("Redering component...done.")
@@ -914,6 +911,11 @@ func _on_ActionPopupPanel_ok_signal(new_template, combine_map):
 
 	# Render the component
 	_execute_and_render()
+
+	# Make sure the user has placed a workplane
+	if component_tree_root.get_children() == null:
+		emit_signal("error", "Please add a workplane before adding other features.")
+		return
 
 	# If this is the workplane or first non-workplane item being added, set the home view
 	var tv = component_tree_root.get_children().get_children()

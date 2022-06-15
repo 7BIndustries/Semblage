@@ -66,7 +66,7 @@ class cqgi_interface(Node):
 				render_tree["components"] = Array()
 
 				# Step through each of the objects returned from script execution
-				i = 0
+				cnt = 0
 				for result in build_result.results:
 					component_id = list(result.shape.ctx.tags)[0]
 
@@ -75,7 +75,7 @@ class cqgi_interface(Node):
 					cur_comp["workplanes"] = Array()
 
 					# We cannot get the largest dimension if there are no solids
-					if type(result.shape.val()).__name__ != "Vector":
+					if type(result.shape.val()).__name__ != "Vector" and type(result.shape.val()).__name__ != "Location":
 						cur_comp["largest_dimension"] = result.shape.val().BoundingBox().DiagonalLength
 					else:
 						cur_comp["largest_dimension"] = 5.0
@@ -83,7 +83,8 @@ class cqgi_interface(Node):
 					# Break out the metadata line
 					meta_line = re.findall('.*# meta.*', script_text)
 					if meta_line:
-						meta_data = meta_line[i].split("meta ") # meta_line.group().split("meta ")
+						meta_data = meta_line[cnt].split("meta ")
+						cnt += 1
 
 						# Break out the color data from the metadata
 						if len(meta_data) > 1:
@@ -129,17 +130,6 @@ class cqgi_interface(Node):
 						# Add the current workplane to the array
 						cur_comp["workplanes"].append(cur_wp)
 
-						# Grab the previous solid, if there is one
-						try:
-							tess_shape = result.shape.end().end().val()
-							tess_edges = result.shape.end().end().edges()
-
-							# Tessellate the enclosed shape object
-							obj = self.tess(tess_shape, tess_edges)
-						except:
-							# We do not want to flood the user with unimportant messages
-							pass
-
 						# Add the current component, even if it only contains a workplane
 						render_tree["components"].append(cur_comp)
 					elif type(result.shape.val()).__name__ == "Face":
@@ -156,8 +146,14 @@ class cqgi_interface(Node):
 						obj = self.tess(tess_shape, tess_edges)
 
 						try:
-							# Get the workplane that the wire should be sitting on
-							wp_obj = result.shape.end()
+							# Find the workplane that the wire should be sitting on
+							for i in range(0, 20):
+								# Make sure the current object is either a solid or a compound
+								if type(result.shape.end(i).val()).__name__ == "Vector":
+									wp_obj = result.shape.end(i)
+
+									# We have found what we needed
+									break
 
 							# Get the origin, normal and center from the workplane
 							origin_vec = Vector3(wp_obj.val().x, wp_obj.val().y, wp_obj.val().z)
@@ -183,8 +179,8 @@ class cqgi_interface(Node):
 
 							# Add the current workplane to the array
 							cur_comp["workplanes"].append(cur_wp)
-						except:
-							pass
+						except Exception as err:
+							print(err)
 
 						try:
 							# Grab the previous solid for context
@@ -218,6 +214,39 @@ class cqgi_interface(Node):
 						# Tessellate the enclosed shape object
 						obj = self.tess(tess_shape, tess_edges)
 
+					# If we have something other than a solid or compound, find the last solid or
+					base_obj = None
+					if result.shape != None and type(result.shape.val()).__name__ != "Solid" and type(result.shape.val()).__name__ != "Compound":
+						try:
+							for i in range(0, 20):
+								# Make sure the current object is either a solid or a compound
+								if type(result.shape.end(i).val()).__name__ == "Solid" or type(result.shape.end(i).val()).__name__ == "Compound":
+									parent_obj = result.shape.end(i)
+									tess_shape = parent_obj.val()
+									tess_edges = parent_obj.edges()
+
+									# Tessellate the enclosed shape object
+									if obj == None:
+										obj = self.tess(tess_shape, tess_edges)
+									else:
+										base_obj = self.tess(tess_shape, tess_edges)
+
+									# We have found what we needed
+									break
+						except Exception as err:
+							pass
+
+					# Grab the previous solid, if there is one
+#					try:
+#						tess_shape = result.shape.end().end().val()
+#						tess_edges = result.shape.end().end().edges()
+#
+#						# Tessellate the enclosed shape object
+#						obj = self.tess(tess_shape, tess_edges)
+#					except:
+#						# We do not want to flood the user with unimportant messages
+#						pass
+
 					# Save the tessellation information, if there was a tessellatable object
 					if obj != None:
 						cur_comp["smallest_dimension"] = obj["smallest_dimension"]
@@ -227,6 +256,15 @@ class cqgi_interface(Node):
 						cur_comp["faces"] = obj["faces"]
 						cur_comp["edges"] = obj["edges"]
 						cur_comp["vertices"] = obj["vertices"]
+
+						# Add the base object's geometry in addition to the main object's
+						if base_obj != None:
+							for bf in base_obj["faces"].keys():
+								cur_comp["faces"][bf] = base_obj["faces"][bf]
+							for be in base_obj["edges"]:
+								cur_comp["edges"][be] = base_obj["edges"][be]
+							for bv in base_obj["vertices"]:
+								cur_comp["vertices"][bv] = base_obj["vertices"][bv]
 					else:
 						cur_comp["smallest_dimension"] = 1.0
 						cur_comp["largest_dimension"] = 5.0
@@ -236,8 +274,6 @@ class cqgi_interface(Node):
 
 					# Add the current component
 					render_tree["components"].append(cur_comp)
-
-					i += 1
 		except Exception as err:
 			ret = "error~" + str(err)
 			return ret
@@ -289,6 +325,8 @@ class cqgi_interface(Node):
 
 				# Use the ratio of the sizes to try to find a good medium for the line width
 				line_dimension = (max_temp / diag_temp) * 0.1
+			else:
+				line_dimension = shape.BoundingBox().DiagonalLength * 0.01
 
 			for face in shape.Faces():
 				# Construct a unique permanent ID so that the vertices, edges
@@ -423,46 +461,6 @@ class cqgi_interface(Node):
 					edges_tess[edge_perm_id]["start_vertex"] = Vector3(edge.startPoint().x, edge.startPoint().y, edge.startPoint().z)
 					edges_tess[edge_perm_id]["end_vertex"] = Vector3(edge.endPoint().x, edge.endPoint().y, edge.endPoint().z)
 
-				# If dealing with some sort of arc, discretize it into individual lines
-				if gt == "CIRCLE" or gt == "ARC" or gt == "SPLINE" or gt == "BSPLINE" or gt == "ELLIPSE":
-					from OCP import GCPnts, BRepAdaptor
-
-					# Save the start and end vertices for the circle (which should be the same)
-					edges_tess[edge_perm_id]["start_vertex"] = Vector3(edge.startPoint().x, edge.startPoint().y, edge.startPoint().z)
-					edges_tess[edge_perm_id]["end_vertex"] = Vector3(edge.endPoint().x, edge.endPoint().y, edge.endPoint().z)
-
-					# Find the effective origin and normal of the circular edge
-					edges_tess[edge_perm_id]["normal"] = Array()
-					edges_tess[edge_perm_id]["normal"].append(cq_shape.plane.zDir.x)
-					edges_tess[edge_perm_id]["normal"].append(cq_shape.plane.zDir.y)
-					edges_tess[edge_perm_id]["normal"].append(cq_shape.plane.zDir.z)
-					# Arc center does not apply for SPLINE and BSPLINE
-					if gt == "SPLINE" and gt == "BSPLINE":
-						edges_tess[edge_perm_id]["origin"] = Array()
-						edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().x)
-						edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().y)
-						edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().z)
-
-					# Discretize the curve
-					disc = GCPnts.GCPnts_TangentialDeflection(BRepAdaptor.BRepAdaptor_Curve(edge.wrapped), 0.5, 0.01)
-
-					# Add each of the discretized sections to the edge list
-					if disc.NbPoints() > 1:
-						for i in range(2, disc.NbPoints() + 1):
-							cur_edge_segment = Dictionary()
-							cur_edge_segment["parent"] = edge_perm_id
-
-							p_0 = disc.Value(i - 1)
-							p_1 = disc.Value(i)
-
-							# Add the start and end vertices for this edge
-							cur_edge_segment["vertex_1"] = Vector3(p_0.X(), p_0.Y(), p_0.Z())
-							cur_edge_segment["vertex_2"] = Vector3(p_1.X(), p_1.Y(), p_1.Z())
-
-							# Save the current edge segment
-							edges_tess[edge_perm_id]["segments"].append(cur_edge_segment)
-							edge_segment_tess.append(cur_edge_segment)
-				else:
 					# Handle simple lines by collecting their beginning and end points
 					i = 0
 					x1 = 0
@@ -494,6 +492,46 @@ class cqgi_interface(Node):
 					# Save the current edge segment
 					edges_tess[edge_perm_id]["segments"].append(cur_edge_segment)
 					edge_segment_tess.append(cur_edge_segment)
+				# If dealing with some sort of arc, discretize it into individual lines
+				elif gt == "CIRCLE" or gt == "ARC" or gt == "SPLINE" or gt == "BSPLINE" or gt == "ELLIPSE":
+					from OCP import GCPnts, BRepAdaptor
+
+					# Save the start and end vertices for the circle (which should be the same)
+					edges_tess[edge_perm_id]["start_vertex"] = Vector3(edge.startPoint().x, edge.startPoint().y, edge.startPoint().z)
+					edges_tess[edge_perm_id]["end_vertex"] = Vector3(edge.endPoint().x, edge.endPoint().y, edge.endPoint().z)
+
+					# Find the effective origin and normal of the circular edge
+					edges_tess[edge_perm_id]["normal"] = Array()
+					edges_tess[edge_perm_id]["normal"].append(cq_shape.plane.zDir.x)
+					edges_tess[edge_perm_id]["normal"].append(cq_shape.plane.zDir.y)
+					edges_tess[edge_perm_id]["normal"].append(cq_shape.plane.zDir.z)
+
+					# Arc center does not apply for SPLINE and BSPLINE
+					if gt == "SPLINE" and gt == "BSPLINE":
+						edges_tess[edge_perm_id]["origin"] = Array()
+						edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().x)
+						edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().y)
+						edges_tess[edge_perm_id]["origin"].append(edge.arcCenter().z)
+
+					# Discretize the curve
+					disc = GCPnts.GCPnts_TangentialDeflection(BRepAdaptor.BRepAdaptor_Curve(edge.wrapped), 0.5, 0.01)
+
+					# Add each of the discretized sections to the edge list
+					if disc.NbPoints() > 1:
+						for i in range(2, disc.NbPoints() + 1):
+							cur_edge_segment = Dictionary()
+							cur_edge_segment["parent"] = edge_perm_id
+
+							p_0 = disc.Value(i - 1)
+							p_1 = disc.Value(i)
+
+							# Add the start and end vertices for this edge
+							cur_edge_segment["vertex_1"] = Vector3(p_0.X(), p_0.Y(), p_0.Z())
+							cur_edge_segment["vertex_2"] = Vector3(p_1.X(), p_1.Y(), p_1.Z())
+
+							# Save the current edge segment
+							edges_tess[edge_perm_id]["segments"].append(cur_edge_segment)
+							edge_segment_tess.append(cur_edge_segment)
 
 			# Add CadQuery-reported vertices
 			for vertex in cq_shape.vertices().all():
