@@ -263,8 +263,8 @@ class cqgi_interface(Node):
 								cur_comp["faces"][bf] = base_obj["faces"][bf]
 							for be in base_obj["edges"]:
 								cur_comp["edges"][be] = base_obj["edges"][be]
-							for bv in base_obj["vertices"]:
-								cur_comp["vertices"][bv] = base_obj["vertices"][bv]
+#							for bv in base_obj["vertices"]:
+#								cur_comp["vertices"][bv] = base_obj["vertices"][bv]
 					else:
 						cur_comp["smallest_dimension"] = 1.0
 						cur_comp["largest_dimension"] = 5.0
@@ -275,6 +275,8 @@ class cqgi_interface(Node):
 					# Add the current component
 					render_tree["components"].append(cur_comp)
 		except Exception as err:
+			import traceback
+			traceback.print_exc()
 			ret = "error~" + str(err)
 			return ret
 
@@ -307,26 +309,33 @@ class cqgi_interface(Node):
 
 		# Protect against this being called with just a blank workplane object in the stack
 		if hasattr(shape, "ShapeType"):
-			# Find the smallest dimension so that we can scale lines appropriately
-			if len(shape.Solids()) != 0:
-				max_temp = 0
-				min_temp = 999999999
-				diag_temp = 0
-				for sol in shape.Solids():
-					# Grab the max
-					if sol.BoundingBox().xlen > max_temp:
-						max_temp = sol.BoundingBox().xlen
-					if sol.BoundingBox().ylen > max_temp:
-						max_temp = sol.BoundingBox().ylen
-					if sol.BoundingBox().zlen > max_temp:
-						max_temp = sol.BoundingBox().zlen
+			# Find the min and max size of the bounding box
+			min = 999999999
+			max = 0
+			if shape.BoundingBox().xlen > 0 and shape.BoundingBox().xlen > max:
+				max = shape.BoundingBox().xlen
+			if shape.BoundingBox().ylen > 0 and shape.BoundingBox().ylen > max:
+				max = shape.BoundingBox().ylen
+			if shape.BoundingBox().zlen > 0 and shape.BoundingBox().zlen > max:
+				max = shape.BoundingBox().zlen
+			if shape.BoundingBox().xlen > 0 and shape.BoundingBox().xlen < min:
+				min = shape.BoundingBox().xlen
+			if shape.BoundingBox().ylen > 0 and shape.BoundingBox().ylen < min:
+				min = shape.BoundingBox().ylen
+			if shape.BoundingBox().zlen > 0 and shape.BoundingBox().zlen < min:
+				min = shape.BoundingBox().zlen
 
-					diag_temp = sol.BoundingBox().DiagonalLength
-
-				# Use the ratio of the sizes to try to find a good medium for the line width
-				line_dimension = (max_temp / diag_temp) * 0.1
+			# Use factors of 10 of the ratio of the min and max to set the edge line thickness
+			ratio = min / max
+			if ratio > 0 and ratio <= 10:
+				diag = max * 0.005
+			elif ratio > 10 and ratio <= 100:
+				diag = max * 0.05
 			else:
-				line_dimension = shape.BoundingBox().DiagonalLength * 0.01
+				diag = max * 0.5
+
+			# Save the edge line thickness
+			line_dimension = diag #shape.BoundingBox().DiagonalLength * ratio
 
 			for face in shape.Faces():
 				# Construct a unique permanent ID so that the vertices, edges
