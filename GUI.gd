@@ -4,7 +4,7 @@ signal error
 
 var VERSIONNUM = "0.5.0-alpha"
 
-var open_file_path # The component/CQ file that the user opened
+var open_file_path = null # The component/CQ file that the user opened
 var confirm_component_text = null
 var safe_distance = 0 # The distance away the camera should be placed to be able to view the components
 var combined = {}
@@ -260,6 +260,7 @@ func _on_OpenDialog_file_selected(path):
 		confirm_dlg.dialog_text = txt
 		confirm_dlg.popup_centered()
 	else:
+		cqgipy.set_script_path(_get_parent_directory(open_file_path))
 		_load_component(check_component_text)
 
 
@@ -581,7 +582,6 @@ func _render_component_text(component_text):
 
 	# Clear the 3D viewport
 	self._clear_viewport()
-	cqgipy.set_script_path(open_file_path)
 
 	# Method that post-processes the results of the script to pull out renderables
 	render_tree = cqgipy
@@ -1329,7 +1329,17 @@ Called when the user confirms that they still want to open
 a component file.
 """
 func _on_ConfirmationDialog_confirmed():
+	cqgipy.set_script_path(_get_parent_directory(open_file_path))
 	_load_component(confirm_component_text)
+
+
+"""
+Allows the caller to get the parent directory of the open
+script file.
+"""
+func _get_parent_directory(file_path):
+	var path_parts = file_path.split("/")
+	return file_path.replace(path_parts[-1], "")
 
 
 """
