@@ -35,8 +35,10 @@ func _ready():
 	start_angle_lbl.set_text("Start Angle: ")
 	start_angle_group.add_child(start_angle_lbl)
 	var start_angle_ctrl = NumberEdit.new()
+	start_angle_ctrl.CanBeNegative = true
 	start_angle_ctrl.name = "start_angle_ctrl"
 	start_angle_ctrl.size_flags_horizontal = 3
+	start_angle_ctrl.MinValue = -360.0
 	start_angle_ctrl.MaxValue = 360.0
 	start_angle_ctrl.set_text("0.0")
 	start_angle_ctrl.hint_tooltip = tr("POLAR_ARRAY_START_ANGLE_CTRL_HINT_TOOLTIP")
