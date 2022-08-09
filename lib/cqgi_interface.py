@@ -326,7 +326,10 @@ class cqgi_interface(Node):
 				min = shape.BoundingBox().zlen
 
 			# Use factors of 10 of the ratio of the min and max to set the edge line thickness
-			ratio = min / max
+			if min > 0 and max > 0:
+				ratio = min / max
+			else:
+				ratio = -1
 			if ratio > 0 and ratio <= 10:
 				diag = max * 0.005
 			elif ratio > 10 and ratio <= 100:

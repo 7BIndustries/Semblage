@@ -53,7 +53,8 @@ class synthesis(Node):
 		for see in selected_edge_ends:
 			sel_edge_ends.append((see.x, see.y, see.z))
 		for sen in selected_normals:
-			sel_normals.append((sen.x, sen.y, sen.z))
+			if sen != None:
+				sel_normals.append((sen.x, sen.y, sen.z))
 		for os in other_edge_starts:
 			other_starts.append((os.x, os.y, os.z))
 		for oe in other_edge_ends:
@@ -75,6 +76,11 @@ class synthesis(Node):
 				other_meta_temp = {}
 				other_meta_temp[str(om_inner)] = bool(om[om_inner])
 				other_meta.append(other_meta_temp)
+
+		# Workaround for mismatch in size between start and normal arrays
+		if len(other_edge_starts) != len(other_norms):
+			for i in range(len(other_norms), len(other_edge_starts)):
+				other_norms.append((0, 0, 0))
 
 		# Synthesize the selector
 		res = vector_based_synth.synthesize(str(selector_type), selected_edges=sel_edges, selected_edge_types=sel_edge_types, selected_edge_starts=sel_edge_starts, selected_edge_ends=sel_edge_ends, selected_edge_normals=sel_normals, other_edge_starts=other_starts, other_edge_ends=other_ends, other_edge_meta=other_meta, other_normals=other_norms)
