@@ -66,7 +66,6 @@ class cqgi_interface(Node):
 				render_tree["components"] = Array()
 
 				# Step through each of the objects returned from script execution
-				cnt = 0
 				for result in build_result.results:
 					component_id = list(result.shape.ctx.tags)[0]
 
@@ -81,10 +80,9 @@ class cqgi_interface(Node):
 						cur_comp["largest_dimension"] = 5.0
 
 					# Break out the metadata line
-					meta_line = re.findall('.*# meta.*', script_text)
+					meta_line = re.findall('.*' + component_id + '.*\n.*# meta.*', script_text)
 					if meta_line:
-						meta_data = meta_line[cnt].split("meta ")
-						cnt += 1
+						meta_data = meta_line[0].split("meta ")
 
 						# Break out the color data from the metadata
 						if len(meta_data) > 1:

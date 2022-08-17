@@ -1718,7 +1718,8 @@ func _show_hide_tree_item():
 		sel.set_suffix(0, " (hidden)")
 
 		# Toggle the metadata
-		sel.set_metadata(0, {"visible": false})
+		meta["visible"] = false
+		sel.set_metadata(0, meta)
 	else:
 		# Collapse the tree item as a visual cue that it is being rendered again
 		sel.collapsed = false
@@ -1727,7 +1728,8 @@ func _show_hide_tree_item():
 		sel.set_suffix(0, "")
 
 		# Toggle the metadata
-		sel.set_metadata(0, {"visible": true})
+		meta["visible"] = true
+		sel.set_metadata(0, meta)
 
 	# We do not need the popup menu anymore
 	var data_popup = $DataPopupPanel
