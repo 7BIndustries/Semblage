@@ -38,7 +38,7 @@ jobs:
           curl https://downloads.tuxfamily.org/godotengine/3.3.2/Godot_v3.3.2-stable_linux_headless.64.zip --output Godot_v3.3.2-stable_linux_headless.64.zip
           unzip Godot_v3.3.2-stable_linux_headless.64.zip
           chmod +x Godot_v3.3.2-stable_linux_headless.64
-          wget -O semblage_libs.tar.xz https://7bindustries.com/static/semblage_libs.tar.xz
+          wget -O semblage_libs.tar.xz https://7bindustries.com/static/downloads/semblage_libs.tar.xz
           mv semblage_libs.tar.xz $PWD/lib/
           cd $PWD/lib/
           tar -xvf semblage_libs.tar.xz
