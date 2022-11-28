@@ -676,7 +676,7 @@ class cqgi_interface(Node):
 				for result in build_result.results:
 					try:
 						# Export the STL to the temporary location in the user data directory
-						success = result.shape.val().exportStl(export_path, 1e-3, 0.1)
+						success = result.shape.val().exportStl(export_path, 1e-3, 0.1, True)
 					except Exception as err:
 						ret = "error~There was an error exporting to STL: " + err
 						return ret
