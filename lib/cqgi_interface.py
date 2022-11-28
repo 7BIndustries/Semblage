@@ -391,18 +391,19 @@ class cqgi_interface(Node):
 					else False
 				)
 
-				vertices = face_mesh.Nodes()
-
-				i = 1
-				for v in vertices:
+				# Collect all the vertices
+				vertices = []
+				for i in range(1, face_mesh.NbNodes() + 1):
+					v = face_mesh.Node(i)
 					v_new = v.Transformed(Trsf)
-					vertices.SetValue(i, v_new)
-					i += 1
+					vertices.append(v_new)
 
 				faces_tess[perm_id]["triangles"] = Array()
 
 				# Step through all the triangles and add associate them with the face
-				for triangle in face_mesh.Triangles():
+				for i in range(1, face_mesh.NbTriangles() + 1):
+					triangle = face_mesh.Triangle(i)
+
 					# Construct a permanent unique ID for this triangle
 					tri_perm_id = "triangle_" + str(uuid.uuid4())
 
@@ -413,17 +414,17 @@ class cqgi_interface(Node):
 
 					# Collect all the vertices into arrays
 					first_vert = Array()
-					first_vert.append(vertices.Value(nodes[0]).X())
-					first_vert.append(vertices.Value(nodes[0]).Y())
-					first_vert.append(vertices.Value(nodes[0]).Z())
+					first_vert.append(vertices[nodes[0] - 1].X())
+					first_vert.append(vertices[nodes[0] - 1].Y())
+					first_vert.append(vertices[nodes[0] - 1].Z())
 					second_vert = Array()
-					second_vert.append(vertices.Value(nodes[1]).X())
-					second_vert.append(vertices.Value(nodes[1]).Y())
-					second_vert.append(vertices.Value(nodes[1]).Z())
+					second_vert.append(vertices[nodes[1] - 1].X())
+					second_vert.append(vertices[nodes[1] - 1].Y())
+					second_vert.append(vertices[nodes[1] - 1].Z())
 					third_vert = Array()
-					third_vert.append(vertices.Value(nodes[2]).X())
-					third_vert.append(vertices.Value(nodes[2]).Y())
-					third_vert.append(vertices.Value(nodes[2]).Z())
+					third_vert.append(vertices[nodes[2] - 1].X())
+					third_vert.append(vertices[nodes[2] - 1].Y())
+					third_vert.append(vertices[nodes[2] - 1].Z())
 
 					if reverse:
 						cur_triangle["vertex_1"] = first_vert
