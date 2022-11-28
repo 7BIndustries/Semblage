@@ -33,8 +33,6 @@ jobs:
       - name: Install Godot and run GUT tests
         run: |
           sudo apt install -y wget
-          # pip install nptyping
-          # pip install scipy
           curl https://downloads.tuxfamily.org/godotengine/3.3.2/Godot_v3.3.2-stable_linux_headless.64.zip --output Godot_v3.3.2-stable_linux_headless.64.zip
           unzip Godot_v3.3.2-stable_linux_headless.64.zip
           chmod +x Godot_v3.3.2-stable_linux_headless.64
@@ -46,4 +44,4 @@ jobs:
           addons/pythonscript/x11-64/bin/python3.8 -m ensurepip
           addons/pythonscript/x11-64/bin/python3.8 -m pip install --upgrade pip
           addons/pythonscript/x11-64/bin/python3.8 -m pip install --pre cadquery
-          LD_LIBRARY_PATH=$PWD/lib ./Godot_v3.3.2-stable_linux_headless.64 --verbose -d -s --path ./project addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit
+          ./Godot_v3.3.2-stable_linux_headless.64 --verbose -d -s --path ./project addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit
