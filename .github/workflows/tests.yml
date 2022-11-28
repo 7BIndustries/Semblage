@@ -38,11 +38,6 @@ jobs:
           curl https://downloads.tuxfamily.org/godotengine/3.3.2/Godot_v3.3.2-stable_linux_headless.64.zip --output Godot_v3.3.2-stable_linux_headless.64.zip
           unzip Godot_v3.3.2-stable_linux_headless.64.zip
           chmod +x Godot_v3.3.2-stable_linux_headless.64
-      #    wget -O semblage_libs.tar.xz https://7bindustries.com/static/downloads/semblage_libs.tar.xz
-      #    mv semblage_libs.tar.xz $PWD/lib/
-      #    cd $PWD/lib/
-      #    tar -xvf semblage_libs.tar.xz
-      #    cd ..
           wget -O gut.tar.gz https://github.com/bitwes/Gut/archive/refs/tags/v7.1.0.tar.gz
           tar -xvf gut.tar.gz
           mv Gut-7.1.0/addons/gut addons/
@@ -51,7 +46,4 @@ jobs:
           addons/pythonscript/x11-64/bin/python3.8 -m ensurepip
           addons/pythonscript/x11-64/bin/python3.8 -m pip install --upgrade pip
           addons/pythonscript/x11-64/bin/python3.8 -m pip install --pre cadquery
-      #    addons/pythonscript/x11-64/bin/python3.8 -m pip install nptyping==1.4.4
-      #    addons/pythonscript/x11-64/bin/python3.8 -m pip install scipy
-      #    export LD_LIBRARY_PATH=$PWD/lib
           LD_LIBRARY_PATH=$PWD/lib ./Godot_v3.3.2-stable_linux_headless.64 --verbose -d -s --path ./project addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit
