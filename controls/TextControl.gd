@@ -219,17 +219,17 @@ func get_completed_template():
 
 	# Fill out the main template
 	complete += template.format({
-		"txt": "\"\"" + txt_ctrl.get_text() + "\"\"",
+		"txt": "\"" + txt_ctrl.get_text() + "\"",
 		"font_size": font_size_ctrl.get_text(),
 		"distance": distance_ctrl.get_text(),
 		"cut": cut_ctrl.pressed,
 		"combine": combine_ctrl.pressed,
 		"clean": clean_ctrl.pressed,
-		"font": "\"\"" + font_ctrl.get_text() + "\"\"",
+		"font": "\"" + font_ctrl.get_text() + "\"",
 		"font_path": font_path,
-		"kind": "\"\"" + kind_ctrl.get_item_text(kind_ctrl.get_selected_id()) + "\"\"",
-		"halign": "\"\"" + halign_ctrl.get_item_text(halign_ctrl.get_selected_id()) + "\"\"",
-		"valign": "\"\"" + valign_ctrl.get_item_text(valign_ctrl.get_selected_id()) + "\"\""
+		"kind": "\"" + kind_ctrl.get_item_text(kind_ctrl.get_selected_id()) + "\"",
+		"halign": "\"" + halign_ctrl.get_item_text(halign_ctrl.get_selected_id()) + "\"",
+		"valign": "\"" + valign_ctrl.get_item_text(valign_ctrl.get_selected_id()) + "\""
 		})
 
 	return complete
