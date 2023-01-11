@@ -1246,14 +1246,35 @@ func _clear_toolbar_popup():
 
 
 """
+Gets the current file name from the path.
+"""
+func _get_current_file_name():
+	var file_name = null
+
+	# Make sure there is an open file first
+	if open_file_path != null:
+		file_name = open_file_path.split("/")[-1]
+
+	# Use a default if there is no open file
+	if file_name == null:
+		file_name = "component"
+	else:
+		file_name = file_name.split(".")[0]
+
+	return file_name
+
+"""
 Sets up the export dialog for STL.
 """
 func _show_export_stl():
 	var tb_popup = $ToolbarPopupPanel
 	tb_popup.hide()
 
+	# Get the name of the currently open file
+	var cur_file_name = _get_current_file_name()
+
 	var export_dlg = $ExportDialog
-	export_dlg.current_file = "component.stl"
+	export_dlg.current_file = cur_file_name + ".stl"
 	export_dlg.popup_centered()
 
 
@@ -1264,8 +1285,11 @@ func _show_export_step():
 	var tb_popup = $ToolbarPopupPanel
 	tb_popup.hide()
 
+	# Get the name of the currently open file
+	var cur_file_name = _get_current_file_name()
+
 	var export_dlg = $ExportDialog
-	export_dlg.current_file = "component.step"
+	export_dlg.current_file = cur_file_name + ".step"
 	export_dlg.popup_centered()
 
 
