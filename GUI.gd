@@ -30,6 +30,7 @@ func _ready():
 
 	# Set the tooltips of the main controls
 	var open_button = $GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton
+	var add_button = $GUI/VBoxContainer/PanelContainer/Toolbar/AddComponentButton
 	var save_button = $GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton
 	var make_button = $GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton
 	var reload_button = $GUI/VBoxContainer/PanelContainer/Toolbar/ReloadButton
@@ -38,6 +39,7 @@ func _ready():
 	var code_button = $GUI/VBoxContainer/PanelContainer/Toolbar/ShowCodeButton
 	var about_button = $GUI/VBoxContainer/PanelContainer/Toolbar/AboutButton
 	open_button.hint_tooltip = tr("OPEN_BUTTON_HINT_TOOLTIP")
+	add_button.hint_tooltip = tr("ADD_COMPONENT_BUTTON_HINT_TOOLTIP")
 	save_button.hint_tooltip = tr("SAVE_BUTTON_HINT_TOOLTIP")
 	make_button.hint_tooltip = tr("MAKE_BUTTON_HINT_TOOLTIP")
 	reload_button.hint_tooltip = tr("RELOAD_BUTTON_HINT_TOOLTIP")
@@ -1123,6 +1125,70 @@ func _on_MakeButton_button_down():
 
 
 """
+Called when the user clicks the add component button.
+"""
+func _on_AddComponentButton_button_down():
+	var add_btn = $GUI/VBoxContainer/PanelContainer/Toolbar/AddComponentButton
+	var pos = add_btn.rect_position
+	var size = add_btn.rect_size
+
+	# Clear any previous items
+	_clear_toolbar_popup()
+
+	# Toggle the visibility of the popup
+	var tb_popup = $ToolbarPopupPanel
+	if tb_popup.visible:
+		tb_popup.hide()
+	else:
+		tb_popup.rect_position = Vector2(pos.x, pos.y + size.y)
+		tb_popup.rect_size = Vector2(100, 50)
+		tb_popup.show()
+
+		# Add the create Component button
+		var component_item = Button.new()
+		component_item.set_text("Component")
+		component_item.connect("button_down", self, "_create_component")
+		$ToolbarPopupPanel/ToolbarPopupVBox.add_child(component_item)
+
+		# Add the create Assembly button
+		var assembly_item = Button.new()
+		assembly_item.set_text("Assembly")
+		assembly_item.connect("button_down", self, "_create_assembly")
+		$ToolbarPopupPanel/ToolbarPopupVBox.add_child(assembly_item)
+
+
+"""
+Creates a single component file with a base Component in it.
+"""
+func _create_component():
+	var tb_popup = $ToolbarPopupPanel
+	tb_popup.hide()
+
+	var comp_dlg = $NewComponentDialog
+	comp_dlg.current_file = "component.py"
+	comp_dlg.window_title = "Create New Component"
+	comp_dlg.clear_filters()
+	comp_dlg.add_filter('*.py')
+	comp_dlg.popup_centered()
+
+
+"""
+Creates an assembly directory with all of the necessary subdirectories and
+files in it.
+"""
+func _create_assembly():
+	var tb_popup = $ToolbarPopupPanel
+	tb_popup.hide()
+
+	var comp_dlg = $NewComponentDialog
+	comp_dlg.current_file = "component"
+	comp_dlg.window_title = "Create New Assembly"
+	comp_dlg.clear_filters()
+	# comp_dlg.add_filter('*.py')
+	comp_dlg.popup_centered()
+
+
+"""
 Called when the user clicks the save button.
 """
 func _on_SaveButton_button_down():
@@ -2065,3 +2131,59 @@ func _on_ShowCodeButton_button_down():
 
 	# Show the dialog
 	dlg.popup_centered()
+
+
+"""
+Allows the user to create a new component file.
+"""
+func _on_NewComponentDialog_file_selected(path):
+	if path != null:
+		# If the path does not end in .py, we have an assembly
+		if path.ends_with('.py'):
+			# Keep track of where the currently open file is
+			open_file_path = path
+
+			# Save the current component's text to the specified file
+			_save_component_text()
+
+			# Set the file tab to reflect the file path
+			var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
+			tabs.set_tab_title(0, open_file_path)
+		else:
+			# Get the parent directory
+			var par_path = FileSystem.find_parent_dir(path)
+			var assy_name = FileSystem.find_end_of_path(path)
+			var comps_path = assy_name + "/components"
+
+			# Open the parent directory and start building the new directory structure
+			var dir = Directory.new()
+			dir.open(par_path)
+
+			# Make sure that we will not be overwriting an existing directory
+			if dir.dir_exists(path):
+				emit_signal("error", "Provided assembly name already exists in the parent directory. Please try another name.")
+				return
+
+			# Create the top level assembly and component directories
+			dir.make_dir_recursive(comps_path)
+
+			# Create the init file so that the components will import correctly
+			var file = File.new()
+			file.open(path + '/components/__init__.py', File.WRITE)
+			file.store_string('')
+			file.close()
+
+			# Create the assembly python file
+			file.open(path + '/assembly.py', File.WRITE)
+			file.store_string('')
+			file.close()
+
+			# Keep track of where the currently open file is
+			open_file_path = path + '/assembly.py'
+
+			# Save the current component's text to the specified file
+			_save_component_text()
+
+			# Set the file tab to reflect the file path
+			var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
+			tabs.set_tab_title(0, open_file_path)

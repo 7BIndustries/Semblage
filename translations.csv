@@ -253,3 +253,4 @@ WP_ROTATE_Y_CTRL_HINT_TOOLTIP,Rotation angle around the Y axis in degrees.
 WP_ROTATE_Z_CTRL_HINT_TOOLTIP,Rotation angle around the Z axis in degrees.
 DIAMETER_CTRL_HINT_TOOLTIP,Diameter of the circle.
 SHOW_CODE_BUTTON_HINT_TOOLTIP,Shows the current code being generated based on the user input.
+ADD_COMPONENT_BUTTON_HINT_TOOLTIP,Creates a component file or the directory structure for an assembly.

@@ -1,4 +1,4 @@
-[gd_scene load_steps=74 format=2]
+[gd_scene load_steps=75 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -37,6 +37,7 @@
 [ext_resource path="res://ColorPickerDialog.gd" type="Script" id=35]
 [ext_resource path="res://SaveBeforeCloseDialog.gd" type="Script" id=36]
 [ext_resource path="res://assets/icons/show_code_button_flat_ready.svg" type="Texture" id=37]
+[ext_resource path="res://assets/icons/add_component_button_flat_ready.svg" type="Texture" id=38]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
@@ -201,45 +202,52 @@ margin_bottom = 48.0
 size_flags_vertical = 3
 icon = ExtResource( 1 )
 
-[node name="SaveButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
+[node name="AddComponentButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
 margin_left = 55.0
-margin_right = 107.0
+margin_right = 106.0
+margin_bottom = 48.0
+size_flags_vertical = 3
+icon = ExtResource( 38 )
+
+[node name="SaveButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
+margin_left = 110.0
+margin_right = 162.0
 margin_bottom = 48.0
 icon = ExtResource( 3 )
 
 [node name="MakeButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
-margin_left = 111.0
-margin_right = 163.0
+margin_left = 166.0
+margin_right = 218.0
 margin_bottom = 48.0
 icon = ExtResource( 10 )
 
 [node name="CloseButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
-margin_left = 167.0
-margin_right = 219.0
+margin_left = 222.0
+margin_right = 274.0
 margin_bottom = 48.0
 icon = ExtResource( 5 )
 
 [node name="ReloadButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
-margin_left = 223.0
-margin_right = 275.0
+margin_left = 278.0
+margin_right = 330.0
 margin_bottom = 48.0
 icon = ExtResource( 6 )
 
 [node name="HomeViewButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
-margin_left = 279.0
-margin_right = 331.0
+margin_left = 334.0
+margin_right = 386.0
 margin_bottom = 48.0
 icon = ExtResource( 4 )
 
 [node name="ShowCodeButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
-margin_left = 335.0
-margin_right = 387.0
+margin_left = 390.0
+margin_right = 442.0
 margin_bottom = 48.0
 icon = ExtResource( 37 )
 
 [node name="AboutButton" type="ToolButton" parent="GUI/VBoxContainer/PanelContainer/Toolbar"]
-margin_left = 391.0
-margin_right = 443.0
+margin_left = 446.0
+margin_right = 498.0
 margin_bottom = 48.0
 icon = ExtResource( 28 )
 
@@ -1470,10 +1478,10 @@ margin_right = 315.0
 margin_bottom = 517.0
 
 [node name="ColorPicker" type="ColorPicker" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
-margin_left = 176.0
-margin_top = 176.0
-margin_right = 484.0
-margin_bottom = 638.0
+margin_left = 184.0
+margin_top = 184.0
+margin_right = 492.0
+margin_bottom = 646.0
 
 [node name="OkButton" type="Button" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
 margin_top = 466.0
@@ -1573,7 +1581,16 @@ rect_min_size = Vector2( 380, 480 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="NewComponentDialog" type="FileDialog" parent="."]
+margin_right = 640.0
+margin_bottom = 480.0
+access = 2
+filters = PoolStringArray( "*.py" )
+current_dir = "/home/jwright/Downloads/repos/Semblage"
+current_path = "/home/jwright/Downloads/repos/Semblage/"
+
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton" to="." method="_on_OpenButton_button_down"]
+[connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/AddComponentButton" to="." method="_on_AddComponentButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/SaveButton" to="." method="_on_SaveButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/MakeButton" to="." method="_on_MakeButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/CloseButton" to="." method="_on_CloseButton_button_down"]
@@ -1674,3 +1691,6 @@ size_flags_vertical = 3
 [connection signal="resized" from="SaveBeforeCloseDialog/PanelContainer" to="SaveBeforeCloseDialog" method="_on_PanelContainer_resized"]
 [connection signal="button_down" from="SaveBeforeCloseDialog/PanelContainer/VBoxContainer/HBoxContainer/YesButton" to="SaveBeforeCloseDialog" method="_on_YesButton_button_down"]
 [connection signal="button_down" from="SaveBeforeCloseDialog/PanelContainer/VBoxContainer/HBoxContainer/NoButton" to="SaveBeforeCloseDialog" method="_on_NoButton_button_down"]
+[connection signal="about_to_show" from="NewComponentDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]
+[connection signal="file_selected" from="NewComponentDialog" to="." method="_on_NewComponentDialog_file_selected"]
+[connection signal="popup_hide" from="NewComponentDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_popup_hide"]

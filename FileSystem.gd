@@ -33,3 +33,24 @@ static func load_file_text(path):
 	f.close()
 
 	return text
+
+
+"""
+Determines the parent directory given a path string.
+"""
+static func find_parent_dir(path):
+	var path_parts = path.split('/')
+
+	# Remove the directory/file from the end of the path
+	var par_path = path.replace(path_parts[-1], '')
+
+	return par_path
+
+
+"""
+Extracts the destination file/directory from a given path.
+"""
+static func find_end_of_path(path):
+	var path_parts = path.split('/')
+
+	return path_parts[-1]
