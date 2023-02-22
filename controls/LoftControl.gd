@@ -6,12 +6,10 @@ class_name LoftControl
 
 var prev_template = null
 
-var template = "{wire_component}.loft(ruled={ruled},combine={combine}).tag(\"{comp_name}\")"
+var template = ".loft(ruled={ruled},combine={combine})"
 
-const wire_component_edit_rgx = "(?<=^)(.*?)(?=\\.loft)"
-const ruled_edit_rgx = "(?<=.ruled\\()(.*?)(?=,combine)"
-const combine_edit_rgx = "(?<=combine\\=)(.*?)(?=\\,)"
-const tag_edit_rgx = "(?<=.tag\\(\")(.*?)(?=\"\\))"
+const ruled_edit_rgx = "(?<=ruled\\=)(.*?)(?=,combine)"
+const combine_edit_rgx = "(?<=combine\\=)(.*?)(?=\\))"
 
 var valid = false
 
@@ -19,35 +17,6 @@ var valid = false
 Called when the node enters the scene tree.
 """
 func _ready():
-	# Control to set which component to pull wires from for the loft
-	var wire_wp_group = VBoxContainer.new()
-	wire_wp_group.name = "wire_wp_group"
-	# Wire workplane label
-	var wire_wp_lbl = Label.new()
-	wire_wp_lbl.set_text("Component to Pull Wires From")
-	wire_wp_group.add_child(wire_wp_lbl)
-	# Wire workplane option control
-	var wire_wp_opt = OptionButton.new()
-	wire_wp_opt.name = "wire_wp_opt"
-	wire_wp_opt.hint_tooltip = tr("LOFT_WIRE_WP_OPT_HINT_TOOLTIP")
-	wire_wp_opt.connect("item_selected", self, "_on_wire_wp_opt_item_selected")
-	wire_wp_group.add_child(wire_wp_opt)
-
-	# Control to set the tag name of the resulting object
-	var tag_name_group = VBoxContainer.new()
-	tag_name_group.name = "tag_name_group"
-	# Tag name label
-	var tag_name_lbl = Label.new()
-	tag_name_lbl.set_text("New Component Name")
-	tag_name_group.add_child(tag_name_lbl)
-	# Tag name input text
-	var tag_name_txt = LineEdit.new()
-	tag_name_txt.name = "tag_name_txt"
-	tag_name_txt.hint_tooltip = tr("WP_NAME_CTRL_HINT_TOOLTIP")
-	tag_name_txt.set_text("loft1")
-	tag_name_txt.connect("text_changed", self, "_on_tag_text_changed")
-	tag_name_group.add_child(tag_name_txt)
-
 	# Add the ruled checkbox
 	var ruled_group = HBoxContainer.new()
 	ruled_group.name = "ruled_group"
@@ -66,8 +35,8 @@ func _ready():
 	var combine_lbl = Label.new()
 	combine_lbl.set_text("Combine: ")
 	combine_group.add_child(combine_lbl)
-	var combine_ctrl = CheckBox.new()
-	combine_ctrl.pressed = true
+	var combine_ctrl = OptionButton.new()
+	Common.load_option_button(combine_ctrl, ["combine", "cut", "nothing"])
 	combine_ctrl.name = "combine_ctrl"
 	combine_ctrl.hint_tooltip = tr("COMBINE_CTRL_HINT_TOOLTIP")
 	combine_group.add_child(combine_ctrl)
@@ -81,8 +50,6 @@ func _ready():
 	error_btn_group.add_child(error_btn)
 	error_btn_group.hide()
 
-	add_child(wire_wp_group)
-	add_child(tag_name_group)
 	add_child(ruled_group)
 	add_child(combine_group)
 	add_child(error_btn_group)
@@ -90,9 +57,6 @@ func _ready():
 	# Pull any component names that already exist in the context
 	var comp_names = find_parent("ActionPopupPanel")
 	comp_names = comp_names.components
-
-	# Load up both component option buttons with the names of the found components
-	Common.load_option_button(wire_wp_opt, comp_names)
 
 	_validate_form()
 
@@ -108,23 +72,12 @@ func is_binary():
 Validates the form as the user makes changes.
 """
 func _validate_form():
-	var wire_wp_opt = get_node("wire_wp_group/wire_wp_opt")
-	var tag_name_txt = get_node("tag_name_group/tag_name_txt")
 	var error_btn = get_node("error_btn_group/error_btn")
 	var error_btn_group = get_node("error_btn_group")
 
-	# Check to make sure that the workplane/tag name is valid
-	var valid_tag_name = Common._validate_tag_name(tag_name_txt.get_text())
-
-	# Validate the workplane/tag name characters
-	if not valid_tag_name:
-		error_btn_group.show()
-		error_btn.hint_tooltip = tr("TAG_NAME_CHARACTER_ERROR")
-		valid = false
-	elif wire_wp_opt.get_item_text(wire_wp_opt.selected) == "":
-		error_btn_group.show()
-		error_btn.hint_tooltip = tr("NO_COMPONENT_SELECTED_ERROR")
-		valid = false
+	# At this time there is nothing to validate in this control
+	if false:
+		pass
 	else:
 		error_btn_group.hide()
 		valid = true
@@ -141,16 +94,22 @@ func is_valid():
 Fills out the template and returns it.
 """
 func get_completed_template():
-	var wire_wp_opt = get_node("wire_wp_group/wire_wp_opt")
-	var tag_name_txt = get_node("tag_name_group/tag_name_txt")
 	var ruled_ctrl = get_node("ruled_group/ruled_ctrl")
 	var combine_ctrl = get_node("combine_group/combine_ctrl")
 
+	# Get the correct value from the combine control
+	var combine_val = "cut"
+	var combine_str = combine_ctrl.get_item_text(combine_ctrl.get_selected_id())
+	if combine_str == "nothing":
+		combine_val = "False"
+	elif combine_str == "combine":
+		combine_val = "True"
+	else:
+		combine_val = "\"" + combine_str + "\""
+
 	var complete = template.format({
-		"wire_component": wire_wp_opt.get_item_text(wire_wp_opt.get_selected_id()),
-		"comp_name": tag_name_txt.get_text(),
 		"ruled": ruled_ctrl.pressed,
-		"combine": combine_ctrl.pressed
+		"combine": combine_val
 	})
 
 	return complete
@@ -168,8 +127,6 @@ func get_previous_template():
 Loads values into the control's sub-controls based on a code string.
 """
 func set_values_from_string(text_line):
-	var wire_wp_opt = get_node("wire_wp_group/wire_wp_opt")
-	var tag_name_txt = get_node("tag_name_group/tag_name_txt")
 	var ruled_ctrl = get_node("ruled_group/ruled_ctrl")
 	var combine_ctrl = get_node("combine_group/combine_ctrl")
 
@@ -177,21 +134,9 @@ func set_values_from_string(text_line):
 
 	var rgx = RegEx.new()
 
-	# Wire component name
-	rgx.compile(wire_component_edit_rgx)
-	var res = rgx.search(text_line)
-	if res:
-		Common.set_option_btn_by_text(wire_wp_opt, res.get_string())
-
-	# Tag/component name
-	rgx.compile(tag_edit_rgx)
-	res = rgx.search(text_line)
-	if res:
-		tag_name_txt.set_text(res.get_string())
-
 	# Ruled boolean
 	rgx.compile(ruled_edit_rgx)
-	res = rgx.search(text_line)
+	var res = rgx.search(text_line)
 	if res:
 		var ruled = res.get_string()
 		ruled_ctrl.pressed = true if ruled == "True" else false
@@ -201,14 +146,14 @@ func set_values_from_string(text_line):
 	res = rgx.search(text_line)
 	if res:
 		var comb = res.get_string()
-		combine_ctrl.pressed = true if comb == "True" else false
 
-
-"""
-Called when the user changes the tag (new component name) text.
-"""
-func _on_tag_text_changed(_new_text):
-	_validate_form()
+		# True = combine, False = nothing, cut = cut
+		if comb == "True":
+			Common.set_option_btn_by_text(combine_ctrl, "combine")
+		elif comb == "False":
+			Common.set_option_btn_by_text(combine_ctrl, "nothing")
+		else:
+			Common.set_option_btn_by_text(combine_ctrl, "cut")
 
 
 """

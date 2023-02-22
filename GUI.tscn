@@ -1478,10 +1478,10 @@ margin_right = 315.0
 margin_bottom = 517.0
 
 [node name="ColorPicker" type="ColorPicker" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
-margin_left = 184.0
-margin_top = 184.0
-margin_right = 492.0
-margin_bottom = 646.0
+margin_left = 200.0
+margin_top = 200.0
+margin_right = 508.0
+margin_bottom = 662.0
 
 [node name="OkButton" type="Button" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
 margin_top = 466.0

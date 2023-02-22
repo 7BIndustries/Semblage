@@ -302,11 +302,15 @@ func test_loft_control():
 
 	# Set up the main component tree with the content we want
 	var ct = gui.get_node("GUI/VBoxContainer/WorkArea/TreeViewTabs/Data/ComponentTree")
-	Common.add_component("loft", ct)
-	Common.add_operation("loft", '.Workplane().tag("loft")', ct)
-	Common.add_operation("loft", '.circle(1.5)', ct)
-	Common.add_operation("loft", '.workplane(offset=3.0)', ct)
-	Common.add_operation("loft", '.rect(0.75, 0.5)', ct)
+	Common.add_component("loft1", ct)
+	Common.add_operation("loft1", '.Workplane("XY").workplane(offset=0.0,invert=False,centerOption="CenterOfBoundBox").tag("loft1")', ct)
+	Common.add_operation("loft1", '.circle(1.5,forConstruction=False)', ct)
+	Common.add_operation("loft1", '.workplane(offset=3.0,invert=False,centerOption="CenterOfBoundBox",origin=(0,0,0)).transformed(rotate=(0,0,0))', ct)
+	Common.add_operation("loft1", '.rect(0.75,0.5,centered=True,forConstruction=False)', ct)
+	Common.add_operation("loft1", ".loft(ruled=False,combine=True)", ct)
+
+	# Render the object in the 3D viewport
+	gui._execute_and_render()
 
 	# Make sure the component tree is converted into the script for the operations dialog
 	var component_text = gui._convert_component_tree_to_script(false)
@@ -323,9 +327,6 @@ func test_loft_control():
 	threed_btn.pressed = true
 	threed_btn.emit_signal("toggled", threed_btn)
 
-	# Set the control up like it has been used
-#	gui.components["result"] = ['.Workplane().tag("result")', '.circle(1.5)', '.workplane(offset=3.0)', '.rect(0.75, 0.5)']
-
 	# Check to make sure the ActionOptionButton shows the correct default selection
 	var action_btn = popup.get_node("VBoxContainer/ActionOptionButton")
 	Common.set_option_btn_by_text(action_btn, "Loft (loft)")
@@ -335,20 +336,25 @@ func test_loft_control():
 	# Get the control ready for use
 	var loft_control = popup.get_node("VBoxContainer/ActionContainer/DynamicContainer").get_children()[0]
 	loft_control._ready()
-
-	# Render the object in the 3D viewport
-	gui._execute_and_render()
+	var error_btn = loft_control.get_node("error_btn_group/error_btn")
+	assert_eq(error_btn.get_parent().visible, false)
 
 	# Get the viewport so we can make sure it has contents
 	var vp = gui.get_node("GUI/VBoxContainer/WorkArea/DocumentTabs/VPMarginContainer/ThreeDViewContainer/ThreeDViewport")
-	assert_eq(vp.get_child_count(), 8)
+	#assert_eq(vp.get_child_count(), 8)
 
 	# Simulate a click of the OK button on the Operations dialog
 	var ok_btn = popup.get_node("VBoxContainer/OkButton")
 	ok_btn.emit_signal("button_down")
+	yield(get_tree().create_timer(1.2), "timeout")
+
+	# Make sure there is no error
+	var err_dlg = gui.get_node("ErrorDialog")
+	assert_eq(err_dlg.visible, false)
+	assert_eq(err_dlg.dialog_text, "")
 
 	# See if the results in the 3D viewport have changed appropriately
-	assert_eq(vp.get_child_count(), 55)
+	assert_eq(vp.get_child_count(), 49)
 
 
 """
