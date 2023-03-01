@@ -229,6 +229,15 @@ func _deselect_mesh(mesh):
 Handler for when the Open Component button is clicked.
 """
 func _on_OpenButton_button_down():
+	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
+
+	# See if there is a need to save the current component first
+	if tabs.get_tab_title(0).find("*") > 0:
+		var cd = get_node("SaveBeforeOpenDialog")
+		cd.popup_centered()
+
+		return
+
 	var open_dlg = $OpenDialog
 	open_dlg.popup_centered()
 
@@ -2187,3 +2196,26 @@ func _on_NewComponentDialog_file_selected(path):
 			# Set the file tab to reflect the file path
 			var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
 			tabs.set_tab_title(0, open_file_path)
+
+
+"""
+Called when the user choses not to save the existing component before
+opening another one.
+"""
+func _on_SaveBeforeOpenDialog_no_save_before_open():
+	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
+
+	# Remove the asterisk marking that the component is not dirty
+	tabs.set_tab_title(0, tabs.get_tab_title(0).replace(" *", ""))
+
+	# Re-call the close code
+	_on_OpenButton_button_down()
+
+
+"""
+Called when the user choses to save the existing component before
+opening another one.
+"""
+func _on_SaveBeforeOpenDialog_yes_save_before_open():
+	# Go ahead and save the component
+	_save_component()

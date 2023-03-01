@@ -1,4 +1,4 @@
-[gd_scene load_steps=75 format=2]
+[gd_scene load_steps=76 format=2]
 
 [ext_resource path="res://assets/icons/folder_button_flat_ready.svg" type="Texture" id=1]
 [ext_resource path="res://GUI.gd" type="Script" id=2]
@@ -38,6 +38,7 @@
 [ext_resource path="res://SaveBeforeCloseDialog.gd" type="Script" id=36]
 [ext_resource path="res://assets/icons/show_code_button_flat_ready.svg" type="Texture" id=37]
 [ext_resource path="res://assets/icons/add_component_button_flat_ready.svg" type="Texture" id=38]
+[ext_resource path="res://SaveBeforeOpenDialog.gd" type="Script" id=39]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
@@ -1478,10 +1479,10 @@ margin_right = 315.0
 margin_bottom = 517.0
 
 [node name="ColorPicker" type="ColorPicker" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
-margin_left = 200.0
-margin_top = 200.0
-margin_right = 508.0
-margin_bottom = 662.0
+margin_left = 208.0
+margin_top = 208.0
+margin_right = 516.0
+margin_bottom = 670.0
 
 [node name="OkButton" type="Button" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
 margin_top = 466.0
@@ -1543,6 +1544,61 @@ size_flags_vertical = 3
 text = "Yes"
 
 [node name="NoButton" type="Button" parent="SaveBeforeCloseDialog/PanelContainer/VBoxContainer/HBoxContainer"]
+margin_left = 94.0
+margin_right = 185.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "No"
+
+[node name="SaveBeforeOpenDialog" type="WindowDialog" parent="."]
+margin_right = 204.0
+margin_bottom = 90.0
+window_title = "Save Before Opening Another?"
+script = ExtResource( 39 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PanelContainer" type="PanelContainer" parent="SaveBeforeOpenDialog"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SaveBeforeOpenDialog/PanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 192.0
+margin_bottom = 79.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="SaveBeforeOpenDialog/PanelContainer/VBoxContainer"]
+margin_right = 185.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+text = "Do you want to save changes
+to the component before
+closing?"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SaveBeforeOpenDialog/PanelContainer/VBoxContainer"]
+margin_top = 52.0
+margin_right = 185.0
+margin_bottom = 72.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="YesButton" type="Button" parent="SaveBeforeOpenDialog/PanelContainer/VBoxContainer/HBoxContainer"]
+margin_right = 90.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Yes"
+
+[node name="NoButton" type="Button" parent="SaveBeforeOpenDialog/PanelContainer/VBoxContainer/HBoxContainer"]
 margin_left = 94.0
 margin_right = 185.0
 margin_bottom = 20.0
@@ -1691,6 +1747,12 @@ current_path = "/home/jwright/Downloads/repos/Semblage/"
 [connection signal="resized" from="SaveBeforeCloseDialog/PanelContainer" to="SaveBeforeCloseDialog" method="_on_PanelContainer_resized"]
 [connection signal="button_down" from="SaveBeforeCloseDialog/PanelContainer/VBoxContainer/HBoxContainer/YesButton" to="SaveBeforeCloseDialog" method="_on_YesButton_button_down"]
 [connection signal="button_down" from="SaveBeforeCloseDialog/PanelContainer/VBoxContainer/HBoxContainer/NoButton" to="SaveBeforeCloseDialog" method="_on_NoButton_button_down"]
+[connection signal="no_save_before_open" from="SaveBeforeOpenDialog" to="." method="_on_SaveBeforeOpenDialog_no_save_before_open"]
+[connection signal="resized" from="SaveBeforeOpenDialog" to="SaveBeforeOpenDialog" method="_on_SaveBeforeOpenDialog_resized"]
+[connection signal="yes_save_before_open" from="SaveBeforeOpenDialog" to="." method="_on_SaveBeforeOpenDialog_yes_save_before_open"]
+[connection signal="resized" from="SaveBeforeOpenDialog/PanelContainer" to="SaveBeforeOpenDialog" method="_on_PanelContainer_resized"]
+[connection signal="button_down" from="SaveBeforeOpenDialog/PanelContainer/VBoxContainer/HBoxContainer/YesButton" to="SaveBeforeOpenDialog" method="_on_YesButton_button_down"]
+[connection signal="button_down" from="SaveBeforeOpenDialog/PanelContainer/VBoxContainer/HBoxContainer/NoButton" to="SaveBeforeOpenDialog" method="_on_NoButton_button_down"]
 [connection signal="about_to_show" from="NewComponentDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_about_to_show"]
 [connection signal="file_selected" from="NewComponentDialog" to="." method="_on_NewComponentDialog_file_selected"]
 [connection signal="popup_hide" from="NewComponentDialog" to="GUI/VBoxContainer/WorkArea/DocumentTabs" method="_dialog_popup_hide"]
