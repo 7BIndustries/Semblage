@@ -42,7 +42,13 @@ static func find_parent_dir(path):
 	var path_parts = path.split('/')
 
 	# Remove the directory/file from the end of the path
-	var par_path = path.replace(path_parts[-1], '')
+	path_parts.remove(path_parts.size() - 1)
+
+	# Reassemble the path without the end
+	var par_path = ""
+	for part in path_parts:
+		par_path += "/"
+		par_path += part
 
 	return par_path
 

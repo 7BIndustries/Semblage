@@ -616,12 +616,11 @@ margin_bottom = 4.0
 [node name="OpenDialog" type="FileDialog" parent="."]
 margin_right = 760.0
 margin_bottom = 381.0
+rect_min_size = Vector2( 400, 140 )
 window_title = "Open a File"
 mode = 0
 access = 2
 filters = PoolStringArray( "*.py" )
-current_dir = "/home/jwright/Downloads/repos/Semblage"
-current_path = "/home/jwright/Downloads/repos/Semblage/"
 
 [node name="ErrorDialog" type="AcceptDialog" parent="."]
 margin_left = 200.0
@@ -635,41 +634,37 @@ margin_left = 100.0
 margin_top = 100.0
 margin_right = 740.0
 margin_bottom = 580.0
+rect_min_size = Vector2( 400, 140 )
 window_title = "Export Component"
 access = 2
-current_dir = "/"
-current_file = "component.stl"
-current_path = "/component.stl"
 
 [node name="SaveDialog" type="FileDialog" parent="."]
 margin_right = 640.0
 margin_bottom = 480.0
+rect_min_size = Vector2( 400, 140 )
 access = 2
 filters = PoolStringArray( "*.py" )
-current_dir = "/home/jwright/Downloads/repos/Semblage"
-current_path = "/home/jwright/Downloads/repos/Semblage/"
 
 [node name="ExportFileDialog" type="FileDialog" parent="."]
 margin_right = 500.0
 margin_bottom = 300.0
+rect_min_size = Vector2( 400, 140 )
 window_title = "Export to File"
 access = 2
-current_dir = "/home/jwright/Downloads/repos/Semblage"
-current_path = "/home/jwright/Downloads/repos/Semblage/"
 
 [node name="ImportFileDialog" type="FileDialog" parent="."]
 margin_right = 315.0
 margin_bottom = 130.0
+rect_min_size = Vector2( 400, 140 )
 window_title = "Open a File"
 resizable = true
 mode = 0
 access = 2
-current_dir = "/home/jwright/Downloads/repos/Semblage"
-current_path = "/home/jwright/Downloads/repos/Semblage/"
 
 [node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
 margin_right = 200.0
 margin_bottom = 70.0
+rect_min_size = Vector2( 400, 140 )
 
 [node name="ExportSVGDialog" type="WindowDialog" parent="."]
 margin_right = 356.0
@@ -1479,10 +1474,10 @@ margin_right = 315.0
 margin_bottom = 517.0
 
 [node name="ColorPicker" type="ColorPicker" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
-margin_left = 208.0
-margin_top = 208.0
-margin_right = 516.0
-margin_bottom = 670.0
+margin_left = 216.0
+margin_top = 216.0
+margin_right = 524.0
+margin_bottom = 678.0
 
 [node name="OkButton" type="Button" parent="ColorPickerDialog/PanelContainer/VBoxContainer"]
 margin_top = 466.0
@@ -1640,10 +1635,9 @@ size_flags_vertical = 3
 [node name="NewComponentDialog" type="FileDialog" parent="."]
 margin_right = 640.0
 margin_bottom = 480.0
+rect_min_size = Vector2( 400, 140 )
 access = 2
 filters = PoolStringArray( "*.py" )
-current_dir = "/home/jwright/Downloads/repos/Semblage"
-current_path = "/home/jwright/Downloads/repos/Semblage/"
 
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/OpenButton" to="." method="_on_OpenButton_button_down"]
 [connection signal="button_down" from="GUI/VBoxContainer/PanelContainer/Toolbar/AddComponentButton" to="." method="_on_AddComponentButton_button_down"]
