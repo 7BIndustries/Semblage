@@ -81,9 +81,17 @@ static func find_matching_edit_trigger(code_text):
 Returns the tagged object specified in the given template.
 """
 static func get_component_from_template(template):
+	var wp_rgx = "(?<=tag\\(\")(.*)(?=\"\\))"
+	var assy_rgx = "(?<=name\\=\")(.*?)(?=\"\\,)"
+
+	# Figure out whether we are dealing with an assembly, or a regular component
+	var rgx = wp_rgx
+	if "Assembly" in template:
+		rgx = assy_rgx
+
 	# Use a regular expression to extract the tag names
 	var object_rgx = RegEx.new()
-	object_rgx.compile("(?<=tag\\(\")(.*)(?=\"\\))")
+	object_rgx.compile(rgx)
 	var res = object_rgx.search(template)
 
 	if res:
@@ -226,6 +234,21 @@ static func get_selector_actions():
 			selector_actions.append(Triggers.get_triggers()[trigger].action.name)
 
 	return selector_actions
+
+
+"""
+Filters out to only workplane actions.
+"""
+static func get_assembly_actions():
+	var wp_actions = []
+
+	# Grab only actions from the Workplane group
+	for trigger in Triggers.get_triggers().keys():
+		if Triggers.get_triggers()[trigger].action.group == "ASSEMBLY":
+			wp_actions.append(Triggers.get_triggers()[trigger].action.name)
+
+	return wp_actions
+
 
 """
 Gets the matching action given the action's name.

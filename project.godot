@@ -10,6 +10,11 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "VBoxContainer",
+"class": "AssemblyControl",
+"language": "GDScript",
+"path": "res://controls/AssemblyControl.gd"
+}, {
+"base": "VBoxContainer",
 "class": "BlindCutControl",
 "language": "GDScript",
 "path": "res://controls/BlindCutControl.gd"
@@ -375,6 +380,7 @@ _global_script_classes=[ {
 "path": "res://controls/WorkplaneControl.gd"
 } ]
 _global_script_class_icons={
+"AssemblyControl": "",
 "BlindCutControl": "",
 "BoxControl": "",
 "CBoreHoleControl": "",

@@ -8,6 +8,15 @@ Returns the available Action triggers to the caller.
 """
 static func get_triggers():
 	var triggers  = {
+		"Assembly": {
+			"trigger": "cq$",
+			"edit_trigger": "^\\.Assembly\\(.*\\).*",
+			"action": {
+				"name": "Assembly",
+				"group": "ASSEMBLY",
+				"control": "res://controls/AssemblyControl.gd"
+			}
+		},
 		"faces": {
 			"trigger": "cq$",
 			"edit_trigger": "^\\.faces\\(.*\\).*",

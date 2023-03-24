@@ -14,6 +14,7 @@ var three_d_actions = null
 var two_d_actions = null
 var wp_actions = null
 var selector_actions = null
+var assembly_actions = null
 
 
 """
@@ -433,6 +434,40 @@ func _on_SketchButton_toggled(_button_pressed):
 
 
 """
+Called when the user clicks the Assembly button in the Operations dialog and
+toggles it.
+"""
+func _on_AssemblyButton_toggled(button_pressed):
+	var assy_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/AssemblyButton
+
+	if assy_btn.pressed:
+		# Untoggle all other group buttons
+		_untoggle_all_group_buttons(assy_btn)
+
+		action_filter = "ASSEMBLY"
+
+		# Fill in the workplane action list the first time it is requested
+		if assembly_actions == null:
+			assembly_actions = ContextHandler.get_assembly_actions()
+
+		# Repopulate the action option button
+		var opt_btn = $VBoxContainer/ActionOptionButton
+		opt_btn.clear()
+		Common.load_option_button($VBoxContainer/ActionOptionButton, assembly_actions)
+
+		# Set the help tooltips for all the items in the dropdown
+		_set_tooltips()
+
+		_set_action_control()
+
+		# Hide any previously shown sketch tools
+		_hide_sketch_controls()
+
+		# Make sure the dialog is sized correctly
+		_on_VBoxContainer_resized()
+
+
+"""
 Called when the user clicks on the Workplane button and toggles it.
 """
 func _on_WorkplaneButton_toggled(_button_pressed):
@@ -518,6 +553,7 @@ func _untoggle_all_group_buttons(except):
 	var three_d_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton
 	var sketch_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton
 	var selector_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton
+	var assy_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/AssemblyButton
 
 	# Untoggle all buttons except the one that was passed
 	if except != wp_btn:
@@ -528,6 +564,8 @@ func _untoggle_all_group_buttons(except):
 		sketch_btn.pressed = false
 	if except != selector_btn:
 		selector_btn.pressed = false
+	if except != assy_btn:
+		assy_btn.pressed = false
 
 
 """
