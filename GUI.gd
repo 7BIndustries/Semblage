@@ -596,8 +596,12 @@ func _render_component_text(component_text):
 
 	# Method that post-processes the results of the script to pull out renderables
 	render_tree = cqgipy
-	if cqgipy.has_method('get_render_tree'):
-		render_tree = render_tree.get_render_tree(component_text)
+	if cqgipy.has_method('get_render_tree') and cqgipy.has_method('get_assembly_render_tree'):
+		# Handle assemblies differently than standard components
+		if ".Assembly" in component_text:
+			render_tree = render_tree.get_assembly_render_tree(component_text)
+		else:
+			render_tree = render_tree.get_render_tree(component_text)
 	else:
 		emit_signal("error", "The current component has invalid geometry. Please undo the last operation and try a different method.")
 
@@ -923,20 +927,22 @@ func _on_ActionPopupPanel_ok_signal(new_template, combine_map):
 	# Render the component
 	_execute_and_render()
 
-	# Make sure the user has placed a workplane
-	if component_tree_root.get_children() == null:
-		emit_signal("error", "Please add a workplane before adding other features.")
-		return
+	# Handle an assembly differently
+	if not new_template.begins_with(".Assembly"):
+		# Make sure the user has placed a workplane
+		if component_tree_root.get_children() == null:
+			emit_signal("error", "Please add a workplane before adding other features.")
+			return
 
-	# If this is the workplane or first non-workplane item being added, set the home view
-	var tv = component_tree_root.get_children().get_children()
-	tv = tv.get_next()
-	if tv == null:
-		_home_view()
-	else:
+		# If this is the workplane or first non-workplane item being added, set the home view
+		var tv = component_tree_root.get_children().get_children()
 		tv = tv.get_next()
 		if tv == null:
 			_home_view()
+		else:
+			tv = tv.get_next()
+			if tv == null:
+				_home_view()
 
 	# Let the user know the name of the file they are trying to open
 	var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
@@ -1150,18 +1156,18 @@ func _on_AddComponentButton_button_down():
 		tb_popup.hide()
 	else:
 		tb_popup.rect_position = Vector2(pos.x, pos.y + size.y)
-		tb_popup.rect_size = Vector2(100, 50)
+		tb_popup.rect_size = Vector2(125, 50)
 		tb_popup.show()
 
 		# Add the create Component button
 		var component_item = Button.new()
-		component_item.set_text("Component")
+		component_item.set_text("New Component")
 		component_item.connect("button_down", self, "_create_component")
 		$ToolbarPopupPanel/ToolbarPopupVBox.add_child(component_item)
 
 		# Add the create Assembly button
 		var assembly_item = Button.new()
-		assembly_item.set_text("Assembly")
+		assembly_item.set_text("New Assembly")
 		assembly_item.connect("button_down", self, "_create_assembly")
 		$ToolbarPopupPanel/ToolbarPopupVBox.add_child(assembly_item)
 
@@ -2196,6 +2202,10 @@ func _on_NewComponentDialog_file_selected(path):
 			# Set the file tab to reflect the file path
 			var tabs = $GUI/VBoxContainer/WorkArea/DocumentTabs
 			tabs.set_tab_title(0, open_file_path)
+
+			# Add a top level assembly entry to the component tree
+			var new_template = ".Assembly(loc=(0,0,0),name=\"" + assy_name + "\",color=cq.Color(0,0,1),metadata=None)"
+			_on_ActionPopupPanel_ok_signal(new_template, null)
 
 
 """

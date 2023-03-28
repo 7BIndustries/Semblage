@@ -1,19 +1,37 @@
 extends VBoxContainer
 
-class_name AssemblyControl
+class_name AssemblyPartControl
 
 var prev_template = null
 
-var template = ".Assembly(loc={loc},name={name},color={color},metadata={metadata})"
+var template = ".add(obj={component},name={name},loc={loc},color={color})"
 
-# Edit regexes
-const name_edit_rgx = "(?<=name\\=)(.*?)(?=\\,color)"
-const loc_edit_rgx = "(?<=loc\\=)(.*?)(?=\\,name)"
-const color_edit_rgx = "(?<=color\\=)(.*?)(?=\\,metadata)"
-const metadata_edit_rgx = "(?<=metadata\\=)(.*?)(?=\\))"
+# Regexes used to load controls from the code string
+const obj_edit_rgx = "(?<=obj\\=)(.*?)(?=\\,name)"
+const name_edit_rgx = "(?<=name\\=)(.*?)(?=\\,loc)"
+const loc_edit_rgx = "(?<=loc\\=)(.*?)(?=\\,color)"
+const color_edit_rgx = "(?<=color\\=)(.*?)(?=\\))"
 
-# Called when the node enters the scene tree for the first time.
+"""
+Called when the node enters the scene tree for the first time.
+"""
 func _ready():
+	# Allow the user to set the component to add to the assembly
+	var obj_group = HBoxContainer.new()
+	obj_group.name = "obj_group"
+	var assy_obj_lbl = Label.new()
+	assy_obj_lbl.set_text("Component: ")
+	obj_group.add_child(assy_obj_lbl)
+	var assy_comp_ctrl = OptionButton.new()
+	assy_comp_ctrl.name = "assy_comp_ctrl"
+	assy_comp_ctrl.size_flags_horizontal = 3
+	assy_comp_ctrl.add_item("None")
+	assy_comp_ctrl.add_item("New")
+#	assy_comp_ctrl.set_text("change_me")
+	assy_comp_ctrl.hint_tooltip = tr("ASSY_COMPONENT_CTRL_HINT_TOOLTIP")
+	obj_group.add_child(assy_comp_ctrl)
+	add_child(obj_group)
+
 	# Allow the user to give the Workplane/component a name
 	var name_group = HBoxContainer.new()
 	name_group.name = "name_group"
@@ -149,23 +167,6 @@ func _ready():
 
 	add_child(color_comps_group)
 
-	# Allow the user to set assembly metadata
-#	var meta_group = HBoxContainer.new()
-#	meta_group.name = "meta_group"
-#	var assy_meta_lbl = Label.new()
-#	assy_meta_lbl.set_text("Metadata")
-#	meta_group.add_child(assy_meta_lbl)
-#	add_child(meta_group)
-#	var meta_ctrl = Tree.new()
-#	var item = meta_ctrl.create_item(meta_ctrl.get_root())
-#	item.set_text(0, "key")
-#	item.set_text(1, "value")
-#
-#	# Make sure the columns are editable
-#	item.set_editable(0, true)
-#	item.set_editable(1, true)
-#
-#	add_child(meta_ctrl)
 
 """
 Called when a user selects a color from the color picker dialog.
@@ -216,13 +217,13 @@ func is_valid():
 	var color_a_ctrl = get_node("color_comps_group/color_a_ctrl")
 
 	# Make sure all of the numeric controls have valid values
+	if not assy_name_ctrl.is_valid:
+		return false
 	if not loc_x_ctrl.is_valid:
 		return false
 	if not loc_y_ctrl.is_valid:
 		return false
 	if not loc_z_ctrl.is_valid:
-		return false
-	if not assy_name_ctrl.is_valid:
 		return false
 	if not color_r_ctrl.is_valid:
 		return false
@@ -242,29 +243,33 @@ Fills out the template and returns it.
 func get_completed_template():
 	var complete = ""
 
+	var assy_comp_ctrl = get_node("obj_group/assy_comp_ctrl")
+	var assy_name_ctrl = get_node("name_group/assy_name_ctrl")
 	var loc_x_ctrl = get_node("loc_group/loc_x_ctrl")
 	var loc_y_ctrl = get_node("loc_group/loc_y_ctrl")
 	var loc_z_ctrl = get_node("loc_group/loc_z_ctrl")
-	var assy_name_ctrl = get_node("name_group/assy_name_ctrl")
 	var color_r_ctrl = get_node("color_comps_group/color_r_ctrl")
 	var color_g_ctrl = get_node("color_comps_group/color_g_ctrl")
 	var color_b_ctrl = get_node("color_comps_group/color_b_ctrl")
 	var color_a_ctrl = get_node("color_comps_group/color_a_ctrl")
 
-	# Assemble the location 3-tuple
-	var loc = "(" + loc_x_ctrl.get_text() + "," + loc_y_ctrl.get_text() + "," + loc_y_ctrl.get_text() + ")"
+	# Assemble the method call for the object
+	var component = "build_" + assy_comp_ctrl.get_item_text(assy_comp_ctrl.get_selected_id()) + "()"
 
 	# Assemble the name
 	var name = "\"" + assy_name_ctrl.get_text() + "\""
+
+	# Assemble the location 3-tuple
+	var loc = "(" + loc_x_ctrl.get_text() + "," + loc_y_ctrl.get_text() + "," + loc_y_ctrl.get_text() + ")"
 
 	# Assemble the CadQuery Color object instantiation
 	var color = "cq.Color(" + color_r_ctrl.get_text() + "," + color_g_ctrl.get_text() + "," + color_b_ctrl.get_text() + "," + color_a_ctrl.get_text() + ")"
 
 	complete += template.format({
-		"loc": loc,
+		"component": component,
 		"name": name,
-		"color": color,
-		"metadata": "None"
+		"loc": loc,
+		"color": color
 	})
 
 	return complete

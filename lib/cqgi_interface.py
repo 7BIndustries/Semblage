@@ -6,7 +6,7 @@ import json
 from contextlib import ExitStack, contextmanager
 from godot import exposed, export, signal, Node, ResourceLoader, Dictionary, Array, Vector3
 from cadquery import cqgi
-from cadquery import Vector, Color, exporters
+from cadquery import Vector, Color, exporters, Assembly
 from OCP.TopLoc import TopLoc_Location
 from OCP.BRep import BRep_Tool
 from OCP.BRepMesh import BRepMesh_IncrementalMesh
@@ -67,6 +67,11 @@ class cqgi_interface(Node):
 
 				# Step through each of the objects returned from script execution
 				for result in build_result.results:
+					# Assemblies have to be handled differently than Workplane objects
+					if isinstance(result.shape, Assembly):
+						return "error~At this time use of assemblies and regular components cannot be mixed."
+						continue
+
 					component_id = list(result.shape.ctx.tags)[0]
 
 					cur_comp = Dictionary()
@@ -281,6 +286,58 @@ class cqgi_interface(Node):
 		# Handles the case of there being only adges in the component(s)
 		if len(render_tree["components"]) > 0 and render_tree["components"][0]["largest_dimension"] == -1:
 			render_tree["components"][0]["largest_dimension"] = render_tree["components"][0]["smallest_dimension"]
+
+		return render_tree
+
+
+	def get_assembly_render_tree(self, script_text):
+		"""
+		Handles assemblies differently than stock components.
+		"""
+		try:
+			with ExitStack() as stack:
+				stack.enter_context(module_manager())
+				script_text = str(script_text)
+
+				cq_model = cqgi.parse(script_text)
+				build_result = cq_model.build({})
+
+				# Make sure the build was successful
+				if not build_result.success:
+					return "error~" + str(build_result.exception)
+
+				# The highest level render tree that holds all items (components and workplanes)
+				render_tree = Dictionary()
+
+				# All of the components and workplanes that the user has requested be rendered
+				render_tree["components"] = Array()
+
+				# Step through each of the objects returned from script execution
+				for result in build_result.results:
+					# Assemblies have to be handled differently than Workplane objects
+					if not isinstance(result.shape, Assembly):
+						return "error~At this time use of assemblies and regular components cannot be mixed."
+						continue
+
+					# Start to pull the parts of the assembly to add as separate components
+					if result.shape.obj != None:
+						cur_assy = result.shape
+
+						# Create a component entry to hold this part shape
+#						cur_comp = Dictionary()
+#						cur_comp["id"] = cur_assy.name
+#						cur_comp["workplanes"] = Array()
+
+						# Save the largest dimension of this shape
+#						cur_comp["largest_dimension"] = cur_assy.shapes.val().BoundingBox().DiagonalLength
+					elif result.shape.children != None:
+						for child in result.shape.children:
+							print(child.shapes)
+		except Exception as err:
+			import traceback
+			traceback.print_exc()
+			ret = "error~" + str(err)
+			return ret
 
 		return render_tree
 

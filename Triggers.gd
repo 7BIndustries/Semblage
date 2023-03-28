@@ -12,9 +12,18 @@ static func get_triggers():
 			"trigger": "cq$",
 			"edit_trigger": "^\\.Assembly\\(.*\\).*",
 			"action": {
-				"name": "Assembly",
+				"name": "New Assembly",
 				"group": "ASSEMBLY",
 				"control": "res://controls/AssemblyControl.gd"
+			}
+		},
+		"add": {
+			"trigger": "cq$",
+			"edit_trigger": "^\\.add\\(.*\\).*",
+			"action": {
+				"name": "Add Component (add)",
+				"group": "ASSEMBLY",
+				"control": "res://controls/AssemblyComponentControl.gd"
 			}
 		},
 		"faces": {
