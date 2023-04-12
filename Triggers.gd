@@ -14,7 +14,8 @@ static func get_triggers():
 			"action": {
 				"name": "New Assembly",
 				"group": "ASSEMBLY",
-				"control": "res://controls/AssemblyControl.gd"
+				"control": "res://controls/AssemblyControl.gd",
+				"icon": preload("res://assets/icons/assembly_button_flat_ready.svg")
 			}
 		},
 		"add": {
@@ -518,7 +519,8 @@ static func get_triggers():
 			"action": {
 				"name": "New Component",
 				"group": "WP",
-				"control": "res://controls/WorkplaneControl.gd"
+				"control": "res://controls/WorkplaneControl.gd",
+				"icon": preload("res://assets/icons/workplane_button_flat_ready.svg")
 			}
 		},
 		"workplane": {
@@ -527,7 +529,8 @@ static func get_triggers():
 			"action": {
 				"name": "workplane (workplane)",
 				"group": "WP",
-				"control": "res://controls/InlineWorkplaneControl.gd"
+				"control": "res://controls/InlineWorkplaneControl.gd",
+				"icon": preload("res://assets/icons/workplane_button_flat_ready.svg")
 			}
 		},
 		"ExistingCompoent": {

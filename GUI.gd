@@ -383,7 +383,7 @@ func load_semblage_component(text):
 
 			# Save this new component name as the current for use later
 			cur_component = new_component
-			Common.add_component(new_component, component_tree)
+			Common.add_component(new_component, icon, null, component_tree)
 		# The metadata attached to this component
 		elif line.find("# meta") >= 0:
 			# We want to attach the metadata to the last component added
@@ -492,6 +492,9 @@ func _convert_component_tree_to_script(include_show):
 					# Move to the next child operation, if there is one
 					cur_op = cur_op.get_next()
 			else:
+				# Add the base text for the component
+				component_text += "    " + cur_comp.get_text(0)  + "=" + cur_comp.get_text(0) + cur_comp.get_tooltip(0) + "\n"
+
 				# Walk through any operations attached to this component
 				var cur_op = cur_comp.get_children()
 				while true:
@@ -895,15 +898,19 @@ func _on_ActionPopupPanel_ok_signal(new_template, combine_map):
 	else:
 		# Add the componenent name to the component tree if it had a name
 		if new_component:
+			# Find the icon for the component
+			var action = ContextHandler.find_matching_edit_trigger(new_template)
+			var icon = action[action.keys()[0]]["icon"]
+
 			# Add the component
-			Common.add_component(new_component, component_tree)
+			Common.add_component(new_component, icon, new_template, component_tree)
 
 			# See if we have an external component loaded
 			if new_template.begins_with("(ext)"):
 				for op in new_template.split("\n"):
 					Common.add_operation(new_component, op.replace("(ext) ", ""), component_tree)
-			else:
-				Common.add_operation(new_component, new_template, component_tree)
+#			else:
+#				Common.add_operation(new_component, new_template, component_tree)
 
 			# If there was a binary (i.e. boolean) operation, nest components as appropriate
 			if combine_map != null:
@@ -935,7 +942,7 @@ func _on_ActionPopupPanel_ok_signal(new_template, combine_map):
 			return
 
 		# If this is the workplane or first non-workplane item being added, set the home view
-		var tv = component_tree_root.get_children().get_children()
+		var tv = component_tree_root.get_children()#.get_children()
 		tv = tv.get_next()
 		if tv == null:
 			_home_view()

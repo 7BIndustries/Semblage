@@ -2,15 +2,17 @@ extends VBoxContainer
 
 class_name AssemblyPartControl
 
+signal error
+
 var prev_template = null
 
 var template = ".add(obj={component},name={name},loc={loc},color={color})"
 
 # Regexes used to load controls from the code string
 const obj_edit_rgx = "(?<=obj\\=)(.*?)(?=\\,name)"
-const name_edit_rgx = "(?<=name\\=)(.*?)(?=\\,loc)"
-const loc_edit_rgx = "(?<=loc\\=)(.*?)(?=\\,color)"
-const color_edit_rgx = "(?<=color\\=)(.*?)(?=\\))"
+const name_edit_rgx = "(?<=name\\=\")(.*?)(?=\"\\,loc)"
+const loc_edit_rgx = "(?<=loc\\=\\()(.*?)(?=\\)\\,color)"
+const color_edit_rgx = "(?<=color\\=cq\\.Color\\()(.*?)(?=\\))"
 
 """
 Called when the node enters the scene tree for the first time.
@@ -27,7 +29,7 @@ func _ready():
 	assy_comp_ctrl.size_flags_horizontal = 3
 	assy_comp_ctrl.add_item("None")
 	assy_comp_ctrl.add_item("New")
-#	assy_comp_ctrl.set_text("change_me")
+	assy_comp_ctrl.connect("item_selected", self, "_on_component_changed")
 	assy_comp_ctrl.hint_tooltip = tr("ASSY_COMPONENT_CTRL_HINT_TOOLTIP")
 	obj_group.add_child(assy_comp_ctrl)
 	add_child(obj_group)
@@ -41,6 +43,7 @@ func _ready():
 	var assy_name_ctrl = WPNameEdit.new()
 	assy_name_ctrl.name = "assy_name_ctrl"
 	assy_name_ctrl.size_flags_horizontal = 3
+	assy_name_ctrl.editable = false
 	assy_name_ctrl.set_text("change_me")
 	assy_name_ctrl.hint_tooltip = tr("WP_NAME_CTRL_HINT_TOOLTIP")
 	name_group.add_child(assy_name_ctrl)
@@ -123,8 +126,9 @@ func _ready():
 	var color_r_ctrl = NumberEdit.new()
 	color_r_ctrl.size_flags_horizontal = 3
 	color_r_ctrl.name = "color_r_ctrl"
-	color_r_ctrl.CanBeNegative = true
+	color_r_ctrl.CanBeNegative = false
 	color_r_ctrl.CanBeAVariable = true
+	color_r_ctrl.MaxValue = 1.0
 	color_r_ctrl.set_text("0.0")
 	color_r_ctrl.hint_tooltip = tr("COLOR_R_CTRL_HINT_TOOLTIP")
 	color_comps_group.add_child(color_r_ctrl)
@@ -135,8 +139,9 @@ func _ready():
 	var color_g_ctrl = NumberEdit.new()
 	color_g_ctrl.size_flags_horizontal = 3
 	color_g_ctrl.name = "color_g_ctrl"
-	color_g_ctrl.CanBeNegative = true
+	color_g_ctrl.CanBeNegative = false
 	color_g_ctrl.CanBeAVariable = true
+	color_g_ctrl.MaxValue = 1.0
 	color_g_ctrl.set_text("0.0")
 	color_g_ctrl.hint_tooltip = tr("COLOR_G_CTRL_HINT_TOOLTIP")
 	color_comps_group.add_child(color_g_ctrl)
@@ -147,8 +152,9 @@ func _ready():
 	var color_b_ctrl = NumberEdit.new()
 	color_b_ctrl.size_flags_horizontal = 3
 	color_b_ctrl.name = "color_b_ctrl"
-	color_b_ctrl.CanBeNegative = true
+	color_b_ctrl.CanBeNegative = false
 	color_b_ctrl.CanBeAVariable = true
+	color_b_ctrl.MaxValue = 1.0
 	color_b_ctrl.set_text("0.0")
 	color_b_ctrl.hint_tooltip = tr("COLOR_G_CTRL_HINT_TOOLTIP")
 	color_comps_group.add_child(color_b_ctrl)
@@ -159,13 +165,31 @@ func _ready():
 	var color_a_ctrl = NumberEdit.new()
 	color_a_ctrl.size_flags_horizontal = 3
 	color_a_ctrl.name = "color_a_ctrl"
-	color_a_ctrl.CanBeNegative = true
+	color_a_ctrl.CanBeNegative = false
 	color_a_ctrl.CanBeAVariable = true
+	color_a_ctrl.MaxValue = 1.0
 	color_a_ctrl.set_text("0.0")
 	color_a_ctrl.hint_tooltip = tr("COLOR_A_CTRL_HINT_TOOLTIP")
 	color_comps_group.add_child(color_a_ctrl)
 
 	add_child(color_comps_group)
+
+	# Get the directory holding the current component's file
+	var tlp = self.find_parent('Control')
+	if not tlp.open_file_path:
+		return
+	var path_parts = tlp.open_file_path.split("/")
+	var path_str = tlp.open_file_path.replace(path_parts[-1], "")
+
+	# Fill the components drop down with any components that are in the assembly directory
+	var mods = discovery.discover(path_str)
+	for mod in mods:
+		var cur_item = null
+
+		# Step through the period delimited package-module structure and nest it within the tree
+		var mod_parts = mod.split(".")
+		for mod_part in mod_parts:
+			assy_comp_ctrl.add_item(cur_item)
 
 
 """
@@ -207,14 +231,19 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var assy_comp_ctrl = get_node("obj_group/assy_comp_ctrl")
+	var assy_name_ctrl = get_node("name_group/assy_name_ctrl")
 	var loc_x_ctrl = get_node("loc_group/loc_x_ctrl")
 	var loc_y_ctrl = get_node("loc_group/loc_y_ctrl")
 	var loc_z_ctrl = get_node("loc_group/loc_z_ctrl")
-	var assy_name_ctrl = get_node("name_group/assy_name_ctrl")
 	var color_r_ctrl = get_node("color_comps_group/color_r_ctrl")
 	var color_g_ctrl = get_node("color_comps_group/color_g_ctrl")
 	var color_b_ctrl = get_node("color_comps_group/color_b_ctrl")
 	var color_a_ctrl = get_node("color_comps_group/color_a_ctrl")
+
+	# Make sure that the user has selected a component
+	if assy_comp_ctrl.get_selected_id() == 0:
+		return false
 
 	# Make sure all of the numeric controls have valid values
 	if not assy_name_ctrl.is_valid:
@@ -254,7 +283,7 @@ func get_completed_template():
 	var color_a_ctrl = get_node("color_comps_group/color_a_ctrl")
 
 	# Assemble the method call for the object
-	var component = "build_" + assy_comp_ctrl.get_item_text(assy_comp_ctrl.get_selected_id()) + "()"
+	var component = "build_" + assy_name_ctrl.get_text() + "()"
 
 	# Assemble the name
 	var name = "\"" + assy_name_ctrl.get_text() + "\""
@@ -273,3 +302,83 @@ func get_completed_template():
 	})
 
 	return complete
+
+
+"""
+Loads values into the control's sub-controls based on a code string.
+"""
+func set_values_from_string(text_line):
+	prev_template = text_line
+
+	var rgx = RegEx.new()
+
+	var assy_comp_ctrl = get_node("obj_group/assy_comp_ctrl")
+	var assy_name_ctrl = get_node("name_group/assy_name_ctrl")
+	var loc_x_ctrl = get_node("loc_group/loc_x_ctrl")
+	var loc_y_ctrl = get_node("loc_group/loc_y_ctrl")
+	var loc_z_ctrl = get_node("loc_group/loc_z_ctrl")
+	var color_r_ctrl = get_node("color_comps_group/color_r_ctrl")
+	var color_g_ctrl = get_node("color_comps_group/color_g_ctrl")
+	var color_b_ctrl = get_node("color_comps_group/color_b_ctrl")
+	var color_a_ctrl = get_node("color_comps_group/color_a_ctrl")
+
+	# Set the assembly component object selection
+	rgx.compile(obj_edit_rgx)
+	var res = rgx.search(text_line)
+	if res:
+		var obj_name = res.get_string().replace("build_", "").replace("()", "")
+
+		# The component build method will not be present in the option drop down when editing
+		assy_comp_ctrl.add_item(obj_name)
+		Common.set_option_btn_by_text(assy_comp_ctrl, obj_name)
+
+	# The workplane name
+	rgx.compile(name_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		assy_name_ctrl.set_text(res.get_string())
+
+	# Split the location and insert the values in the correct controls
+	rgx.compile(loc_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		# Fill in the origin X, Y and Z controls
+		var xyz = res.get_string().split(",")
+		loc_x_ctrl.set_text(xyz[0])
+		loc_y_ctrl.set_text(xyz[1])
+		loc_z_ctrl.set_text(xyz[2])
+
+	# Split the color and insert the values in the correct controls
+	rgx.compile(color_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		# Fill in the origin X, Y and Z controls
+		var xyz = res.get_string().split(",")
+		color_r_ctrl.set_text(xyz[0])
+		color_g_ctrl.set_text(xyz[1])
+		color_b_ctrl.set_text(xyz[2])
+		color_a_ctrl.set_text(xyz[3])
+
+
+"""
+Called when the user changes the component selection.
+"""
+func _on_component_changed(selected_index):
+	var assy_comp_ctrl = get_node("obj_group/assy_comp_ctrl")
+	var assy_name_ctrl = get_node("name_group/assy_name_ctrl")
+
+	# Unlock the name field if anything other than None is selected
+	if selected_index != 0:
+		assy_name_ctrl.editable = true
+
+	# Make sure the assembly is saved if the user is trying to add a new component
+	if selected_index == 1:
+		var par = find_parent("ActionPopupPanel")
+		var code = par.new_template
+
+		# If there is no top-level assembly object, something is wrong
+		if code == null or not code.begins_with(".Assembly"):
+			par._on_error("You must add a top level assembly and save it before adding a component.")
+			return
+
+	print(assy_comp_ctrl.get_item_text(selected_index))

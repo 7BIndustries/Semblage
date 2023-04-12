@@ -36,6 +36,8 @@ func _ready():
 	sketch_btn.hint_tooltip = tr("SKETCH_BUTTON_HINT_TOOLTIP")
 	var select_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton
 	select_btn.hint_tooltip = tr("SELECTOR_BUTTON_HINT_TOOLTIP")
+	var assy_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/AssemblyButton
+	assy_btn.hint_tooltip = tr("ASSEMBLY_BUTTON_HINT_TOOLTIP")
 
 	# Add a tooltip to the modify operation buttons
 	var add_btn = $VBoxContainer/ActionContainer/ActionButtonContainer/AddButton
@@ -232,6 +234,7 @@ func _select_group_button(group):
 	var three_d_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/ThreeDButton
 	var sketch_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SketchButton
 	var selector_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/SelectorButton
+	var assy_btn = $VBoxContainer/ActionGroupsVBoxContainer/HBoxContainer/AssemblyButton
 
 	if group == "WP":
 		wp_btn.pressed = true
@@ -241,6 +244,8 @@ func _select_group_button(group):
 		_on_ThreeDButton_toggled(three_d_btn)
 	elif group == "SELECTORS":
 		selector_btn.pressed = true
+	elif group == "ASSEMBLY":
+		assy_btn.pressed = true
 	else:
 		sketch_btn.pressed = true
 		_on_SketchButton_toggled(sketch_btn)

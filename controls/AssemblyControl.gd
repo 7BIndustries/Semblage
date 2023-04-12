@@ -7,9 +7,9 @@ var prev_template = null
 var template = ".Assembly(loc={loc},name={name},color={color},metadata={metadata})"
 
 # Edit regexes
-const name_edit_rgx = "(?<=name\\=)(.*?)(?=\\,color)"
-const loc_edit_rgx = "(?<=loc\\=)(.*?)(?=\\,name)"
-const color_edit_rgx = "(?<=color\\=)(.*?)(?=\\,metadata)"
+const name_edit_rgx = "(?<=name\\=\")(.*?)(?=\"\\,color)"
+const loc_edit_rgx = "(?<=loc\\=\\()(.*?)(?=\\)\\,name)"
+const color_edit_rgx = "(?<=color\\=cq\\.Color\\()(.*?)(?=\\)\\,metadata)"
 const metadata_edit_rgx = "(?<=metadata\\=)(.*?)(?=\\))"
 
 # Called when the node enters the scene tree for the first time.
@@ -105,8 +105,9 @@ func _ready():
 	var color_r_ctrl = NumberEdit.new()
 	color_r_ctrl.size_flags_horizontal = 3
 	color_r_ctrl.name = "color_r_ctrl"
-	color_r_ctrl.CanBeNegative = true
+	color_r_ctrl.CanBeNegative = false
 	color_r_ctrl.CanBeAVariable = true
+	color_r_ctrl.MaxValue = 1.0
 	color_r_ctrl.set_text("0.0")
 	color_r_ctrl.hint_tooltip = tr("COLOR_R_CTRL_HINT_TOOLTIP")
 	color_comps_group.add_child(color_r_ctrl)
@@ -117,8 +118,9 @@ func _ready():
 	var color_g_ctrl = NumberEdit.new()
 	color_g_ctrl.size_flags_horizontal = 3
 	color_g_ctrl.name = "color_g_ctrl"
-	color_g_ctrl.CanBeNegative = true
+	color_g_ctrl.CanBeNegative = false
 	color_g_ctrl.CanBeAVariable = true
+	color_g_ctrl.MaxValue = 1.0
 	color_g_ctrl.set_text("0.0")
 	color_g_ctrl.hint_tooltip = tr("COLOR_G_CTRL_HINT_TOOLTIP")
 	color_comps_group.add_child(color_g_ctrl)
@@ -129,8 +131,9 @@ func _ready():
 	var color_b_ctrl = NumberEdit.new()
 	color_b_ctrl.size_flags_horizontal = 3
 	color_b_ctrl.name = "color_b_ctrl"
-	color_b_ctrl.CanBeNegative = true
+	color_b_ctrl.CanBeNegative = false
 	color_b_ctrl.CanBeAVariable = true
+	color_b_ctrl.MaxValue = 1.0
 	color_b_ctrl.set_text("0.0")
 	color_b_ctrl.hint_tooltip = tr("COLOR_G_CTRL_HINT_TOOLTIP")
 	color_comps_group.add_child(color_b_ctrl)
@@ -206,10 +209,10 @@ func is_binary():
 Checks whether or not all the values in the controls are valid.
 """
 func is_valid():
+	var assy_name_ctrl = get_node("name_group/assy_name_ctrl")
 	var loc_x_ctrl = get_node("loc_group/loc_x_ctrl")
 	var loc_y_ctrl = get_node("loc_group/loc_y_ctrl")
 	var loc_z_ctrl = get_node("loc_group/loc_z_ctrl")
-	var assy_name_ctrl = get_node("name_group/assy_name_ctrl")
 	var color_r_ctrl = get_node("color_comps_group/color_r_ctrl")
 	var color_g_ctrl = get_node("color_comps_group/color_g_ctrl")
 	var color_b_ctrl = get_node("color_comps_group/color_b_ctrl")
@@ -242,17 +245,17 @@ Fills out the template and returns it.
 func get_completed_template():
 	var complete = ""
 
+	var assy_name_ctrl = get_node("name_group/assy_name_ctrl")
 	var loc_x_ctrl = get_node("loc_group/loc_x_ctrl")
 	var loc_y_ctrl = get_node("loc_group/loc_y_ctrl")
 	var loc_z_ctrl = get_node("loc_group/loc_z_ctrl")
-	var assy_name_ctrl = get_node("name_group/assy_name_ctrl")
 	var color_r_ctrl = get_node("color_comps_group/color_r_ctrl")
 	var color_g_ctrl = get_node("color_comps_group/color_g_ctrl")
 	var color_b_ctrl = get_node("color_comps_group/color_b_ctrl")
 	var color_a_ctrl = get_node("color_comps_group/color_a_ctrl")
 
 	# Assemble the location 3-tuple
-	var loc = "(" + loc_x_ctrl.get_text() + "," + loc_y_ctrl.get_text() + "," + loc_y_ctrl.get_text() + ")"
+	var loc = "(" + loc_x_ctrl.get_text() + "," + loc_y_ctrl.get_text() + "," + loc_z_ctrl.get_text() + ")"
 
 	# Assemble the name
 	var name = "\"" + assy_name_ctrl.get_text() + "\""
@@ -268,3 +271,48 @@ func get_completed_template():
 	})
 
 	return complete
+
+
+"""
+Loads values into the control's sub-controls based on a code string.
+"""
+func set_values_from_string(text_line):
+	prev_template = text_line
+
+	var rgx = RegEx.new()
+
+	var assy_name_ctrl = get_node("name_group/assy_name_ctrl")
+	var loc_x_ctrl = get_node("loc_group/loc_x_ctrl")
+	var loc_y_ctrl = get_node("loc_group/loc_y_ctrl")
+	var loc_z_ctrl = get_node("loc_group/loc_z_ctrl")
+	var color_r_ctrl = get_node("color_comps_group/color_r_ctrl")
+	var color_g_ctrl = get_node("color_comps_group/color_g_ctrl")
+	var color_b_ctrl = get_node("color_comps_group/color_b_ctrl")
+	var color_a_ctrl = get_node("color_comps_group/color_a_ctrl")
+
+	# The workplane name
+	rgx.compile(name_edit_rgx)
+	var res = rgx.search(text_line)
+	if res:
+		assy_name_ctrl.set_text(res.get_string())
+
+	# Split the location and insert the values in the correct controls
+	rgx.compile(loc_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		# Fill in the origin X, Y and Z controls
+		var xyz = res.get_string().split(",")
+		loc_x_ctrl.set_text(xyz[0])
+		loc_y_ctrl.set_text(xyz[1])
+		loc_z_ctrl.set_text(xyz[2])
+
+	# Split the color and insert the values in the correct controls
+	rgx.compile(color_edit_rgx)
+	res = rgx.search(text_line)
+	if res:
+		# Fill in the origin X, Y and Z controls
+		var xyz = res.get_string().split(",")
+		color_r_ctrl.set_text(xyz[0])
+		color_g_ctrl.set_text(xyz[1])
+		color_b_ctrl.set_text(xyz[2])
+		color_a_ctrl.set_text(xyz[3])

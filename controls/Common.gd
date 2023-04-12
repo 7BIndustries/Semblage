@@ -96,13 +96,15 @@ static func add_item_to_tree(new_object, tree, tree_root):
 """
 Adds a component to the Components tree.
 """
-static func add_component(new_component, tree):
+static func add_component(new_component, icon, new_template, tree):
 	var tree_root = tree.get_root()
 
 	# Add the component to the tree if it is not already there
 	if new_component and not _check_tree_item_exists(tree, new_component):
 		var new_comp_item = tree.create_item(tree_root)
 		new_comp_item.set_text(0, new_component)
+		new_comp_item.set_icon(0, icon)
+		new_comp_item.set_tooltip(0, new_template)
 
 		# Make sure this new component will be rendered
 		set_component_tree_item_visibility(tree, new_component, true)
